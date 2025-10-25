@@ -1,7 +1,7 @@
 .sideBarNav {
   display: flex;
   flex-direction: column;
-  width: 15%;
+  width: 100%;
   border-right: dashed;
   padding: 4% 0 4% 0;
   align-items: center;
@@ -13,12 +13,16 @@
 
 .menu_button {
   height: 40px;
-  width: 80%;
+  width: 90%;
   margin-top: 20px;
   border-radius: 5px;
   text-align: center;
   line-height: 40px;
   color: cornflowerblue;
+  padding: 0 10px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 .menu_selected {
