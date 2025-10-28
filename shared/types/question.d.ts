@@ -4,6 +4,7 @@ import { Answer, PopulatedDatabaseAnswer } from './answer';
 import { DatabaseTag, Tag } from './tag';
 import { Comment, DatabaseComment } from './comment';
 import { DatabaseCommunity } from './community';
+import { FlaggedInfo, DeletedInfo } from './moderation';
 
 /**
  * Type representing the possible ordering options for questions.
@@ -26,6 +27,9 @@ export type OrderType = 'newest' | 'unanswered' | 'active' | 'mostViewed';
  * - `upVotes`: An array of usernames who have upvoted the question.
  * - `downVotes`: An array of usernames who have downvoted the question.
  * - `comments`: An array of comments related to the question.
+ * - `community`: The community this question belongs to.
+ * - `flagged`: Flagged information for moderation.
+ * - `deleted`: Deleted information for moderation.
  */
 export interface Question {
   title: string;
@@ -39,6 +43,8 @@ export interface Question {
   downVotes: string[];
   comments: Comment[];
   community: ObjectId | null;
+  flagged?: FlaggedInfo;
+  deleted?: DeletedInfo;
 }
 
 /**
@@ -47,6 +53,9 @@ export interface Question {
  * - `tags`: An array of ObjectIds referencing tags associated with the question.
  * - `answers`: An array of ObjectIds referencing answers associated with the question.
  * - `comments`: An array of ObjectIds referencing comments associated with the question.
+ * - `community`: ObjectId referencing the community this question belongs to.
+ * - `flagged`: Flagged information for moderation.
+ * - `deleted`: Deleted information for moderation.
  */
 export interface DatabaseQuestion
   extends Omit<Question, 'tags' | 'answers' | 'comments' | 'community'> {
