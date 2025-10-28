@@ -1,5 +1,6 @@
 import { ObjectId } from 'mongodb';
 import { Request } from 'express';
+import { FlaggedInfo, DeletedInfo } from './moderation';
 
 /**
  * Represents a message in a chat.
@@ -7,12 +8,16 @@ import { Request } from 'express';
  * - `msgFrom`: The username of the user sending the message.
  * - `msgDateTime`: The date and time when the message was sent.
  * - `type`: The type of the message, either 'global' or 'direct'.
+ * - `flagged`: Flagged information for moderation.
+ * - `deleted`: Deleted information for moderation.
  */
 export interface Message {
   msg: string;
   msgFrom: string;
   msgDateTime: Date;
   type: 'global' | 'direct';
+  flagged?: FlaggedInfo;
+  deleted?: DeletedInfo;
 }
 
 /**
@@ -22,6 +27,8 @@ export interface Message {
  * - `msgFrom`: The username of the user sending the message.
  * - `msgDateTime`: The date and time when the message was sent.
  * - `type`: The type of the message, either 'global' or 'direct'.
+ * - `flagged`: Flagged information for moderation.
+ * - `deleted`: Deleted information for moderation.
  */
 export interface DatabaseMessage extends Message {
   _id: ObjectId;

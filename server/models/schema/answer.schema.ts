@@ -21,6 +21,44 @@ const answerSchema: Schema = new Schema(
       type: Date,
     },
     comments: [{ type: Schema.Types.ObjectId, ref: 'Comment' }],
+    flagged: {
+      isFlagged: {
+        type: Boolean,
+        default: false,
+      },
+      flaggedBy: [{ type: String }],
+      flaggedAt: [{ type: Date }],
+      reviewedBy: {
+        type: String,
+        default: null,
+      },
+      reviewedAt: {
+        type: Date,
+        default: null,
+      },
+    },
+    deleted: {
+      isDeleted: {
+        type: Boolean,
+        default: false,
+      },
+      deletedBy: {
+        type: String,
+        default: null,
+      },
+      deleteReason: {
+        type: String,
+        default: '',
+      },
+      deletedAt: {
+        type: Date,
+        default: null,
+      },
+      restoredAt: {
+        type: Date,
+        default: null,
+      },
+    },
   },
   { collection: 'Answer' },
 );

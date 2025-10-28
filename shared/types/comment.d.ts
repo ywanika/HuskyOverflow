@@ -1,16 +1,21 @@
 import { Request } from 'express';
 import { ObjectId } from 'mongodb';
+import { FlaggedInfo, DeletedInfo } from './moderation';
 
 /**
  * Represents a comment on a question or an answer.
  * - `text`: The content of the comment.
  * - `commentBy`: The author of the comment.
  * - `commentDateTime`: The timestamp when the comment was made.
+ * - `flagged`: Flagged information for moderation.
+ * - `deleted`: Deleted information for moderation.
  */
 export interface Comment {
   text: string;
   commentBy: string;
   commentDateTime: Date;
+  flagged?: FlaggedInfo;
+  deleted?: DeletedInfo;
 }
 
 /**
@@ -19,6 +24,8 @@ export interface Comment {
  * - `text`: The content of the comment.
  * - `commentBy`: The author of the comment.
  * - `commentDateTime`: The timestamp when the comment was made.
+ * - `flagged`: Flagged information for moderation.
+ * - `deleted`: Deleted information for moderation.
  */
 export interface DatabaseComment extends Comment {
   _id: ObjectId;

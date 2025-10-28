@@ -26,6 +26,27 @@ const userSchema: Schema = new Schema(
       type: String,
       default: '',
     },
+    role: {
+      type: String,
+      enum: ['user', 'moderator', 'admin'],
+      default: 'user',
+    },
+    agreedToGuidelines: {
+      type: Boolean,
+      default: false,
+    },
+    suspendedUntil: {
+      type: Date,
+      default: null,
+    },
+    suspensionReason: {
+      type: String,
+      default: '',
+    },
+    lastActive: {
+      type: Date,
+      default: Date.now,
+    },
   },
   { collection: 'User' },
 );

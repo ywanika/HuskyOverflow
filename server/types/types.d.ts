@@ -3,6 +3,7 @@ import { ClientToServerEvents, ServerToClientEvents } from '@fake-stack-overflow
 
 // export * from '../../shared/src/types/types';
 export * from '@fake-stack-overflow/shared';
+export * from '@fake-stack-overflow/shared/types/moderation';
 
 /**
  * Type alias for the Socket.io Server instance.
