@@ -14,28 +14,44 @@ const Header = () => {
   const { user: currentUser } = useUserContext();
   const navigate = useNavigate();
   return (
-    <Box as="header" id='header' className='header' bg="gray.100" p={6}>
-      <Flex justify="space-between" align="center" maxW="100%">
-        <Heading as="h1" size="lg" color="black" flexShrink={0} mr={8}>
-          Fake Stack Overflow
+    <Box as='header' id='header' className='header' bg='gray.100' p={6} role='banner'>
+      <Flex justify='space-between' align='center' maxW='100%'>
+        <Heading as='h1' size='lg' color='black' flexShrink={0} mr={8}>
+          <a
+            href='/home'
+            style={{ textDecoration: 'none', color: 'inherit' }}
+            aria-label='Fake Stack Overflow - Go to home'>
+            Fake Stack Overflow
+          </a>
         </Heading>
-        <Flex gap={6} align="center" flexShrink={0}>
+        <Flex gap={6} align='center' flexShrink={0} role='search'>
           <Input
             id='searchBar'
-            placeholder='Search ...'
+            placeholder='Search questions, tags, users...'
             value={val}
             onChange={handleInputChange}
             onKeyDown={handleKeyDown}
-            w="300px"
+            w='300px'
             flexShrink={0}
+            aria-label='Search the site'
+            aria-describedby='search-help'
           />
-          <Button onClick={handleSignOut} colorScheme="blue" variant="outline" flexShrink={0}>
+          <Box id='search-help' className='sr-only'>
+            Press Enter to search. Use Tab to navigate to other options.
+          </Box>
+          <Button
+            onClick={handleSignOut}
+            colorScheme='blue'
+            variant='outline'
+            flexShrink={0}
+            aria-label='Sign out of your account'>
             Log out
           </Button>
           <Button
             onClick={() => navigate(`/user/${currentUser.username}`)}
-            colorScheme="blue"
-            flexShrink={0}>
+            colorScheme='blue'
+            flexShrink={0}
+            aria-label={`View profile for ${currentUser.username}`}>
             View Profile
           </Button>
         </Flex>

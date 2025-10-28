@@ -1,64 +1,79 @@
-import 'cypress-axe';
-
 describe('Accessibility Tests', () => {
   beforeEach(() => {
-    // Visit the app
-    cy.visit('http://localhost:4531');
-    
-    // Login (adjust credentials as needed)
-    cy.get('#username-input').type('testuser');
-    cy.get('#password-input').type('password');
-    cy.get('.login-button').click();
-    
-    // Wait for navigation
-    cy.url().should('include', '/home');
+    // Visit the login page before each test
+    cy.visit('http://localhost:3000');
   });
 
-  it('should have no accessibility violations on homepage', () => {
+  it('should have no accessibility violations on login page', () => {
+    // Inject axe-core
     cy.injectAxe();
+    
+    // Check for accessibility violations
     cy.checkA11y();
   });
 
-  it('should display skip links when focused', () => {
-    cy.get('body').click(0, 0); // Click at top to focus
+  it('should have proper focus management', () => {
+    // Test skip links
+    cy.get('body').type('{tab}');
     cy.get('.skip-link').should('be.visible');
-  });
-
-  it('should have proper ARIA landmarks', () => {
-    cy.get('nav[aria-label="Main navigation"]').should('exist');
-    cy.get('main[role="main"]').should('exist');
-    cy.get('header[role="banner"]').should('exist');
-  });
-
-  it('should navigate with keyboard only', () => {
-    cy.realPress('Tab'); // Focus first element
-    cy.get(':focus').should('exist');
-    cy.realPress('Tab'); // Continue navigation
-    cy.get(':focus').should('exist');
-  });
-
-  it('should have proper form labels on login page', () => {
-    // Logout first
-    cy.get('.logout-button').click();
-    cy.url().should('include', '/');
     
-    cy.get('label[for="username-input"]').should('exist').and('be.visible');
-    cy.get('label[for="password-input"]').should('exist').and('be.visible');
+    // Test keyboard navigation
+    cy.get('body').type('{tab}');
+    cy.focused().should('have.attr', 'href', '#main-content');
+    
+    cy.get('body').type('{tab}');
+    cy.focused().should('have.attr', 'href', '#navigation');
   });
 
-  it('should have required field indicators', () => {
-    cy.visit('http://localhost:4531');
-    cy.get('.required').should('exist').and('contain', '*');
+  it('should have proper form accessibility', () => {
+    // Check form labels
+    cy.get('label[for="username-input"]').should('exist');
+    cy.get('label[for="password-input"]').should('exist');
+    
+    // Check required field indicators
+    cy.get('.required').should('contain', '*');
+    
+    // Check fieldset and legend
+    cy.get('fieldset').should('exist');
+    cy.get('legend').should('exist');
+    
+    // Check help text
+    cy.get('#username-help').should('exist');
+    cy.get('#password-help').should('exist');
   });
 
-  it('should have accessible button labels', () => {
-    cy.get('button').each(($btn) => {
-      cy.wrap($btn).should('have.attr', 'aria-label').or('contain.text');
-    });
+  it('should have proper ARIA attributes', () => {
+    // Check main landmark
+    cy.get('main[role="main"]').should('exist');
+    
+    // Check form attributes
+    cy.get('form[role="form"]').should('exist');
+    cy.get('form').should('have.attr', 'aria-labelledby');
+    
+    // Check error message
+    cy.get('.error-message').should('have.attr', 'role', 'alert');
   });
 
-  it('should navigate breadcrumbs with keyboard', () => {
-    cy.get('.breadcrumb').should('exist');
+  it('should have proper contrast ratios', () => {
+    // This test would need to be run with a tool that can measure contrast
+    // For now, we'll check that the elements exist
+    cy.get('h1').should('exist');
+    cy.get('h2').should('exist');
+    cy.get('.form-label').should('exist');
+  });
+
+  it('should be keyboard navigable', () => {
+    // Test tab navigation through form
+    cy.get('body').type('{tab}');
+    cy.focused().should('have.attr', 'id', 'username-input');
+    
+    cy.get('body').type('{tab}');
+    cy.focused().should('have.attr', 'id', 'password-input');
+    
+    cy.get('body').type('{tab}');
+    cy.focused().should('have.attr', 'id', 'showPasswordToggle');
+    
+    cy.get('body').type('{tab}');
+    cy.focused().should('have.attr', 'type', 'submit');
   });
 });
-

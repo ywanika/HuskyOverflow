@@ -7,7 +7,7 @@ const Breadcrumbs = () => {
 
   const getBreadcrumbLabel = (segment: string, index: number) => {
     const path = '/' + pathSegments.slice(0, index + 1).join('/');
-    
+
     switch (segment) {
       case 'home':
         return { label: 'Home', path: '/home' };
@@ -37,31 +37,33 @@ const Breadcrumbs = () => {
   }
 
   return (
-    <Box as="nav" aria-label="Breadcrumb" mb={4}>
-      <Text fontSize="sm" color="gray.600">
-        {pathSegments.map((segment, index) => {
-          const { label, path } = getBreadcrumbLabel(segment, index);
-          const isLast = index === pathSegments.length - 1;
-          
-          return (
-            <span key={path}>
-              {isLast ? (
-                <Text as="span" fontWeight="bold" color="gray.900">
-                  {label}
-                </Text>
-              ) : (
-                <>
-                  <Link href={path} color="blue.500" textDecoration="underline">
-                    {label}
-                  </Link>
-                  <Text as="span" mx={2} color="gray.400">
+    <Box as='nav' aria-label='Breadcrumb' mb={4}>
+      <Text fontSize='sm' color='gray.600'>
+        <ol style={{ listStyle: 'none', padding: 0, margin: 0, display: 'flex', flexWrap: 'wrap' }}>
+          {pathSegments.map((segment, index) => {
+            const { label, path } = getBreadcrumbLabel(segment, index);
+            const isLast = index === pathSegments.length - 1;
+
+            return (
+              <li key={path} style={{ display: 'flex', alignItems: 'center' }}>
+                {index > 0 && (
+                  <Text as='span' mx={2} color='gray.400' aria-hidden='true'>
                     /
                   </Text>
-                </>
-              )}
-            </span>
-          );
-        })}
+                )}
+                {isLast ? (
+                  <Text as='span' fontWeight='bold' color='gray.900' aria-current='page'>
+                    {label}
+                  </Text>
+                ) : (
+                  <Link href={path} color='blue.500' textDecoration='underline'>
+                    {label}
+                  </Link>
+                )}
+              </li>
+            );
+          })}
+        </ol>
       </Text>
     </Box>
   );

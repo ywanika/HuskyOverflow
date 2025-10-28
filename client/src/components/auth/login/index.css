@@ -9,26 +9,36 @@
   padding: 20px;
 }
 
-/* Heading styles */
+/* Heading styles - improved contrast */
+.container h1 {
+  font-size: 2.5rem;
+  color: #1a1a1a; /* Improved contrast ratio */
+  margin-bottom: 10px;
+  font-weight: 700;
+}
+
 .container h2 {
   font-size: 2rem;
-  color: #333;
+  color: #2d2d2d; /* Improved contrast ratio */
   margin-bottom: 10px;
+  font-weight: 600;
 }
 
 .container h3 {
   font-size: 1.5rem;
-  color: #555;
+  color: #404040; /* Improved contrast ratio */
   margin-bottom: 20px;
+  font-weight: 500;
 }
 
 .container h4 {
   font-size: 1rem;
-  color: #666;
+  color: #404040; /* Improved contrast ratio */
   margin: 15px 0 5px; /* Adjusted for better spacing */
   text-align: left; /* Align text to the left */
   width: 100%; /* Ensure alignment respects the form's width */
   max-width: 400px; /* Match the form's max width */
+  font-weight: 500;
 }
 
 /* Form styles */
@@ -57,7 +67,45 @@ form {
 
 .input-text:focus {
   border-color: #007bff;
-  box-shadow: 0 0 5px rgba(0, 123, 255, 0.5);
+  box-shadow: 0 0 0 3px rgba(0, 123, 255, 0.25);
+  outline: 2px solid #007bff;
+  outline-offset: 2px;
+}
+
+.input-text:focus-visible {
+  outline: 2px solid #007bff;
+  outline-offset: 2px;
+  border-color: #007bff;
+  box-shadow: 0 0 0 3px rgba(0, 123, 255, 0.25);
+}
+
+/* Checkbox styles for better accessibility */
+input[type="checkbox"] {
+  margin-right: 8px;
+  transform: scale(1.2);
+}
+
+input[type="checkbox"]:focus {
+  outline: 2px solid #007bff;
+  outline-offset: 2px;
+}
+
+input[type="checkbox"]:focus-visible {
+  outline: 2px solid #007bff;
+  outline-offset: 2px;
+}
+
+.show-password {
+  display: flex;
+  align-items: center;
+  margin: 15px 0;
+}
+
+.show-password label {
+  cursor: pointer;
+  user-select: none;
+  color: #1a1a1a;
+  font-size: 14px;
 }
 
 /* Button styles */
@@ -80,6 +128,18 @@ form {
   background-color: #003f7f;
 }
 
+.login-button:focus {
+  outline: 2px solid #007bff;
+  outline-offset: 2px;
+  box-shadow: 0 0 0 3px rgba(0, 123, 255, 0.25);
+}
+
+.login-button:focus-visible {
+  outline: 2px solid #007bff;
+  outline-offset: 2px;
+  box-shadow: 0 0 0 3px rgba(0, 123, 255, 0.25);
+}
+
 /* Signup link styles */
 .signup-link {
   margin-top: 30px; /* Increased spacing */
@@ -96,11 +156,30 @@ form {
   text-decoration: underline;
 }
 
+.signup-link:focus {
+  outline: 2px solid #007bff;
+  outline-offset: 2px;
+  color: #0056b3;
+  text-decoration: underline;
+}
+
+.signup-link:focus-visible {
+  outline: 2px solid #007bff;
+  outline-offset: 2px;
+  color: #0056b3;
+  text-decoration: underline;
+}
+
 .error-message {
-  color: red;
+  color: #d32f2f; /* Improved red color for better contrast */
   font-size: 14px;
   margin-top: 20px;
   text-align: center;
+  font-weight: 500;
+  background-color: #ffebee; /* Light red background for better visibility */
+  padding: 8px 12px;
+  border-radius: 4px;
+  border-left: 4px solid #d32f2f;
 }
 
 /* Accessibility styles */
@@ -124,18 +203,20 @@ form {
   display: block;
   font-weight: bold;
   margin-bottom: 5px;
-  color: #333;
+  color: #1a1a1a; /* Improved contrast ratio */
+  font-size: 14px;
 }
 
 .required {
-  color: red;
+  color: #d32f2f; /* Improved red color for better contrast */
   font-weight: bold;
 }
 
 .form-help {
   font-size: 12px;
-  color: #666;
+  color: #404040; /* Improved contrast ratio */
   margin-top: 5px;
+  line-height: 1.4;
 }
 
 fieldset {
