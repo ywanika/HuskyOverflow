@@ -1,7 +1,7 @@
 .btn-action-community {
   padding: 0.5rem 1rem;
-  background-color: #3b82f6;
-  color: white;
+  background-color: #cb9f00;
+  color: black;
   border: none;
   border-radius: 8px;
   cursor: pointer;
@@ -10,7 +10,7 @@
 }
 
 .btn-action-community:hover {
-  background-color: #2563eb;
+  background-color: #9e6c00;
 }
 
 .community-error {

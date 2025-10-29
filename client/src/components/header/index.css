@@ -75,6 +75,39 @@
   color: var(--color-text-muted);
 }
 
+.logout-button {
+  padding: 12px;
+  font-size: 16px;
+  background-color: #cb9f00;
+  color: black;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: background-color 0.3s;
+}
+
+.logout-button:hover {
+  background-color: #9e6c00;
+}
+
+.view-profile-button {
+  background-color: #cb9f00;
+  color: black;
+  border: none;
+  padding: 10px 15px;
+  border-radius: 5px;
+  cursor: pointer;
+  margin-left: 10px;
+}
+
+.view-profile-button:hover {
+  background-color: #9e6c00;
+}
+
+.view-profile-button:active {
+  background-color: #9e6c00;
+}
+
 /* Responsive design */
 @media (max-width: 768px) {
   .header-container {

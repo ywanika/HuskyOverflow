@@ -37,6 +37,7 @@
   transform: translateX(4px);
 }
 
+/* Active state from UIAndAccessibility_Sprint1 */
 .nav-item.active {
   background-color: var(--color-primary);
   color: var(--color-text-primary);
@@ -54,6 +55,26 @@
   background-color: var(--color-accent);
 }
 
+/* Menu buttons from colorBlindness_Accessibility_Sprint1 */
+.menu_button {
+  height: 40px;
+  width: 90%;
+  margin-top: 20px;
+  border-radius: 5px;
+  text-align: center;
+  line-height: 40px;
+  color: #9137b7;
+  padding: 0 10px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.menu_selected {
+  border: #9137b7 1px solid;
+}
+
+/* Focus states */
 .nav-item:focus {
   background-color: var(--color-focus);
   color: var(--color-bg-primary);
@@ -70,7 +91,18 @@
   text-decoration: none;
 }
 
-/* Responsive design */
+/* Message options from colorBlindness_Accessibility_Sprint1 */
+.message-options {
+  color: #9e6c00;
+  width: max-content;
+}
+
+.message-option-selected {
+  text-decoration: underline;
+  width: 110%;
+}
+
+/* Responsive design from UIAndAccessibility_Sprint1 */
 @media (max-width: 768px) {
   .sideBarNav {
     min-height: auto;

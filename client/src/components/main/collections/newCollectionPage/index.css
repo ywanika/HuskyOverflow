@@ -26,8 +26,8 @@
 
 .new-collection-input:focus {
   outline: none;
-  border-color: #2563eb;
-  box-shadow: 0 0 0 2px rgba(37, 99, 235, 0.2);
+  border-color: #9137b7;
+  box-shadow: 0 0 0 2px rgba(145, 55, 183, 0.2);
 }
 
 .new-collection-checkbox {
@@ -40,8 +40,8 @@
 }
 
 .new-collection-btn {
-  background-color: #2563eb;
-  color: white;
+  background-color: #cb9f00;
+  color: #000;
   padding: 0.75rem 1.5rem;
   font-size: 1rem;
   border: none;
@@ -53,11 +53,11 @@
 }
 
 .new-collection-btn:hover {
-  background-color: #1e40af;
+  background-color: #9e6c00;
 }
 
 .new-collection-btn:active {
-  background-color: #163493;
+  background-color: #9e6c00;
 }
 
 .new-collection-error {

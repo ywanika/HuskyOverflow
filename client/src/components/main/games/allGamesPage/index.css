@@ -73,6 +73,28 @@
   margin-top: var(--spacing-lg);
 }
 
+/* Button Specific Classes */
+.btn-create-game,
+.btn-leave-game,
+.btn-refresh-list,
+.btn-join-game {
+  background: #cb9f00;
+  color: black;
+  padding: 10px 20px;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 16px;
+  transition: background-color 0.2s ease;
+}
+
+.btn-create-game:hover,
+.btn-leave-game:hover,
+.btn-refresh-list:hover,
+.btn-join-game:hover {
+  background: #9e6c00;
+}
+
 /* Error Message */
 .game-error {
   background-color: rgba(211, 47, 47, 0.1);

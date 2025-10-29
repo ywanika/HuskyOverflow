@@ -1,8 +1,24 @@
 /* Profile Settings Container */
 .profile-settings {
+  --color-bg: #f2f4f7;
+  --color-card-bg: #ffffff;
+  --color-border: #d1d5db;
+  --color-primary: #cb9f00;
+  --color-primary-hover: #9e6c00;
+  --color-danger: #dc2626;
+  --color-danger-hover: #991b1b;
+  --color-success: #16a34a;
+  --color-error: #b91c1c;
+  --radius: 0.75rem;
+  --spacing: 1rem;
+  --font-md: 1rem;
+  --font-lg: 1.25rem;
+
+  background-color: var(--color-bg);
+  padding: 2rem;
+  display: flex;
+  justify-content: center;
   min-height: 100vh;
-  background-color: var(--color-bg-secondary);
-  padding: var(--spacing-lg);
 }
 
 /* Profile Card */

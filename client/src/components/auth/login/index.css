@@ -58,6 +58,49 @@
   text-align: center;
 }
 
+/* Input Text Styles */
+.input-text {
+  width: 100%;
+  border: 1px solid #ddd;
+  border-radius: 5px;
+  background-color: #fff;
+  color: #333;
+  box-sizing: border-box;
+  transition:
+    border-color 0.3s,
+    box-shadow 0.3s;
+}
+
+.input-text:focus {
+  border-color: #9137b7;
+  box-shadow: 0 0 0 3px rgba(145, 55, 183, 0.25);
+  outline: 2px solid #9137b7;
+  outline-offset: 2px;
+}
+
+.input-text:focus-visible {
+  outline: 2px solid #9137b7;
+  outline-offset: 2px;
+  border-color: #9137b7;
+  box-shadow: 0 0 0 3px rgba(145, 55, 183, 0.25);
+}
+
+/* Checkbox styles for better accessibility */
+input[type="checkbox"] {
+  margin-right: 8px;
+  transform: scale(1.2);
+}
+
+input[type="checkbox"]:focus {
+  outline: 2px solid #9137b7;
+  outline-offset: 2px;
+}
+
+input[type="checkbox"]:focus-visible {
+  outline: 2px solid #9137b7;
+  outline-offset: 2px;
+}
+
 /* Checkbox Group */
 .checkbox-group {
   display: flex;
@@ -89,6 +132,45 @@
   margin: 0;
 }
 
+/* Show Password Label */
+.show-password label {
+  cursor: pointer;
+  user-select: none;
+  color: #1a1a1a;
+  font-size: 14px;
+}
+
+/* Button styles */
+.login-button {
+  padding: 12px;
+  font-size: 16px;
+  background-color: #cb9f00;
+  color: #000;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
+.login-button:hover {
+  background-color: #9e6c00;
+}
+
+.login-button:active {
+  background-color: #9e6c00;
+}
+
+.login-button:focus {
+  outline: 2px solid #9e6c00;
+  outline-offset: 2px;
+  box-shadow: 0 0 0 3px rgba(0, 123, 255, 0.25);
+}
+
+.login-button:focus-visible {
+  outline: 2px solid #9e6c00;
+  outline-offset: 2px;
+  box-shadow: 0 0 0 3px rgba(0, 123, 255, 0.25);
+}
+
 /* Login Footer */
 .login-footer {
   margin-top: var(--spacing-xl);
@@ -115,6 +197,14 @@
 }
 
 .signup-link:focus {
+  outline: 2px solid var(--color-focus);
+  outline-offset: 2px;
+  color: var(--color-secondary);
+  text-decoration: underline;
+  background-color: var(--color-hover);
+}
+
+.signup-link:focus-visible {
   outline: 2px solid var(--color-focus);
   outline-offset: 2px;
   color: var(--color-secondary);

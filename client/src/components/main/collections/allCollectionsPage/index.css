@@ -21,6 +21,26 @@
   width: 100%;
 }
 
+/* Create Button */
+.collections-create-btn {
+  background-color: #9137b7;
+  color: #fff;
+  padding: 0.6rem 1.2rem;
+  font-size: 1rem;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all var(--transition-normal);
+}
+
+.collections-create-btn:hover {
+  background-color: #591980;
+}
+
+.collections-create-btn:active {
+  background-color: #591980;
+}
+
 /* Collection Card */
 .collection-card {
   background-color: var(--color-bg-primary);

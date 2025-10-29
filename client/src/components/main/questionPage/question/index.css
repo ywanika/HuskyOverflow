@@ -5,7 +5,7 @@
 }
 
 .postStats {
-  color: #bbbbbb;
+  color: #0a999e;
   text-align: center;
   width: 10%;
 }
@@ -15,7 +15,7 @@
 }
 
 .postTitle {
-  color: cornflowerblue;
+  color: #9137b7;
 }
 
 .question_tags {
@@ -42,15 +42,15 @@
 }
 
 .question_author {
-  color: red;
+  color: #9e6c00;
 }
 
 .question_meta {
-  color: #bbbbbb;
+  color: #0a999e;
 }
 
 .question .collections-btn {
-  background-color: rgba(81, 51, 166, 0.85);
+  background-color: #9137b7;
   font-weight: bold;
   color: white;
   border: none;
@@ -63,5 +63,5 @@
 }
 
 .question .collections-btn:hover {
-  background-color: darkblue;
+  background-color: #591980;
 }

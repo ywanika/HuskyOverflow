@@ -16,9 +16,10 @@
   justify-content: center;
   width: 44px;
   height: 44px;
-  border: 2px solid var(--color-bg-tertiary);
+  padding: 0.5rem;
+  border: 2px solid #0a999e;  /* Colorblind-safe teal from colorBlindness branch */
   border-radius: var(--radius-md);
-  background-color: var(--color-bg-primary);
+  background-color: #f0f0f0;  /* From colorBlindness branch */
   color: var(--color-text-primary);
   cursor: pointer;
   transition: all var(--transition-fast);
