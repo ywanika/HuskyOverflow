@@ -74,8 +74,8 @@
 
 .save-btn {
   padding: 0.5rem 0.75rem;
-  background-color: #007bff;
-  color: white;
+  background-color: #cb9f00;
+  color: black;
   border: none;
   border-radius: 6px;
   font-size: 0.9rem;
@@ -85,15 +85,15 @@
 }
 
 .save-btn:hover {
-  background-color: #0056b3;
+  background-color: #9e6c00;
 }
 
 .close-btn {
   margin-top: 1.5rem;
   width: 100%;
   padding: 0.6rem;
-  background-color: #6c757d;
-  color: white;
+  background-color: #0a999e;
+  color: black;
   border: none;
   border-radius: 6px;
   cursor: pointer;
@@ -102,7 +102,7 @@
 }
 
 .close-btn:hover {
-  background-color: #5a6268;
+  background-color: #0a696e;
 }
 
 @keyframes fadeIn {

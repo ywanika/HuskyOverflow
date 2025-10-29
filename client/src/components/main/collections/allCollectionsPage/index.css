@@ -18,8 +18,8 @@
 }
 
 .collections-create-btn {
-  background-color: #2563eb;
-  color: white;
+  background-color: #9137b7;
+  color: #fff;
   padding: 0.6rem 1.2rem;
   font-size: 1rem;
   border: none;
@@ -31,11 +31,11 @@
 }
 
 .collections-create-btn:hover {
-  background-color: #1e40af;
+  background-color: #591980;
 }
 
 .collections-create-btn:active {
-  background-color: #163493;
+  background-color: #591980;
 }
 
 .collections-list {

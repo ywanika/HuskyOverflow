@@ -40,16 +40,16 @@ const Header = () => {
             Press Enter to search. Use Tab to navigate to other options.
           </Box>
           <Button
+            className='logout-button'
             onClick={handleSignOut}
-            colorScheme='blue'
             variant='outline'
             flexShrink={0}
             aria-label='Sign out of your account'>
             Log out
           </Button>
           <Button
+            className='view-profile-button'
             onClick={() => navigate(`/user/${currentUser.username}`)}
-            colorScheme='blue'
             flexShrink={0}
             aria-label={`View profile for ${currentUser.username}`}>
             View Profile

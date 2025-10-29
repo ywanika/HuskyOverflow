@@ -18,7 +18,7 @@
   border-radius: 5px;
   text-align: center;
   line-height: 40px;
-  color: cornflowerblue;
+  color: #9137b7;
   padding: 0 10px;
   white-space: nowrap;
   overflow: hidden;
@@ -26,7 +26,7 @@
 }
 
 .menu_selected {
-  background: #cccccc;
+  border: #9137b7 1px solid;
 }
 
 .additional-options {
@@ -37,11 +37,11 @@
 }
 
 .message-options {
+  color: #9e6c00;
   width: max-content;
 }
 
 .message-option-selected {
-  background: #3090e2;
-  color: white;
+  text-decoration: underline;
   width: 110%;
 }
