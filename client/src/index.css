@@ -1,3 +1,5 @@
+@import './darkmode.css';
+
 html {
   height: 99%;
 }
@@ -5,6 +7,18 @@ html {
 body,
 #root {
   height: 100%;
+  transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+/* Dark mode styles */
+[data-theme='dark'] body {
+  background-color: #1a202c;
+  color: #fff;
+}
+
+[data-theme='light'] body {
+  background-color: #fff;
+  color: #000;
 }
 
 /* Skip links for accessibility */
@@ -55,4 +69,10 @@ body,
 *:focus-visible {
   outline: 2px solid #007bff;
   outline-offset: 2px;
+}
+
+/* Dark mode focus indicators */
+[data-theme='dark'] *:focus,
+[data-theme='dark'] *:focus-visible {
+  outline-color: #63b3ed;
 }

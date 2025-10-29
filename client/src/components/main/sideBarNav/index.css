@@ -23,10 +23,17 @@
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
+  transition: background-color 0.3s ease;
 }
 
 .menu_selected {
   background: #cccccc;
+}
+
+/* Dark mode support for menu selected */
+[data-theme='dark'] .menu_selected {
+  background: #4a5568;
+  color: white;
 }
 
 .additional-options {

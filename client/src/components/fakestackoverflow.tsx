@@ -5,6 +5,7 @@ import Login from './auth/login';
 import { FakeSOSocket, SafeDatabaseUser } from '../types/types';
 import LoginContext from '../contexts/LoginContext';
 import UserContext from '../contexts/UserContext';
+import { ThemeProvider } from '../contexts/ThemeContext';
 import QuestionPage from './main/questionPage';
 import TagPage from './main/tagPage';
 import NewQuestionPage from './main/newQuestion';
@@ -48,40 +49,42 @@ const FakeStackOverflow = ({ socket }: { socket: FakeSOSocket | null }) => {
   const [user, setUser] = useState<SafeDatabaseUser | null>(null);
 
   return (
-    <LoginContext.Provider value={{ setUser }}>
-      <Routes>
-        {/* Public Route */}
-        <Route path='/' element={<Login />} />
-        <Route path='/signup' element={<Signup />} />
-        {/* Protected Routes */}
-        {
-          <Route
-            element={
-              <ProtectedRoute user={user} socket={socket}>
-                <Layout />
-              </ProtectedRoute>
-            }>
-            <Route path='/home' element={<QuestionPage />} />
-            <Route path='tags' element={<TagPage />} />
-            <Route path='/messaging' element={<MessagingPage />} />
-            <Route path='/messaging/direct-message' element={<DirectMessage />} />
-            <Route path='/question/:qid' element={<AnswerPage />} />
-            <Route path='/new/question' element={<NewQuestionPage />} />
-            <Route path='/new/answer/:qid' element={<NewAnswerPage />} />
-            <Route path='/users' element={<UsersListPage />} />
-            <Route path='/user/:username' element={<ProfileSettings />} />
-            <Route path='/new/collection' element={<NewCollectionPage />} />
-            <Route path='/collections/:username' element={<AllCollectionsPage />} />
-            <Route path='/collections/:username/:collectionId' element={<CollectionPage />} />
-            <Route path='/games' element={<AllGamesPage />} />
-            <Route path='/games/:gameID' element={<GamePage />} />
-            <Route path='/communities' element={<AllCommunitiesPage />} />
-            <Route path='/new/community' element={<NewCommunityPage />} />
-            <Route path='/communities/:communityID' element={<CommunityPage />} />
-          </Route>
-        }
-      </Routes>
-    </LoginContext.Provider>
+    <ThemeProvider>
+      <LoginContext.Provider value={{ setUser }}>
+        <Routes>
+          {/* Public Route */}
+          <Route path='/' element={<Login />} />
+          <Route path='/signup' element={<Signup />} />
+          {/* Protected Routes */}
+          {
+            <Route
+              element={
+                <ProtectedRoute user={user} socket={socket}>
+                  <Layout />
+                </ProtectedRoute>
+              }>
+              <Route path='/home' element={<QuestionPage />} />
+              <Route path='tags' element={<TagPage />} />
+              <Route path='/messaging' element={<MessagingPage />} />
+              <Route path='/messaging/direct-message' element={<DirectMessage />} />
+              <Route path='/question/:qid' element={<AnswerPage />} />
+              <Route path='/new/question' element={<NewQuestionPage />} />
+              <Route path='/new/answer/:qid' element={<NewAnswerPage />} />
+              <Route path='/users' element={<UsersListPage />} />
+              <Route path='/user/:username' element={<ProfileSettings />} />
+              <Route path='/new/collection' element={<NewCollectionPage />} />
+              <Route path='/collections/:username' element={<AllCollectionsPage />} />
+              <Route path='/collections/:username/:collectionId' element={<CollectionPage />} />
+              <Route path='/games' element={<AllGamesPage />} />
+              <Route path='/games/:gameID' element={<GamePage />} />
+              <Route path='/communities' element={<AllCommunitiesPage />} />
+              <Route path='/new/community' element={<NewCommunityPage />} />
+              <Route path='/communities/:communityID' element={<CommunityPage />} />
+            </Route>
+          }
+        </Routes>
+      </LoginContext.Provider>
+    </ThemeProvider>
   );
 };
 

@@ -7,6 +7,11 @@
   min-height: 100vh;
   background-color: #f7f7f7;
   padding: 20px;
+  transition: background-color 0.3s ease;
+}
+
+[data-theme='dark'] .container {
+  background-color: #1a202c;
 }
 
 /* Heading styles - improved contrast */
@@ -17,6 +22,10 @@
   font-weight: 700;
 }
 
+[data-theme='dark'] .container h1 {
+  color: #fff;
+}
+
 .container h2 {
   font-size: 2rem;
   color: #2d2d2d; /* Improved contrast ratio */
@@ -24,11 +33,19 @@
   font-weight: 600;
 }
 
+[data-theme='dark'] .container h2 {
+  color: #e2e8f0;
+}
+
 .container h3 {
   font-size: 1.5rem;
   color: #404040; /* Improved contrast ratio */
   margin-bottom: 20px;
   font-weight: 500;
+}
+
+[data-theme='dark'] .container h3 {
+  color: #cbd5e0;
 }
 
 .container h4 {
@@ -39,6 +56,10 @@
   width: 100%; /* Ensure alignment respects the form's width */
   max-width: 400px; /* Match the form's max width */
   font-weight: 500;
+}
+
+[data-theme='dark'] .container h4 {
+  color: #cbd5e0;
 }
 
 /* Form styles */
@@ -62,7 +83,18 @@ form {
   box-sizing: border-box;
   transition:
     border-color 0.3s,
-    box-shadow 0.3s;
+    box-shadow 0.3s,
+    background-color 0.3s;
+}
+
+[data-theme='dark'] .input-text {
+  background-color: #2d3748;
+  color: #fff;
+  border-color: #4a5568;
+}
+
+[data-theme='dark'] .input-text::placeholder {
+  color: #a0aec0;
 }
 
 .input-text:focus {
@@ -106,6 +138,10 @@ input[type="checkbox"]:focus-visible {
   user-select: none;
   color: #1a1a1a;
   font-size: 14px;
+}
+
+[data-theme='dark'] .show-password label {
+  color: #e2e8f0;
 }
 
 /* Button styles */
@@ -182,6 +218,12 @@ input[type="checkbox"]:focus-visible {
   border-left: 4px solid #d32f2f;
 }
 
+[data-theme='dark'] .error-message {
+  background-color: #742a2a;
+  color: #feb2b2;
+  border-left-color: #fc8181;
+}
+
 /* Accessibility styles */
 .sr-only {
   position: absolute;
@@ -207,9 +249,17 @@ input[type="checkbox"]:focus-visible {
   font-size: 14px;
 }
 
+[data-theme='dark'] .form-label {
+  color: #e2e8f0;
+}
+
 .required {
   color: #d32f2f; /* Improved red color for better contrast */
   font-weight: bold;
+}
+
+[data-theme='dark'] .required {
+  color: #fc8181;
 }
 
 .form-help {
@@ -219,11 +269,19 @@ input[type="checkbox"]:focus-visible {
   line-height: 1.4;
 }
 
+[data-theme='dark'] .form-help {
+  color: #a0aec0;
+}
+
 fieldset {
   border: 1px solid #ddd;
   border-radius: 5px;
   padding: 20px;
   margin: 0;
+}
+
+[data-theme='dark'] fieldset {
+  border-color: #4a5568;
 }
 
 legend {
