@@ -1,5 +1,6 @@
 import './index.css';
 import useUserSearch from '../../../../hooks/useUserSearch';
+import PageHeader from '../../baseComponents/pageHeader';
 
 /**
  * Interface representing the props for the UserHeader component.
@@ -24,21 +25,31 @@ const UsersListHeader = ({ userCount, setUserFilter }: UserHeaderProps) => {
   const { val, handleInputChange } = useUserSearch(setUserFilter);
 
   return (
-    <div>
-      <div className='space_between right_padding'>
-        <div className='bold_title'>Users List</div>
+    <PageHeader
+      title='Users'
+      subtitle='Browse all registered users'
+      count={userCount}
+      countLabel='users'
+    >
+      <div className='user-search-container'>
+        <label htmlFor='user_search_bar' className='sr-only'>
+          Search users by username
+        </label>
         <input
           id='user_search_bar'
-          placeholder='Search Usernames ...'
-          type='text'
+          className='user-search-input'
+          placeholder='Search usernames...'
+          type='search'
           value={val}
           onChange={handleInputChange}
+          aria-label='Search users by username'
+          aria-describedby='user-search-help'
         />
+        <div id='user-search-help' className='sr-only'>
+          Enter a username to filter the user list. Search is case-sensitive.
+        </div>
       </div>
-      <div className='space_between right_padding'>
-        <div id='user_count'>{userCount} users</div>
-      </div>
-    </div>
+    </PageHeader>
   );
 };
 

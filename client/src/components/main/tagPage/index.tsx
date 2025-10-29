@@ -1,7 +1,8 @@
 import './index.css';
-import TagView from './tag';
 import useTagPage from '../../../hooks/useTagPage';
 import AskQuestionButton from '../askQuestionButton';
+import PageHeader from '../baseComponents/pageHeader';
+import TagCard from './tagCard';
 
 /**
  * Represents the TagPage component which displays a list of tags
@@ -11,18 +12,28 @@ const TagPage = () => {
   const { tlist, clickTag } = useTagPage();
 
   return (
-    <>
-      <div className='space_between right_padding'>
-        <div className='bold_title'>{tlist.length} Tags</div>
-        <div className='bold_title'>All Tags</div>
+    <div className='tag-page'>
+      <PageHeader
+        title='Tags'
+        subtitle='Browse all available tags'
+        count={tlist.length}
+        countLabel='tags'
+      >
         <AskQuestionButton />
-      </div>
-      <div className='tag_list right_padding'>
-        {tlist.map(t => (
-          <TagView key={t.name} t={t} clickTag={clickTag} />
-        ))}
-      </div>
-    </>
+      </PageHeader>
+      
+      <main className='tag-page-content'>
+        <div className='tag-grid'>
+          {tlist.map(tag => (
+            <TagCard 
+              key={tag.name} 
+              tag={tag} 
+              onClick={clickTag} 
+            />
+          ))}
+        </div>
+      </main>
+    </div>
   );
 };
 

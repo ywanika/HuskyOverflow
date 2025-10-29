@@ -3,6 +3,7 @@ import OrderButton from './orderButton';
 import { OrderType } from '../../../../types/types';
 import { orderTypeDisplayName } from '../../../../types/constants';
 import AskQuestionButton from '../../askQuestionButton';
+import PageHeader from '../../baseComponents/pageHeader';
 
 /**
  * Interface representing the props for the QuestionHeader component.
@@ -27,14 +28,13 @@ interface QuestionHeaderProps {
  * @param setQuestionOrder - Function to set the order of questions based on input message.
  */
 const QuestionHeader = ({ titleText, qcnt, setQuestionOrder }: QuestionHeaderProps) => (
-  <div>
-    <div className='space_between right_padding'>
-      <div className='bold_title'>{titleText}</div>
-      <AskQuestionButton />
-    </div>
-    <div className='space_between right_padding'>
-      <div id='question_count'>{qcnt} questions</div>
-      <div className='btns'>
+  <PageHeader
+    title={titleText}
+    count={qcnt}
+    countLabel='questions'
+  >
+    <div className='question-header-actions'>
+      <div className='order-buttons'>
         {Object.keys(orderTypeDisplayName).map(order => (
           <OrderButton
             key={order}
@@ -43,8 +43,9 @@ const QuestionHeader = ({ titleText, qcnt, setQuestionOrder }: QuestionHeaderPro
           />
         ))}
       </div>
+      <AskQuestionButton />
     </div>
-  </div>
+  </PageHeader>
 );
 
 export default QuestionHeader;

@@ -42,18 +42,28 @@ const VoteComponent = ({ question }: VoteComponentProps) => {
   };
 
   return (
-    <div className='vote-container'>
+    <div className='vote-container' role='group' aria-label='Vote on this question'>
       <button
-        className={`vote-button ${voted === 1 ? 'vote-button-upvoted' : ''}`}
-        onClick={() => handleVote('upvote')}>
-        Upvote
+        type='button'
+        className={`btn btn-sm vote-button ${voted === 1 ? 'vote-button-upvoted' : ''}`}
+        onClick={() => handleVote('upvote')}
+        aria-label={`Upvote this question. Current vote count: ${count}`}
+        aria-pressed={voted === 1}>
+        <span className='vote-icon' aria-hidden='true'>↑</span>
+        <span className='sr-only'>Upvote</span>
       </button>
+      <div className='vote-count' aria-live='polite' aria-label={`Total votes: ${count}`}>
+        {count}
+      </div>
       <button
-        className={`vote-button ${voted === -1 ? 'vote-button-downvoted' : ''}`}
-        onClick={() => handleVote('downvote')}>
-        Downvote
+        type='button'
+        className={`btn btn-sm vote-button ${voted === -1 ? 'vote-button-downvoted' : ''}`}
+        onClick={() => handleVote('downvote')}
+        aria-label={`Downvote this question. Current vote count: ${count}`}
+        aria-pressed={voted === -1}>
+        <span className='vote-icon' aria-hidden='true'>↓</span>
+        <span className='sr-only'>Downvote</span>
       </button>
-      <span className='vote-count'>{count}</span>
     </div>
   );
 };

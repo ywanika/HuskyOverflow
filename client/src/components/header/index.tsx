@@ -1,5 +1,4 @@
 import { useNavigate } from 'react-router-dom';
-import { Box, Heading, Input, Button, Flex } from '@chakra-ui/react';
 import useHeader from '../../hooks/useHeader';
 import './index.css';
 import useUserContext from '../../hooks/useUserContext';
@@ -13,50 +12,55 @@ const Header = () => {
   const { val, handleInputChange, handleKeyDown, handleSignOut } = useHeader();
   const { user: currentUser } = useUserContext();
   const navigate = useNavigate();
+  
   return (
-    <Box as='header' id='header' className='header' bg='gray.100' p={6} role='banner'>
-      <Flex justify='space-between' align='center' maxW='100%'>
-        <Heading as='h1' size='lg' color='black' flexShrink={0} mr={8}>
+    <header id='header' className='header' role='banner'>
+      <div className='header-container'>
+        <h1 className='header-title'>
           <a
             href='/home'
-            style={{ textDecoration: 'none', color: 'inherit' }}
+            className='header-link'
             aria-label='Fake Stack Overflow - Go to home'>
             Fake Stack Overflow
           </a>
-        </Heading>
-        <Flex gap={6} align='center' flexShrink={0} role='search'>
-          <Input
-            id='searchBar'
-            placeholder='Search questions, tags, users...'
-            value={val}
-            onChange={handleInputChange}
-            onKeyDown={handleKeyDown}
-            w='300px'
-            flexShrink={0}
-            aria-label='Search the site'
-            aria-describedby='search-help'
-          />
-          <Box id='search-help' className='sr-only'>
-            Press Enter to search. Use Tab to navigate to other options.
-          </Box>
-          <Button
+        </h1>
+        <div className='header-actions' role='search'>
+          <div className='search-container'>
+            <label htmlFor='searchBar' className='sr-only'>
+              Search the site
+            </label>
+            <input
+              id='searchBar'
+              type='search'
+              className='search-input'
+              placeholder='Search questions, tags, users...'
+              value={val}
+              onChange={handleInputChange}
+              onKeyDown={handleKeyDown}
+              aria-label='Search the site'
+              aria-describedby='search-help'
+            />
+            <div id='search-help' className='sr-only'>
+              Press Enter to search. Use Tab to navigate to other options.
+            </div>
+          </div>
+          <button
+            type='button'
+            className='btn btn-secondary'
             onClick={handleSignOut}
-            colorScheme='blue'
-            variant='outline'
-            flexShrink={0}
             aria-label='Sign out of your account'>
             Log out
-          </Button>
-          <Button
+          </button>
+          <button
+            type='button'
+            className='btn btn-primary'
             onClick={() => navigate(`/user/${currentUser.username}`)}
-            colorScheme='blue'
-            flexShrink={0}
             aria-label={`View profile for ${currentUser.username}`}>
             View Profile
-          </Button>
-        </Flex>
-      </Flex>
-    </Box>
+          </button>
+        </div>
+      </div>
+    </header>
   );
 };
 
