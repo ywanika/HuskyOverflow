@@ -68,6 +68,7 @@
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
+  transition: background-color 0.3s ease;
 }
 
 .menu_selected {
@@ -81,6 +82,17 @@
   outline: 2px solid var(--color-bg-primary);
   outline-offset: -2px;
   text-decoration: none;
+/* Dark mode support for menu selected */
+[data-theme='dark'] .menu_selected {
+  background: #4a5568;
+  color: white;
+}
+
+.additional-options {
+  display: flex;
+  flex-direction: column;
+  padding: 4% 0 4% 0;
+  align-items: center;
 }
 
 .nav-item:focus-visible {

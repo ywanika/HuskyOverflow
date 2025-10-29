@@ -1,5 +1,6 @@
 /* Import accessibility system */
 @import './styles/accessibility.css';
+@import './darkmode.css';
 
 html {
   height: 99%;
@@ -16,6 +17,18 @@ body,
   line-height: 1.6;
   color: var(--color-text-primary);
   background-color: var(--color-bg-secondary);
+  transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+/* Dark mode styles */
+[data-theme='dark'] body {
+  background-color: #1a202c;
+  color: #fff;
+}
+
+[data-theme='light'] body {
+  background-color: #fff;
+  color: #000;
 }
 
 /* Skip links for accessibility */
@@ -66,4 +79,11 @@ body,
 *:focus-visible {
   outline: 2px solid #0a999e;
   outline-offset: 2px;
+}
+}
+
+/* Dark mode focus indicators */
+[data-theme='dark'] *:focus,
+[data-theme='dark'] *:focus-visible {
+  outline-color: #63b3ed;
 }
