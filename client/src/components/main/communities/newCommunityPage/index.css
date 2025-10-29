@@ -37,7 +37,7 @@
 }
 
 .new-community-submit {
-  background-color: #3b82f6;
+  background-color: #cb9f00;
   color: #fff;
   padding: 0.6rem 1.5rem;
   font-size: 1rem;
@@ -50,11 +50,11 @@
 }
 
 .new-community-submit:hover {
-  background-color: #2563eb;
+  background-color: #9e6c00;
 }
 
 .new-community-submit:active {
-  background-color: #2563eb;
+  background-color: #9e6c00;
 }
 
 .new-community-error {

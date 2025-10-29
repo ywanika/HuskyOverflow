@@ -1,0 +1,56 @@
+/* Ask Question Button Specific Styles */
+.ask-question-btn {
+  position: relative;
+  overflow: hidden;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  box-shadow: var(--shadow-md);
+}
+
+.ask-question-btn:hover {
+  transform: translateY(-3px);
+  box-shadow: var(--shadow-lg);
+}
+
+.ask-question-btn:active {
+  transform: translateY(-1px);
+  box-shadow: var(--shadow-md);
+}
+
+.btn-icon {
+  font-size: var(--font-size-xl);
+  font-weight: 900;
+  margin-right: var(--spacing-sm);
+  line-height: 1;
+}
+
+/* Animation for the plus icon */
+.ask-question-btn:hover .btn-icon {
+  transform: rotate(90deg);
+  transition: transform var(--transition-fast);
+}
+
+/* Responsive design */
+@media (max-width: 768px) {
+  .ask-question-btn {
+    width: 100%;
+    justify-content: center;
+  }
+  
+  .btn-icon {
+    font-size: var(--font-size-lg);
+  }
+}
+
+/* Reduced motion */
+@media (prefers-reduced-motion: reduce) {
+  .ask-question-btn:hover .btn-icon {
+    transform: none;
+  }
+  
+  .ask-question-btn:hover,
+  .ask-question-btn:active {
+    transform: none;
+  }
+}

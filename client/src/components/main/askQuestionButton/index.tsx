@@ -17,11 +17,16 @@ const AskQuestionButton = () => {
 
   return (
     <button
-      className='bluebtn'
-      onClick={() => {
-        handleNewQuestion();
-      }}>
+      type='button'
+      className='btn btn-primary btn-lg ask-question-btn'
+      onClick={handleNewQuestion}
+      aria-label='Ask a new question'
+      aria-describedby='ask-question-help'>
+      <span className='btn-icon' aria-hidden='true'>+</span>
       Ask a Question
+      <div id='ask-question-help' className='sr-only'>
+        Click to navigate to the new question page where you can create a new question.
+      </div>
     </button>
   );
 };

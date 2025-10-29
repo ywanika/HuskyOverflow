@@ -1,5 +1,5 @@
 import { useNavigate } from 'react-router-dom';
-import { Box, Heading, Input, Button, Flex } from '@chakra-ui/react';
+import { Box, Button, Flex, Heading, Input, Link } from '@chakra-ui/react';
 import useHeader from '../../hooks/useHeader';
 import './index.css';
 import useUserContext from '../../hooks/useUserContext';
@@ -16,6 +16,12 @@ const Header = () => {
   const { user: currentUser } = useUserContext();
   const { theme } = useTheme();
   const navigate = useNavigate();
+  
+  return (
+    <header id='header' className='header' role='banner'>
+      <div className='header-container'>
+        <Heading as='h1' className='header-title'>
+          <Link
 
   const isDark = theme === 'dark';
 
@@ -31,14 +37,16 @@ const Header = () => {
         <Heading as='h1' size='lg' color={isDark ? 'white' : 'black'} flexShrink={0} mr={8}>
           <a
             href='/home'
-            style={{ textDecoration: 'none', color: 'inherit' }}
-            aria-label='Fake Stack Overflow - Go to home'>
+            className='header-link'
+            aria-label='Fake Stack Overflow - Go to home'
+            _hover={{ textDecoration: 'none' }}>
             Fake Stack Overflow
-          </a>
+          </Link>
         </Heading>
         <Flex gap={6} align='center' flexShrink={0} role='search'>
           <Input
             id='searchBar'
+            type='search'
             placeholder='Search questions, tags, users...'
             value={val}
             onChange={handleInputChange}
@@ -57,23 +65,23 @@ const Header = () => {
           </Box>
           <ThemeToggleButton />
           <Button
+            className='logout-button'
             onClick={handleSignOut}
-            colorScheme='blue'
             variant='outline'
             flexShrink={0}
             aria-label='Sign out of your account'>
             Log out
           </Button>
           <Button
+            className='view-profile-button'
             onClick={() => navigate(`/user/${currentUser.username}`)}
-            colorScheme='blue'
             flexShrink={0}
             aria-label={`View profile for ${currentUser.username}`}>
             View Profile
           </Button>
         </Flex>
-      </Flex>
-    </Box>
+      </div>
+    </header>
   );
 };
 

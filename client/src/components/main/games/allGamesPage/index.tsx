@@ -1,6 +1,7 @@
 import './index.css';
 import useAllGamesPage from '../../../../hooks/useAllGamesPage';
 import GameCard from './gameCard';
+import PageHeader from '../../baseComponents/pageHeader';
 
 /**
  * Component to display the "All Games" page, which provides functionality to view, create, and join games.
@@ -22,36 +23,70 @@ const AllGamesPage = () => {
 
   return (
     <div className='game-page'>
-      <div className='game-controls'>
-        <button className='btn-create-game' onClick={handleToggleModal}>
-          Create Game
-        </button>
-      </div>
+      <PageHeader
+        title='Games'
+        subtitle='Play games with other users'
+        count={availableGames.length}
+        countLabel='available games'
+      >
+        <div className='game-header-actions'>
+          <button 
+            type='button'
+            className='btn btn-secondary'
+            onClick={fetchGames}
+            aria-label='Refresh games list'
+          >
+            Refresh List
+          </button>
+          <button 
+            type='button'
+            className='btn btn-primary'
+            onClick={handleToggleModal}
+            aria-label='Create a new game'
+          >
+            Create Game
+          </button>
+        </div>
+      </PageHeader>
 
       {isModalOpen && (
-        <div className='game-modal'>
-          <div className='modal-content'>
-            <h2>Select Game Type</h2>
-            <button onClick={() => handleSelectGameType('Nim')}>Nim</button>
-            <button onClick={handleToggleModal}>Cancel</button>
+        <div className='game-modal-overlay' role='dialog' aria-labelledby='modal-title' aria-modal='true'>
+          <div className='game-modal'>
+            <div className='modal-content'>
+              <h2 id='modal-title'>Select Game Type</h2>
+              <div className='modal-actions'>
+                <button 
+                  type='button'
+                  className='btn btn-primary'
+                  onClick={() => handleSelectGameType('Nim')}
+                >
+                  Create Nim Game
+                </button>
+                <button 
+                  type='button'
+                  className='btn btn-secondary'
+                  onClick={handleToggleModal}
+                >
+                  Cancel
+                </button>
+              </div>
+            </div>
           </div>
         </div>
       )}
 
-      <div className='game-available'>
-        <div className='game-list'>
-          {error && <div className='game-error'>{error}</div>}
-          <h2>Available Games</h2>
-          <button className='btn-refresh-list' onClick={fetchGames}>
-            Refresh List
-          </button>
-          <div className='game-items'>
-            {availableGames.map(game => (
-              <GameCard key={game.gameID} game={game} handleJoin={handleJoin} />
-            ))}
+      <main className='game-content'>
+        {error && (
+          <div className='game-error' role='alert' aria-live='polite'>
+            {error}
           </div>
+        )}
+        <div className='game-grid'>
+          {availableGames.map(game => (
+            <GameCard key={game.gameID} game={game} handleJoin={handleJoin} />
+          ))}
         </div>
-      </div>
+      </main>
     </div>
   );
 };

@@ -1,10 +1,11 @@
-/* Container styles */
-.container {
+/* Login Container */
+.login-container {
   display: flex;
-  flex-direction: column;
   justify-content: center;
   align-items: center;
   min-height: 100vh;
+  background-color: var(--color-bg-secondary);
+  padding: var(--spacing-lg);
   background-color: #f7f7f7;
   padding: 20px;
   transition: background-color 0.3s ease;
@@ -14,14 +15,41 @@
   background-color: #1a202c;
 }
 
-/* Heading styles - improved contrast */
-.container h1 {
-  font-size: 2.5rem;
-  color: #1a1a1a; /* Improved contrast ratio */
-  margin-bottom: 10px;
-  font-weight: 700;
+/* Login Card */
+.login-card {
+  background-color: var(--color-bg-primary);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-lg);
+  padding: var(--spacing-2xl);
+  width: 100%;
+  max-width: 450px;
+  border: 1px solid var(--color-bg-tertiary);
 }
 
+/* Login Header */
+.login-header {
+  text-align: center;
+  margin-bottom: var(--spacing-xl);
+}
+
+.login-title {
+  font-size: var(--font-size-4xl);
+  font-weight: 800;
+  color: var(--color-text-primary);
+  margin: 0 0 var(--spacing-sm) 0;
+  line-height: 1.2;
+}
+
+.login-subtitle {
+  font-size: var(--font-size-xl);
+  font-weight: 600;
+  color: var(--color-text-secondary);
+  margin: 0;
+  line-height: 1.3;
+}
+
+/* Login Form */
+.login-form {
 [data-theme='dark'] .container h1 {
   color: #fff;
 }
@@ -65,16 +93,22 @@
 /* Form styles */
 form {
   width: 100%;
-  max-width: 400px;
-  display: flex;
-  flex-direction: column;
-  gap: 15px;
 }
 
-/* Input styles */
+.form-fieldset {
+  border: 2px solid var(--color-bg-tertiary);
+  border-radius: var(--radius-lg);
+  padding: var(--spacing-xl);
+  margin: 0;
+}
+
+.form-actions {
+  margin-top: var(--spacing-lg);
+  text-align: center;
+}
+
+/* Input Text Styles */
 .input-text {
-  padding: 12px;
-  font-size: 16px;
   width: 100%;
   border: 1px solid #ddd;
   border-radius: 5px;
@@ -98,17 +132,17 @@ form {
 }
 
 .input-text:focus {
-  border-color: #007bff;
-  box-shadow: 0 0 0 3px rgba(0, 123, 255, 0.25);
-  outline: 2px solid #007bff;
+  border-color: #9137b7;
+  box-shadow: 0 0 0 3px rgba(145, 55, 183, 0.25);
+  outline: 2px solid #9137b7;
   outline-offset: 2px;
 }
 
 .input-text:focus-visible {
-  outline: 2px solid #007bff;
+  outline: 2px solid #9137b7;
   outline-offset: 2px;
-  border-color: #007bff;
-  box-shadow: 0 0 0 3px rgba(0, 123, 255, 0.25);
+  border-color: #9137b7;
+  box-shadow: 0 0 0 3px rgba(145, 55, 183, 0.25);
 }
 
 /* Checkbox styles for better accessibility */
@@ -118,21 +152,47 @@ input[type="checkbox"] {
 }
 
 input[type="checkbox"]:focus {
-  outline: 2px solid #007bff;
+  outline: 2px solid #9137b7;
   outline-offset: 2px;
 }
 
 input[type="checkbox"]:focus-visible {
-  outline: 2px solid #007bff;
+  outline: 2px solid #9137b7;
   outline-offset: 2px;
 }
 
-.show-password {
+/* Checkbox Group */
+.checkbox-group {
   display: flex;
   align-items: center;
-  margin: 15px 0;
+  gap: var(--spacing-sm);
+  margin-top: var(--spacing-sm);
 }
 
+.checkbox-input {
+  width: 20px;
+  height: 20px;
+  margin: 0;
+  cursor: pointer;
+  accent-color: var(--color-primary);
+}
+
+.checkbox-input:focus {
+  outline: 2px solid var(--color-focus);
+  outline-offset: 2px;
+  border-radius: var(--radius-sm);
+}
+
+.checkbox-label {
+  cursor: pointer;
+  user-select: none;
+  color: var(--color-text-primary);
+  font-size: var(--font-size-sm);
+  font-weight: 500;
+  margin: 0;
+}
+
+/* Show Password Label */
 .show-password label {
   cursor: pointer;
   user-select: none;
@@ -148,62 +208,110 @@ input[type="checkbox"]:focus-visible {
 .login-button {
   padding: 12px;
   font-size: 16px;
-  background-color: #007bff;
-  color: #fff;
+  background-color: #cb9f00;
+  color: #000;
   border: none;
   border-radius: 5px;
   cursor: pointer;
-  transition: background-color 0.3s;
 }
 
 .login-button:hover {
-  background-color: #0056b3;
+  background-color: #9e6c00;
 }
 
 .login-button:active {
-  background-color: #003f7f;
+  background-color: #9e6c00;
 }
 
 .login-button:focus {
-  outline: 2px solid #007bff;
+  outline: 2px solid #9e6c00;
   outline-offset: 2px;
   box-shadow: 0 0 0 3px rgba(0, 123, 255, 0.25);
 }
 
 .login-button:focus-visible {
-  outline: 2px solid #007bff;
+  outline: 2px solid #9e6c00;
   outline-offset: 2px;
   box-shadow: 0 0 0 3px rgba(0, 123, 255, 0.25);
 }
 
-/* Signup link styles */
+/* Login Footer */
+.login-footer {
+  margin-top: var(--spacing-xl);
+  text-align: center;
+  padding-top: var(--spacing-lg);
+  border-top: 1px solid var(--color-bg-tertiary);
+}
+
 .signup-link {
-  margin-top: 30px; /* Increased spacing */
-  font-size: 14px;
-  color: #007bff;
+  color: var(--color-primary);
   text-decoration: none;
-  cursor: pointer;
-  transition: color 0.3s;
-  text-align: center; /* Center the link */
+  font-weight: 500;
+  font-size: var(--font-size-sm);
+  transition: all var(--transition-fast);
+  padding: var(--spacing-sm);
+  border-radius: var(--radius-md);
+  display: inline-block;
 }
 
 .signup-link:hover {
-  color: #0056b3;
+  color: var(--color-secondary);
   text-decoration: underline;
+  background-color: var(--color-hover);
 }
 
 .signup-link:focus {
-  outline: 2px solid #007bff;
+  outline: 2px solid var(--color-focus);
   outline-offset: 2px;
-  color: #0056b3;
+  color: var(--color-secondary);
   text-decoration: underline;
+  background-color: var(--color-hover);
 }
 
 .signup-link:focus-visible {
-  outline: 2px solid #007bff;
+  outline: 2px solid var(--color-focus);
   outline-offset: 2px;
-  color: #0056b3;
+  color: var(--color-secondary);
   text-decoration: underline;
+  background-color: var(--color-hover);
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .login-container {
+    padding: var(--spacing-md);
+  }
+  
+  .login-card {
+    padding: var(--spacing-xl);
+  }
+  
+  .login-title {
+    font-size: var(--font-size-3xl);
+  }
+  
+  .login-subtitle {
+    font-size: var(--font-size-lg);
+  }
+}
+
+@media (max-width: 480px) {
+  .login-card {
+    padding: var(--spacing-lg);
+  }
+  
+  .form-fieldset {
+    padding: var(--spacing-lg);
+  }
+  
+  .login-title {
+    font-size: var(--font-size-2xl);
+  }
+  
+  .login-subtitle {
+    font-size: var(--font-size-base);
+  }
+}
 }
 
 .error-message {

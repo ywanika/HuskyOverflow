@@ -12,22 +12,24 @@ const QuestionPage = () => {
   const { titleText, qlist, setQuestionOrder } = useQuestionPage();
 
   return (
-    <>
+    <div className='questions-page'>
       <QuestionHeader
         titleText={titleText}
         qcnt={qlist.length}
         setQuestionOrder={setQuestionOrder}
       />
-      <div id='question_list' className='question_list'>
-        {qlist.map(q => (
-          <QuestionView question={q} key={q._id.toString()} />
-        ))}
-      </div>
+      <main className='questions-content'>
+        <div id='question_list' className='question_list'>
+          {qlist.map(q => (
+            <QuestionView question={q} key={q._id.toString()} />
+          ))}
+        </div>
 
-      {titleText === 'Search Results' && !qlist.length && (
-        <div className='bold_title right_padding'>No Questions Found</div>
-      )}
-    </>
+        {titleText === 'Search Results' && !qlist.length && (
+          <div className='no-questions-message'>No Questions Found</div>
+        )}
+      </main>
+    </div>
   );
 };
 

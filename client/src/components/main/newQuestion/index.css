@@ -21,7 +21,7 @@
 
 .form_communitySelect:hover,
 .form_communitySelect:focus {
-  border-color: #3b82f6; /* Blue-500 */
+  border-color: #9e6c00; /* Blue-500 */
   outline: none;
   box-shadow: 0 0 0 1px #3b82f6;
 }
