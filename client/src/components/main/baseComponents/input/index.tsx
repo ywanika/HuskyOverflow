@@ -10,6 +10,8 @@ import './index.css';
  * - val - The current value of the input field.
  * - setState - Callback function to update the state with the input field's value.
  * - err - An optional error message to display if there is an error with the input.
+ * - type - The input type (text, email, password, etc.). Defaults to 'text'.
+ * - placeholder - Optional placeholder text for the input field.
  */
 interface InputProps {
   title: string;
@@ -19,6 +21,8 @@ interface InputProps {
   val: string;
   setState: (value: string) => void;
   err?: string;
+  type?: string;
+  placeholder?: string;
 }
 
 /**
@@ -32,25 +36,39 @@ interface InputProps {
  * @param val The current value of the input field.
  * @param setState Callback function to update the value of the input field.
  * @param err Optional error message to display below the input field.
+ * @param type The input type. Defaults to 'text'.
+ * @param placeholder Optional placeholder text for the input field.
  */
-const Input = ({ title, hint, id, mandatory = true, val, setState, err }: InputProps) => (
-  <>
-    <div className='input_title'>
+const Input = ({ 
+  title, 
+  hint, 
+  id, 
+  mandatory = true, 
+  val, 
+  setState, 
+  err, 
+  type = 'text',
+  placeholder 
+}: InputProps) => (
+  <div className='form-group'>
+    <label htmlFor={id} className={`form-label ${mandatory ? 'required' : ''}`}>
       {title}
-      {mandatory ? '*' : ''}
-    </div>
-    {hint && <div className='input_hint'>{hint}</div>}
+    </label>
+    {hint && <div className='form-help'>{hint}</div>}
     <input
       id={id}
-      className='input_input'
-      type='text'
+      className={`form-input ${err ? 'form-input-error' : ''}`}
+      type={type}
       value={val}
-      onInput={e => {
-        setState(e.currentTarget.value);
-      }}
+      onChange={e => setState(e.target.value)}
+      placeholder={placeholder}
+      required={mandatory}
+      aria-describedby={hint ? `${id}-hint` : undefined}
+      aria-invalid={err ? 'true' : 'false'}
     />
-    {err && <div className='input_error'>{err}</div>}
-  </>
+    {hint && <div id={`${id}-hint`} className='form-help'>{hint}</div>}
+    {err && <div className='form-error' role='alert' aria-live='polite'>{err}</div>}
+  </div>
 );
 
 export default Input;

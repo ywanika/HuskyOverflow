@@ -1,4 +1,3 @@
-import { useState } from 'react';
 import './index.css';
 import { NavLink, useLocation } from 'react-router-dom';
 import useUserContext from '../../../hooks/useUserContext';
@@ -10,76 +9,38 @@ import useUserContext from '../../../hooks/useUserContext';
  */
 const SideBarNav = () => {
   const { user } = useUserContext();
-  const [showOptions, setShowOptions] = useState<boolean>(false);
   const location = useLocation();
 
-  const toggleOptions = () => {
-    setShowOptions(!showOptions);
-  };
-
-  const isActiveOption = (path: string) =>
-    location.pathname === path ? 'message-option-selected ' : '';
+  const navigationItems = [
+    { to: '/home', id: 'menu_questions', label: 'Questions' },
+    { to: '/tags', id: 'menu_tag', label: 'Tags' },
+    { to: '/messaging', id: 'menu_messaging', label: 'Messaging' },
+    { to: '/users', id: 'menu_users', label: 'Users' },
+    { to: '/games', id: 'menu_games', label: 'Games' },
+    { to: '/communities', id: 'menu_communities', label: 'Communities' },
+    { to: `/collections/${user.username}`, id: 'menu_collections', label: 'My Collections' },
+  ];
 
   return (
-    <div id='sideBarNav' className='sideBarNav'>
-      <NavLink
-        to='/home'
-        id='menu_questions'
-        className={({ isActive }) => `menu_button ${isActive ? 'menu_selected' : ''}`}>
-        Questions
-      </NavLink>
-      <NavLink
-        to='/tags'
-        id='menu_tag'
-        className={({ isActive }) => `menu_button ${isActive ? 'menu_selected' : ''}`}>
-        Tags
-      </NavLink>
-      <NavLink
-        to='/messaging'
-        id='menu_messaging'
-        className={({ isActive }) => `menu_button ${isActive ? 'menu_selected' : ''}`}
-        onClick={toggleOptions}>
-        Messaging
-      </NavLink>
-      {showOptions && (
-        <div className='additional-options'>
-          <NavLink
-            to='/messaging'
-            className={`menu_button message-options ${isActiveOption('/messaging')}`}>
-            Global Messages
-          </NavLink>
-          <NavLink
-            to='/messaging/direct-message'
-            className={`menu_button message-options ${isActiveOption('/messaging/direct-message')}`}>
-            Direct Messages
-          </NavLink>
-        </div>
-      )}
-      <NavLink
-        to='/users'
-        id='menu_users'
-        className={({ isActive }) => `menu_button ${isActive ? 'menu_selected' : ''}`}>
-        Users
-      </NavLink>
-      <NavLink
-        to='/games'
-        id='menu_games'
-        className={({ isActive }) => `menu_button ${isActive ? 'menu_selected' : ''}`}>
-        Games
-      </NavLink>
-      <NavLink
-        to='/communities'
-        id='menu_communities'
-        className={({ isActive }) => `menu_button ${isActive ? 'menu_selected' : ''}`}>
-        Communities
-      </NavLink>
-      <NavLink
-        to={`/collections/${user.username}`}
-        id='menu_collections'
-        className={({ isActive }) => `menu_button ${isActive ? 'menu_selected' : ''}`}>
-        My Collections
-      </NavLink>
-    </div>
+    <nav id='sideBarNav' className='sideBarNav' role='navigation' aria-label='Main navigation'>
+      <ul className='nav-list'>
+        {navigationItems.map((item) => {
+          const isActive = location.pathname === item.to;
+          return (
+            <li key={item.id}>
+              <NavLink
+                to={item.to}
+                id={item.id}
+                className={({ isActive }) => `nav-item ${isActive ? 'active' : ''}`}
+                aria-current={isActive ? 'page' : undefined}
+                aria-label={`Navigate to ${item.label}`}>
+                {item.label}
+              </NavLink>
+            </li>
+          );
+        })}
+      </ul>
+    </nav>
   );
 };
 

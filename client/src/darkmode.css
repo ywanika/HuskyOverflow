@@ -1,0 +1,149 @@
+/* Dark Mode Global Styles */
+
+/* Dark mode for common containers */
+[data-theme='dark'] .container,
+[data-theme='dark'] .main,
+[data-theme='dark'] .content {
+  background-color: #1a202c;
+  color: #fff;
+}
+
+/* Dark mode for cards and boxes */
+[data-theme='dark'] .card,
+[data-theme='dark'] .box,
+[data-theme='dark'] .panel {
+  background-color: #2d3748;
+  color: #fff;
+  border-color: #4a5568;
+}
+
+/* Dark mode for buttons */
+[data-theme='dark'] button:not([class*='chakra']) {
+  background-color: #4a5568;
+  color: #fff;
+  border-color: #718096;
+}
+
+[data-theme='dark'] button:not([class*='chakra']):hover {
+  background-color: #718096;
+}
+
+/* Dark mode for inputs */
+[data-theme='dark'] input,
+[data-theme='dark'] textarea,
+[data-theme='dark'] select {
+  background-color: #2d3748;
+  color: #fff;
+  border-color: #4a5568;
+}
+
+[data-theme='dark'] input::placeholder,
+[data-theme='dark'] textarea::placeholder {
+  color: #a0aec0;
+}
+
+/* Dark mode for links */
+[data-theme='dark'] a {
+  color: #63b3ed;
+}
+
+[data-theme='dark'] a:hover {
+  color: #90cdf4;
+}
+
+/* Dark mode for headers */
+[data-theme='dark'] h1,
+[data-theme='dark'] h2,
+[data-theme='dark'] h3,
+[data-theme='dark'] h4,
+[data-theme='dark'] h5,
+[data-theme='dark'] h6 {
+  color: #fff;
+}
+
+/* Dark mode for tables */
+[data-theme='dark'] table {
+  background-color: #2d3748;
+  color: #fff;
+}
+
+[data-theme='dark'] thead {
+  background-color: #4a5568;
+}
+
+[data-theme='dark'] tbody tr:nth-child(even) {
+  background-color: #374151;
+}
+
+[data-theme='dark'] td,
+[data-theme='dark'] th {
+  border-color: #4a5568;
+}
+
+/* Dark mode for borders */
+[data-theme='dark'] .border,
+[data-theme='dark'] [class*='border'] {
+  border-color: #4a5568;
+}
+
+/* Dark mode for shadows */
+[data-theme='dark'] .shadow,
+[data-theme='dark'] [class*='shadow'] {
+  box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.3), 0 1px 2px 0 rgba(0, 0, 0, 0.2);
+}
+
+/* Dark mode for modals and overlays */
+[data-theme='dark'] .modal,
+[data-theme='dark'] .overlay,
+[data-theme='dark'] .dialog {
+  background-color: #2d3748;
+  color: #fff;
+}
+
+/* Dark mode for navigation */
+[data-theme='dark'] nav {
+  background-color: #2d3748;
+  border-color: #4a5568;
+}
+
+/* Dark mode for list items */
+[data-theme='dark'] li {
+  color: #fff;
+}
+
+/* Dark mode for code blocks */
+[data-theme='dark'] code,
+[data-theme='dark'] pre {
+  background-color: #1a202c;
+  color: #68d391;
+}
+
+/* Dark mode for disabled elements */
+[data-theme='dark'] :disabled {
+  opacity: 0.5;
+  color: #a0aec0;
+}
+
+/* Dark mode for selected text */
+[data-theme='dark'] ::selection {
+  background-color: #4a5568;
+  color: #fff;
+}
+
+/* Dark mode for scrollbars (webkit browsers) */
+[data-theme='dark'] ::-webkit-scrollbar {
+  width: 12px;
+}
+
+[data-theme='dark'] ::-webkit-scrollbar-track {
+  background: #1a202c;
+}
+
+[data-theme='dark'] ::-webkit-scrollbar-thumb {
+  background: #4a5568;
+  border-radius: 6px;
+}
+
+[data-theme='dark'] ::-webkit-scrollbar-thumb:hover {
+  background: #718096;
+}

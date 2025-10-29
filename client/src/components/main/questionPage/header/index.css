@@ -1,0 +1,33 @@
+/* Question Header Actions */
+.question-header-actions {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-lg);
+  flex-wrap: wrap;
+}
+
+.order-buttons {
+  display: flex;
+  gap: var(--spacing-sm);
+  flex-wrap: wrap;
+}
+
+/* Responsive design */
+@media (max-width: 768px) {
+  .question-header-actions {
+    flex-direction: column;
+    align-items: stretch;
+    gap: var(--spacing-md);
+  }
+  
+  .order-buttons {
+    justify-content: center;
+  }
+}
+
+@media (max-width: 480px) {
+  .order-buttons {
+    flex-direction: column;
+    gap: var(--spacing-xs);
+  }
+}

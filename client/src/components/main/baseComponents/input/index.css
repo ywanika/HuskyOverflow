@@ -1,26 +1,67 @@
+/* Input component specific styles - extends accessibility system */
+
+.form-input-error {
+  border-color: var(--color-error) !important;
+  box-shadow: 0 0 0 3px rgba(211, 47, 47, 0.25) !important;
+}
+
+.form-input-error:focus {
+  border-color: var(--color-error) !important;
+  box-shadow: 0 0 0 3px rgba(211, 47, 47, 0.25) !important;
+}
+
+/* Legacy class support for backward compatibility */
 .input_title {
-  margin-bottom: 8px;
-  font-weight: bold;
+  @extend .form-label;
 }
 
 .input_hint {
-  font-size: 14px;
-  color: black;
-  margin-bottom: 5px;
-  font-style: italic;
-  margin-left: 10px;
+  @extend .form-help;
 }
 
 .input_input {
-  width: 100%;
-  box-sizing: border-box;
-  padding: 10px;
-  margin-bottom: 20px;
-  border: 1px solid #ccc;
-  border-radius: 4px;
+  @extend .form-input;
 }
 
 .input_error {
-  color: red;
-  margin-bottom: 20px;
+  @extend .form-error;
+}
+
+/* Additional input-specific enhancements */
+.form-input[type="search"] {
+  padding-right: var(--spacing-xl);
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 24 24' stroke='%23666'%3E%3Cpath stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right var(--spacing-sm) center;
+  background-size: 16px 16px;
+}
+
+.form-input[type="email"] {
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 24 24' stroke='%23666'%3E%3Cpath stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='M16 12a4 4 0 10-8 0 4 4 0 008 0zm0 0v1.5a2.5 2.5 0 005 0V12a9 9 0 10-9 9m4.5-1.206a8.959 8.959 0 01-4.5 1.207'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right var(--spacing-sm) center;
+  background-size: 16px 16px;
+}
+
+/* Input validation states */
+.form-input:valid:not(:placeholder-shown) {
+  border-color: var(--color-success);
+}
+
+.form-input:valid:not(:placeholder-shown):focus {
+  box-shadow: 0 0 0 3px rgba(187, 210, 105, 0.25);
+}
+
+/* Loading state for inputs */
+.form-input.loading {
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 24 24'%3E%3Ccircle cx='12' cy='12' r='10' stroke='%23e5e7eb' stroke-width='4'/%3E%3Cpath fill='%23374151' d='M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right var(--spacing-sm) center;
+  background-size: 16px 16px;
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
 }
