@@ -10,7 +10,14 @@ import {
 import useUserContext from './useUserContext';
 import addComment from '../services/commentService';
 import { getQuestionById } from '../services/questionService';
-import { deleteQuestion, deleteAnswer, deleteComment } from '../services/moderationService';
+import {
+  deleteQuestion,
+  deleteAnswer,
+  deleteComment,
+  flagQuestion,
+  flagAnswer,
+  flagComment,
+} from '../services/moderationService';
 
 /**
  * Custom hook for managing the answer page's state, navigation, and real-time updates.
@@ -236,6 +243,39 @@ const useAnswerPage = () => {
     setQuestion(res || null);
   };
 
+  /**
+   * Handles flagging of a question by a user
+   */
+  const handleFlagQuestion = async () => {
+    if (!questionID) {
+      throw new Error('Question ID not found');
+    }
+    await flagQuestion(questionID, user.username);
+    // Refresh the question data
+    const res = await getQuestionById(questionID, user.username);
+    setQuestion(res || null);
+  };
+
+  /**
+   * Handles flagging of an answer by a user
+   */
+  const handleFlagAnswer = async (answerId: string) => {
+    await flagAnswer(answerId, user.username);
+    // Refresh the question data
+    const res = await getQuestionById(questionID, user.username);
+    setQuestion(res || null);
+  };
+
+  /**
+   * Handles flagging of a comment by a user
+   */
+  const handleFlagComment = async (commentId: string) => {
+    await flagComment(commentId, user.username);
+    // Refresh the question data
+    const res = await getQuestionById(questionID, user.username);
+    setQuestion(res || null);
+  };
+
   return {
     questionID,
     question,
@@ -244,6 +284,9 @@ const useAnswerPage = () => {
     handleDeleteQuestion,
     handleDeleteAnswer,
     handleDeleteComment,
+    handleFlagQuestion,
+    handleFlagAnswer,
+    handleFlagComment,
     user,
   };
 };

@@ -116,6 +116,27 @@ export interface CollectionUpdatePayload {
 }
 
 /**
+ * Interface representing the payload for a moderation update event.
+ * - `type`: The type of moderation action (`'questionDeleted'`, `'answerDeleted'`, `'commentDeleted'`, `'questionFlagged'`, `'answerFlagged'`, or `'commentFlagged'`).
+ * - `questionId`, `answerId`, or `commentId`: The ID of the content affected.
+ * - `deletedBy` or `flaggedBy`: The username of the user who performed the action.
+ */
+export interface ModerationUpdatePayload {
+  type:
+    | 'questionDeleted'
+    | 'answerDeleted'
+    | 'commentDeleted'
+    | 'questionFlagged'
+    | 'answerFlagged'
+    | 'commentFlagged';
+  questionId?: string;
+  answerId?: string;
+  commentId?: string;
+  deletedBy?: string;
+  flaggedBy?: string;
+}
+
+/**
  * Interface representing the events the client can emit to the server.
  * - `makeMove`: Client can emit a move in the game.
  * - `joinGame`: Client can join a game.
@@ -145,6 +166,7 @@ export interface ClientToServerEvents {
  * - `chatUpdate`: Server sends updated chat.
  * - `communityUpdate`: Server sends updated community.
  * - `collectionUpdate`: Server sends updated collection.
+ * - `moderationUpdate`: Server sends moderation action update (delete or flag).
  */
 export interface ServerToClientEvents {
   questionUpdate: (question: PopulatedDatabaseQuestion) => void;
@@ -159,4 +181,5 @@ export interface ServerToClientEvents {
   chatUpdate: (chat: ChatUpdatePayload) => void;
   communityUpdate: (community: CommunityUpdatePayload) => void;
   collectionUpdate: (community: CollectionUpdatePayload) => void;
+  moderationUpdate: (moderation: ModerationUpdatePayload) => void;
 }

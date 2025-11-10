@@ -23,6 +23,9 @@ const AnswerPage = () => {
     handleDeleteQuestion,
     handleDeleteAnswer,
     handleDeleteComment,
+    handleFlagQuestion,
+    handleFlagAnswer,
+    handleFlagComment,
     user,
   } = useAnswerPage();
 
@@ -81,12 +84,19 @@ const AnswerPage = () => {
         questionId={questionID}
         isModerator={isModerator}
         onDeleteClick={() => handleDeleteClick('question', questionID, question.title)}
+        onFlagClick={handleFlagQuestion}
+        isFlagged={question.flagged?.flaggedBy?.includes(user.username) || false}
       />
       <CommentSection
         comments={question.comments.filter(c => !c.deleted?.isDeleted)}
         handleAddComment={(comment: Comment) => handleNewComment(comment, 'question', questionID)}
         isModerator={isModerator}
         onDeleteComment={(commentId: string) => handleDeleteClick('comment', commentId)}
+        onFlagComment={handleFlagComment}
+        getIsFlagged={(commentId: string) => {
+          const comment = question.comments.find(c => String(c._id) === commentId);
+          return comment?.flagged?.flaggedBy?.includes(user.username) || false;
+        }}
       />
       {question.answers
         .filter(a => !a.deleted?.isDeleted)
@@ -104,6 +114,13 @@ const AnswerPage = () => {
             isModerator={isModerator}
             onDeleteClick={() => handleDeleteClick('answer', String(a._id))}
             onDeleteComment={(commentId: string) => handleDeleteClick('comment', commentId)}
+            onFlagClick={() => handleFlagAnswer(String(a._id))}
+            isFlagged={a.flagged?.flaggedBy?.includes(user.username) || false}
+            onFlagComment={handleFlagComment}
+            getIsCommentFlagged={(commentId: string) => {
+              const comment = a.comments.find(c => String(c._id) === commentId);
+              return comment?.flagged?.flaggedBy?.includes(user.username) || false;
+            }}
           />
         ))}
       <button

@@ -192,3 +192,177 @@ export const deleteComment = async (
   }
 };
 
+/**
+ * Creates a notification for moderators when content is flagged
+ * @param contentType - Type of content that was flagged
+ * @param contentId - ID of the flagged content
+ * @param flaggedBy - Username of the user who flagged the content
+ */
+const createFlagNotification = async (
+  contentType: 'question' | 'answer' | 'comment',
+  contentId: string,
+  flaggedBy: string,
+): Promise<void> => {
+  try {
+    // Get all moderators and admins
+    const moderators = await UserModel.find({
+      role: { $in: ['moderator', 'admin'] },
+    });
+
+    // Create notifications for all moderators
+    const notifications = moderators.map(moderator =>
+      NotificationModel.create({
+        recipientUsername: moderator.username,
+        type: 'flag',
+        message: `A ${contentType} has been flagged by ${flaggedBy}`,
+        contentId: new ObjectId(contentId),
+        isRead: false,
+        timestamp: new Date(),
+      }),
+    );
+
+    await Promise.all(notifications);
+  } catch (error) {
+    // Log error but don't fail the flag if notification fails
+    console.error('Error creating flag notification:', error);
+  }
+};
+
+/**
+ * Flags a question - Any user can flag
+ * @param questionId - The ID of the question to flag
+ * @param username - The username of the user flagging the content
+ * @returns Promise resolving to ModerationResponse
+ */
+export const flagQuestion = async (
+  questionId: string,
+  username: string,
+): Promise<ModerationResponse> => {
+  try {
+    // Find the question
+    const question: DatabaseQuestion | null = await QuestionModel.findById(questionId);
+
+    if (!question) {
+      return { success: false, error: 'Question not found' };
+    }
+
+    // Check if user has already flagged this question
+    if (question.flagged?.flaggedBy?.includes(username)) {
+      return { success: false, error: 'You have already flagged this question' };
+    }
+
+    // Update the question with the flag
+    const updatedQuestion = await QuestionModel.findByIdAndUpdate(
+      questionId,
+      {
+        'flagged.isFlagged': true,
+        $addToSet: { 'flagged.flaggedBy': username },
+        $push: { 'flagged.flaggedAt': new Date() },
+      },
+      { new: true },
+    );
+
+    if (!updatedQuestion) {
+      return { success: false, error: 'Failed to flag question' };
+    }
+
+    // Create notification for moderators
+    await createFlagNotification('question', questionId, username);
+
+    return { success: true, message: 'Question flagged successfully' };
+  } catch (error) {
+    return { success: false, error: `Error flagging question: ${(error as Error).message}` };
+  }
+};
+
+/**
+ * Flags an answer - Any user can flag
+ * @param answerId - The ID of the answer to flag
+ * @param username - The username of the user flagging the content
+ * @returns Promise resolving to ModerationResponse
+ */
+export const flagAnswer = async (answerId: string, username: string): Promise<ModerationResponse> => {
+  try {
+    // Find the answer
+    const answer: DatabaseAnswer | null = await AnswerModel.findById(answerId);
+
+    if (!answer) {
+      return { success: false, error: 'Answer not found' };
+    }
+
+    // Check if user has already flagged this answer
+    if (answer.flagged?.flaggedBy?.includes(username)) {
+      return { success: false, error: 'You have already flagged this answer' };
+    }
+
+    // Update the answer with the flag
+    const updatedAnswer = await AnswerModel.findByIdAndUpdate(
+      answerId,
+      {
+        'flagged.isFlagged': true,
+        $addToSet: { 'flagged.flaggedBy': username },
+        $push: { 'flagged.flaggedAt': new Date() },
+      },
+      { new: true },
+    );
+
+    if (!updatedAnswer) {
+      return { success: false, error: 'Failed to flag answer' };
+    }
+
+    // Create notification for moderators
+    await createFlagNotification('answer', answerId, username);
+
+    return { success: true, message: 'Answer flagged successfully' };
+  } catch (error) {
+    return { success: false, error: `Error flagging answer: ${(error as Error).message}` };
+  }
+};
+
+/**
+ * Flags a comment - Any user can flag
+ * @param commentId - The ID of the comment to flag
+ * @param username - The username of the user flagging the content
+ * @returns Promise resolving to ModerationResponse
+ */
+export const flagComment = async (
+  commentId: string,
+  username: string,
+): Promise<ModerationResponse> => {
+  try {
+    // Find the comment
+    const comment: DatabaseComment | null = await CommentModel.findById(commentId);
+
+    if (!comment) {
+      return { success: false, error: 'Comment not found' };
+    }
+
+    // Check if user has already flagged this comment
+    if (comment.flagged?.flaggedBy?.includes(username)) {
+      return { success: false, error: 'You have already flagged this comment' };
+    }
+
+    // Update the comment with the flag
+    const updatedComment = await CommentModel.findByIdAndUpdate(
+      commentId,
+      {
+        'flagged.isFlagged': true,
+        $addToSet: { 'flagged.flaggedBy': username },
+        $push: { 'flagged.flaggedAt': new Date() },
+      },
+      { new: true },
+    );
+
+    if (!updatedComment) {
+      return { success: false, error: 'Failed to flag comment' };
+    }
+
+    // Create notification for moderators
+    await createFlagNotification('comment', commentId, username);
+
+    return { success: true, message: 'Comment flagged successfully' };
+  } catch (error) {
+    return { success: false, error: `Error flagging comment: ${(error as Error).message}` };
+  }
+};
+
