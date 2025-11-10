@@ -20,15 +20,11 @@ body,
   transition: background-color 0.3s ease, color 0.3s ease;
 }
 
-/* Dark mode styles */
-[data-theme='dark'] body {
-  background-color: #1a202c;
-  color: #fff;
-}
-
+/* Theme states: rely on CSS variables so only colors change across themes */
+[data-theme='dark'] body,
 [data-theme='light'] body {
-  background-color: #fff;
-  color: #000;
+  background-color: var(--color-bg-secondary);
+  color: var(--color-text-primary);
 }
 
 /* Skip links for accessibility */
@@ -79,7 +75,6 @@ body,
 *:focus-visible {
   outline: 2px solid #0a999e;
   outline-offset: 2px;
-}
 }
 
 /* Dark mode focus indicators */

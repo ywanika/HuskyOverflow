@@ -25,7 +25,7 @@
 }
 
 .bluebtn {
-  background: #9137b7;
+  background: var(--color-info);
   color: #ffffff;
   border: #000000 1px solid;
   font-size: 20px;
@@ -34,7 +34,7 @@
 }
 
 .bluebtn:hover {
-  background: #591980;
+  background: var(--color-primary);
 }
 
 .btn_indicator_container {

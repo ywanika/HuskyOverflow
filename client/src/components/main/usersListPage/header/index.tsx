@@ -27,9 +27,6 @@ const UsersListHeader = ({ userCount, setUserFilter }: UserHeaderProps) => {
   return (
     <PageHeader
       title='Users'
-      subtitle='Browse all registered users'
-      count={userCount}
-      countLabel='users'
     >
       <div className='user-search-container'>
         <label htmlFor='user_search_bar' className='sr-only'>

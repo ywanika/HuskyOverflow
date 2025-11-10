@@ -1,21 +1,15 @@
-import { useState } from 'react';
 import './index.css';
 import GlobalMessagesTab from './globalMessagesTab';
 import DirectMessagesTab from './directMessagesTab';
 import PageHeader from '../baseComponents/pageHeader';
-
-type TabType = 'global' | 'direct';
+import useMainMessagePage from '../../../hooks/useMainMessagePage';
 
 /**
  * Main messaging page with tabs for global and direct messages.
  * All messaging functionality is contained within this single page.
  */
 const MainMessagePage = () => {
-  const [activeTab, setActiveTab] = useState<TabType>('global');
-
-  const handleTabChange = (tab: TabType) => {
-    setActiveTab(tab);
-  };
+  const { activeTab, handleTabChange } = useMainMessagePage();
 
   return (
     <div className='main-message-page'>

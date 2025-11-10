@@ -35,7 +35,17 @@ const Breadcrumbs = () => {
     }
   };
 
-  if (pathSegments.length === 0 || (pathSegments.length === 1 && pathSegments[0] === 'home')) {
+  // Hide breadcrumbs for main pages to avoid redundant text above headers
+  const mainPages = ['home', 'tags', 'users', 'games', 'communities', 'messaging', 'questions'];
+  // Also hide breadcrumbs for user-specific pages to avoid showing usernames
+  const userSpecificPages = ['collections', 'user'];
+  // Hide breadcrumbs for new form pages to avoid showing "New / Question", "New / Collection", "New / Community"
+  const newFormPages = ['question', 'collection', 'community'];
+  
+  if (pathSegments.length === 0 || 
+      (pathSegments.length === 1 && mainPages.includes(pathSegments[0])) ||
+      (pathSegments.length === 2 && userSpecificPages.includes(pathSegments[0])) ||
+      (pathSegments.length === 2 && pathSegments[0] === 'new' && newFormPages.includes(pathSegments[1]))) {
     return null;
   }
 

@@ -17,12 +17,6 @@ const Header = () => {
   const { theme } = useTheme();
   const navigate = useNavigate();
   
-  return (
-    <header id='header' className='header' role='banner'>
-      <div className='header-container'>
-        <Heading as='h1' className='header-title'>
-          <Link
-
   const isDark = theme === 'dark';
 
   return (
@@ -33,9 +27,9 @@ const Header = () => {
       bg={isDark ? 'gray.800' : 'gray.100'}
       p={6}
       role='banner'>
-      <Flex justify='space-between' align='center' maxW='100%'>
-        <Heading as='h1' size='lg' color={isDark ? 'white' : 'black'} flexShrink={0} mr={8}>
-          <a
+      <Flex justify='space-between' align='center' maxW='100%' className='header-container'>
+        <Heading as='h1' size='lg' color={isDark ? 'white' : 'black'} flexShrink={0} mr={8} className='header-title'>
+          <Link
             href='/home'
             className='header-link'
             aria-label='Fake Stack Overflow - Go to home'
@@ -43,7 +37,7 @@ const Header = () => {
             Fake Stack Overflow
           </Link>
         </Heading>
-        <Flex gap={6} align='center' flexShrink={0} role='search'>
+        <Flex gap={6} align='center' flexShrink={0} role='search' className='header-actions'>
           <Input
             id='searchBar'
             type='search'
@@ -51,6 +45,7 @@ const Header = () => {
             value={val}
             onChange={handleInputChange}
             onKeyDown={handleKeyDown}
+            className='search-input form-input'
             w='300px'
             flexShrink={0}
             aria-label='Search the site'
@@ -65,23 +60,22 @@ const Header = () => {
           </Box>
           <ThemeToggleButton />
           <Button
-            className='logout-button'
+            className='logout-button btn btn-secondary'
             onClick={handleSignOut}
-            variant='outline'
             flexShrink={0}
             aria-label='Sign out of your account'>
             Log out
           </Button>
           <Button
-            className='view-profile-button'
+            className='view-profile-button btn btn-primary'
             onClick={() => navigate(`/user/${currentUser.username}`)}
             flexShrink={0}
             aria-label={`View profile for ${currentUser.username}`}>
             View Profile
           </Button>
         </Flex>
-      </div>
-    </header>
+      </Flex>
+    </Box>
   );
 };
 

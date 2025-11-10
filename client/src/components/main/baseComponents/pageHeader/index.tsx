@@ -36,12 +36,6 @@ const PageHeader = ({
       <div className='page-header-content'>
         <div className='page-header-title-section'>
           <h1 className='page-title'>{title}</h1>
-          {subtitle && <p className='page-subtitle'>{subtitle}</p>}
-          {count !== undefined && countLabel && (
-            <div className='page-count'>
-              {count} {countLabel}
-            </div>
-          )}
         </div>
         {children && (
           <div className='page-header-actions'>

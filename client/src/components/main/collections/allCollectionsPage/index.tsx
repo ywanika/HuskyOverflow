@@ -1,6 +1,7 @@
 import './index.css';
 import useAllCollectionsPage from '../../../../hooks/useAllCollectionsPage';
 import DeleteCollectionButton from '../deleteCollectionButton';
+import CollectionCard from '../collectionCard';
 import PageHeader from '../../baseComponents/pageHeader';
 
 /**
@@ -12,16 +13,14 @@ const AllCollectionsPage = () => {
     collections,
     handleCreateCollection,
     handleViewCollection,
+    handleLocalDeleteCollection,
     isOwner,
   } = useAllCollectionsPage();
 
   return (
     <div className='collections-page'>
       <PageHeader
-        title={`${usernameBeingViewed}'s Collections`}
-        subtitle={isOwner ? 'Manage your question collections' : 'View user collections'}
-        count={collections.length}
-        countLabel='collections'
+        title="Collections"
       >
         {isOwner && (
           <button 
@@ -38,42 +37,13 @@ const AllCollectionsPage = () => {
       <main className='collections-content'>
         <div className='collections-grid'>
           {collections.map(collection => (
-            <article
+            <CollectionCard
               key={collection._id.toString()}
-              className='collection-card'
-              onClick={() => handleViewCollection(collection._id.toString())}
-              onKeyDown={(e) => {
-                if (e.key === 'Enter' || e.key === ' ') {
-                  e.preventDefault();
-                  handleViewCollection(collection._id.toString());
-                }
-              }}
-              tabIndex={0}
-              role='button'
-              aria-label={`View collection: ${collection.name}`}
-            >
-              <header className='collection-card-header'>
-                <h2 className='collection-name'>{collection.name}</h2>
-              </header>
-              
-              <div className='collection-card-body'>
-                <p className='collection-description'>{collection.description}</p>
-                
-                <dl className='collection-meta'>
-                  <dt className='meta-label'>Privacy:</dt>
-                  <dd className='meta-value'>{collection.isPrivate ? 'Private' : 'Public'}</dd>
-                  
-                  <dt className='meta-label'>Questions:</dt>
-                  <dd className='meta-value'>{collection.questions.length}</dd>
-                </dl>
-              </div>
-              
-              <footer className='collection-card-actions'>
-                {isOwner && (
-                  <DeleteCollectionButton collectionId={collection._id.toString()} />
-                )}
-              </footer>
-            </article>
+              collection={collection}
+              isOwner={isOwner}
+              onView={handleViewCollection}
+              onDeleted={handleLocalDeleteCollection}
+            />
           ))}
         </div>
       </main>

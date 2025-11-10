@@ -1,8 +1,8 @@
 import './index.css';
 import useDirectMessage from '../../../../hooks/useDirectMessage';
-import ChatsListCard from '../../directMessage/chatsListCard';
+import ChatsListCard from '../chatsListCard';
 import UsersListPage from '../../usersListPage';
-import MessageCard from '../../messageCard';
+import MessageCard from '../messageCard';
 
 /**
  * Direct messages tab that contains the full direct messaging functionality.
@@ -32,12 +32,6 @@ const DirectMessagesTab = () => {
       </div>
 
       <div className='create-panel'>
-        <button
-          className='custom-button'
-          onClick={() => setShowCreatePanel(prevState => !prevState)}
-        >
-          {showCreatePanel ? 'Hide Create Chat Panel' : 'Start a Chat'}
-        </button>
         {error && <div className='direct-message-error'>{error}</div>}
         {showCreatePanel && (
           <>
@@ -52,7 +46,15 @@ const DirectMessagesTab = () => {
 
       <div className='direct-message-container'>
         <div className='chats-list'>
-          <h3>Your Chats</h3>
+          <div className='chats-header'>
+            <h3>Your Chats</h3>
+            <button
+              className='custom-button'
+              onClick={() => setShowCreatePanel(prevState => !prevState)}
+            >
+              New Chat
+            </button>
+          </div>
           {chats.map(chat => (
             <ChatsListCard key={String(chat._id)} chat={chat} handleChatSelect={handleChatSelect} />
           ))}

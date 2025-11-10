@@ -14,6 +14,7 @@
   background-color: var(--color-bg-primary);
   color: var(--color-text-primary);
   transition: all var(--transition-fast);
+  min-height: 44px;
 }
 
 .user-search-input:focus {

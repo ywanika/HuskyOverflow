@@ -30,8 +30,6 @@ interface QuestionHeaderProps {
 const QuestionHeader = ({ titleText, qcnt, setQuestionOrder }: QuestionHeaderProps) => (
   <PageHeader
     title={titleText}
-    count={qcnt}
-    countLabel='questions'
   >
     <div className='question-header-actions'>
       <div className='order-buttons'>

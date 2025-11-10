@@ -22,14 +22,11 @@ const AllGamesPage = () => {
   } = useAllGamesPage();
 
   return (
-    <div className='game-page'>
+    <div className='games-page'>
       <PageHeader
         title='Games'
-        subtitle='Play games with other users'
-        count={availableGames.length}
-        countLabel='available games'
       >
-        <div className='game-header-actions'>
+        <div className='games-header-actions'>
           <button 
             type='button'
             className='btn btn-secondary'
@@ -48,6 +45,24 @@ const AllGamesPage = () => {
           </button>
         </div>
       </PageHeader>
+
+      <main className='games-content'>
+        <div className='games-list'>
+          {availableGames.length > 0 ? (
+            availableGames.map(game => (
+              <GameCard
+                key={game.gameID}
+                game={game}
+                handleJoin={handleJoin}
+              />
+            ))
+          ) : (
+            <div className='no-games-message'>
+              No games available. Create a new game to get started!
+            </div>
+          )}
+        </div>
+      </main>
 
       {isModalOpen && (
         <div className='game-modal-overlay' role='dialog' aria-labelledby='modal-title' aria-modal='true'>
@@ -75,18 +90,11 @@ const AllGamesPage = () => {
         </div>
       )}
 
-      <main className='game-content'>
-        {error && (
-          <div className='game-error' role='alert' aria-live='polite'>
-            {error}
-          </div>
-        )}
-        <div className='game-grid'>
-          {availableGames.map(game => (
-            <GameCard key={game.gameID} game={game} handleJoin={handleJoin} />
-          ))}
+      {error && (
+        <div className='game-error' role='alert' aria-live='polite'>
+          {error}
         </div>
-      </main>
+      )}
     </div>
   );
 };

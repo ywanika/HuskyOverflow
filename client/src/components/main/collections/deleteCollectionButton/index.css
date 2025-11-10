@@ -1,7 +1,6 @@
 .delete-collection-wrapper {
-  display: flex;
-  justify-content: flex-end;
-  padding: 1rem;
+  display: block;
+  padding: 0;
 }
 
 .delete-collection-button {
@@ -16,6 +15,7 @@
   transition:
     background-color 0.2s ease,
     transform 0.1s ease;
+  width: 100%;
 }
 
 .delete-collection-button:hover {

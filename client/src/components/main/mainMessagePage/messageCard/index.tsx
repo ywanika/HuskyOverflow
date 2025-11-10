@@ -1,8 +1,8 @@
 import Markdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
 import './index.css';
-import { DatabaseMessage } from '../../../types/types';
-import { getMetaData } from '../../../tool';
+import { DatabaseMessage } from '../../../../types/types';
+import { getMetaData } from '../../../../tool';
 
 /**
  * MessageCard component displays a single message with its sender and timestamp.
@@ -22,3 +22,7 @@ const MessageCard = ({ message }: { message: DatabaseMessage }) => (
 );
 
 export default MessageCard;
+
+
+
+

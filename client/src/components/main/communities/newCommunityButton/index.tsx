@@ -6,7 +6,7 @@ const NewCommunityButton = () => {
 
   return (
     <button className='new-community-button' onClick={handleClick}>
-      Create
+      Create Community
     </button>
   );
 };
