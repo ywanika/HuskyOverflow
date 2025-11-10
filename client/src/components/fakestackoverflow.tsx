@@ -25,6 +25,7 @@ import AllCollectionsPage from './main/collections/allCollectionsPage';
 import CollectionPage from './main/collections/collectionPage';
 import NewCollectionPage from './main/collections/newCollectionPage';
 import MainMessagePage from './main/mainMessagePage';
+import ModeratorDashboard from './main/moderatorDashboard';
 
 const ProtectedRoute = ({
   user,
@@ -79,6 +80,7 @@ const FakeStackOverflow = ({ socket }: { socket: FakeSOSocket | null }) => {
             <Route path='/communities' element={<AllCommunitiesPage />} />
             <Route path='/new/community' element={<NewCommunityPage />} />
             <Route path='/communities/:communityID' element={<CommunityPage />} />
+            <Route path='/moderator/dashboard' element={<ModeratorDashboard />} />
           </Route>
         }
       </Routes>
@@ -114,6 +116,7 @@ const FakeStackOverflow = ({ socket }: { socket: FakeSOSocket | null }) => {
               <Route path='/communities' element={<AllCommunitiesPage />} />
               <Route path='/new/community' element={<NewCommunityPage />} />
               <Route path='/communities/:communityID' element={<CommunityPage />} />
+              <Route path='/moderator/dashboard' element={<ModeratorDashboard />} />
             </Route>
           }
         </Routes>

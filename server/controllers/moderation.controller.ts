@@ -7,6 +7,9 @@ import {
   flagQuestion,
   flagAnswer,
   flagComment,
+  getFlaggedContent,
+  markAsReviewed,
+  dismissFlag,
 } from '../services/moderation.service';
 
 /**
@@ -298,6 +301,123 @@ const moderationController = (socket: FakeSOSocket) => {
     }
   };
 
+  /**
+   * Gets all flagged content - Moderator only
+   * @param req - Request object
+   * @param res - Response object
+   * @returns Promise resolving to void
+   */
+  const getFlaggedContentRoute = async (_: Request, res: Response): Promise<void> => {
+    try {
+      const result = await getFlaggedContent();
+
+      if (result.error) {
+        res.status(500).json({ error: result.error });
+        return;
+      }
+
+      res.json(result);
+    } catch (err: unknown) {
+      res.status(500).json({ error: `Error fetching flagged content: ${(err as Error).message}` });
+    }
+  };
+
+  /**
+   * Marks flagged content as reviewed - Moderator only
+   * @param req - Request containing contentType, contentId, and moderatorUsername
+   * @param res - Response object
+   * @returns Promise resolving to void
+   */
+  const markAsReviewedRoute = async (req: Request, res: Response): Promise<void> => {
+    const { contentType, contentId, moderatorUsername } = req.body;
+
+    if (!contentType || !contentId || !moderatorUsername) {
+      res.status(400).json({ error: 'Missing required fields: contentType, contentId, or moderatorUsername' });
+      return;
+    }
+
+    try {
+      const result = await markAsReviewed(contentType, contentId, moderatorUsername);
+
+      if (!result.success) {
+        if (result.error?.includes('Unauthorized')) {
+          res.status(403).json({ error: result.error });
+        } else if (result.error?.includes('not found')) {
+          res.status(404).json({ error: result.error });
+        } else {
+          res.status(500).json({ error: result.error });
+        }
+        return;
+      }
+
+      const reviewType =
+        contentType === 'question'
+          ? 'questionReviewed'
+          : contentType === 'answer'
+            ? 'answerReviewed'
+            : 'commentReviewed';
+      const idField = contentType === 'question' ? 'questionId' : contentType === 'answer' ? 'answerId' : 'commentId';
+      
+      socket.emit('moderationUpdate', {
+        type: reviewType,
+        [idField]: contentId,
+        reviewedBy: moderatorUsername,
+      });
+
+      res.json({ success: true, message: result.message });
+    } catch (err: unknown) {
+      res.status(500).json({ error: `Error marking content as reviewed: ${(err as Error).message}` });
+    }
+  };
+
+  /**
+   * Dismisses a flag - Moderator only
+   * @param req - Request containing contentType, contentId, and moderatorUsername
+   * @param res - Response object
+   * @returns Promise resolving to void
+   */
+  const dismissFlagRoute = async (req: Request, res: Response): Promise<void> => {
+    const { contentType, contentId, moderatorUsername } = req.body;
+
+    if (!contentType || !contentId || !moderatorUsername) {
+      res.status(400).json({ error: 'Missing required fields: contentType, contentId, or moderatorUsername' });
+      return;
+    }
+
+    try {
+      const result = await dismissFlag(contentType, contentId, moderatorUsername);
+
+      if (!result.success) {
+        if (result.error?.includes('Unauthorized')) {
+          res.status(403).json({ error: result.error });
+        } else if (result.error?.includes('not found')) {
+          res.status(404).json({ error: result.error });
+        } else {
+          res.status(500).json({ error: result.error });
+        }
+        return;
+      }
+
+      const dismissType =
+        contentType === 'question'
+          ? 'questionFlagDismissed'
+          : contentType === 'answer'
+            ? 'answerFlagDismissed'
+            : 'commentFlagDismissed';
+      const idField = contentType === 'question' ? 'questionId' : contentType === 'answer' ? 'answerId' : 'commentId';
+      
+      socket.emit('moderationUpdate', {
+        type: dismissType,
+        [idField]: contentId,
+        dismissedBy: moderatorUsername,
+      });
+
+      res.json({ success: true, message: result.message });
+    } catch (err: unknown) {
+      res.status(500).json({ error: `Error dismissing flag: ${(err as Error).message}` });
+    }
+  };
+
   // Register routes
   router.delete('/delete/question/:questionId', deleteQuestionRoute);
   router.delete('/delete/answer/:answerId', deleteAnswerRoute);
@@ -305,6 +425,9 @@ const moderationController = (socket: FakeSOSocket) => {
   router.post('/flag/question/:questionId', flagQuestionRoute);
   router.post('/flag/answer/:answerId', flagAnswerRoute);
   router.post('/flag/comment/:commentId', flagCommentRoute);
+  router.get('/flagged', getFlaggedContentRoute);
+  router.post('/review', markAsReviewedRoute);
+  router.post('/dismiss', dismissFlagRoute);
 
   return router;
 };

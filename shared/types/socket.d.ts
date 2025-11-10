@@ -117,9 +117,9 @@ export interface CollectionUpdatePayload {
 
 /**
  * Interface representing the payload for a moderation update event.
- * - `type`: The type of moderation action (`'questionDeleted'`, `'answerDeleted'`, `'commentDeleted'`, `'questionFlagged'`, `'answerFlagged'`, or `'commentFlagged'`).
+ * - `type`: The type of moderation action.
  * - `questionId`, `answerId`, or `commentId`: The ID of the content affected.
- * - `deletedBy` or `flaggedBy`: The username of the user who performed the action.
+ * - `deletedBy`, `flaggedBy`, `reviewedBy`, or `dismissedBy`: The username of the user who performed the action.
  */
 export interface ModerationUpdatePayload {
   type:
@@ -128,12 +128,20 @@ export interface ModerationUpdatePayload {
     | 'commentDeleted'
     | 'questionFlagged'
     | 'answerFlagged'
-    | 'commentFlagged';
+    | 'commentFlagged'
+    | 'questionReviewed'
+    | 'answerReviewed'
+    | 'commentReviewed'
+    | 'questionFlagDismissed'
+    | 'answerFlagDismissed'
+    | 'commentFlagDismissed';
   questionId?: string;
   answerId?: string;
   commentId?: string;
   deletedBy?: string;
   flaggedBy?: string;
+  reviewedBy?: string;
+  dismissedBy?: string;
 }
 
 /**

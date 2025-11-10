@@ -149,3 +149,92 @@ export const flagComment = async (
   return res.data;
 };
 
+/**
+ * Gets all flagged content - Moderator only
+ * @returns Promise resolving to flagged content
+ * @throws Error if the API response status is not 200
+ */
+export const getFlaggedContent = async (): Promise<{
+  questions: Array<{
+    _id: string;
+    contentType: 'question';
+    content: any;
+    flaggedBy: string[];
+    flaggedAt: Date[];
+  }>;
+  answers: Array<{
+    _id: string;
+    contentType: 'answer';
+    content: any;
+    flaggedBy: string[];
+    flaggedAt: Date[];
+  }>;
+  comments: Array<{
+    _id: string;
+    contentType: 'comment';
+    content: any;
+    flaggedBy: string[];
+    flaggedAt: Date[];
+  }>;
+}> => {
+  const res = await api.get(`${MODERATION_API_URL}/flagged`);
+
+  if (res.status !== 200) {
+    throw new Error('Error while fetching flagged content');
+  }
+
+  return res.data;
+};
+
+/**
+ * Marks flagged content as reviewed - Moderator only
+ * @param contentType - Type of content
+ * @param contentId - ID of the content
+ * @param moderatorUsername - Username of the moderator
+ * @returns Promise resolving to the result
+ * @throws Error if the API response status is not 200
+ */
+export const markAsReviewed = async (
+  contentType: 'question' | 'answer' | 'comment',
+  contentId: string,
+  moderatorUsername: string,
+): Promise<{ success: boolean; message?: string }> => {
+  const res = await api.post(`${MODERATION_API_URL}/review`, {
+    contentType,
+    contentId,
+    moderatorUsername,
+  });
+
+  if (res.status !== 200) {
+    throw new Error('Error while marking content as reviewed');
+  }
+
+  return res.data;
+};
+
+/**
+ * Dismisses a flag - Moderator only
+ * @param contentType - Type of content
+ * @param contentId - ID of the content
+ * @param moderatorUsername - Username of the moderator
+ * @returns Promise resolving to the result
+ * @throws Error if the API response status is not 200
+ */
+export const dismissFlag = async (
+  contentType: 'question' | 'answer' | 'comment',
+  contentId: string,
+  moderatorUsername: string,
+): Promise<{ success: boolean; message?: string }> => {
+  const res = await api.post(`${MODERATION_API_URL}/dismiss`, {
+    contentType,
+    contentId,
+    moderatorUsername,
+  });
+
+  if (res.status !== 200) {
+    throw new Error('Error while dismissing flag');
+  }
+
+  return res.data;
+};
+

@@ -366,3 +366,214 @@ export const flagComment = async (
   }
 };
 
+/**
+ * Interface for flagged content items
+ */
+export interface FlaggedContentItem {
+  _id: string;
+  contentType: 'question' | 'answer' | 'comment';
+  content: DatabaseQuestion | DatabaseAnswer | DatabaseComment;
+  flaggedBy: string[];
+  flaggedAt: Date[];
+  reviewedBy?: string;
+  reviewedAt?: Date;
+}
+
+/**
+ * Response type for getting flagged content
+ */
+export interface FlaggedContentResponse {
+  questions: FlaggedContentItem[];
+  answers: FlaggedContentItem[];
+  comments: FlaggedContentItem[];
+  error?: string;
+}
+
+/**
+ * Gets all flagged content that hasn't been reviewed yet
+ * @returns Promise resolving to FlaggedContentResponse
+ */
+export const getFlaggedContent = async (): Promise<FlaggedContentResponse> => {
+  try {
+    // Get all flagged questions that haven't been reviewed
+    const flaggedQuestions = await QuestionModel.find({
+      'flagged.isFlagged': true,
+      'flagged.reviewedBy': null,
+    }).lean();
+
+    // Get all flagged answers that haven't been reviewed
+    const flaggedAnswers = await AnswerModel.find({
+      'flagged.isFlagged': true,
+      'flagged.reviewedBy': null,
+    }).lean();
+
+    // Get all flagged comments that haven't been reviewed
+    const flaggedComments = await CommentModel.find({
+      'flagged.isFlagged': true,
+      'flagged.reviewedBy': null,
+    }).lean();
+
+    const questions: FlaggedContentItem[] = flaggedQuestions.map(q => ({
+      _id: q._id.toString(),
+      contentType: 'question' as const,
+      content: q as DatabaseQuestion,
+      flaggedBy: q.flagged?.flaggedBy || [],
+      flaggedAt: q.flagged?.flaggedAt || [],
+      reviewedBy: q.flagged?.reviewedBy,
+      reviewedAt: q.flagged?.reviewedAt,
+    }));
+
+    const answers: FlaggedContentItem[] = flaggedAnswers.map(a => ({
+      _id: a._id.toString(),
+      contentType: 'answer' as const,
+      content: a as DatabaseAnswer,
+      flaggedBy: a.flagged?.flaggedBy || [],
+      flaggedAt: a.flagged?.flaggedAt || [],
+      reviewedBy: a.flagged?.reviewedBy,
+      reviewedAt: a.flagged?.reviewedAt,
+    }));
+
+    const comments: FlaggedContentItem[] = flaggedComments.map(c => ({
+      _id: c._id.toString(),
+      contentType: 'comment' as const,
+      content: c as DatabaseComment,
+      flaggedBy: c.flagged?.flaggedBy || [],
+      flaggedAt: c.flagged?.flaggedAt || [],
+      reviewedBy: c.flagged?.reviewedBy,
+      reviewedAt: c.flagged?.reviewedAt,
+    }));
+
+    return { questions, answers, comments };
+  } catch (error) {
+    return {
+      questions: [],
+      answers: [],
+      comments: [],
+      error: `Error fetching flagged content: ${(error as Error).message}`,
+    };
+  }
+};
+
+/**
+ * Marks flagged content as reviewed by a moderator
+ * @param contentType - Type of content being reviewed
+ * @param contentId - ID of the content
+ * @param moderatorUsername - Username of the moderator reviewing
+ * @returns Promise resolving to ModerationResponse
+ */
+export const markAsReviewed = async (
+  contentType: 'question' | 'answer' | 'comment',
+  contentId: string,
+  moderatorUsername: string,
+): Promise<ModerationResponse> => {
+  try {
+    // Check if user is moderator/admin
+    const hasPermission = await isModerator(moderatorUsername);
+    if (!hasPermission) {
+      return { success: false, error: 'Unauthorized: Only moderators and admins can review content' };
+    }
+
+    let updatedContent: DatabaseQuestion | DatabaseAnswer | DatabaseComment | null = null;
+
+    if (contentType === 'question') {
+      updatedContent = await QuestionModel.findByIdAndUpdate(
+        contentId,
+        {
+          'flagged.reviewedBy': moderatorUsername,
+          'flagged.reviewedAt': new Date(),
+        },
+        { new: true },
+      );
+    } else if (contentType === 'answer') {
+      updatedContent = await AnswerModel.findByIdAndUpdate(
+        contentId,
+        {
+          'flagged.reviewedBy': moderatorUsername,
+          'flagged.reviewedAt': new Date(),
+        },
+        { new: true },
+      );
+    } else if (contentType === 'comment') {
+      updatedContent = await CommentModel.findByIdAndUpdate(
+        contentId,
+        {
+          'flagged.reviewedBy': moderatorUsername,
+          'flagged.reviewedAt': new Date(),
+        },
+        { new: true },
+      );
+    }
+
+    if (!updatedContent) {
+      return { success: false, error: 'Content not found' };
+    }
+
+    return { success: true, message: 'Content marked as reviewed' };
+  } catch (error) {
+    return { success: false, error: `Error marking content as reviewed: ${(error as Error).message}` };
+  }
+};
+
+/**
+ * Dismisses a flag (unflags content) - Moderator only
+ * @param contentType - Type of content
+ * @param contentId - ID of the content
+ * @param moderatorUsername - Username of the moderator
+ * @returns Promise resolving to ModerationResponse
+ */
+export const dismissFlag = async (
+  contentType: 'question' | 'answer' | 'comment',
+  contentId: string,
+  moderatorUsername: string,
+): Promise<ModerationResponse> => {
+  try {
+    // Check if user is moderator/admin
+    const hasPermission = await isModerator(moderatorUsername);
+    if (!hasPermission) {
+      return { success: false, error: 'Unauthorized: Only moderators and admins can dismiss flags' };
+    }
+
+    let updatedContent: DatabaseQuestion | DatabaseAnswer | DatabaseComment | null = null;
+
+    if (contentType === 'question') {
+      updatedContent = await QuestionModel.findByIdAndUpdate(
+        contentId,
+        {
+          'flagged.isFlagged': false,
+          'flagged.reviewedBy': moderatorUsername,
+          'flagged.reviewedAt': new Date(),
+        },
+        { new: true },
+      );
+    } else if (contentType === 'answer') {
+      updatedContent = await AnswerModel.findByIdAndUpdate(
+        contentId,
+        {
+          'flagged.isFlagged': false,
+          'flagged.reviewedBy': moderatorUsername,
+          'flagged.reviewedAt': new Date(),
+        },
+        { new: true },
+      );
+    } else if (contentType === 'comment') {
+      updatedContent = await CommentModel.findByIdAndUpdate(
+        contentId,
+        {
+          'flagged.isFlagged': false,
+          'flagged.reviewedBy': moderatorUsername,
+          'flagged.reviewedAt': new Date(),
+        },
+        { new: true },
+      );
+    }
+
+    if (!updatedContent) {
+      return { success: false, error: 'Content not found' };
+    }
+
+    return { success: true, message: 'Flag dismissed successfully' };
+  } catch (error) {
+    return { success: false, error: `Error dismissing flag: ${(error as Error).message}` };
+  }
+};
+
