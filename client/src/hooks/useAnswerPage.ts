@@ -10,6 +10,14 @@ import {
 import useUserContext from './useUserContext';
 import addComment from '../services/commentService';
 import { getQuestionById } from '../services/questionService';
+import {
+  deleteQuestion,
+  deleteAnswer,
+  deleteComment,
+  flagQuestion,
+  flagAnswer,
+  flagComment,
+} from '../services/moderationService';
 
 /**
  * Custom hook for managing the answer page's state, navigation, and real-time updates.
@@ -167,24 +175,114 @@ const useAnswerPage = () => {
       }
     };
 
+    /**
+     * Function to handle moderation updates (deletions)
+     */
+    const handleModerationUpdate = async () => {
+      // Refresh the question data when moderation occurs
+      try {
+        const res = await getQuestionById(questionID, user.username);
+        setQuestion(res || null);
+      } catch (error) {
+        // eslint-disable-next-line no-console
+        console.error('Error fetching question after moderation update:', error);
+      }
+    };
+
     socket.on('answerUpdate', handleAnswerUpdate);
     socket.on('viewsUpdate', handleViewsUpdate);
     socket.on('commentUpdate', handleCommentUpdate);
     socket.on('voteUpdate', handleVoteUpdate);
+    socket.on('moderationUpdate', handleModerationUpdate);
 
     return () => {
       socket.off('answerUpdate', handleAnswerUpdate);
       socket.off('viewsUpdate', handleViewsUpdate);
       socket.off('commentUpdate', handleCommentUpdate);
       socket.off('voteUpdate', handleVoteUpdate);
+      socket.off('moderationUpdate', handleModerationUpdate);
     };
-  }, [questionID, socket]);
+  }, [questionID, socket, user.username]);
+
+  /**
+   * Handles deletion of a question by a moderator
+   */
+  const handleDeleteQuestion = async (deleteReason: string) => {
+    if (!questionID) {
+      throw new Error('Question ID not found');
+    }
+    await deleteQuestion(questionID, user.username, deleteReason);
+    // Refresh the question data
+    const res = await getQuestionById(questionID, user.username);
+    setQuestion(res || null);
+    // Optionally navigate away or show a message
+  };
+
+  /**
+   * Handles deletion of an answer by a moderator
+   */
+  const handleDeleteAnswer = async (answerId: string, deleteReason: string) => {
+    await deleteAnswer(answerId, user.username, deleteReason);
+    // Refresh the question data
+    const res = await getQuestionById(questionID, user.username);
+    setQuestion(res || null);
+  };
+
+  /**
+   * Handles deletion of a comment by a moderator
+   */
+  const handleDeleteComment = async (commentId: string, deleteReason: string) => {
+    await deleteComment(commentId, user.username, deleteReason);
+    // Refresh the question data
+    const res = await getQuestionById(questionID, user.username);
+    setQuestion(res || null);
+  };
+
+  /**
+   * Handles flagging of a question by a user
+   */
+  const handleFlagQuestion = async () => {
+    if (!questionID) {
+      throw new Error('Question ID not found');
+    }
+    await flagQuestion(questionID, user.username);
+    // Refresh the question data
+    const res = await getQuestionById(questionID, user.username);
+    setQuestion(res || null);
+  };
+
+  /**
+   * Handles flagging of an answer by a user
+   */
+  const handleFlagAnswer = async (answerId: string) => {
+    await flagAnswer(answerId, user.username);
+    // Refresh the question data
+    const res = await getQuestionById(questionID, user.username);
+    setQuestion(res || null);
+  };
+
+  /**
+   * Handles flagging of a comment by a user
+   */
+  const handleFlagComment = async (commentId: string) => {
+    await flagComment(commentId, user.username);
+    // Refresh the question data
+    const res = await getQuestionById(questionID, user.username);
+    setQuestion(res || null);
+  };
 
   return {
     questionID,
     question,
     handleNewComment,
     handleNewAnswer,
+    handleDeleteQuestion,
+    handleDeleteAnswer,
+    handleDeleteComment,
+    handleFlagQuestion,
+    handleFlagAnswer,
+    handleFlagComment,
+    user,
   };
 };
 
