@@ -1,149 +1,442 @@
-/* Dark Mode Global Styles */
+/* ========================================
+   COMPREHENSIVE DARK MODE SYSTEM
+   ======================================== */
 
-/* Dark mode for common containers */
-[data-theme='dark'] .container,
-[data-theme='dark'] .main,
-[data-theme='dark'] .content {
-  background-color: #1a202c;
-  color: #fff;
+/* Light mode color variables (explicit for clarity/extensibility) */
+[data-theme='light'] {
+  /* Mirror the light palette defined in :root so the state is explicit */
+  --color-bg-primary: #ffffff;
+  --color-bg-secondary: #f8f9fa;
+  --color-bg-tertiary: #e9ecef;
+
+  --color-text-primary: #1a1a1a;
+  --color-text-secondary: #2d2d2d;
+  --color-text-muted: #404040;
+  --color-text-light: #666666;
+
+  /* Accents remain the same across themes for consistent branding */
+  --color-primary: #F9B1BA;
+  --color-secondary: #F9A672;
+  --color-accent: #F6CB60;
+  --color-success: #BBD269;
+  --color-info: #89C992;
+  /* Keep danger identical across themes (e.g., Delete remains red) */
+  --color-error: #d32f2f;
+  --color-warning: #f57c00;
+
+  --color-focus: #007bff;
+  --color-focus-ring: rgba(0, 123, 255, 0.25);
+  --color-hover: rgba(0, 123, 255, 0.1);
+  --color-active: rgba(0, 123, 255, 0.2);
 }
 
-/* Dark mode for cards and boxes */
+/* Dark mode color variables */
+[data-theme='dark'] {
+  /* Override light mode colors with dark equivalents */
+  --color-bg-primary: #1a202c;        /* Dark blue-gray */
+  --color-bg-secondary: #2d3748;      /* Medium dark gray */
+  --color-bg-tertiary: #4a5568;       /* Lighter dark gray */
+  
+  --color-text-primary: #f7fafc;      /* Near white */
+  --color-text-secondary: #e2e8f0;    /* Light gray */
+  --color-text-muted: #a0aec0;        /* Medium gray */
+  --color-text-light: #718096;        /* Dark gray */
+  
+  /* Consistent accent colors for dark mode */
+  --color-primary: #f6ad55;           /* Warm orange */
+  --color-secondary: #68d391;         /* Green */
+  --color-accent: #f6e05e;            /* Yellow */
+  --color-success: #68d391;           /* Green */
+  --color-info: #63b3ed;              /* Blue */
+  /* Keep danger identical across themes (Delete stays red) */
+  --color-error: #d32f2f;             /* Red (same as light) */
+  --color-warning: #f6ad55;           /* Orange */
+  
+  /* Interactive states */
+  --color-focus: #63b3ed;             /* Blue */
+  --color-focus-ring: rgba(99, 179, 237, 0.25);
+  --color-hover: rgba(99, 179, 237, 0.1);
+  --color-active: rgba(99, 179, 237, 0.2);
+}
+
+/* ========================================
+   GLOBAL DARK MODE STYLES
+   ======================================== */
+
+/* Main content areas - CRITICAL FIX */
+[data-theme='dark'] .main,
+[data-theme='dark'] .content,
+[data-theme='dark'] .right_main,
+[data-theme='dark'] .game-page,
+[data-theme='dark'] .collection-page,
+[data-theme='dark'] .community-page-layout,
+[data-theme='dark'] .chat-room,
+[data-theme='dark'] .questions-section,
+[data-theme='dark'] .community-sidebar,
+[data-theme='dark'] .members-list,
+[data-theme='dark'] .game-content,
+[data-theme='dark'] .game-modal,
+[data-theme='dark'] .game-modal .modal-content,
+[data-theme='dark'] .global-messages-tab,
+[data-theme='dark'] .direct-message-container,
+[data-theme='dark'] .chat-container,
+[data-theme='dark'] .chats-list,
+[data-theme='dark'] .create-panel,
+[data-theme='dark'] .profile-settings,
+[data-theme='dark'] .profile-card,
+[data-theme='dark'] .profile-section,
+[data-theme='dark'] .bio-content,
+[data-theme='dark'] .modal,
+[data-theme='dark'] .modal-content {
+  background-color: var(--color-bg-primary) !important;
+  color: var(--color-text-primary) !important;
+}
+
+/* Cards and containers */
 [data-theme='dark'] .card,
 [data-theme='dark'] .box,
-[data-theme='dark'] .panel {
-  background-color: #2d3748;
-  color: #fff;
-  border-color: #4a5568;
+[data-theme='dark'] .panel,
+[data-theme='dark'] .game-item,
+[data-theme='dark'] .chats-list-card,
+[data-theme='dark'] .message,
+[data-theme='dark'] .message.receiver {
+  background-color: var(--color-bg-secondary) !important;
+  color: var(--color-text-primary) !important;
+  border-color: var(--color-bg-tertiary) !important;
 }
 
-/* Dark mode for buttons */
-[data-theme='dark'] button:not([class*='chakra']) {
-  background-color: #4a5568;
-  color: #fff;
-  border-color: #718096;
+/* Ensure community and collection cards are darker than their backgrounds */
+[data-theme='dark'] .community-card,
+[data-theme='dark'] .collection-card {
+  background-color: var(--color-bg-primary) !important;
+  color: var(--color-text-primary) !important;
+  border-color: var(--color-bg-tertiary) !important;
 }
 
-[data-theme='dark'] button:not([class*='chakra']):hover {
-  background-color: #718096;
+/* ========================================
+   CONSISTENT BUTTON SYSTEM FOR DARK MODE
+   ======================================== */
+
+/* Primary buttons - consistent yellow/orange theme */
+[data-theme='dark'] .btn-primary,
+[data-theme='dark'] .logout-button,
+[data-theme='dark'] .view-profile-button,
+[data-theme='dark'] .btn-create-game,
+[data-theme='dark'] .btn-leave-game,
+[data-theme='dark'] .btn-refresh-list,
+[data-theme='dark'] .btn-join-game,
+[data-theme='dark'] .send-button,
+[data-theme='dark'] .bluebtn,
+[data-theme='dark'] .form_postBtn {
+  background-color: var(--color-accent) !important;
+  color: #1a202c !important;
+  border: 2px solid var(--color-accent) !important;
+  font-weight: 600 !important;
+  font-size: var(--font-size-base) !important;
+  padding: var(--spacing-sm) var(--spacing-md) !important;
+  border-radius: var(--radius-md) !important;
+  transition: all var(--transition-fast) !important;
+  min-height: 44px !important;
 }
 
-/* Dark mode for inputs */
+[data-theme='dark'] .btn-primary:hover,
+[data-theme='dark'] .logout-button:hover,
+[data-theme='dark'] .view-profile-button:hover,
+[data-theme='dark'] .btn-create-game:hover,
+[data-theme='dark'] .btn-leave-game:hover,
+[data-theme='dark'] .btn-refresh-list:hover,
+[data-theme='dark'] .btn-join-game:hover,
+[data-theme='dark'] .send-button:hover,
+[data-theme='dark'] .bluebtn:hover,
+[data-theme='dark'] .form_postBtn:hover {
+  background-color: var(--color-primary) !important;
+  border-color: var(--color-primary) !important;
+  transform: translateY(-1px) !important;
+  box-shadow: var(--shadow-md) !important;
+}
+
+/* Secondary buttons - dark theme */
+[data-theme='dark'] .btn-secondary,
+[data-theme='dark'] button:not([class*='btn-primary']):not([class*='btn-danger']):not([class*='logout']):not([class*='view-profile']):not([class*='create']):not([class*='join']):not([class*='refresh']):not([class*='send']):not([class*='bluebtn']):not([class*='form_postBtn']) {
+  background-color: var(--color-bg-tertiary) !important;
+  color: var(--color-text-primary) !important;
+  border: 2px solid var(--color-bg-tertiary) !important;
+  font-weight: 500 !important;
+  font-size: var(--font-size-base) !important;
+  padding: var(--spacing-sm) var(--spacing-md) !important;
+  border-radius: var(--radius-md) !important;
+  transition: all var(--transition-fast) !important;
+  min-height: 44px !important;
+}
+
+[data-theme='dark'] .btn-secondary:hover,
+[data-theme='dark'] button:not([class*='btn-primary']):not([class*='logout']):not([class*='view-profile']):not([class*='create']):not([class*='join']):not([class*='refresh']):not([class*='send']):not([class*='bluebtn']):not([class*='form_postBtn']):hover {
+  background-color: var(--color-primary) !important;
+  border-color: var(--color-primary) !important;
+  color: #1a202c !important;
+  transform: translateY(-1px) !important;
+  box-shadow: var(--shadow-md) !important;
+}
+
+/* Force New Community button to be yellow in dark mode */
+[data-theme='dark'] .new-community-button {
+  background-color: var(--color-accent) !important;
+  color: #1a202c !important;
+  border: 2px solid var(--color-accent) !important;
+  font-weight: 600 !important;
+}
+
+[data-theme='dark'] .new-community-button:hover {
+  background-color: var(--color-primary) !important;
+  border-color: var(--color-primary) !important;
+}
+
+/* Danger buttons - always red in both themes */
+[data-theme='dark'] .btn-danger,
+[data-theme='light'] .btn-danger {
+  background-color: var(--color-error) !important;
+  color: var(--color-bg-primary) !important;
+  border: 2px solid var(--color-error) !important;
+}
+
+[data-theme='dark'] .btn-danger:hover,
+[data-theme='light'] .btn-danger:hover {
+  filter: brightness(0.9);
+}
+
+/* ========================================
+   FORM ELEMENTS
+   ======================================== */
+
 [data-theme='dark'] input,
 [data-theme='dark'] textarea,
-[data-theme='dark'] select {
-  background-color: #2d3748;
-  color: #fff;
-  border-color: #4a5568;
+[data-theme='dark'] select,
+[data-theme='dark'] .form-input,
+[data-theme='dark'] .search-input,
+[data-theme='dark'] .message-textbox {
+  background-color: var(--color-bg-secondary) !important;
+  color: var(--color-text-primary) !important;
+  border: 2px solid var(--color-bg-tertiary) !important;
+}
+
+[data-theme='dark'] input:focus,
+[data-theme='dark'] textarea:focus,
+[data-theme='dark'] select:focus,
+[data-theme='dark'] .form-input:focus,
+[data-theme='dark'] .search-input:focus,
+[data-theme='dark'] .message-textbox:focus {
+  border-color: var(--color-focus) !important;
+  box-shadow: 0 0 0 3px var(--color-focus-ring) !important;
 }
 
 [data-theme='dark'] input::placeholder,
-[data-theme='dark'] textarea::placeholder {
-  color: #a0aec0;
+[data-theme='dark'] textarea::placeholder,
+[data-theme='dark'] .search-input::placeholder,
+[data-theme='dark'] .message-textbox::placeholder {
+  color: var(--color-text-muted) !important;
 }
 
-/* Dark mode for links */
-[data-theme='dark'] a {
-  color: #63b3ed;
-}
+/* ========================================
+   TEXT AND TYPOGRAPHY
+   ======================================== */
 
-[data-theme='dark'] a:hover {
-  color: #90cdf4;
-}
-
-/* Dark mode for headers */
 [data-theme='dark'] h1,
 [data-theme='dark'] h2,
 [data-theme='dark'] h3,
 [data-theme='dark'] h4,
 [data-theme='dark'] h5,
-[data-theme='dark'] h6 {
-  color: #fff;
+[data-theme='dark'] h6,
+[data-theme='dark'] .bold_title,
+[data-theme='dark'] .section-heading,
+[data-theme='dark'] .community-title,
+[data-theme='dark'] .collection-title {
+  color: var(--color-text-primary) !important;
+  font-weight: 700 !important;
 }
 
-/* Dark mode for tables */
+[data-theme='dark'] p,
+[data-theme='dark'] span,
+[data-theme='dark'] div,
+[data-theme='dark'] .community-description,
+[data-theme='dark'] .collection-description,
+[data-theme='dark'] .collection-meta,
+[data-theme='dark'] .message-body,
+[data-theme='dark'] .message-sender,
+[data-theme='dark'] .message-time,
+[data-theme='dark'] .chat-message,
+[data-theme='dark'] .info-value,
+[data-theme='dark'] .bio-content {
+  color: var(--color-text-secondary) !important;
+}
+
+[data-theme='dark'] .text-muted,
+[data-theme='dark'] .form-help,
+[data-theme='dark'] .game-status {
+  color: var(--color-text-muted) !important;
+}
+
+/* ========================================
+   NAVIGATION AND LINKS
+   ======================================== */
+
+[data-theme='dark'] .nav-item {
+  color: var(--color-text-secondary) !important;
+  background-color: transparent !important;
+}
+
+[data-theme='dark'] .nav-item:hover {
+  background-color: var(--color-hover) !important;
+  color: var(--color-text-primary) !important;
+}
+
+[data-theme='dark'] .nav-item.active {
+  background-color: var(--color-primary) !important;
+  color: #1a202c !important;
+  font-weight: 600 !important;
+}
+
+[data-theme='dark'] a {
+  color: var(--color-info) !important;
+}
+
+[data-theme='dark'] a:hover {
+  color: var(--color-accent) !important;
+}
+
+/* ========================================
+   TABLES AND LISTS
+   ======================================== */
+
 [data-theme='dark'] table {
-  background-color: #2d3748;
-  color: #fff;
+  background-color: var(--color-bg-secondary) !important;
+  color: var(--color-text-primary) !important;
+  border-color: var(--color-bg-tertiary) !important;
 }
 
 [data-theme='dark'] thead {
-  background-color: #4a5568;
+  background-color: var(--color-bg-tertiary) !important;
 }
 
 [data-theme='dark'] tbody tr:nth-child(even) {
-  background-color: #374151;
+  background-color: var(--color-bg-primary) !important;
 }
 
 [data-theme='dark'] td,
 [data-theme='dark'] th {
-  border-color: #4a5568;
+  border-color: var(--color-bg-tertiary) !important;
+  color: var(--color-text-primary) !important;
 }
 
-/* Dark mode for borders */
+[data-theme='dark'] li {
+  color: var(--color-text-primary) !important;
+}
+
+/* ========================================
+   BORDERS AND SHADOWS
+   ======================================== */
+
 [data-theme='dark'] .border,
 [data-theme='dark'] [class*='border'] {
-  border-color: #4a5568;
+  border-color: var(--color-bg-tertiary) !important;
 }
 
-/* Dark mode for shadows */
 [data-theme='dark'] .shadow,
 [data-theme='dark'] [class*='shadow'] {
-  box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.3), 0 1px 2px 0 rgba(0, 0, 0, 0.2);
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.3), 0 2px 4px -1px rgba(0, 0, 0, 0.2) !important;
 }
 
-/* Dark mode for modals and overlays */
+/* ========================================
+   MODALS AND OVERLAYS
+   ======================================== */
+
 [data-theme='dark'] .modal,
 [data-theme='dark'] .overlay,
-[data-theme='dark'] .dialog {
-  background-color: #2d3748;
-  color: #fff;
+[data-theme='dark'] .dialog,
+[data-theme='dark'] .game-modal-overlay {
+  background-color: rgba(0, 0, 0, 0.8) !important;
 }
 
-/* Dark mode for navigation */
-[data-theme='dark'] nav {
-  background-color: #2d3748;
-  border-color: #4a5568;
+[data-theme='dark'] .game-modal {
+  background-color: var(--color-bg-secondary) !important;
+  color: var(--color-text-primary) !important;
 }
 
-/* Dark mode for list items */
-[data-theme='dark'] li {
-  color: #fff;
-}
+/* ========================================
+   SCROLLBARS
+   ======================================== */
 
-/* Dark mode for code blocks */
-[data-theme='dark'] code,
-[data-theme='dark'] pre {
-  background-color: #1a202c;
-  color: #68d391;
-}
-
-/* Dark mode for disabled elements */
-[data-theme='dark'] :disabled {
-  opacity: 0.5;
-  color: #a0aec0;
-}
-
-/* Dark mode for selected text */
-[data-theme='dark'] ::selection {
-  background-color: #4a5568;
-  color: #fff;
-}
-
-/* Dark mode for scrollbars (webkit browsers) */
 [data-theme='dark'] ::-webkit-scrollbar {
   width: 12px;
 }
 
 [data-theme='dark'] ::-webkit-scrollbar-track {
-  background: #1a202c;
+  background: var(--color-bg-primary);
 }
 
 [data-theme='dark'] ::-webkit-scrollbar-thumb {
-  background: #4a5568;
+  background: var(--color-bg-tertiary);
   border-radius: 6px;
 }
 
 [data-theme='dark'] ::-webkit-scrollbar-thumb:hover {
-  background: #718096;
+  background: var(--color-primary);
+}
+
+/* ========================================
+   UTILITY OVERRIDES
+   ======================================== */
+
+[data-theme='dark'] .bg-primary { background-color: var(--color-bg-primary) !important; }
+[data-theme='dark'] .bg-secondary { background-color: var(--color-bg-secondary) !important; }
+[data-theme='dark'] .text-primary { color: var(--color-text-primary) !important; }
+[data-theme='dark'] .text-secondary { color: var(--color-text-secondary) !important; }
+[data-theme='dark'] .text-muted { color: var(--color-text-muted) !important; }
+
+/* ========================================
+   SPECIFIC COMPONENT FIXES
+   ======================================== */
+
+/* Chat room specific */
+[data-theme='dark'] .chat-header {
+  background-color: var(--color-accent) !important;
+  color: #1a202c !important;
+}
+
+[data-theme='dark'] .chat-messages {
+  background-color: var(--color-bg-primary) !important;
+}
+
+[data-theme='dark'] .message-input {
+  background-color: var(--color-bg-secondary) !important;
+  border-color: var(--color-bg-tertiary) !important;
+}
+
+/* Game items */
+[data-theme='dark'] .game-item {
+  background-color: var(--color-bg-secondary) !important;
+  border-color: var(--color-bg-tertiary) !important;
+}
+
+[data-theme='dark'] .game-item li {
+  background-color: var(--color-bg-primary) !important;
+  color: var(--color-text-primary) !important;
+}
+
+/* Error messages */
+[data-theme='dark'] .error-message {
+  background-color: rgba(252, 129, 129, 0.1) !important;
+  border-color: var(--color-error) !important;
+  color: var(--color-error) !important;
+}
+
+/* Disabled elements */
+[data-theme='dark'] :disabled {
+  opacity: 0.5 !important;
+  color: var(--color-text-muted) !important;
+}
+
+/* Selected text */
+[data-theme='dark'] ::selection {
+  background-color: var(--color-primary) !important;
+  color: #1a202c !important;
 }

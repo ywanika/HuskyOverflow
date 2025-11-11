@@ -1,5 +1,6 @@
 import axios from 'axios';
 import { Collection, PopulatedDatabaseCollection } from '../types/types';
+import profanityService from './profanityService';
 
 const COLLECTION_API_URL = '/api/collection';
 
@@ -9,6 +10,10 @@ const COLLECTION_API_URL = '/api/collection';
  * @returns {Promise<PopulatedDatabaseCollection>} - A promise that resolves to the created collection
  */
 const createCollection = async (collection: Collection): Promise<PopulatedDatabaseCollection> => {
+  await profanityService(collection.name);
+  if (collection.description) {
+    await profanityService(collection.description);
+  }
   const res = await axios.post(`${COLLECTION_API_URL}/create`, collection);
 
   if (res.status !== 200) {

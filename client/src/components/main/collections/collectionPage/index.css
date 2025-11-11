@@ -1,8 +1,9 @@
 .collection-page {
   padding: 2rem;
   font-family: Arial, sans-serif;
-  background-color: #f9f9f9;
+  background-color: var(--color-bg-primary);
   min-height: 100vh;
+  color: var(--color-text-primary);
 }
 
 .collection-header {
@@ -10,14 +11,15 @@
 }
 
 .collection-title {
-  font-size: 2rem;
+  font-size: var(--font-size-4xl);
   margin-bottom: 0.5rem;
-  color: #1e293b;
+  color: var(--color-text-primary);
+  font-weight: 700;
 }
 
 .collection-description {
-  font-size: 1rem;
-  color: #475569;
+  font-size: var(--font-size-base);
+  color: var(--color-text-secondary);
   margin-bottom: 0.5rem;
 
   display: -webkit-box;
@@ -29,8 +31,8 @@
 }
 
 .collection-meta {
-  font-size: 0.9rem;
-  color: #64748b;
+  font-size: var(--font-size-sm);
+  color: var(--color-text-muted);
 }
 
 .questions-list {

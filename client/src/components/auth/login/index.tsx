@@ -24,7 +24,7 @@ const Login = () => {
           <h1 className='login-title'>Welcome to FakeStackOverflow!</h1>
           <h2 className='login-subtitle'>Please login to continue.</h2>
         </header>
-        
+
         <form onSubmit={handleSubmit} className='login-form' aria-labelledby='login-heading'>
           <fieldset className='form-fieldset'>
             <legend id='login-heading' className='sr-only'>
@@ -91,7 +91,10 @@ const Login = () => {
             </div>
 
             <div className='form-actions'>
-              <button type='submit' className='btn btn-primary btn-lg' aria-describedby='submit-help'>
+              <button
+                type='submit'
+                className='btn btn-primary btn-lg'
+                aria-describedby='submit-help'>
                 Sign In
               </button>
               <div id='submit-help' className='form-help'>
@@ -100,13 +103,13 @@ const Login = () => {
             </div>
           </fieldset>
         </form>
-        
+
         {err && (
           <div className='form-error' role='alert' aria-live='polite'>
             {err}
           </div>
         )}
-        
+
         <div className='login-footer'>
           <Link to='/signup' className='signup-link'>
             Don&apos;t have an account? Sign up here.

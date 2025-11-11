@@ -1,28 +1,19 @@
-import { useState } from 'react';
 import './index.css';
 import GlobalMessagesTab from './globalMessagesTab';
 import DirectMessagesTab from './directMessagesTab';
 import PageHeader from '../baseComponents/pageHeader';
-
-type TabType = 'global' | 'direct';
+import useMainMessagePage from '../../../hooks/useMainMessagePage';
 
 /**
  * Main messaging page with tabs for global and direct messages.
  * All messaging functionality is contained within this single page.
  */
 const MainMessagePage = () => {
-  const [activeTab, setActiveTab] = useState<TabType>('global');
-
-  const handleTabChange = (tab: TabType) => {
-    setActiveTab(tab);
-  };
+  const { activeTab, handleTabChange } = useMainMessagePage();
 
   return (
     <div className='main-message-page'>
-      <PageHeader
-        title='Messaging'
-        subtitle='Communicate with other users'
-      >
+      <PageHeader title='Messaging' subtitle='Communicate with other users'>
         <div className='tab-navigation' role='tablist' aria-label='Message types'>
           <button
             type='button'
@@ -31,8 +22,7 @@ const MainMessagePage = () => {
             role='tab'
             aria-selected={activeTab === 'global'}
             aria-controls='global-tabpanel'
-            id='global-tab'
-          >
+            id='global-tab'>
             Global Messages
           </button>
           <button
@@ -42,28 +32,25 @@ const MainMessagePage = () => {
             role='tab'
             aria-selected={activeTab === 'direct'}
             aria-controls='direct-tabpanel'
-            id='direct-tab'
-          >
+            id='direct-tab'>
             Direct Messages
           </button>
         </div>
       </PageHeader>
-      
+
       <main className='tab-content'>
         <div
           id='global-tabpanel'
           role='tabpanel'
           aria-labelledby='global-tab'
-          hidden={activeTab !== 'global'}
-        >
+          hidden={activeTab !== 'global'}>
           {activeTab === 'global' && <GlobalMessagesTab />}
         </div>
         <div
           id='direct-tabpanel'
           role='tabpanel'
           aria-labelledby='direct-tab'
-          hidden={activeTab !== 'direct'}
-        >
+          hidden={activeTab !== 'direct'}>
           {activeTab === 'direct' && <DirectMessagesTab />}
         </div>
       </main>

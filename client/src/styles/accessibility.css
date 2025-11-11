@@ -147,7 +147,7 @@
   cursor: pointer;
   transition: all var(--transition-fast);
   min-height: 44px; /* Minimum touch target size */
-  min-width: 44px;
+  min-width: 120px; /* Consistent action width */
   position: relative;
   overflow: hidden;
 }
@@ -322,6 +322,7 @@
   border-radius: var(--radius-md);
   transition: all var(--transition-fast);
   box-sizing: border-box;
+  min-height: 44px; /* Align with button height for inline layouts */
 }
 
 .form-input:focus {

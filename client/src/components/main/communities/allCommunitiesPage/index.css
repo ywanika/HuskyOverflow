@@ -37,6 +37,7 @@
   background-color: var(--color-bg-primary);
   color: var(--color-text-primary);
   transition: all var(--transition-fast);
+  min-height: 44px;
 }
 
 .community-search-input:focus {
@@ -51,7 +52,7 @@
 
 .communities-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+  grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
   gap: var(--spacing-xl);
   width: 100%;
 }

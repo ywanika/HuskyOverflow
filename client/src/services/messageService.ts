@@ -1,5 +1,6 @@
 import api from './config';
 import { DatabaseMessage, Message } from '../types/types';
+import profanityService from './profanityService';
 
 const MESSAGE_API_URL = `/api/message`;
 
@@ -21,6 +22,7 @@ const addMessage = async (messageToAdd: Omit<Message, 'type'>): Promise<Database
   const reqBody: AddMessageRequestBody = {
     messageToAdd,
   };
+  await profanityService(messageToAdd.msg);
   const res = await api.post(`${MESSAGE_API_URL}/addMessage`, reqBody);
   if (res.status !== 200) {
     throw new Error('Error while adding a new message to a chat');

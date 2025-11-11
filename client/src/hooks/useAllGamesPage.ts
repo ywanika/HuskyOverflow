@@ -23,7 +23,11 @@ const useAllGamesPage = () => {
   const fetchGames = async () => {
     try {
       const games = await getGames(undefined, undefined);
-      setAvailableGames(games);
+      // Deduplicate games by gameID to prevent redundant cards
+      const uniqueGames = games.filter(
+        (game, index, self) => index === self.findIndex(g => g.gameID === game.gameID),
+      );
+      setAvailableGames(uniqueGames);
     } catch (getGamesError) {
       setError('Error fetching games');
     }

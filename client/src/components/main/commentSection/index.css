@@ -1,27 +1,31 @@
 .comment-section {
-  margin: 0.5em;
-  padding: 0.5em;
-  border-radius: 6px;
-  background-color: #f9f9f9;
-  font-size: 0.9rem;
+  margin: var(--spacing-sm);
+  padding: var(--spacing-sm);
+  border-radius: var(--radius-md);
+  background-color: var(--color-bg-secondary);
+  border: 1px solid var(--color-bg-tertiary);
+  font-size: var(--font-size-sm);
 }
 
 .toggle-button {
   background: none;
-  color: #9137b7;
+  color: var(--color-accent);
   border: none;
-  font-size: 1rem;
+  font-size: var(--font-size-base);
   cursor: pointer;
   padding: 0;
   text-decoration: underline;
+  font-weight: 600;
+  transition: all var(--transition-fast);
 }
 
 .toggle-button:hover {
-  color: #591980;
+  color: var(--color-primary);
+  text-decoration: none;
 }
 
 .comments-container {
-  margin-top: 0.5em;
+  margin-top: var(--spacing-sm);
 }
 
 .comments-list {
@@ -31,86 +35,110 @@
 }
 
 .comment-item {
-  background-color: #fff;
-  padding: 0.5em;
-  margin-bottom: 0.25em;
-  border-radius: 4px;
-  border: 1px solid #ddd;
+  background-color: var(--color-bg-primary);
+  padding: var(--spacing-sm);
+  margin-bottom: var(--spacing-xs);
+  border-radius: var(--radius-sm);
+  border: 1px solid var(--color-bg-tertiary);
 }
 
 .comment-text {
-  font-size: 0.85rem;
-  margin-bottom: 0.25em;
+  font-size: var(--font-size-sm);
+  margin-bottom: var(--spacing-xs);
+  color: var(--color-text-primary);
 }
 
 .comment-meta {
-  font-size: 0.75rem;
-  color: #0a999e;
+  font-size: var(--font-size-xs);
+  color: var(--color-text-muted);
 }
 
 .no-comments {
   font-style: italic;
-  color: #0a999e;
-  font-size: 0.85rem;
+  color: var(--color-text-muted);
+  font-size: var(--font-size-sm);
 }
 
 .add-comment {
-  margin-top: 0.5em;
+  margin-top: var(--spacing-sm);
   display: flex;
   flex-direction: column;
-  gap: 0.5em;
+  gap: var(--spacing-sm);
 }
 
 .input-row {
   display: flex;
-  gap: 0.5em;
+  gap: var(--spacing-sm);
 }
 
 .comment-username {
   flex: 2;
-  padding: 0.25em;
-  border: 1px solid #ccc;
-  border-radius: 4px;
-  font-size: 0.85rem;
+  padding: var(--spacing-xs);
+  border: 2px solid var(--color-bg-tertiary);
+  border-radius: var(--radius-sm);
+  font-size: var(--font-size-sm);
+  background-color: var(--color-bg-secondary);
+  color: var(--color-text-primary);
+  transition: all var(--transition-fast);
 }
 
 .comment-username:focus {
-  border-color: #9137b7;
+  border-color: var(--color-focus);
   outline: none;
+  box-shadow: 0 0 0 3px var(--color-focus-ring);
+}
+
+.comment-username::placeholder {
+  color: var(--color-text-muted);
 }
 
 .comment-textarea {
   flex: 5;
-  padding: 0.25em;
-  border: 1px solid #ccc;
-  border-radius: 4px;
-  font-size: 0.85rem;
+  padding: var(--spacing-xs);
+  border: 2px solid var(--color-bg-tertiary);
+  border-radius: var(--radius-sm);
+  font-size: var(--font-size-sm);
   resize: none;
+  background-color: var(--color-bg-secondary);
+  color: var(--color-text-primary);
+  transition: all var(--transition-fast);
 }
 
 .comment-textarea:focus {
-  border-color: #9137b7;
+  border-color: var(--color-focus);
   outline: none;
+  box-shadow: 0 0 0 3px var(--color-focus-ring);
+}
+
+.comment-textarea::placeholder {
+  color: var(--color-text-muted);
 }
 
 .add-comment-button {
   flex: 1;
-  background-color: #cb9f00;
-  color: black;
-  padding: 0.25em 0.5em;
-  border: none;
-  border-radius: 4px;
+  background-color: var(--color-accent);
+  color: #1a202c;
+  padding: var(--spacing-xs) var(--spacing-sm);
+  border: 2px solid var(--color-accent);
+  border-radius: var(--radius-sm);
   cursor: pointer;
-  font-size: 0.85rem;
+  font-size: var(--font-size-sm);
+  font-weight: 600;
+  transition: all var(--transition-fast);
+  min-height: 36px;
 }
 
 .add-comment-button:hover {
-  background-color: #9e6c00;
+  background-color: var(--color-primary);
+  border-color: var(--color-primary);
+  transform: translateY(-1px);
+  box-shadow: var(--shadow-md);
 }
 
 .error {
-  color: red;
-  font-size: 0.75rem;
+  color: var(--color-error);
+  font-size: var(--font-size-xs);
   display: block;
-  margin-top: -0.5em;
+  margin-top: calc(-1 * var(--spacing-sm));
+  font-weight: 500;
 }

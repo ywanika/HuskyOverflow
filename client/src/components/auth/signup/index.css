@@ -8,7 +8,7 @@
   justify-content: center;
   align-items: center;
   min-height: 100vh;
-  background-color: #f7f7f7;
+  background-color: var(--color-bg-secondary);
   padding: 20px;
 }
 
@@ -59,7 +59,7 @@ form {
 }
 
 .input-text:focus {
-  border-color: #591980;
+  border-color: var(--color-primary);
   box-shadow: 0 0 5px rgba(0, 123, 255, 0.5);
 }
 
@@ -95,7 +95,7 @@ form {
 }
 
 .login-link:hover {
-  color: #591980;
+  color: var(--color-primary);
   text-decoration: underline;
 }
 

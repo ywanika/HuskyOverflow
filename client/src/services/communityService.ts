@@ -1,6 +1,7 @@
 import { ObjectId } from 'mongodb';
 import api from './config';
 import { Community, DatabaseCommunity } from '../types/types';
+import profanityService from './profanityService';
 
 const COMMUNITIES_API_URL = `/api/community`;
 
@@ -48,6 +49,9 @@ const getCommunities = async (): Promise<DatabaseCommunity[]> => {
  * @returns The created community object.
  */
 const createCommunity = async (community: Community): Promise<DatabaseCommunity> => {
+  await profanityService(community.name);
+  await profanityService(community.description);
+
   const res = await api.post(`${COMMUNITIES_API_URL}/create`, community);
 
   if (res.status !== 200) {

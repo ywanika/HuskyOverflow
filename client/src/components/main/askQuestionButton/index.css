@@ -14,8 +14,10 @@
 }
 
 .ask-question-btn:active {
-  transform: translateY(-1px);
-  box-shadow: var(--shadow-md);
+  background-color: var(--color-primary);
+  border-color: var(--color-primary);
+  transform: translateY(0);
+  box-shadow: var(--shadow-sm);
 }
 
 .btn-icon {

@@ -13,23 +13,14 @@ const TagPage = () => {
 
   return (
     <div className='tag-page'>
-      <PageHeader
-        title='Tags'
-        subtitle='Browse all available tags'
-        count={tlist.length}
-        countLabel='tags'
-      >
+      <PageHeader title='Tags'>
         <AskQuestionButton />
       </PageHeader>
-      
+
       <main className='tag-page-content'>
         <div className='tag-grid'>
           {tlist.map(tag => (
-            <TagCard 
-              key={tag.name} 
-              tag={tag} 
-              onClick={clickTag} 
-            />
+            <TagCard key={tag.name} tag={tag} onClick={clickTag} />
           ))}
         </div>
       </main>

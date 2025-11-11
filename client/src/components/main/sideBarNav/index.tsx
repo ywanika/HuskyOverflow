@@ -24,7 +24,7 @@ const SideBarNav = () => {
   return (
     <nav id='sideBarNav' className='sideBarNav' role='navigation' aria-label='Main navigation'>
       <ul className='nav-list'>
-        {navigationItems.map((item) => {
+        {navigationItems.map(item => {
           const isActive = location.pathname === item.to;
           return (
             <li key={item.id}>

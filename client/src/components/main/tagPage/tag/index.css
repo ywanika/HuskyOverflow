@@ -1,14 +1,35 @@
 .tagNode {
   place-self: center;
-  border: #000000 1px dashed;
-  padding: 5%;
-  width: 30%;
+  border: 1px dashed var(--color-bg-tertiary);
+  border-radius: var(--radius-lg);
+  padding: var(--spacing-lg);
+  width: 100%;
   display: flex;
   flex-direction: column;
   justify-items: center;
   align-items: center;
+  background-color: var(--color-bg-primary);
+  color: var(--color-text-primary);
+  transition: all var(--transition-fast);
+  cursor: pointer;
+  min-height: 120px;
+}
+
+.tagNode:hover {
+  border-color: var(--color-primary);
+  background-color: var(--color-bg-secondary);
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-md);
 }
 
 .tagName {
-  color: #591980;
+  color: var(--color-primary);
+  font-size: var(--font-size-lg);
+  font-weight: 600;
+  text-align: center;
+  margin-bottom: var(--spacing-sm);
+}
+
+.tagNode:hover .tagName {
+  color: var(--color-secondary);
 }

@@ -2,17 +2,30 @@
 .answer {
   display: flex;
   flex-direction: row;
-  border-bottom: #000000 1px dashed;
+  border-bottom: 1px dashed var(--color-bg-tertiary);
+  padding: var(--spacing-md) 0;
+  background-color: var(--color-bg-primary);
+  color: var(--color-text-primary);
 }
 
 .answerText {
   width: 75%;
+  padding: 0 var(--spacing-sm);
+  font-size: var(--font-size-base);
+  line-height: 1.6;
+  color: var(--color-text-primary);
 }
 
 .answerAuthor {
   margin-left: 5%;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  font-size: var(--font-size-sm);
 }
 
 .answer_author {
-  color: green;
+  color: var(--color-success);
+  font-weight: 600;
+  margin-bottom: var(--spacing-xs);
 }

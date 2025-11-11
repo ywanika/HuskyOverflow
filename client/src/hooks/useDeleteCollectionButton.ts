@@ -8,15 +8,27 @@ import useUserContext from './useUserContext';
  * @returns An object containing the following:
  * - handleDeleteCollection - A function to handle the button click.
  */
-const useDeleteCollectionButton = () => {
+type UseDeleteOptions = {
+  onDeleted?: (collectionId: string) => void;
+  navigateAfterDelete?: string | null;
+};
+
+const useDeleteCollectionButton = (options?: UseDeleteOptions) => {
   const { user } = useUserContext();
   const navigate = useNavigate();
   const { username } = useParams();
 
   const handleDeleteCollection = async (collectionId: string) => {
-    // Logic to delete the collection
     await deleteCollection(collectionId, user.username);
-    navigate(`/collections/${username}`);
+
+    if (options?.onDeleted) {
+      options.onDeleted(collectionId);
+    }
+
+    const targetPath = options?.navigateAfterDelete ?? `/collections/${username}`;
+    if (targetPath) {
+      navigate(targetPath);
+    }
   };
 
   return {

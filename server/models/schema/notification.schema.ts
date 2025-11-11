@@ -20,7 +20,14 @@ const notificationSchema: Schema = new Schema(
     },
     type: {
       type: String,
-      enum: ['deletion', 'appeal_result', 'flag', 'suspension', 'role_change', 'system_announcement'],
+      enum: [
+        'deletion',
+        'appeal_result',
+        'flag',
+        'suspension',
+        'role_change',
+        'system_announcement',
+      ],
       required: true,
     },
     message: {

@@ -26,6 +26,7 @@ const useProfileSettings = () => {
   const [newBio, setNewBio] = useState('');
   const [successMessage, setSuccessMessage] = useState<string | null>(null);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
+  const [bioErrorMessage, setBioErrorMessage] = useState<string | null>(null);
 
   // For delete-user confirmation modal
   const [showConfirmation, setShowConfirmation] = useState(false);
@@ -113,7 +114,8 @@ const useProfileSettings = () => {
       setSuccessMessage('Biography updated!');
       setErrorMessage(null);
     } catch (error) {
-      setErrorMessage('Failed to update biography.');
+      setErrorMessage(`Failed to update biography. ${(error as Error).message}`);
+      setBioErrorMessage((error as Error).message);
       setSuccessMessage(null);
     }
   };
@@ -157,6 +159,7 @@ const useProfileSettings = () => {
     setNewBio,
     successMessage,
     errorMessage,
+    bioErrorMessage,
     showConfirmation,
     setShowConfirmation,
     pendingAction,
