@@ -1,3 +1,4 @@
+import { useState } from 'react';
 import { getMetaData } from '../../../tool';
 import AnswerView from './answer';
 import AnswerHeader from './header';
@@ -7,16 +8,68 @@ import QuestionBody from './questionBody';
 import VoteComponent from '../voteComponent';
 import CommentSection from '../commentSection';
 import useAnswerPage from '../../../hooks/useAnswerPage';
+import DeleteContentModal from '../../moderation/DeleteContentModal';
 
 /**
  * AnswerPage component that displays the full content of a question along with its answers.
  * It also includes the functionality to vote, ask a new question, and post a new answer.
  */
 const AnswerPage = () => {
-  const { questionID, question, handleNewComment, handleNewAnswer } = useAnswerPage();
+  const {
+    questionID,
+    question,
+    handleNewComment,
+    handleNewAnswer,
+    handleDeleteQuestion,
+    handleDeleteAnswer,
+    handleDeleteComment,
+    handleFlagQuestion,
+    handleFlagAnswer,
+    handleFlagComment,
+    user,
+  } = useAnswerPage();
+
+  const [deleteModal, setDeleteModal] = useState<{
+    isOpen: boolean;
+    type: 'question' | 'answer' | 'comment';
+    contentId: string;
+    contentTitle?: string;
+  }>({
+    isOpen: false,
+    type: 'question',
+    contentId: '',
+  });
+
+  const isModerator = user.role === 'moderator' || user.role === 'admin';
 
   if (!question) {
     return null;
+  }
+
+  const handleDeleteClick = (type: 'question' | 'answer' | 'comment', contentId: string, contentTitle?: string) => {
+    setDeleteModal({ isOpen: true, type, contentId, contentTitle });
+  };
+
+  const handleDeleteConfirm = async (deleteReason: string) => {
+    if (deleteModal.type === 'question') {
+      await handleDeleteQuestion(deleteReason);
+    } else if (deleteModal.type === 'answer') {
+      await handleDeleteAnswer(deleteModal.contentId, deleteReason);
+    } else if (deleteModal.type === 'comment') {
+      await handleDeleteComment(deleteModal.contentId, deleteReason);
+    }
+  };
+
+  // Don't show deleted content
+  if (question.deleted?.isDeleted) {
+    return (
+      <div className="right_padding">
+        <p>This question has been deleted by a moderator.</p>
+        {question.deleted.deleteReason && (
+          <p>Reason: {question.deleted.deleteReason}</p>
+        )}
+      </div>
+    );
   }
 
   return (
@@ -28,23 +81,48 @@ const AnswerPage = () => {
         text={question.text}
         askby={question.askedBy}
         meta={getMetaData(new Date(question.askDateTime))}
+        questionId={questionID}
+        isModerator={isModerator}
+        onDeleteClick={() => handleDeleteClick('question', questionID, question.title)}
+        onFlagClick={handleFlagQuestion}
+        isFlagged={question.flagged?.flaggedBy?.includes(user.username) || false}
       />
       <CommentSection
-        comments={question.comments}
+        comments={question.comments.filter(c => !c.deleted?.isDeleted)}
         handleAddComment={(comment: Comment) => handleNewComment(comment, 'question', questionID)}
+        isModerator={isModerator}
+        onDeleteComment={(commentId: string) => handleDeleteClick('comment', commentId)}
+        onFlagComment={handleFlagComment}
+        getIsFlagged={(commentId: string) => {
+          const comment = question.comments.find(c => String(c._id) === commentId);
+          return comment?.flagged?.flaggedBy?.includes(user.username) || false;
+        }}
       />
-      {question.answers.map(a => (
-        <AnswerView
-          key={String(a._id)}
-          text={a.text}
-          ansBy={a.ansBy}
-          meta={getMetaData(new Date(a.ansDateTime))}
-          comments={a.comments}
-          handleAddComment={(comment: Comment) =>
-            handleNewComment(comment, 'answer', String(a._id))
-          }
-        />
-      ))}
+      {question.answers
+        .filter(a => !a.deleted?.isDeleted)
+        .map(a => (
+          <AnswerView
+            key={String(a._id)}
+            text={a.text}
+            ansBy={a.ansBy}
+            meta={getMetaData(new Date(a.ansDateTime))}
+            comments={a.comments.filter(c => !c.deleted?.isDeleted)}
+            handleAddComment={(comment: Comment) =>
+              handleNewComment(comment, 'answer', String(a._id))
+            }
+            answerId={String(a._id)}
+            isModerator={isModerator}
+            onDeleteClick={() => handleDeleteClick('answer', String(a._id))}
+            onDeleteComment={(commentId: string) => handleDeleteClick('comment', commentId)}
+            onFlagClick={() => handleFlagAnswer(String(a._id))}
+            isFlagged={a.flagged?.flaggedBy?.includes(user.username) || false}
+            onFlagComment={handleFlagComment}
+            getIsCommentFlagged={(commentId: string) => {
+              const comment = a.comments.find(c => String(c._id) === commentId);
+              return comment?.flagged?.flaggedBy?.includes(user.username) || false;
+            }}
+          />
+        ))}
       <button
         className='bluebtn ansButton'
         onClick={() => {
@@ -52,6 +130,14 @@ const AnswerPage = () => {
         }}>
         Answer Question
       </button>
+
+      <DeleteContentModal
+        isOpen={deleteModal.isOpen}
+        onClose={() => setDeleteModal({ ...deleteModal, isOpen: false })}
+        onConfirm={handleDeleteConfirm}
+        contentType={deleteModal.type}
+        contentTitle={deleteModal.contentTitle}
+      />
     </>
   );
 };

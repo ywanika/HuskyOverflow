@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import Markdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
+import { Button } from '@chakra-ui/react';
 import { getMetaData } from '../../../tool';
 import { Comment, DatabaseComment } from '../../../types/types';
 import './index.css';
@@ -11,10 +12,18 @@ import useUserContext from '../../../hooks/useUserContext';
  *
  * - comments - list of the comment components
  * - handleAddComment - a function that handles adding a new comment, taking a Comment object as an argument
+ * - isModerator - Whether the current user is a moderator or admin
+ * - onDeleteComment - Callback function when delete button is clicked for a comment
+ * - onFlagComment - Callback function when flag button is clicked for a comment
+ * - getIsFlagged - Function to check if a comment is already flagged by the current user
  */
 interface CommentSectionProps {
   comments: DatabaseComment[];
   handleAddComment: (comment: Comment) => void;
+  isModerator?: boolean;
+  onDeleteComment?: (commentId: string) => void;
+  onFlagComment?: (commentId: string) => void;
+  getIsFlagged?: (commentId: string) => boolean;
 }
 
 /**
@@ -22,8 +31,19 @@ interface CommentSectionProps {
  *
  * @param comments: an array of Comment objects
  * @param handleAddComment: function to handle the addition of a new comment
+ * @param isModerator: whether the current user is a moderator
+ * @param onDeleteComment: callback when delete button is clicked for a comment
+ * @param onFlagComment: callback when flag button is clicked for a comment
+ * @param getIsFlagged: function to check if a comment is already flagged
  */
-const CommentSection = ({ comments, handleAddComment }: CommentSectionProps) => {
+const CommentSection = ({
+  comments,
+  handleAddComment,
+  isModerator,
+  onDeleteComment,
+  onFlagComment,
+  getIsFlagged,
+}: CommentSectionProps) => {
   const { user } = useUserContext();
   const [text, setText] = useState<string>('');
   const [textErr, setTextErr] = useState<string>('');
@@ -70,9 +90,44 @@ const CommentSection = ({ comments, handleAddComment }: CommentSectionProps) => 
                   <div className='comment-text'>
                     <Markdown remarkPlugins={[remarkGfm]}>{comment.text}</Markdown>
                   </div>
-                  <small className='comment-meta'>
-                    {comment.commentBy}, {getMetaData(new Date(comment.commentDateTime))}
-                  </small>
+                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', gap: '8px' }}>
+                    <small className='comment-meta'>
+                      {comment.commentBy}, {getMetaData(new Date(comment.commentDateTime))}
+                    </small>
+                    <div style={{ display: 'flex', gap: '4px' }}>
+                      {onFlagComment && (
+                        <Button
+                          size="xs"
+                          colorScheme="orange"
+                          variant="outline"
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            onFlagComment(String(comment._id));
+                          }}
+                          disabled={getIsFlagged ? getIsFlagged(String(comment._id)) : false}
+                          aria-label={
+                            getIsFlagged && getIsFlagged(String(comment._id))
+                              ? 'Already flagged'
+                              : `Flag comment by ${comment.commentBy}`
+                          }>
+                          {getIsFlagged && getIsFlagged(String(comment._id)) ? 'Flagged' : 'Flag'}
+                        </Button>
+                      )}
+                      {isModerator && onDeleteComment && (
+                        <Button
+                          size="xs"
+                          colorScheme="red"
+                          variant="outline"
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            onDeleteComment(String(comment._id));
+                          }}
+                          aria-label={`Delete comment by ${comment.commentBy}`}>
+                          Delete
+                        </Button>
+                      )}
+                    </div>
+                  </div>
                 </li>
               ))
             ) : (
