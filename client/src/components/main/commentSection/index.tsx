@@ -32,7 +32,7 @@ const CommentSection = ({ comments, handleAddComment }: CommentSectionProps) => 
   /**
    * Function to handle the addition of a new comment.
    */
-  const handleAddCommentClick = () => {
+  const handleAddCommentClick = async () => {
     if (text.trim() === '' || user.username.trim() === '') {
       setTextErr(text.trim() === '' ? 'Comment text cannot be empty' : '');
       return;
@@ -44,9 +44,15 @@ const CommentSection = ({ comments, handleAddComment }: CommentSectionProps) => 
       commentDateTime: new Date(),
     };
 
-    handleAddComment(newComment);
-    setText('');
-    setTextErr('');
+    try {
+      await handleAddComment(newComment);
+      // Only clear text on successful submission
+      setText('');
+      setTextErr('');
+    } catch (error) {
+      // Don't clear text on error so user can edit and retry
+      setTextErr((error as Error).message);
+    }
   };
 
   return (

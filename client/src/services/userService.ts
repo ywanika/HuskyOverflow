@@ -1,6 +1,7 @@
 import axios from 'axios';
 import { UserCredentials, SafeDatabaseUser } from '../types/types';
 import api from './config';
+import profanityService from './profanityService';
 
 const USER_API_URL = `/api/user`;
 
@@ -39,13 +40,17 @@ const getUserByUsername = async (username: string): Promise<SafeDatabaseUser> =>
  */
 const createUser = async (user: UserCredentials): Promise<SafeDatabaseUser> => {
   try {
+    // Check profanity in username
+    await profanityService(user.username);
+
     const res = await api.post(`${USER_API_URL}/signup`, user);
     return res.data;
   } catch (error) {
+    // Handle other errors
     if (axios.isAxiosError(error) && error.response) {
       throw new Error(`Error while signing up: ${error.response.data}`);
     } else {
-      throw new Error('Error while signing up');
+      throw new Error(`Error while signing up: ${(error as Error).message}`);
     }
   }
 };
@@ -113,6 +118,7 @@ const updateBiography = async (
   username: string,
   newBiography: string,
 ): Promise<SafeDatabaseUser> => {
+  await profanityService(newBiography);
   const res = await api.patch(`${USER_API_URL}/updateBiography`, {
     username,
     biography: newBiography,

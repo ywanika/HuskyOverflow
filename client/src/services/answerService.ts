@@ -1,5 +1,6 @@
 import { Answer, PopulatedDatabaseAnswer } from '../types/types';
 import api from './config';
+import profanityService from './profanityService';
 
 const ANSWER_API_URL = `/api/answer`;
 
@@ -12,6 +13,8 @@ const ANSWER_API_URL = `/api/answer`;
  */
 const addAnswer = async (qid: string, ans: Answer): Promise<PopulatedDatabaseAnswer> => {
   const data = { qid, ans };
+
+  await profanityService(ans.text);
 
   const res = await api.post(`${ANSWER_API_URL}/addAnswer`, data);
   if (res.status !== 200) {

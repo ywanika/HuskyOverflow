@@ -108,11 +108,25 @@ const useNewQuestion = () => {
       comments: [],
       community: community ? community._id : null,
     };
-
-    const res = await addQuestion(question);
-
-    if (res && res._id) {
-      navigate('/home');
+    try {
+      const res = await addQuestion(question);
+      if (res && res._id) {
+        navigate('/home');
+      }
+    } catch (error) {
+      const errorMessage = (error as Error).message;
+      // Check for specific profanity errors
+      if (errorMessage.startsWith('TITLE_PROFANITY:')) {
+        setTitleErr(errorMessage.replace('TITLE_PROFANITY: ', ''));
+      } else if (errorMessage.startsWith('TEXT_PROFANITY:')) {
+        setTextErr(errorMessage.replace('TEXT_PROFANITY: ', ''));
+      } else if (errorMessage.startsWith('TAG_PROFANITY:')) {
+        setTagErr(errorMessage.replace('TAG_PROFANITY: ', ''));
+      } else {
+        // Handle other errors
+        // eslint-disable-next-line no-console
+        console.error(error);
+      }
     }
   };
 

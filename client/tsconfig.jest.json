@@ -1,0 +1,12 @@
+{
+  "extends": "./tsconfig.app.json",
+  "compilerOptions": {
+    "module": "ESNext",
+    "moduleResolution": "node",
+    "esModuleInterop": true,
+    "noEmit": true,
+    "types": ["jest", "node"]
+  },
+  "include": ["src", "jest.setup.ts"]
+}
+

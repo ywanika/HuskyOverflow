@@ -1,6 +1,7 @@
 import { ObjectId } from 'mongodb';
 import { Message, PopulatedDatabaseChat } from '../types/types';
 import api from './config';
+import profanityService from './profanityService';
 
 const CHAT_API_URL = `/api/chat`;
 
@@ -50,6 +51,8 @@ export const sendMessage = async (
   message: Omit<Message, 'type'>,
   chatID: ObjectId,
 ): Promise<PopulatedDatabaseChat> => {
+  await profanityService(message.msg);
+
   const res = await api.post(`${CHAT_API_URL}/${chatID}/addMessage`, message);
 
   if (res.status !== 200) {

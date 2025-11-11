@@ -1,5 +1,6 @@
 import api from './config';
 import { Comment, DatabaseComment } from '../types/types';
+import profanityService from './profanityService';
 
 const COMMENT_API_URL = `/api/comment`;
 
@@ -33,6 +34,7 @@ const addComment = async (
     type,
     comment,
   };
+  await profanityService(comment.text);
   const res = await api.post(`${COMMENT_API_URL}/addComment`, reqBody);
   if (res.status !== 200) {
     throw new Error('Error while creating a new comment for the question');

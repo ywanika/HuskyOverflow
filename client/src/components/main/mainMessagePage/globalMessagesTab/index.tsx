@@ -50,9 +50,13 @@ const GlobalMessagesTab = () => {
     };
 
     // Persist message and optimistically update UI with returned message
-    const saved = await addMessage(messageToAdd);
-    setMessages(prev => [...prev, saved]);
-    setNewMessage('');
+    try {
+      const saved = await addMessage(messageToAdd);
+      setMessages(prev => [...prev, saved]);
+      setNewMessage('');
+    } catch (err) {
+      setError((err as Error).message);
+    }
   };
 
   return (

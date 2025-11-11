@@ -78,6 +78,7 @@ const DirectMessagesTab = () => {
                 <button className='custom-button' onClick={handleSendMessage}>
                   Send
                 </button>
+                {error && <span className='error-message'>{error}</span>}
               </div>
             </>
           ) : (

@@ -14,6 +14,7 @@ const ProfileSettings: React.FC = () => {
     confirmNewPassword,
     successMessage,
     errorMessage,
+    bioErrorMessage,
     showConfirmation,
     pendingAction,
     canEditProfile,
@@ -137,6 +138,11 @@ const ProfileSettings: React.FC = () => {
                         onClick={() => setEditBioMode(false)}>
                         Cancel
                       </button>
+                      {bioErrorMessage && (
+                        <div className='form-error' role='alert' aria-live='polite'>
+                          {bioErrorMessage}
+                        </div>
+                      )}
                     </div>
                   </div>
                 )}
