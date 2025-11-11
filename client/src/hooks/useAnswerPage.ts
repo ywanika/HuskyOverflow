@@ -55,16 +55,11 @@ const useAnswerPage = () => {
     targetType: 'question' | 'answer',
     targetId: string | undefined,
   ) => {
-    try {
-      if (targetId === undefined) {
-        throw new Error('No target ID provided.');
-      }
-
-      await addComment(targetId, targetType, comment);
-    } catch (error) {
-      // eslint-disable-next-line no-console
-      console.error('Error adding comment:', error);
+    if (targetId === undefined) {
+      throw new Error('No target ID provided.');
     }
+    // Let the error propagate to the caller (CommentSection)
+    await addComment(targetId, targetType, comment);
   };
 
   useEffect(() => {

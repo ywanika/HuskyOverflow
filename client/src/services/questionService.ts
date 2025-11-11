@@ -1,6 +1,7 @@
 import { ObjectId } from 'mongodb';
 import { PopulatedDatabaseQuestion, Question, VoteInterface } from '../types/types';
 import api from './config';
+import profanityService from './profanityService';
 
 const QUESTION_API_URL = `/api/question`;
 
@@ -47,6 +48,28 @@ const getQuestionById = async (
  * @throws Error if there is an issue creating the new question.
  */
 const addQuestion = async (q: Question): Promise<PopulatedDatabaseQuestion> => {
+  // Check profanity in title
+  try {
+    await profanityService(q.title);
+  } catch (error) {
+    throw new Error('TITLE_PROFANITY: Profanity detected in title. Please revise.');
+  }
+
+  // Check profanity in text
+  try {
+    await profanityService(q.text);
+  } catch (error) {
+    throw new Error('TEXT_PROFANITY: Profanity detected in question text. Please revise.');
+  }
+
+  // Check profanity in tags
+  const tagNames = q.tags.map(tag => tag.name).join(' ');
+  try {
+    await profanityService(tagNames);
+  } catch (error) {
+    throw new Error('TAG_PROFANITY: Profanity detected in tags. Please revise.');
+  }
+
   const res = await api.post(`${QUESTION_API_URL}/addQuestion`, q);
 
   if (res.status !== 200) {

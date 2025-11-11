@@ -56,10 +56,12 @@ const useMessagingPage = () => {
       msgFrom: user.username,
       msgDateTime: new Date(),
     };
-
-    await addMessage(newMsg);
-
-    setNewMessage('');
+    try {
+      await addMessage(newMsg);
+      setNewMessage('');
+    } catch (err) {
+      setError((err as Error).message);
+    }
   };
 
   return { messages, newMessage, setNewMessage, handleSendMessage, error };
