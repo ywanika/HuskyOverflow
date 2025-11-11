@@ -14,7 +14,10 @@ const CollectionCard = ({ collection, isOwner, onView, onDeleted }: CollectionCa
   const handleView = () => onView(collection._id.toString());
 
   return (
-    <article className='collection-card' role='article' aria-labelledby={`collection-title-${collection._id}`}>
+    <article
+      className='collection-card'
+      role='article'
+      aria-labelledby={`collection-title-${collection._id}`}>
       <header className='collection-card-header'>
         <h2 id={`collection-title-${collection._id}`} className='collection-name'>
           {collection.name}
@@ -38,8 +41,7 @@ const CollectionCard = ({ collection, isOwner, onView, onDeleted }: CollectionCa
           type='button'
           className='btn btn-primary'
           onClick={handleView}
-          aria-label={`View collection ${collection.name}`}
-        >
+          aria-label={`View collection ${collection.name}`}>
           View Collection
         </button>
         {isOwner && (
@@ -51,5 +53,3 @@ const CollectionCard = ({ collection, isOwner, onView, onDeleted }: CollectionCa
 };
 
 export default CollectionCard;
-
-

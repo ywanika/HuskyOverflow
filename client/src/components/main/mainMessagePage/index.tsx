@@ -13,10 +13,7 @@ const MainMessagePage = () => {
 
   return (
     <div className='main-message-page'>
-      <PageHeader
-        title='Messaging'
-        subtitle='Communicate with other users'
-      >
+      <PageHeader title='Messaging' subtitle='Communicate with other users'>
         <div className='tab-navigation' role='tablist' aria-label='Message types'>
           <button
             type='button'
@@ -25,8 +22,7 @@ const MainMessagePage = () => {
             role='tab'
             aria-selected={activeTab === 'global'}
             aria-controls='global-tabpanel'
-            id='global-tab'
-          >
+            id='global-tab'>
             Global Messages
           </button>
           <button
@@ -36,28 +32,25 @@ const MainMessagePage = () => {
             role='tab'
             aria-selected={activeTab === 'direct'}
             aria-controls='direct-tabpanel'
-            id='direct-tab'
-          >
+            id='direct-tab'>
             Direct Messages
           </button>
         </div>
       </PageHeader>
-      
+
       <main className='tab-content'>
         <div
           id='global-tabpanel'
           role='tabpanel'
           aria-labelledby='global-tab'
-          hidden={activeTab !== 'global'}
-        >
+          hidden={activeTab !== 'global'}>
           {activeTab === 'global' && <GlobalMessagesTab />}
         </div>
         <div
           id='direct-tabpanel'
           role='tabpanel'
           aria-labelledby='direct-tab'
-          hidden={activeTab !== 'direct'}
-        >
+          hidden={activeTab !== 'direct'}>
           {activeTab === 'direct' && <DirectMessagesTab />}
         </div>
       </main>

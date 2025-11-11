@@ -4,8 +4,17 @@ import useDeleteCollectionButton from '../../../../hooks/useDeleteCollectionButt
 /**
  * This component renders a button that allows the user to delete a specific collection.
  */
-const DeleteCollectionButton = ({ collectionId, onDeleted }: { collectionId: string; onDeleted?: (id: string) => void }) => {
-  const { handleDeleteCollection } = useDeleteCollectionButton({ onDeleted, navigateAfterDelete: null });
+const DeleteCollectionButton = ({
+  collectionId,
+  onDeleted,
+}: {
+  collectionId: string;
+  onDeleted?: (id: string) => void;
+}) => {
+  const { handleDeleteCollection } = useDeleteCollectionButton({
+    onDeleted,
+    navigateAfterDelete: null,
+  });
 
   return (
     <div className='delete-collection-wrapper'>

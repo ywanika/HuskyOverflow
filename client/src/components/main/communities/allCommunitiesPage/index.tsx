@@ -10,15 +10,13 @@ import PageHeader from '../../baseComponents/pageHeader';
 const AllCommunitiesPage = () => {
   const { communities, search, handleInputChange, error, setError } = useAllCommunitiesPage();
 
-  const filteredCommunities = communities.filter(community => 
-    community.name.toLowerCase().includes(search.toLowerCase())
+  const filteredCommunities = communities.filter(community =>
+    community.name.toLowerCase().includes(search.toLowerCase()),
   );
 
   return (
     <div className='community-page'>
-      <PageHeader
-        title='Communities'
-      >
+      <PageHeader title='Communities'>
         <div className='community-header-actions'>
           <div className='community-search-container'>
             <label htmlFor='community-search' className='sr-only'>

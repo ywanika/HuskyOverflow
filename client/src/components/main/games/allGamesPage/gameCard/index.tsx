@@ -21,25 +21,24 @@ const GameCard = ({
   };
 
   return (
-    <article 
-      className='game-card' 
-      role='article' 
+    <article
+      className='game-card'
+      role='article'
       aria-labelledby={`game-title-${game.gameID}`}
       tabIndex={0}
       onClick={handleClick}
-      onKeyDown={(e) => {
+      onKeyDown={e => {
         if (e.key === 'Enter' || e.key === ' ') {
           e.preventDefault();
           handleClick();
         }
-      }}
-    >
+      }}>
       <header className='game-card-header'>
         <h3 id={`game-title-${game.gameID}`} className='game-card-title'>
           {game.gameType} Game
         </h3>
       </header>
-      
+
       <div className='game-card-body'>
         <dl className='game-card-meta'>
           <dt className='meta-label'>Status:</dt>
@@ -47,7 +46,7 @@ const GameCard = ({
           <dt className='meta-label'>Players:</dt>
           <dd className='meta-value'>{game.players.length}</dd>
         </dl>
-        
+
         {game.players.length > 0 && (
           <div className='game-players'>
             <h4 className='players-title'>Current Players:</h4>
@@ -61,13 +60,13 @@ const GameCard = ({
           </div>
         )}
       </div>
-      
+
       <footer className='game-card-actions'>
         {game.state.status === 'WAITING_TO_START' ? (
           <button
             type='button'
             className='btn btn-primary'
-            onClick={(e) => {
+            onClick={e => {
               e.stopPropagation();
               handleJoin(game.gameID);
             }}
@@ -75,9 +74,7 @@ const GameCard = ({
             Join Game
           </button>
         ) : (
-          <div className='game-status-disabled'>
-            Game in Progress
-          </div>
+          <div className='game-status-disabled'>Game in Progress</div>
         )}
       </footer>
     </article>

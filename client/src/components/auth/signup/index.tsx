@@ -25,7 +25,7 @@ const Signup = () => {
           <h1 className='login-title'>Join FakeStackOverflow!</h1>
           <h2 className='login-subtitle'>Create your account to get started.</h2>
         </header>
-        
+
         <form onSubmit={handleSubmit} className='login-form' aria-labelledby='signup-heading'>
           <fieldset className='form-fieldset'>
             <legend id='signup-heading' className='sr-only'>
@@ -112,7 +112,10 @@ const Signup = () => {
             </div>
 
             <div className='form-actions'>
-              <button type='submit' className='btn btn-primary btn-lg' aria-describedby='submit-help'>
+              <button
+                type='submit'
+                className='btn btn-primary btn-lg'
+                aria-describedby='submit-help'>
                 Create Account
               </button>
               <div id='submit-help' className='form-help'>
@@ -121,13 +124,13 @@ const Signup = () => {
             </div>
           </fieldset>
         </form>
-        
+
         {err && (
           <div className='form-error' role='alert' aria-live='polite'>
             {err}
           </div>
         )}
-        
+
         <div className='login-footer'>
           <Link to='/' className='signup-link'>
             Already have an account? Login here.

@@ -49,7 +49,9 @@ const VoteComponent = ({ question }: VoteComponentProps) => {
         onClick={() => handleVote('upvote')}
         aria-label={`Upvote this question. Current vote count: ${count}`}
         aria-pressed={voted === 1}>
-        <span className='vote-icon' aria-hidden='true'>↑</span>
+        <span className='vote-icon' aria-hidden='true'>
+          ↑
+        </span>
         <span className='sr-only'>Upvote</span>
       </button>
       <div className='vote-count' aria-live='polite' aria-label={`Total votes: ${count}`}>
@@ -61,7 +63,9 @@ const VoteComponent = ({ question }: VoteComponentProps) => {
         onClick={() => handleVote('downvote')}
         aria-label={`Downvote this question. Current vote count: ${count}`}
         aria-pressed={voted === -1}>
-        <span className='vote-icon' aria-hidden='true'>↓</span>
+        <span className='vote-icon' aria-hidden='true'>
+          ↓
+        </span>
         <span className='sr-only'>Downvote</span>
       </button>
     </div>

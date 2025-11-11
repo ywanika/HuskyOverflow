@@ -41,11 +41,15 @@ const Breadcrumbs = () => {
   const userSpecificPages = ['collections', 'user'];
   // Hide breadcrumbs for new form pages to avoid showing "New / Question", "New / Collection", "New / Community"
   const newFormPages = ['question', 'collection', 'community'];
-  
-  if (pathSegments.length === 0 || 
-      (pathSegments.length === 1 && mainPages.includes(pathSegments[0])) ||
-      (pathSegments.length === 2 && userSpecificPages.includes(pathSegments[0])) ||
-      (pathSegments.length === 2 && pathSegments[0] === 'new' && newFormPages.includes(pathSegments[1]))) {
+
+  if (
+    pathSegments.length === 0 ||
+    (pathSegments.length === 1 && mainPages.includes(pathSegments[0])) ||
+    (pathSegments.length === 2 && userSpecificPages.includes(pathSegments[0])) ||
+    (pathSegments.length === 2 &&
+      pathSegments[0] === 'new' &&
+      newFormPages.includes(pathSegments[1]))
+  ) {
     return null;
   }
 

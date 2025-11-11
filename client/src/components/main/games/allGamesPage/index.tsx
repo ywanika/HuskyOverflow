@@ -23,24 +23,20 @@ const AllGamesPage = () => {
 
   return (
     <div className='games-page'>
-      <PageHeader
-        title='Games'
-      >
+      <PageHeader title='Games'>
         <div className='games-header-actions'>
-          <button 
+          <button
             type='button'
             className='btn btn-secondary'
             onClick={fetchGames}
-            aria-label='Refresh games list'
-          >
+            aria-label='Refresh games list'>
             Refresh List
           </button>
-          <button 
+          <button
             type='button'
             className='btn btn-primary'
             onClick={handleToggleModal}
-            aria-label='Create a new game'
-          >
+            aria-label='Create a new game'>
             Create Game
           </button>
         </div>
@@ -50,11 +46,7 @@ const AllGamesPage = () => {
         <div className='games-list'>
           {availableGames.length > 0 ? (
             availableGames.map(game => (
-              <GameCard
-                key={game.gameID}
-                game={game}
-                handleJoin={handleJoin}
-              />
+              <GameCard key={game.gameID} game={game} handleJoin={handleJoin} />
             ))
           ) : (
             <div className='no-games-message'>
@@ -65,23 +57,22 @@ const AllGamesPage = () => {
       </main>
 
       {isModalOpen && (
-        <div className='game-modal-overlay' role='dialog' aria-labelledby='modal-title' aria-modal='true'>
+        <div
+          className='game-modal-overlay'
+          role='dialog'
+          aria-labelledby='modal-title'
+          aria-modal='true'>
           <div className='game-modal'>
             <div className='modal-content'>
               <h2 id='modal-title'>Select Game Type</h2>
               <div className='modal-actions'>
-                <button 
+                <button
                   type='button'
                   className='btn btn-primary'
-                  onClick={() => handleSelectGameType('Nim')}
-                >
+                  onClick={() => handleSelectGameType('Nim')}>
                   Create Nim Game
                 </button>
-                <button 
-                  type='button'
-                  className='btn btn-secondary'
-                  onClick={handleToggleModal}
-                >
+                <button type='button' className='btn btn-secondary' onClick={handleToggleModal}>
                   Cancel
                 </button>
               </div>

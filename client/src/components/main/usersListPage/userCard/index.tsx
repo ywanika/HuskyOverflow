@@ -23,37 +23,36 @@ const UserCardView = (props: UserProps) => {
   const { user, handleUserCardViewClickHandler } = props;
 
   return (
-    <article 
-      className='user-card' 
-      role='article' 
+    <article
+      className='user-card'
+      role='article'
       aria-labelledby={`user-title-${user.username}`}
       tabIndex={0}
       onClick={() => handleUserCardViewClickHandler(user)}
-      onKeyDown={(e) => {
+      onKeyDown={e => {
         if (e.key === 'Enter' || e.key === ' ') {
           e.preventDefault();
           handleUserCardViewClickHandler(user);
         }
-      }}
-    >
+      }}>
       <header className='user-card-header'>
         <h3 id={`user-title-${user.username}`} className='user-card-title'>
           {user.username}
         </h3>
       </header>
-      
+
       <div className='user-card-body'>
         <dl className='user-card-meta'>
           <dt className='meta-label'>Joined:</dt>
           <dd className='meta-value'>{new Date(user.dateJoined).toLocaleDateString()}</dd>
         </dl>
       </div>
-      
+
       <footer className='user-card-actions'>
         <button
           type='button'
           className='btn btn-primary'
-          onClick={(e) => {
+          onClick={e => {
             e.stopPropagation();
             handleUserCardViewClickHandler(user);
           }}

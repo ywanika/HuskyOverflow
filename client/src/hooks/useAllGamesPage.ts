@@ -24,8 +24,8 @@ const useAllGamesPage = () => {
     try {
       const games = await getGames(undefined, undefined);
       // Deduplicate games by gameID to prevent redundant cards
-      const uniqueGames = games.filter((game, index, self) => 
-        index === self.findIndex(g => g.gameID === game.gameID)
+      const uniqueGames = games.filter(
+        (game, index, self) => index === self.findIndex(g => g.gameID === game.gameID),
       );
       setAvailableGames(uniqueGames);
     } catch (getGamesError) {

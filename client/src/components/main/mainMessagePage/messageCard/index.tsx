@@ -22,7 +22,3 @@ const MessageCard = ({ message }: { message: DatabaseMessage }) => (
 );
 
 export default MessageCard;
-
-
-
-

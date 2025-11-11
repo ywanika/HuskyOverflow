@@ -61,7 +61,7 @@ const GlobalMessagesTab = () => {
         <h2>Global Chat Room</h2>
         <p>Communicate with all users in the global chat</p>
       </div>
-      
+
       <div className='chat-room'>
         <div className='chat-messages'>
           {messages.map(message => (

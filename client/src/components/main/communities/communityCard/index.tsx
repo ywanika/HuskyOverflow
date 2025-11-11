@@ -17,25 +17,28 @@ const CommunityCard = ({
   const { handleViewCommunity } = useCommunityCard(community, setError);
 
   return (
-    <article className='community-card' role='article' aria-labelledby={`community-title-${community._id}`}>
+    <article
+      className='community-card'
+      role='article'
+      aria-labelledby={`community-title-${community._id}`}>
       <header className='community-card-header'>
         <h3 id={`community-title-${community._id}`} className='community-card-title'>
           {community.name}
         </h3>
       </header>
-      
+
       <div className='community-card-body'>
         <p className='community-card-description'>{community.description}</p>
-        
+
         <dl className='community-card-meta'>
           <dt className='meta-label'>Visibility:</dt>
           <dd className='meta-value'>{community.visibility}</dd>
-          
+
           <dt className='meta-label'>Participants:</dt>
           <dd className='meta-value'>{community.participants.length}</dd>
         </dl>
       </div>
-      
+
       <footer className='community-card-actions'>
         <button
           type='button'

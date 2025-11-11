@@ -16,7 +16,7 @@ const Header = () => {
   const { user: currentUser } = useUserContext();
   const { theme } = useTheme();
   const navigate = useNavigate();
-  
+
   const isDark = theme === 'dark';
 
   return (
@@ -28,7 +28,13 @@ const Header = () => {
       p={6}
       role='banner'>
       <Flex justify='space-between' align='center' maxW='100%' className='header-container'>
-        <Heading as='h1' size='lg' color={isDark ? 'white' : 'black'} flexShrink={0} mr={8} className='header-title'>
+        <Heading
+          as='h1'
+          size='lg'
+          color={isDark ? 'white' : 'black'}
+          flexShrink={0}
+          mr={8}
+          className='header-title'>
           <Link
             href='/home'
             className='header-link'

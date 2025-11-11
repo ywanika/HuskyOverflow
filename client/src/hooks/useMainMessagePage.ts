@@ -16,7 +16,3 @@ const useMainMessagePage = () => {
 };
 
 export default useMainMessagePage;
-
-
-
-

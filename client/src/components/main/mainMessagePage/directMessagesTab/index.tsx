@@ -50,8 +50,7 @@ const DirectMessagesTab = () => {
             <h3>Your Chats</h3>
             <button
               className='custom-button'
-              onClick={() => setShowCreatePanel(prevState => !prevState)}
-            >
+              onClick={() => setShowCreatePanel(prevState => !prevState)}>
               New Chat
             </button>
           </div>

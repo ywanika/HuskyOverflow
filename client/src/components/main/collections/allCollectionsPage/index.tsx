@@ -19,16 +19,13 @@ const AllCollectionsPage = () => {
 
   return (
     <div className='collections-page'>
-      <PageHeader
-        title="Collections"
-      >
+      <PageHeader title='Collections'>
         {isOwner && (
-          <button 
+          <button
             type='button'
             className='btn btn-primary'
             onClick={handleCreateCollection}
-            aria-label='Create a new collection'
-          >
+            aria-label='Create a new collection'>
             Create Collection
           </button>
         )}

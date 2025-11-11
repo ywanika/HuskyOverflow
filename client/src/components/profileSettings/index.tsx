@@ -64,7 +64,9 @@ const ProfileSettings: React.FC = () => {
         {userData ? (
           <div className='profile-content'>
             <section className='profile-section' aria-labelledby='general-info-heading'>
-              <h2 id='general-info-heading' className='section-title'>General Information</h2>
+              <h2 id='general-info-heading' className='section-title'>
+                General Information
+              </h2>
               <div className='info-item'>
                 <label className='info-label'>Username:</label>
                 <span className='info-value'>{userData.username}</span>
@@ -79,7 +81,9 @@ const ProfileSettings: React.FC = () => {
             </section>
 
             <section className='profile-section' aria-labelledby='biography-heading'>
-              <h2 id='biography-heading' className='section-title'>Biography</h2>
+              <h2 id='biography-heading' className='section-title'>
+                Biography
+              </h2>
               <div className='bio-section'>
                 {!editBioMode && (
                   <div className='bio-display'>
@@ -140,7 +144,9 @@ const ProfileSettings: React.FC = () => {
             </section>
 
             <section className='profile-section' aria-labelledby='collections-heading'>
-              <h2 id='collections-heading' className='section-title'>Collections</h2>
+              <h2 id='collections-heading' className='section-title'>
+                Collections
+              </h2>
               <button
                 type='button'
                 className='btn btn-primary'
@@ -156,7 +162,9 @@ const ProfileSettings: React.FC = () => {
             {canEditProfile && (
               <>
                 <section className='profile-section' aria-labelledby='password-heading'>
-                  <h2 id='password-heading' className='section-title'>Reset Password</h2>
+                  <h2 id='password-heading' className='section-title'>
+                    Reset Password
+                  </h2>
                   <div className='password-form'>
                     <div className='form-group'>
                       <label htmlFor='new-password' className='form-label required'>
@@ -208,7 +216,9 @@ const ProfileSettings: React.FC = () => {
                 </section>
 
                 <section className='profile-section danger-zone' aria-labelledby='danger-heading'>
-                  <h2 id='danger-heading' className='section-title danger-title'>Danger Zone</h2>
+                  <h2 id='danger-heading' className='section-title danger-title'>
+                    Danger Zone
+                  </h2>
                   <div className='danger-content'>
                     <p className='danger-warning'>
                       Once you delete your account, there is no going back. Please be certain.
@@ -236,10 +246,16 @@ const ProfileSettings: React.FC = () => {
 
         {/* Confirmation Modal for Delete */}
         {showConfirmation && (
-          <div className='modal-overlay' role='dialog' aria-labelledby='modal-title' aria-modal='true'>
+          <div
+            className='modal-overlay'
+            role='dialog'
+            aria-labelledby='modal-title'
+            aria-modal='true'>
             <div className='modal'>
               <div className='modal-content'>
-                <h3 id='modal-title' className='modal-title'>Confirm Account Deletion</h3>
+                <h3 id='modal-title' className='modal-title'>
+                  Confirm Account Deletion
+                </h3>
                 <p className='modal-message'>
                   Are you sure you want to delete user <strong>{userData?.username}</strong>? This
                   action cannot be undone.

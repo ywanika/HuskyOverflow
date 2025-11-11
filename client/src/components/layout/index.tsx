@@ -14,7 +14,9 @@ const Layout = () => {
   const isDark = theme === 'dark';
   const location = useLocation();
   const firstPathSegment = location.pathname.split('/').filter(segment => segment !== '')[0];
-  const hideBreadcrumbs = ['question', 'games', 'communities', 'collections'].includes(firstPathSegment ?? '');
+  const hideBreadcrumbs = ['question', 'games', 'communities', 'collections'].includes(
+    firstPathSegment ?? '',
+  );
 
   return (
     <Box h='100vh' display='flex' flexDirection='column' bg={isDark ? 'gray.900' : 'white'}>
