@@ -57,7 +57,7 @@ const useMessagingPage = () => {
       msgDateTime: new Date(),
     };
     try {
-      await addMessage(newMsg);
+      await addMessage(newMsg, user.agreedToGuidelines);
       setNewMessage('');
     } catch (err) {
       setError((err as Error).message);

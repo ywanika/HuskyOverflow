@@ -1,6 +1,13 @@
 import { useState, useEffect } from 'react';
 import useUserContext from './useUserContext';
-import { getFlaggedContent, markAsReviewed, dismissFlag, deleteQuestion, deleteAnswer, deleteComment } from '../services/moderationService';
+import {
+  getFlaggedContent,
+  markAsReviewed,
+  dismissFlag,
+  deleteQuestion,
+  deleteAnswer,
+  deleteComment,
+} from '../services/moderationService';
 import DeleteContentModal from '../components/moderation/DeleteContentModal';
 
 interface FlaggedItem {
@@ -64,7 +71,10 @@ const useModeratorDashboard = () => {
     };
   }, [socket]);
 
-  const handleMarkAsReviewed = async (contentType: 'question' | 'answer' | 'comment', contentId: string) => {
+  const handleMarkAsReviewed = async (
+    contentType: 'question' | 'answer' | 'comment',
+    contentId: string,
+  ) => {
     try {
       await markAsReviewed(contentType, contentId, user.username);
       await fetchFlaggedContent();
@@ -73,7 +83,10 @@ const useModeratorDashboard = () => {
     }
   };
 
-  const handleDismissFlag = async (contentType: 'question' | 'answer' | 'comment', contentId: string) => {
+  const handleDismissFlag = async (
+    contentType: 'question' | 'answer' | 'comment',
+    contentId: string,
+  ) => {
     try {
       await dismissFlag(contentType, contentId, user.username);
       await fetchFlaggedContent();
@@ -82,7 +95,11 @@ const useModeratorDashboard = () => {
     }
   };
 
-  const handleDeleteClick = (type: 'question' | 'answer' | 'comment', contentId: string, contentTitle?: string) => {
+  const handleDeleteClick = (
+    type: 'question' | 'answer' | 'comment',
+    contentId: string,
+    contentTitle?: string,
+  ) => {
     setDeleteModal({ isOpen: true, type, contentId, contentTitle });
   };
 
@@ -117,4 +134,3 @@ const useModeratorDashboard = () => {
 };
 
 export default useModeratorDashboard;
-

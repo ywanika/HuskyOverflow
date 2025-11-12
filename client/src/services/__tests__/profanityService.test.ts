@@ -49,4 +49,3 @@ describe('profanityService', () => {
     consoleSpy.mockRestore();
   });
 });
-

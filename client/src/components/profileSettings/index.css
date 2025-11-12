@@ -84,6 +84,28 @@
   font-weight: 500;
 }
 
+.warning-text {
+  color: var(--color-error);
+  font-weight: 500;
+}
+
+.guidelines-link {
+  color: var(--color-accent);
+  text-decoration: underline;
+  font-weight: 600;
+}
+
+.guidelines-link:hover {
+  color: var(--color-primary);
+}
+
+.guidelines-status {
+  display: block;
+  margin-top: var(--spacing-sm);
+  color: var(--color-text-secondary);
+  font-size: var(--font-size-sm);
+}
+
 /* Biography Section */
 .bio-section {
   margin-top: var(--spacing-md);

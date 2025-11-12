@@ -118,6 +118,9 @@ const updateBiography = async (
   username: string,
   newBiography: string,
 ): Promise<SafeDatabaseUser> => {
+  // Check guidelines agreement with server
+  await checkGuidelinesAgreement(username);
+
   await profanityService(newBiography);
   const res = await api.patch(`${USER_API_URL}/updateBiography`, {
     username,
@@ -129,6 +132,54 @@ const updateBiography = async (
   return res.data;
 };
 
+/**
+ * Updates the user's community guidelines agreement status.
+ * @param username The unique username of the user
+ * @param agreedToGuidelines Whether the user has agreed to community guidelines
+ * @returns A promise resolving to the updated user
+ * @throws Error if the request fails
+ */
+const updateGuidelinesAgreement = async (
+  username: string,
+  agreedToGuidelines: boolean,
+): Promise<SafeDatabaseUser> => {
+  const res = await api.patch(`${USER_API_URL}/updateGuidelinesAgreement`, {
+    username,
+    agreedToGuidelines,
+  });
+  if (res.status !== 200) {
+    throw new Error('Error when updating guidelines agreement');
+  }
+  return res.data;
+};
+
+/**
+ * Checks if a user has agreed to the community guidelines.
+ * @param username The unique username of the user
+ * @returns A promise resolving to the guidelines agreement status
+ * @throws Error if user hasn't agreed to guidelines or if the request fails
+ */
+const checkGuidelinesAgreement = async (username: string): Promise<void> => {
+  try {
+    const res = await api.get(`${USER_API_URL}/checkGuidelines/${username}`);
+    if (res.status === 200 && res.data.agreed) {
+      return; // User has agreed
+    }
+    // If we get here, user hasn't agreed
+    throw new Error(
+      res.data.message || 'You must agree to the community guidelines before posting.',
+    );
+  } catch (error) {
+    if (axios.isAxiosError(error) && error.response?.status === 403) {
+      throw new Error(
+        error.response.data.message ||
+          'You must agree to the community guidelines before posting. Please visit your profile settings to agree to the guidelines.',
+      );
+    }
+    throw error;
+  }
+};
+
 export {
   getUsers,
   getUserByUsername,
@@ -137,4 +188,6 @@ export {
   deleteUser,
   resetPassword,
   updateBiography,
+  updateGuidelinesAgreement,
+  checkGuidelinesAgreement,
 };

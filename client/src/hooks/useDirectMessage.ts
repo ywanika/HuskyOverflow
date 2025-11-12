@@ -36,7 +36,7 @@ const useDirectMessage = () => {
       };
 
       try {
-        const chat = await sendMessage(message, selectedChat._id);
+        const chat = await sendMessage(message, selectedChat._id, user.username);
 
         setSelectedChat(chat);
         setError(null);

@@ -13,7 +13,19 @@ describe('updateBiography', () => {
     jest.clearAllMocks();
   });
 
+  it('throws error when user has not agreed to guidelines', async () => {
+    mockApi.get.mockResolvedValueOnce({ status: 403, data: { agreed: false } });
+
+    const username = 'user1';
+    const newBiography = 'This is a clean biography';
+
+    await expect(updateBiography(username, newBiography)).rejects.toThrow(
+      'You must agree to the community guidelines before posting.',
+    );
+  });
+
   it('calls profanity service when updating biography and passes back error', async () => {
+    mockApi.get.mockResolvedValueOnce({ status: 200, data: { agreed: true } });
     mockProfanityService.mockRejectedValueOnce(
       new Error('Profanity detected in text. Please revise.'),
     );
@@ -27,6 +39,7 @@ describe('updateBiography', () => {
   });
 
   it('calls API when biography passes profanity check', async () => {
+    mockApi.get.mockResolvedValueOnce({ status: 200, data: { agreed: true } });
     mockProfanityService.mockResolvedValueOnce(undefined);
     mockApi.patch.mockResolvedValueOnce({ status: 200, data: { _id: 'user123' } });
 
@@ -43,6 +56,7 @@ describe('updateBiography', () => {
   });
 
   it('throws error when API response status is not 200', async () => {
+    mockApi.get.mockResolvedValueOnce({ status: 200, data: { agreed: true } });
     mockProfanityService.mockResolvedValueOnce(undefined);
     mockApi.patch.mockResolvedValueOnce({ status: 400, data: {} });
 
@@ -53,6 +67,7 @@ describe('updateBiography', () => {
   });
 
   it('returns the updated user on success', async () => {
+    mockApi.get.mockResolvedValueOnce({ status: 200, data: { agreed: true } });
     const mockUser = { _id: 'user123', username: 'user1', biography: 'Updated biography' };
     mockProfanityService.mockResolvedValueOnce(undefined);
     mockApi.patch.mockResolvedValueOnce({ status: 200, data: mockUser });

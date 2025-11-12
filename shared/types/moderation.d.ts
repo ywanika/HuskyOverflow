@@ -43,7 +43,13 @@ export interface DeletedInfo {
  */
 export interface Notification {
   recipientUsername: string;
-  type: 'deletion' | 'appeal_result' | 'flag' | 'suspension' | 'role_change' | 'system_announcement';
+  type:
+    | 'deletion'
+    | 'appeal_result'
+    | 'flag'
+    | 'suspension'
+    | 'role_change'
+    | 'system_announcement';
   message: string;
   contentId?: ObjectId;
   isRead: boolean;

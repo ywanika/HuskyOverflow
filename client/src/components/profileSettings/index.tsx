@@ -1,8 +1,10 @@
 import * as React from 'react';
+import { Link } from 'react-router-dom';
 import Markdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
 import './index.css';
 import useProfileSettings from '../../hooks/useProfileSettings';
+import { Checkbox } from '@chakra-ui/react';
 
 const ProfileSettings: React.FC = () => {
   const {
@@ -29,6 +31,7 @@ const ProfileSettings: React.FC = () => {
     handleUpdateBiography,
     handleDeleteUser,
     handleViewCollectionsPage,
+    handleGuidelinesAgreementChange,
   } = useProfileSettings();
 
   if (loading) {
@@ -77,6 +80,47 @@ const ProfileSettings: React.FC = () => {
                 <label className='info-label'>Date Joined:</label>
                 <span className='info-value'>
                   {userData.dateJoined ? new Date(userData.dateJoined).toLocaleDateString() : 'N/A'}
+                </span>
+              </div>
+
+              <div className='info-item'>
+                <label className='info-label'>Community Guidelines:</label>
+                <span className='info-value'>
+                  {canEditProfile ? (
+                    <Checkbox.Root
+                      checked={userData.agreedToGuidelines || false}
+                      onCheckedChange={handleGuidelinesAgreementChange}>
+                      <Checkbox.HiddenInput />
+                      <Checkbox.Control>
+                        <Checkbox.Indicator />
+                      </Checkbox.Control>
+                      <Checkbox.Label>I agree to the Community Guidelines</Checkbox.Label>
+                    </Checkbox.Root>
+                  ) : (
+                    <span>
+                      {userData.agreedToGuidelines
+                        ? 'User has agreed to the Community Guidelines'
+                        : 'User has not agreed to the Community Guidelines'}
+                    </span>
+                  )}
+                  {userData.agreedToGuidelines ? (
+                    <span className='guidelines-status'>
+                      {' '}
+                      - You can view our{' '}
+                      <Link to='/guidelines' className='guidelines-link' target='_blank'>
+                        Community Guidelines
+                      </Link>
+                    </span>
+                  ) : (
+                    <span className='warning-text'>
+                      {' '}
+                      - You must{' '}
+                      <Link to='/guidelines' className='guidelines-link' target='_blank'>
+                        review and agree to the guidelines
+                      </Link>{' '}
+                      to post content in the community.
+                    </span>
+                  )}
                 </span>
               </div>
             </section>

@@ -4,13 +4,21 @@ import profanityService from '../profanityService';
 
 jest.mock('../config');
 jest.mock('../profanityService');
+jest.mock('../userService', () => ({
+  ...jest.requireActual('../userService'),
+  checkGuidelinesAgreement: jest.fn(),
+}));
 
 describe('messageService - addMessage', () => {
   const mockApi = api as jest.Mocked<typeof api>;
   const mockProfanityService = profanityService as jest.MockedFunction<typeof profanityService>;
+  const mockCheckGuidelines = jest.requireMock('../userService').checkGuidelinesAgreement;
+
+  const testUsername = 'testUser';
 
   beforeEach(() => {
     jest.clearAllMocks();
+    mockCheckGuidelines.mockResolvedValue(undefined);
   });
 
   it('throws error when message contains profanity', async () => {
@@ -24,7 +32,7 @@ describe('messageService - addMessage', () => {
       msgDateTime: new Date(),
     };
 
-    await expect(addMessage(messageToAdd)).rejects.toThrow(
+    await expect(addMessage(messageToAdd, testUsername)).rejects.toThrow(
       'Profanity detected in text. Please revise.',
     );
     expect(mockProfanityService).toHaveBeenCalledWith(messageToAdd.msg);
@@ -41,7 +49,7 @@ describe('messageService - addMessage', () => {
       msgDateTime: new Date(),
     };
 
-    await addMessage(messageToAdd);
+    await addMessage(messageToAdd, testUsername);
 
     expect(mockProfanityService).toHaveBeenCalledWith(messageToAdd.msg);
     expect(mockApi.post).toHaveBeenCalledWith('/api/message/addMessage', {
@@ -59,7 +67,7 @@ describe('messageService - addMessage', () => {
       msgDateTime: new Date(),
     };
 
-    await expect(addMessage(messageToAdd)).rejects.toThrow(
+    await expect(addMessage(messageToAdd, testUsername)).rejects.toThrow(
       'Error while adding a new message to a chat',
     );
   });
@@ -75,7 +83,7 @@ describe('messageService - addMessage', () => {
       msgDateTime: new Date(),
     };
 
-    const result = await addMessage(messageToAdd);
+    const result = await addMessage(messageToAdd, testUsername);
     expect(result).toEqual(createdMessage);
   });
 });

@@ -22,7 +22,13 @@ const SideBarNav = () => {
     { to: '/communities', id: 'menu_communities', label: 'Communities' },
     { to: `/collections/${user.username}`, id: 'menu_collections', label: 'My Collections' },
     ...(isModerator
-      ? [{ to: '/moderator/dashboard', id: 'menu_moderator_dashboard', label: 'Moderator Dashboard' }]
+      ? [
+          {
+            to: '/moderator/dashboard',
+            id: 'menu_moderator_dashboard',
+            label: 'Moderator Dashboard',
+          },
+        ]
       : []),
   ];
 

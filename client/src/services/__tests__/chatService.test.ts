@@ -5,6 +5,10 @@ import { ObjectId } from 'mongodb';
 
 jest.mock('../config');
 jest.mock('../profanityService');
+jest.mock('../userService', () => ({
+  ...jest.requireActual('../userService'),
+  checkGuidelinesAgreement: jest.fn(),
+}));
 
 // Mock ObjectId for testing
 jest.mock('mongodb', () => ({
@@ -16,9 +20,13 @@ jest.mock('mongodb', () => ({
 describe('chatService - sendMessage', () => {
   const mockApi = api as jest.Mocked<typeof api>;
   const mockProfanityService = profanityService as jest.MockedFunction<typeof profanityService>;
+  const mockCheckGuidelines = jest.requireMock('../userService').checkGuidelinesAgreement;
+
+  const testUsername = 'testUser';
 
   beforeEach(() => {
     jest.clearAllMocks();
+    mockCheckGuidelines.mockResolvedValue(undefined);
   });
 
   it('throws error when message contains profanity', async () => {
@@ -33,7 +41,7 @@ describe('chatService - sendMessage', () => {
       msgDateTime: new Date(),
     };
 
-    await expect(sendMessage(message, chatID)).rejects.toThrow(
+    await expect(sendMessage(message, chatID, testUsername)).rejects.toThrow(
       'Profanity detected in text. Please revise.',
     );
     expect(mockProfanityService).toHaveBeenCalledWith(message.msg);
@@ -51,7 +59,7 @@ describe('chatService - sendMessage', () => {
       msgDateTime: new Date(),
     };
 
-    await sendMessage(message, chatID);
+    await sendMessage(message, chatID, testUsername);
 
     expect(mockProfanityService).toHaveBeenCalledWith(message.msg);
     expect(mockApi.post).toHaveBeenCalledWith(`/api/chat/${chatID}/addMessage`, message);
@@ -68,7 +76,9 @@ describe('chatService - sendMessage', () => {
       msgDateTime: new Date(),
     };
 
-    await expect(sendMessage(message, chatID)).rejects.toThrow('Error when adding message to chat');
+    await expect(sendMessage(message, chatID, testUsername)).rejects.toThrow(
+      'Error when adding message to chat',
+    );
   });
 
   it('returns the updated chat on success', async () => {
@@ -83,7 +93,7 @@ describe('chatService - sendMessage', () => {
       msgDateTime: new Date(),
     };
 
-    const result = await sendMessage(message, chatID);
+    const result = await sendMessage(message, chatID, testUsername);
     expect(result).toEqual(updatedChat);
   });
 });

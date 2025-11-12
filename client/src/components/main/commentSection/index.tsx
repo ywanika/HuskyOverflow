@@ -90,17 +90,23 @@ const CommentSection = ({
                   <div className='comment-text'>
                     <Markdown remarkPlugins={[remarkGfm]}>{comment.text}</Markdown>
                   </div>
-                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', gap: '8px' }}>
+                  <div
+                    style={{
+                      display: 'flex',
+                      justifyContent: 'space-between',
+                      alignItems: 'center',
+                      gap: '8px',
+                    }}>
                     <small className='comment-meta'>
                       {comment.commentBy}, {getMetaData(new Date(comment.commentDateTime))}
                     </small>
                     <div style={{ display: 'flex', gap: '4px' }}>
                       {onFlagComment && (
                         <Button
-                          size="xs"
-                          colorScheme="orange"
-                          variant="outline"
-                          onClick={(e) => {
+                          size='xs'
+                          colorScheme='orange'
+                          variant='outline'
+                          onClick={e => {
                             e.stopPropagation();
                             onFlagComment(String(comment._id));
                           }}
@@ -115,10 +121,10 @@ const CommentSection = ({
                       )}
                       {isModerator && onDeleteComment && (
                         <Button
-                          size="xs"
-                          colorScheme="red"
-                          variant="outline"
-                          onClick={(e) => {
+                          size='xs'
+                          colorScheme='red'
+                          variant='outline'
+                          onClick={e => {
                             e.stopPropagation();
                             onDeleteComment(String(comment._id));
                           }}

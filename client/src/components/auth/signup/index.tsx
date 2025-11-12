@@ -11,10 +11,12 @@ const Signup = () => {
     username,
     password,
     passwordConfirmation,
+    agreedToGuidelines,
     showPassword,
     err,
     handleSubmit,
     handleInputChange,
+    handleGuidelinesChange,
     togglePasswordVisibility,
   } = useAuth('signup');
 
@@ -111,10 +113,34 @@ const Signup = () => {
               </div>
             </div>
 
+            <div className='form-group'>
+              <div className='checkbox-group'>
+                <input
+                  type='checkbox'
+                  id='guidelinesCheckbox'
+                  checked={agreedToGuidelines}
+                  onChange={handleGuidelinesChange}
+                  className='checkbox-input'
+                  required
+                  aria-describedby='guidelines-help'
+                />
+                <label htmlFor='guidelinesCheckbox' className='checkbox-label required'>
+                  I agree to the{' '}
+                  <Link to='/guidelines' target='_blank' className='guidelines-link'>
+                    Community Guidelines
+                  </Link>
+                </label>
+                <div id='guidelines-help' className='form-help'>
+                  You must agree to the community guidelines to create an account
+                </div>
+              </div>
+            </div>
+
             <div className='form-actions'>
               <button
                 type='submit'
                 className='btn btn-primary btn-lg'
+                disabled={!agreedToGuidelines}
                 aria-describedby='submit-help'>
                 Create Account
               </button>

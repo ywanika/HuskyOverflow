@@ -18,13 +18,16 @@ const useNewCommunityPage = () => {
     }
 
     try {
-      const createdCommunity = await createCommunity({
-        name,
-        description,
-        visibility: isPublic ? 'PUBLIC' : 'PRIVATE',
-        admin: user.username,
-        participants: [user.username],
-      });
+      const createdCommunity = await createCommunity(
+        {
+          name,
+          description,
+          visibility: isPublic ? 'PUBLIC' : 'PRIVATE',
+          admin: user.username,
+          participants: [user.username],
+        },
+        user.username,
+      );
 
       navigate(`/communities/${createdCommunity._id.toString()}`);
     } catch (err: unknown) {

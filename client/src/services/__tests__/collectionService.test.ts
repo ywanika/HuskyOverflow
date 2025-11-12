@@ -4,13 +4,31 @@ import profanityService from '../profanityService';
 
 jest.mock('axios');
 jest.mock('../profanityService');
+jest.mock('../config', () => ({
+  __esModule: true,
+  default: {
+    interceptors: { request: { use: jest.fn() }, response: { use: jest.fn() } },
+    get: jest.fn(),
+    post: jest.fn(),
+    patch: jest.fn(),
+    delete: jest.fn(),
+  },
+}));
+jest.mock('../userService', () => ({
+  ...jest.requireActual('../userService'),
+  checkGuidelinesAgreement: jest.fn(),
+}));
 
 describe('collectionService - createCollection', () => {
   const mockAxios = axios as jest.Mocked<typeof axios>;
   const mockProfanityService = profanityService as jest.MockedFunction<typeof profanityService>;
+  const mockCheckGuidelines = jest.requireMock('../userService').checkGuidelinesAgreement;
+
+  const testUsername = 'testUser';
 
   beforeEach(() => {
     jest.clearAllMocks();
+    mockCheckGuidelines.mockResolvedValue(undefined);
   });
 
   it('throws error when collection name contains profanity', async () => {
@@ -26,7 +44,7 @@ describe('collectionService - createCollection', () => {
       questions: [],
     };
 
-    await expect(createCollection(collection)).rejects.toThrow(
+    await expect(createCollection(collection, testUsername)).rejects.toThrow(
       'Profanity detected in text. Please revise.',
     );
     expect(mockProfanityService).toHaveBeenCalledWith(collection.name);
@@ -46,7 +64,7 @@ describe('collectionService - createCollection', () => {
       questions: [],
     };
 
-    await expect(createCollection(collection)).rejects.toThrow(
+    await expect(createCollection(collection, testUsername)).rejects.toThrow(
       'Profanity detected in text. Please revise.',
     );
     expect(mockProfanityService).toHaveBeenCalledTimes(2);
@@ -65,7 +83,7 @@ describe('collectionService - createCollection', () => {
       questions: [],
     };
 
-    await createCollection(collection);
+    await createCollection(collection, testUsername);
 
     expect(mockProfanityService).toHaveBeenCalledTimes(2);
     expect(mockProfanityService).toHaveBeenCalledWith(collection.name);
@@ -84,7 +102,7 @@ describe('collectionService - createCollection', () => {
       questions: [],
     };
 
-    await createCollection(collection);
+    await createCollection(collection, testUsername);
 
     expect(mockProfanityService).toHaveBeenCalledTimes(1);
     expect(mockProfanityService).toHaveBeenCalledWith(collection.name);
@@ -102,7 +120,9 @@ describe('collectionService - createCollection', () => {
       questions: [],
     };
 
-    await expect(createCollection(collection)).rejects.toThrow('Error while creating collection');
+    await expect(createCollection(collection, testUsername)).rejects.toThrow(
+      'Error while creating collection',
+    );
   });
 
   it('returns the created collection on success', async () => {
@@ -118,7 +138,7 @@ describe('collectionService - createCollection', () => {
       questions: [],
     };
 
-    const result = await createCollection(collection);
+    const result = await createCollection(collection, testUsername);
     expect(result).toEqual(createdCollection);
   });
 });
