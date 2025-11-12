@@ -120,7 +120,9 @@ describe('collectionService - createCollection', () => {
       questions: [],
     };
 
-    await expect(createCollection(collection, testUsername)).rejects.toThrow('Error while creating collection');
+    await expect(createCollection(collection, testUsername)).rejects.toThrow(
+      'Error while creating collection',
+    );
   });
 
   it('returns the created collection on success', async () => {
