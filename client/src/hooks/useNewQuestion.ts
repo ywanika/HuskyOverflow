@@ -109,7 +109,7 @@ const useNewQuestion = () => {
       community: community ? community._id : null,
     };
     try {
-      const res = await addQuestion(question);
+      const res = await addQuestion(question, user.username);
       if (res && res._id) {
         navigate('/home');
       }

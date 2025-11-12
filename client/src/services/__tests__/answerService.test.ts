@@ -1,16 +1,26 @@
 import addAnswer from '../answerService';
 import api from '../config';
 import profanityService from '../profanityService';
+import { checkGuidelinesAgreement } from '../userService';
 
 jest.mock('../config');
 jest.mock('../profanityService');
+jest.mock('../userService', () => ({
+  ...jest.requireActual('../userService'),
+  checkGuidelinesAgreement: jest.fn(),
+}));
 
 describe('answerService - addAnswer', () => {
   const mockApi = api as jest.Mocked<typeof api>;
   const mockProfanityService = profanityService as jest.MockedFunction<typeof profanityService>;
+  const mockCheckGuidelines = checkGuidelinesAgreement as jest.MockedFunction<
+    typeof checkGuidelinesAgreement
+  >;
+  const testUsername = 'testuser';
 
   beforeEach(() => {
     jest.clearAllMocks();
+    mockCheckGuidelines.mockResolvedValue(undefined);
   });
 
   it('throws error when answer text contains profanity', async () => {
@@ -26,7 +36,8 @@ describe('answerService - addAnswer', () => {
       comments: [],
     };
 
-    await expect(addAnswer(qid, ans)).rejects.toThrow('Profanity detected in text');
+    await expect(addAnswer(qid, ans, testUsername)).rejects.toThrow('Profanity detected in text');
+    expect(mockCheckGuidelines).toHaveBeenCalledWith(testUsername);
     expect(mockProfanityService).toHaveBeenCalledWith(ans.text);
     expect(mockApi.post).not.toHaveBeenCalled();
   });
@@ -43,7 +54,7 @@ describe('answerService - addAnswer', () => {
       comments: [],
     };
 
-    await addAnswer(qid, ans);
+    await addAnswer(qid, ans, testUsername);
 
     expect(mockProfanityService).toHaveBeenCalledWith(ans.text);
     expect(mockApi.post).toHaveBeenCalledWith('/api/answer/addAnswer', {
@@ -64,7 +75,9 @@ describe('answerService - addAnswer', () => {
       comments: [],
     };
 
-    await expect(addAnswer(qid, ans)).rejects.toThrow('Error while creating a new answer');
+    await expect(addAnswer(qid, ans, testUsername)).rejects.toThrow(
+      'Error while creating a new answer',
+    );
   });
 
   it('returns the created answer on success', async () => {
@@ -80,7 +93,7 @@ describe('answerService - addAnswer', () => {
       comments: [],
     };
 
-    const result = await addAnswer(qid, ans);
+    const result = await addAnswer(qid, ans, testUsername);
     expect(result).toEqual(createdAnswer);
   });
 });

@@ -2,6 +2,7 @@ import { ObjectId } from 'mongodb';
 import { PopulatedDatabaseQuestion, Question, VoteInterface } from '../types/types';
 import api from './config';
 import profanityService from './profanityService';
+import { checkGuidelinesAgreement } from './userService';
 
 const QUESTION_API_URL = `/api/question`;
 
@@ -45,9 +46,12 @@ const getQuestionById = async (
  * Function to add a new question.
  *
  * @param q - The question object to add.
+ * @param username - The username of the user creating the question.
  * @throws Error if there is an issue creating the new question.
  */
-const addQuestion = async (q: Question): Promise<PopulatedDatabaseQuestion> => {
+const addQuestion = async (q: Question, username: string): Promise<PopulatedDatabaseQuestion> => {
+  await checkGuidelinesAgreement(username);
+
   // Check profanity in title
   try {
     await profanityService(q.title);

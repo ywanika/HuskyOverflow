@@ -76,7 +76,10 @@ export const deleteQuestion = async (
     // Check if user is moderator/admin
     const hasPermission = await isModerator(moderatorUsername);
     if (!hasPermission) {
-      return { success: false, error: 'Unauthorized: Only moderators and admins can delete content' };
+      return {
+        success: false,
+        error: 'Unauthorized: Only moderators and admins can delete content',
+      };
     }
 
     // Find and update the question
@@ -120,7 +123,10 @@ export const deleteAnswer = async (
     // Check if user is moderator/admin
     const hasPermission = await isModerator(moderatorUsername);
     if (!hasPermission) {
-      return { success: false, error: 'Unauthorized: Only moderators and admins can delete content' };
+      return {
+        success: false,
+        error: 'Unauthorized: Only moderators and admins can delete content',
+      };
     }
 
     // Find and update the answer
@@ -164,7 +170,10 @@ export const deleteComment = async (
     // Check if user is moderator/admin
     const hasPermission = await isModerator(moderatorUsername);
     if (!hasPermission) {
-      return { success: false, error: 'Unauthorized: Only moderators and admins can delete content' };
+      return {
+        success: false,
+        error: 'Unauthorized: Only moderators and admins can delete content',
+      };
     }
 
     // Find and update the comment
@@ -256,8 +265,8 @@ export const flagQuestion = async (
       questionId,
       {
         'flagged.isFlagged': true,
-        $addToSet: { 'flagged.flaggedBy': username },
-        $push: { 'flagged.flaggedAt': new Date() },
+        '$addToSet': { 'flagged.flaggedBy': username },
+        '$push': { 'flagged.flaggedAt': new Date() },
       },
       { new: true },
     );
@@ -281,7 +290,10 @@ export const flagQuestion = async (
  * @param username - The username of the user flagging the content
  * @returns Promise resolving to ModerationResponse
  */
-export const flagAnswer = async (answerId: string, username: string): Promise<ModerationResponse> => {
+export const flagAnswer = async (
+  answerId: string,
+  username: string,
+): Promise<ModerationResponse> => {
   try {
     // Find the answer
     const answer: DatabaseAnswer | null = await AnswerModel.findById(answerId);
@@ -300,8 +312,8 @@ export const flagAnswer = async (answerId: string, username: string): Promise<Mo
       answerId,
       {
         'flagged.isFlagged': true,
-        $addToSet: { 'flagged.flaggedBy': username },
-        $push: { 'flagged.flaggedAt': new Date() },
+        '$addToSet': { 'flagged.flaggedBy': username },
+        '$push': { 'flagged.flaggedAt': new Date() },
       },
       { new: true },
     );
@@ -347,8 +359,8 @@ export const flagComment = async (
       commentId,
       {
         'flagged.isFlagged': true,
-        $addToSet: { 'flagged.flaggedBy': username },
-        $push: { 'flagged.flaggedAt': new Date() },
+        '$addToSet': { 'flagged.flaggedBy': username },
+        '$push': { 'flagged.flaggedAt': new Date() },
       },
       { new: true },
     );
@@ -470,7 +482,10 @@ export const markAsReviewed = async (
     // Check if user is moderator/admin
     const hasPermission = await isModerator(moderatorUsername);
     if (!hasPermission) {
-      return { success: false, error: 'Unauthorized: Only moderators and admins can review content' };
+      return {
+        success: false,
+        error: 'Unauthorized: Only moderators and admins can review content',
+      };
     }
 
     let updatedContent: DatabaseQuestion | DatabaseAnswer | DatabaseComment | null = null;
@@ -510,7 +525,10 @@ export const markAsReviewed = async (
 
     return { success: true, message: 'Content marked as reviewed' };
   } catch (error) {
-    return { success: false, error: `Error marking content as reviewed: ${(error as Error).message}` };
+    return {
+      success: false,
+      error: `Error marking content as reviewed: ${(error as Error).message}`,
+    };
   }
 };
 
@@ -530,7 +548,10 @@ export const dismissFlag = async (
     // Check if user is moderator/admin
     const hasPermission = await isModerator(moderatorUsername);
     if (!hasPermission) {
-      return { success: false, error: 'Unauthorized: Only moderators and admins can dismiss flags' };
+      return {
+        success: false,
+        error: 'Unauthorized: Only moderators and admins can dismiss flags',
+      };
     }
 
     let updatedContent: DatabaseQuestion | DatabaseAnswer | DatabaseComment | null = null;
@@ -576,4 +597,3 @@ export const dismissFlag = async (
     return { success: false, error: `Error dismissing flag: ${(error as Error).message}` };
   }
 };
-

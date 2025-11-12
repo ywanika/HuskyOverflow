@@ -62,7 +62,7 @@ const useAnswerForm = () => {
     };
 
     try {
-      const res = await addAnswer(questionID, answer);
+      const res = await addAnswer(questionID, answer, user.username);
 
       if (res && res._id) {
         // navigate to the question that was answered

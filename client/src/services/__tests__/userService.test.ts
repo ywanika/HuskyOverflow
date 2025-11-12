@@ -1,16 +1,34 @@
 import { createUser, updateBiography } from '../userService';
 import api from '../config';
 import profanityService from '../profanityService';
+import { checkGuidelinesAgreement } from '../guidelinesCheck';
 
 jest.mock('../config');
 jest.mock('../profanityService');
+jest.mock('../guidelinesCheck');
 
 describe('updateBiography', () => {
   const mockApi = api as jest.Mocked<typeof api>;
   const mockProfanityService = profanityService as jest.MockedFunction<typeof profanityService>;
+  const mockCheckGuidelines = checkGuidelinesAgreement as jest.MockedFunction<
+    typeof checkGuidelinesAgreement
+  >;
 
   beforeEach(() => {
     jest.clearAllMocks();
+  });
+
+  it('throws error when user has not agreed to guidelines', async () => {
+    mockCheckGuidelines.mockImplementation(() => {
+      throw new Error('GUIDELINES_NOT_AGREED');
+    });
+
+    const username = 'user1';
+    const newBiography = 'This is a clean biography';
+
+    await expect(updateBiography(username, newBiography, false)).rejects.toThrow(
+      'GUIDELINES_NOT_AGREED',
+    );
   });
 
   it('calls profanity service when updating biography and passes back error', async () => {
@@ -21,7 +39,7 @@ describe('updateBiography', () => {
     const username = 'user1';
     const newBiography = 'This biography contains profanity';
 
-    await expect(updateBiography(username, newBiography)).rejects.toThrow(
+    await expect(updateBiography(username, newBiography, true)).rejects.toThrow(
       'Profanity detected in text. Please revise.',
     );
   });
@@ -33,7 +51,7 @@ describe('updateBiography', () => {
     const username = 'user1';
     const newBiography = 'This is a clean biography';
 
-    await updateBiography(username, newBiography);
+    await updateBiography(username, newBiography, true);
 
     expect(mockProfanityService).toHaveBeenCalledWith(newBiography);
     expect(mockApi.patch).toHaveBeenCalledWith(`/api/user/updateBiography`, {
@@ -49,7 +67,7 @@ describe('updateBiography', () => {
     const username = 'user1';
     const newBiography = 'Another clean biography';
 
-    await expect(updateBiography(username, newBiography)).rejects.toThrow();
+    await expect(updateBiography(username, newBiography, true)).rejects.toThrow();
   });
 
   it('returns the updated user on success', async () => {
@@ -60,7 +78,7 @@ describe('updateBiography', () => {
     const username = 'user1';
     const newBiography = 'Updated biography';
 
-    const result = await updateBiography(username, newBiography);
+    const result = await updateBiography(username, newBiography, true);
 
     expect(result).toEqual(mockUser);
     expect(mockProfanityService).toHaveBeenCalledWith(newBiography);

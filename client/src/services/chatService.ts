@@ -2,6 +2,7 @@ import { ObjectId } from 'mongodb';
 import { Message, PopulatedDatabaseChat } from '../types/types';
 import api from './config';
 import profanityService from './profanityService';
+import { checkGuidelinesAgreement } from './userService';
 
 const CHAT_API_URL = `/api/chat`;
 
@@ -44,13 +45,16 @@ export const getChatById = async (chatID: ObjectId): Promise<PopulatedDatabaseCh
  *
  * @param message - The message to be sent, excluding the 'type' property.
  * @param chatID - The ID of the chat to which the message will be added.
+ * @param username - The username of the user sending the message.
  * @returns The updated chat data after the message has been sent.
  * @throws Throws an error if the message could not be added to the chat.
  */
 export const sendMessage = async (
   message: Omit<Message, 'type'>,
   chatID: ObjectId,
+  username: string,
 ): Promise<PopulatedDatabaseChat> => {
+  await checkGuidelinesAgreement(username);
   await profanityService(message.msg);
 
   const res = await api.post(`${CHAT_API_URL}/${chatID}/addMessage`, message);

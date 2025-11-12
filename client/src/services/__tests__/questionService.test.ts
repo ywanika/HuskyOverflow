@@ -1,16 +1,26 @@
 import { addQuestion } from '../questionService';
 import api from '../config';
 import profanityService from '../profanityService';
+import { checkGuidelinesAgreement } from '../userService';
 
 jest.mock('../config');
 jest.mock('../profanityService');
+jest.mock('../userService', () => ({
+  ...jest.requireActual('../userService'),
+  checkGuidelinesAgreement: jest.fn(),
+}));
 
 describe('questionService - addQuestion', () => {
   const mockApi = api as jest.Mocked<typeof api>;
   const mockProfanityService = profanityService as jest.MockedFunction<typeof profanityService>;
+  const mockCheckGuidelines = checkGuidelinesAgreement as jest.MockedFunction<
+    typeof checkGuidelinesAgreement
+  >;
+  const testUsername = 'testuser';
 
   beforeEach(() => {
     jest.clearAllMocks();
+    mockCheckGuidelines.mockResolvedValue(undefined);
   });
 
   it('throws error when question title contains profanity', async () => {
@@ -32,7 +42,8 @@ describe('questionService - addQuestion', () => {
       community: null,
     };
 
-    await expect(addQuestion(question)).rejects.toThrow('TITLE_PROFANITY');
+    await expect(addQuestion(question, testUsername)).rejects.toThrow('TITLE_PROFANITY');
+    expect(mockCheckGuidelines).toHaveBeenCalledWith(testUsername);
     expect(mockProfanityService).toHaveBeenCalledWith(question.title);
     expect(mockApi.post).not.toHaveBeenCalled();
   });
@@ -58,7 +69,7 @@ describe('questionService - addQuestion', () => {
       community: null,
     };
 
-    await expect(addQuestion(question)).rejects.toThrow('TEXT_PROFANITY');
+    await expect(addQuestion(question, testUsername)).rejects.toThrow('TEXT_PROFANITY');
     expect(mockProfanityService).toHaveBeenCalledTimes(2);
     expect(mockApi.post).not.toHaveBeenCalled();
   });
@@ -85,7 +96,7 @@ describe('questionService - addQuestion', () => {
       community: null,
     };
 
-    await expect(addQuestion(question)).rejects.toThrow('TAG_PROFANITY');
+    await expect(addQuestion(question, testUsername)).rejects.toThrow('TAG_PROFANITY');
     expect(mockProfanityService).toHaveBeenCalledTimes(3);
     expect(mockApi.post).not.toHaveBeenCalled();
   });
@@ -108,7 +119,7 @@ describe('questionService - addQuestion', () => {
       community: null,
     };
 
-    await addQuestion(question);
+    await addQuestion(question, testUsername);
 
     expect(mockProfanityService).toHaveBeenCalledTimes(3);
     expect(mockProfanityService).toHaveBeenCalledWith(question.title);
@@ -134,7 +145,9 @@ describe('questionService - addQuestion', () => {
       community: null,
     };
 
-    await expect(addQuestion(question)).rejects.toThrow('Error while creating a new question');
+    await expect(addQuestion(question, testUsername)).rejects.toThrow(
+      'Error while creating a new question',
+    );
   });
 
   it('returns the created question on success', async () => {
@@ -156,7 +169,7 @@ describe('questionService - addQuestion', () => {
       community: null,
     };
 
-    const result = await addQuestion(question);
+    const result = await addQuestion(question, testUsername);
     expect(result).toEqual(createdQuestion);
   });
 });

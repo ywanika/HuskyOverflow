@@ -1,16 +1,26 @@
 import addComment from '../commentService';
 import api from '../config';
 import profanityService from '../profanityService';
+import { checkGuidelinesAgreement } from '../userService';
 
 jest.mock('../config');
 jest.mock('../profanityService');
+jest.mock('../userService', () => ({
+  ...jest.requireActual('../userService'),
+  checkGuidelinesAgreement: jest.fn(),
+}));
 
 describe('commentService - addComment', () => {
   const mockApi = api as jest.Mocked<typeof api>;
   const mockProfanityService = profanityService as jest.MockedFunction<typeof profanityService>;
+  const mockCheckGuidelines = checkGuidelinesAgreement as jest.MockedFunction<
+    typeof checkGuidelinesAgreement
+  >;
+  const testUsername = 'testuser';
 
   beforeEach(() => {
     jest.clearAllMocks();
+    mockCheckGuidelines.mockResolvedValue(undefined);
   });
 
   it('throws error when comment text contains profanity', async () => {
@@ -25,9 +35,10 @@ describe('commentService - addComment', () => {
       commentDateTime: new Date(),
     };
 
-    await expect(addComment(id, 'question', comment)).rejects.toThrow(
+    await expect(addComment(id, 'question', comment, testUsername)).rejects.toThrow(
       'Profanity detected in text. Please revise.',
     );
+    expect(mockCheckGuidelines).toHaveBeenCalledWith(testUsername);
     expect(mockProfanityService).toHaveBeenCalledWith(comment.text);
     expect(mockApi.post).not.toHaveBeenCalled();
   });
@@ -43,7 +54,7 @@ describe('commentService - addComment', () => {
       commentDateTime: new Date(),
     };
 
-    await addComment(id, 'question', comment);
+    await addComment(id, 'question', comment, testUsername);
 
     expect(mockProfanityService).toHaveBeenCalledWith(comment.text);
     expect(mockApi.post).toHaveBeenCalledWith('/api/comment/addComment', {
@@ -64,7 +75,7 @@ describe('commentService - addComment', () => {
       commentDateTime: new Date(),
     };
 
-    await addComment(id, 'answer', comment);
+    await addComment(id, 'answer', comment, testUsername);
 
     expect(mockProfanityService).toHaveBeenCalledWith(comment.text);
     expect(mockApi.post).toHaveBeenCalledWith('/api/comment/addComment', {
@@ -85,7 +96,7 @@ describe('commentService - addComment', () => {
       commentDateTime: new Date(),
     };
 
-    await expect(addComment(id, 'question', comment)).rejects.toThrow(
+    await expect(addComment(id, 'question', comment, testUsername)).rejects.toThrow(
       'Error while creating a new comment for the question',
     );
   });
@@ -102,7 +113,7 @@ describe('commentService - addComment', () => {
       commentDateTime: new Date(),
     };
 
-    const result = await addComment(id, 'question', comment);
+    const result = await addComment(id, 'question', comment, testUsername);
     expect(result).toEqual(createdComment);
   });
 });

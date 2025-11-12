@@ -60,7 +60,9 @@ const moderationController = (socket: FakeSOSocket) => {
     const { moderatorUsername, deleteReason } = req.body;
 
     if (!questionId || !moderatorUsername || !deleteReason) {
-      res.status(400).json({ error: 'Missing required fields: questionId, moderatorUsername, or deleteReason' });
+      res
+        .status(400)
+        .json({ error: 'Missing required fields: questionId, moderatorUsername, or deleteReason' });
       return;
     }
 
@@ -102,7 +104,9 @@ const moderationController = (socket: FakeSOSocket) => {
     const { moderatorUsername, deleteReason } = req.body;
 
     if (!answerId || !moderatorUsername || !deleteReason) {
-      res.status(400).json({ error: 'Missing required fields: answerId, moderatorUsername, or deleteReason' });
+      res
+        .status(400)
+        .json({ error: 'Missing required fields: answerId, moderatorUsername, or deleteReason' });
       return;
     }
 
@@ -144,7 +148,9 @@ const moderationController = (socket: FakeSOSocket) => {
     const { moderatorUsername, deleteReason } = req.body;
 
     if (!commentId || !moderatorUsername || !deleteReason) {
-      res.status(400).json({ error: 'Missing required fields: commentId, moderatorUsername, or deleteReason' });
+      res
+        .status(400)
+        .json({ error: 'Missing required fields: commentId, moderatorUsername, or deleteReason' });
       return;
     }
 
@@ -332,7 +338,9 @@ const moderationController = (socket: FakeSOSocket) => {
     const { contentType, contentId, moderatorUsername } = req.body;
 
     if (!contentType || !contentId || !moderatorUsername) {
-      res.status(400).json({ error: 'Missing required fields: contentType, contentId, or moderatorUsername' });
+      res
+        .status(400)
+        .json({ error: 'Missing required fields: contentType, contentId, or moderatorUsername' });
       return;
     }
 
@@ -356,8 +364,13 @@ const moderationController = (socket: FakeSOSocket) => {
           : contentType === 'answer'
             ? 'answerReviewed'
             : 'commentReviewed';
-      const idField = contentType === 'question' ? 'questionId' : contentType === 'answer' ? 'answerId' : 'commentId';
-      
+      const idField =
+        contentType === 'question'
+          ? 'questionId'
+          : contentType === 'answer'
+            ? 'answerId'
+            : 'commentId';
+
       socket.emit('moderationUpdate', {
         type: reviewType,
         [idField]: contentId,
@@ -366,7 +379,9 @@ const moderationController = (socket: FakeSOSocket) => {
 
       res.json({ success: true, message: result.message });
     } catch (err: unknown) {
-      res.status(500).json({ error: `Error marking content as reviewed: ${(err as Error).message}` });
+      res
+        .status(500)
+        .json({ error: `Error marking content as reviewed: ${(err as Error).message}` });
     }
   };
 
@@ -380,7 +395,9 @@ const moderationController = (socket: FakeSOSocket) => {
     const { contentType, contentId, moderatorUsername } = req.body;
 
     if (!contentType || !contentId || !moderatorUsername) {
-      res.status(400).json({ error: 'Missing required fields: contentType, contentId, or moderatorUsername' });
+      res
+        .status(400)
+        .json({ error: 'Missing required fields: contentType, contentId, or moderatorUsername' });
       return;
     }
 
@@ -404,8 +421,13 @@ const moderationController = (socket: FakeSOSocket) => {
           : contentType === 'answer'
             ? 'answerFlagDismissed'
             : 'commentFlagDismissed';
-      const idField = contentType === 'question' ? 'questionId' : contentType === 'answer' ? 'answerId' : 'commentId';
-      
+      const idField =
+        contentType === 'question'
+          ? 'questionId'
+          : contentType === 'answer'
+            ? 'answerId'
+            : 'commentId';
+
       socket.emit('moderationUpdate', {
         type: dismissType,
         [idField]: contentId,
@@ -433,4 +455,3 @@ const moderationController = (socket: FakeSOSocket) => {
 };
 
 export default moderationController;
-

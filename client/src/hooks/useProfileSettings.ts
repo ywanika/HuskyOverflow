@@ -5,6 +5,7 @@ import {
   deleteUser,
   resetPassword,
   updateBiography,
+  updateGuidelinesAgreement,
 } from '../services/userService';
 import { SafeDatabaseUser } from '../types/types';
 import useUserContext from './useUserContext';
@@ -146,6 +147,29 @@ const useProfileSettings = () => {
     return;
   };
 
+  /**
+   * Handler for toggling the community guidelines agreement
+   */
+  const handleGuidelinesAgreementChange = async () => {
+    if (!username || !userData) return;
+
+    const newAgreementStatus = !userData.agreedToGuidelines;
+
+    try {
+      const updatedUser = await updateGuidelinesAgreement(username, newAgreementStatus);
+      setUserData(updatedUser);
+      setSuccessMessage(
+        newAgreementStatus
+          ? 'You have agreed to the community guidelines.'
+          : 'You have withdrawn your agreement to the community guidelines.',
+      );
+      setErrorMessage(null);
+    } catch (error) {
+      setErrorMessage(`Failed to update guidelines agreement. ${(error as Error).message}`);
+      setSuccessMessage(null);
+    }
+  };
+
   return {
     userData,
     newPassword,
@@ -171,6 +195,7 @@ const useProfileSettings = () => {
     handleUpdateBiography,
     handleDeleteUser,
     handleViewCollectionsPage,
+    handleGuidelinesAgreementChange,
   };
 };
 

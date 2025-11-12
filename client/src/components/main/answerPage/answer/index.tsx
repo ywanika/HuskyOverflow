@@ -81,10 +81,10 @@ const AnswerView = ({
       <div style={{ display: 'flex', gap: '8px', marginTop: '8px' }}>
         {onFlagClick && (
           <Button
-            size="sm"
-            colorScheme="orange"
-            variant="outline"
-            onClick={(e) => {
+            size='sm'
+            colorScheme='orange'
+            variant='outline'
+            onClick={e => {
               e.stopPropagation();
               onFlagClick();
             }}
@@ -95,21 +95,21 @@ const AnswerView = ({
         )}
         {isModerator && onDeleteClick && (
           <Button
-            size="sm"
-            colorScheme="red"
-            variant="outline"
-            onClick={(e) => {
+            size='sm'
+            colorScheme='red'
+            variant='outline'
+            onClick={e => {
               e.stopPropagation();
               onDeleteClick();
             }}
-            aria-label="Delete this answer">
+            aria-label='Delete this answer'>
             Delete Answer
           </Button>
         )}
       </div>
     </div>
-    <CommentSection 
-      comments={comments} 
+    <CommentSection
+      comments={comments}
       handleAddComment={handleAddComment}
       isModerator={isModerator}
       onDeleteComment={onDeleteComment}

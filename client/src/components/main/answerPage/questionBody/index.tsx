@@ -65,10 +65,10 @@ const QuestionBody = ({
       <div style={{ display: 'flex', gap: '8px', marginTop: '8px' }}>
         {onFlagClick && (
           <Button
-            size="sm"
-            colorScheme="orange"
-            variant="outline"
-            onClick={(e) => {
+            size='sm'
+            colorScheme='orange'
+            variant='outline'
+            onClick={e => {
               e.stopPropagation();
               onFlagClick();
             }}
@@ -79,14 +79,14 @@ const QuestionBody = ({
         )}
         {isModerator && onDeleteClick && (
           <Button
-            size="sm"
-            colorScheme="red"
-            variant="outline"
-            onClick={(e) => {
+            size='sm'
+            colorScheme='red'
+            variant='outline'
+            onClick={e => {
               e.stopPropagation();
               onDeleteClick();
             }}
-            aria-label="Delete this question">
+            aria-label='Delete this question'>
             Delete Question
           </Button>
         )}
