@@ -4,13 +4,21 @@ import profanityService from '../profanityService';
 
 jest.mock('../config');
 jest.mock('../profanityService');
+jest.mock('../userService', () => ({
+  ...jest.requireActual('../userService'),
+  checkGuidelinesAgreement: jest.fn(),
+}));
 
 describe('communityService - createCommunity', () => {
   const mockApi = api as jest.Mocked<typeof api>;
   const mockProfanityService = profanityService as jest.MockedFunction<typeof profanityService>;
+  const mockCheckGuidelines = jest.requireMock('../userService').checkGuidelinesAgreement;
+
+  const testUsername = 'testUser';
 
   beforeEach(() => {
     jest.clearAllMocks();
+    mockCheckGuidelines.mockResolvedValue(undefined);
   });
 
   it('throws error when community name contains profanity', async () => {
@@ -26,7 +34,7 @@ describe('communityService - createCommunity', () => {
       admin: 'user1',
     };
 
-    await expect(createCommunity(community)).rejects.toThrow(
+    await expect(createCommunity(community, testUsername)).rejects.toThrow(
       'Profanity detected in text. Please revise.',
     );
     expect(mockProfanityService).toHaveBeenCalledWith(community.name);
@@ -46,7 +54,7 @@ describe('communityService - createCommunity', () => {
       admin: 'user1',
     };
 
-    await expect(createCommunity(community)).rejects.toThrow(
+    await expect(createCommunity(community, testUsername)).rejects.toThrow(
       'Profanity detected in text. Please revise.',
     );
     expect(mockProfanityService).toHaveBeenCalledTimes(2);
@@ -65,7 +73,7 @@ describe('communityService - createCommunity', () => {
       admin: 'user1',
     };
 
-    await createCommunity(community);
+    await createCommunity(community, testUsername);
 
     expect(mockProfanityService).toHaveBeenCalledTimes(2);
     expect(mockProfanityService).toHaveBeenCalledWith(community.name);
@@ -85,7 +93,9 @@ describe('communityService - createCommunity', () => {
       admin: 'user1',
     };
 
-    await expect(createCommunity(community)).rejects.toThrow('Error while creating community');
+    await expect(createCommunity(community, testUsername)).rejects.toThrow(
+      'Error while creating community',
+    );
   });
 
   it('returns the created community on success', async () => {
@@ -108,7 +118,7 @@ describe('communityService - createCommunity', () => {
       admin: 'user1',
     };
 
-    const result = await createCommunity(community);
+    const result = await createCommunity(community, testUsername);
     expect(result).toEqual(createdCommunity);
   });
 });

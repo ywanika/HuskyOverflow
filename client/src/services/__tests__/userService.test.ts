@@ -1,37 +1,31 @@
 import { createUser, updateBiography } from '../userService';
 import api from '../config';
 import profanityService from '../profanityService';
-import { checkGuidelinesAgreement } from '../guidelinesCheck';
 
 jest.mock('../config');
 jest.mock('../profanityService');
-jest.mock('../guidelinesCheck');
 
 describe('updateBiography', () => {
   const mockApi = api as jest.Mocked<typeof api>;
   const mockProfanityService = profanityService as jest.MockedFunction<typeof profanityService>;
-  const mockCheckGuidelines = checkGuidelinesAgreement as jest.MockedFunction<
-    typeof checkGuidelinesAgreement
-  >;
 
   beforeEach(() => {
     jest.clearAllMocks();
   });
 
   it('throws error when user has not agreed to guidelines', async () => {
-    mockCheckGuidelines.mockImplementation(() => {
-      throw new Error('GUIDELINES_NOT_AGREED');
-    });
+    mockApi.get.mockResolvedValueOnce({ status: 403, data: { agreed: false } });
 
     const username = 'user1';
     const newBiography = 'This is a clean biography';
 
-    await expect(updateBiography(username, newBiography, false)).rejects.toThrow(
-      'GUIDELINES_NOT_AGREED',
+    await expect(updateBiography(username, newBiography)).rejects.toThrow(
+      'You must agree to the community guidelines before posting.',
     );
   });
 
   it('calls profanity service when updating biography and passes back error', async () => {
+    mockApi.get.mockResolvedValueOnce({ status: 200, data: { agreed: true } });
     mockProfanityService.mockRejectedValueOnce(
       new Error('Profanity detected in text. Please revise.'),
     );
@@ -39,19 +33,20 @@ describe('updateBiography', () => {
     const username = 'user1';
     const newBiography = 'This biography contains profanity';
 
-    await expect(updateBiography(username, newBiography, true)).rejects.toThrow(
+    await expect(updateBiography(username, newBiography)).rejects.toThrow(
       'Profanity detected in text. Please revise.',
     );
   });
 
   it('calls API when biography passes profanity check', async () => {
+    mockApi.get.mockResolvedValueOnce({ status: 200, data: { agreed: true } });
     mockProfanityService.mockResolvedValueOnce(undefined);
     mockApi.patch.mockResolvedValueOnce({ status: 200, data: { _id: 'user123' } });
 
     const username = 'user1';
     const newBiography = 'This is a clean biography';
 
-    await updateBiography(username, newBiography, true);
+    await updateBiography(username, newBiography);
 
     expect(mockProfanityService).toHaveBeenCalledWith(newBiography);
     expect(mockApi.patch).toHaveBeenCalledWith(`/api/user/updateBiography`, {
@@ -61,16 +56,18 @@ describe('updateBiography', () => {
   });
 
   it('throws error when API response status is not 200', async () => {
+    mockApi.get.mockResolvedValueOnce({ status: 200, data: { agreed: true } });
     mockProfanityService.mockResolvedValueOnce(undefined);
     mockApi.patch.mockResolvedValueOnce({ status: 400, data: {} });
 
     const username = 'user1';
     const newBiography = 'Another clean biography';
 
-    await expect(updateBiography(username, newBiography, true)).rejects.toThrow();
+    await expect(updateBiography(username, newBiography)).rejects.toThrow();
   });
 
   it('returns the updated user on success', async () => {
+    mockApi.get.mockResolvedValueOnce({ status: 200, data: { agreed: true } });
     const mockUser = { _id: 'user123', username: 'user1', biography: 'Updated biography' };
     mockProfanityService.mockResolvedValueOnce(undefined);
     mockApi.patch.mockResolvedValueOnce({ status: 200, data: mockUser });
@@ -78,7 +75,7 @@ describe('updateBiography', () => {
     const username = 'user1';
     const newBiography = 'Updated biography';
 
-    const result = await updateBiography(username, newBiography, true);
+    const result = await updateBiography(username, newBiography);
 
     expect(result).toEqual(mockUser);
     expect(mockProfanityService).toHaveBeenCalledWith(newBiography);
