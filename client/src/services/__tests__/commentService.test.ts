@@ -23,6 +23,29 @@ describe('commentService - addComment', () => {
     mockCheckGuidelines.mockResolvedValue(undefined);
   });
 
+  it('throws error when user has not agreed to guidelines', async () => {
+    mockCheckGuidelines.mockRejectedValueOnce(
+      new Error('You must agree to the community guidelines before posting.'),
+    );
+
+    const id = 'question123';
+    const docType = 'question';
+    const comment = {
+      text: 'This is a valid comment',
+      commentBy: 'user1',
+      commentDateTime: new Date(),
+      upVotes: [],
+      downVotes: [],
+    };
+
+    await expect(addComment(id, docType, comment, testUsername)).rejects.toThrow(
+      'You must agree to the community guidelines before posting.',
+    );
+    expect(mockCheckGuidelines).toHaveBeenCalledWith(testUsername);
+    expect(mockProfanityService).not.toHaveBeenCalled();
+    expect(mockApi.post).not.toHaveBeenCalled();
+  });
+
   it('throws error when comment text contains profanity', async () => {
     mockProfanityService.mockRejectedValueOnce(
       new Error('Profanity detected in text. Please revise.'),

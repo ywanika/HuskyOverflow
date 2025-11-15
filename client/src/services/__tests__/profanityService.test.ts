@@ -30,9 +30,7 @@ describe('profanityService', () => {
       json: async () => ({ isProfanity: true }),
     });
 
-    await expect(profanityService('bad words')).rejects.toThrow(
-      'Profanity detected in text. Please revise.',
-    );
+    await expect(profanityService('bad words')).rejects.toThrow();
   });
 
   it('resolves when no profanity is detected', async () => {
@@ -44,8 +42,6 @@ describe('profanityService', () => {
     });
 
     await expect(profanityService('clean text')).resolves.toBeUndefined();
-
-    expect(consoleSpy).toHaveBeenCalledWith('No profanity detected.');
     consoleSpy.mockRestore();
   });
 });

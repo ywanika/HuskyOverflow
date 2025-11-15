@@ -6,6 +6,7 @@ import {
   UserByUsernameRequest,
   FakeSOSocket,
   UpdateBiographyRequest,
+  SignUpUserRequest,
 } from '../types/types';
 import {
   deleteUserByUsername,
@@ -25,7 +26,7 @@ const userController = (socket: FakeSOSocket) => {
    * @param res The response, either returning the created user or an error.
    * @returns A promise resolving to void.
    */
-  const createUser = async (req: UserRequest, res: Response): Promise<void> => {
+  const createUser = async (req: SignUpUserRequest, res: Response): Promise<void> => {
     const requestUser = req.body;
 
     const user: User = {
