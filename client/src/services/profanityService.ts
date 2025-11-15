@@ -16,7 +16,6 @@ const profanityService = async (text: string): Promise<void> => {
   if (profanityResult && profanityResult.isProfanity) {
     throw new Error('Profanity detected in text. Please revise.');
   }
-  console.log('No profanity detected.');
 };
 
 export default profanityService;
