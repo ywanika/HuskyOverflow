@@ -21,6 +21,7 @@ const NewQuestionPage = () => {
     titleErr,
     textErr,
     tagErr,
+    generalErr,
     postQuestion,
   } = useNewQuestion();
 
@@ -70,6 +71,7 @@ const NewQuestionPage = () => {
           }}>
           Post Question
         </button>
+        {generalErr && <div className='error_message'>{generalErr}</div>}
         <div className='mandatory_indicator'>* indicates mandatory fields</div>
       </div>
     </Form>

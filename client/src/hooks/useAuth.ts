@@ -110,7 +110,7 @@ const useAuth = (authType: 'login' | 'signup') => {
 
     try {
       if (authType === 'signup') {
-        user = await createUser({ username, password });
+        user = await createUser({ username, password, agreedToGuidelines });
       } else if (authType === 'login') {
         user = await loginUser({ username, password });
       } else {

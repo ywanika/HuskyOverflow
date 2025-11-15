@@ -12,6 +12,16 @@ export interface UserCredentials {
 }
 
 /**
+ * Represents user credentials for signing up.
+ * - `username`: The unique username of the user.
+ * - `password`: The user's password.
+ * - `agreedToGuidelines`: Whether the user has agreed to the guidelines.
+ */
+export interface UserSignUp extends UserCredentials {
+  agreedToGuidelines: boolean;
+}
+
+/**
  * Represents a user document, including user credentials and additional details.
  * - `username`: The unique username of the user.
  * - `password`: The user's password.
@@ -61,6 +71,22 @@ export interface UserRequest extends Request {
     username: string;
     password: string;
     biography?: string;
+  };
+}
+
+/**
+ * Express request for user login, containing user credentials.
+ * - `username`: The username submitted in the request (body).
+ * - `password`: The password submitted in the request (body).
+ * - `biography`: Optional field for biography information (body).
+ * - `agreedToGuidelines`: Optional field indicating if the user agreed to guidelines (body).
+ */
+export interface SignUpUserRequest extends UserRequest {
+  body: {
+    username: string;
+    password: string;
+    biography?: string;
+    agreedToGuidelines: boolean;
   };
 }
 

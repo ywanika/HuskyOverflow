@@ -28,6 +28,7 @@ const useNewQuestion = () => {
   const [titleErr, setTitleErr] = useState<string>('');
   const [textErr, setTextErr] = useState<string>('');
   const [tagErr, setTagErr] = useState<string>('');
+  const [generalErr, setErr] = useState<string>('');
 
   const [communityList, setCommunityList] = useState<DatabaseCommunity[]>([]);
 
@@ -124,8 +125,7 @@ const useNewQuestion = () => {
         setTagErr(errorMessage.replace('TAG_PROFANITY: ', ''));
       } else {
         // Handle other errors
-        // eslint-disable-next-line no-console
-        console.error(error);
+        setErr(errorMessage);
       }
     }
   };
@@ -159,6 +159,7 @@ const useNewQuestion = () => {
     titleErr,
     textErr,
     tagErr,
+    generalErr,
     postQuestion,
     communityList,
     handleDropdownChange,

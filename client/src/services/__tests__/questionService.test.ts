@@ -23,6 +23,33 @@ describe('questionService - addQuestion', () => {
     mockCheckGuidelines.mockResolvedValue(undefined);
   });
 
+  it('throws error when user has not agreed to guidelines', async () => {
+    mockCheckGuidelines.mockRejectedValueOnce(
+      new Error('You must agree to the community guidelines before posting.'),
+    );
+
+    const question = {
+      title: 'Valid title',
+      text: 'Valid question text',
+      tags: [{ name: 'javascript', description: 'desc' }],
+      askedBy: 'user1',
+      askDateTime: new Date(),
+      answers: [],
+      upVotes: [],
+      downVotes: [],
+      views: [],
+      comments: [],
+      community: null,
+    };
+
+    await expect(addQuestion(question, testUsername)).rejects.toThrow(
+      'You must agree to the community guidelines before posting.',
+    );
+    expect(mockCheckGuidelines).toHaveBeenCalledWith(testUsername);
+    expect(mockProfanityService).not.toHaveBeenCalled();
+    expect(mockApi.post).not.toHaveBeenCalled();
+  });
+
   it('throws error when question title contains profanity', async () => {
     mockProfanityService.mockRejectedValueOnce(
       new Error('TITLE_PROFANITY: Profanity detected in title. Please revise.'),

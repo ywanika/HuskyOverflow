@@ -23,6 +23,29 @@ describe('answerService - addAnswer', () => {
     mockCheckGuidelines.mockResolvedValue(undefined);
   });
 
+  it('throws error when user has not agreed to guidelines', async () => {
+    mockCheckGuidelines.mockRejectedValueOnce(
+      new Error('You must agree to the community guidelines before posting.'),
+    );
+
+    const qid = 'question123';
+    const answer = {
+      text: 'This is a valid answer',
+      ansBy: 'user1',
+      ansDateTime: new Date(),
+      upVotes: [],
+      downVotes: [],
+      comments: [],
+    };
+
+    await expect(addAnswer(qid, answer, testUsername)).rejects.toThrow(
+      'You must agree to the community guidelines before posting.',
+    );
+    expect(mockCheckGuidelines).toHaveBeenCalledWith(testUsername);
+    expect(mockProfanityService).not.toHaveBeenCalled();
+    expect(mockApi.post).not.toHaveBeenCalled();
+  });
+
   it('throws error when answer text contains profanity', async () => {
     mockProfanityService.mockRejectedValueOnce(
       new Error('Profanity detected in text. Please revise.'),
