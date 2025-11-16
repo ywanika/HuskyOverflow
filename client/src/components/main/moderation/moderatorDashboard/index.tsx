@@ -60,73 +60,79 @@ const ModeratorDashboard = () => {
   ) => {
     const title = getContentTitle(item.content, contentType);
     const text = getContentText(item.content);
-    const author = item.content.askedBy || item.content.ansBy || item.content.commentBy || 'Unknown';
+    const author =
+      item.content.askedBy || item.content.ansBy || item.content.commentBy || 'Unknown';
     const date =
-      item.content.askDateTime || item.content.ansDateTime || item.content.commentDateTime || new Date();
+      item.content.askDateTime ||
+      item.content.ansDateTime ||
+      item.content.commentDateTime ||
+      new Date();
 
     return (
-      <Card key={`${contentType}-${item._id}`} mb={4} borderLeft="4px" borderColor="orange.500">
+      <Card key={`${contentType}-${item._id}`} mb={4} borderLeft='4px' borderColor='orange.500'>
         <CardHeader>
-          <HStack justify="space-between" align="start">
-            <VStack align="start" spacing={1} flex={1}>
+          <HStack justify='space-between' align='start'>
+            <VStack align='start' spacing={1} flex={1}>
               <HStack>
-                <Badge colorScheme="orange">{contentType.toUpperCase()}</Badge>
-                <Badge colorScheme="red">{item.flaggedBy.length} flag{item.flaggedBy.length !== 1 ? 's' : ''}</Badge>
+                <Badge colorScheme='orange'>{contentType.toUpperCase()}</Badge>
+                <Badge colorScheme='red'>
+                  {item.flaggedBy.length} flag{item.flaggedBy.length !== 1 ? 's' : ''}
+                </Badge>
               </HStack>
-              <Heading size="sm">{title}</Heading>
-              <Text fontSize="sm" color="gray.600">
+              <Heading size='sm'>{title}</Heading>
+              <Text fontSize='sm' color='gray.600'>
                 By {author} • {getMetaData(new Date(date))}
               </Text>
             </VStack>
           </HStack>
         </CardHeader>
         <CardBody>
-          <Box mb={4} p={3} bg="gray.50" borderRadius="md" maxH="200px" overflowY="auto">
+          <Box mb={4} p={3} bg='gray.50' borderRadius='md' maxH='200px' overflowY='auto'>
             <Markdown remarkPlugins={[remarkGfm]}>{text}</Markdown>
           </Box>
-          <VStack align="start" spacing={2} mb={4}>
-            <Text fontSize="sm" fontWeight="bold">
+          <VStack align='start' spacing={2} mb={4}>
+            <Text fontSize='sm' fontWeight='bold'>
               Flagged by:
             </Text>
-            <HStack wrap="wrap" spacing={2}>
+            <HStack wrap='wrap' spacing={2}>
               {item.flaggedBy.map((username: string, idx: number) => (
-                <Badge key={idx} colorScheme="orange" variant="outline">
+                <Badge key={idx} colorScheme='orange' variant='outline'>
                   {username}
                 </Badge>
               ))}
             </HStack>
-            <Text fontSize="xs" color="gray.500">
+            <Text fontSize='xs' color='gray.500'>
               First flagged: {getMetaData(new Date(item.flaggedAt[0]))}
             </Text>
           </VStack>
-          <HStack spacing={2} flexWrap="wrap">
+          <HStack spacing={2} flexWrap='wrap'>
             {contentType === 'question' && (
               <Button
-                size="sm"
-                colorScheme="blue"
-                variant="outline"
+                size='sm'
+                colorScheme='blue'
+                variant='outline'
                 onClick={() => navigate(`/question/${item._id}`)}>
                 View Question
               </Button>
             )}
             <Button
-              size="sm"
-              colorScheme="green"
-              variant="outline"
+              size='sm'
+              colorScheme='green'
+              variant='outline'
               onClick={() => handleMarkAsReviewed(contentType, item._id)}>
               Mark as Reviewed
             </Button>
             <Button
-              size="sm"
-              colorScheme="orange"
-              variant="outline"
+              size='sm'
+              colorScheme='orange'
+              variant='outline'
               onClick={() => handleDismissFlag(contentType, item._id)}>
               Dismiss Flag
             </Button>
             <Button
-              size="sm"
-              colorScheme="red"
-              variant="outline"
+              size='sm'
+              colorScheme='red'
+              variant='outline'
               onClick={() => handleDeleteClick(contentType, item._id, title)}>
               Delete
             </Button>
@@ -138,8 +144,8 @@ const ModeratorDashboard = () => {
 
   if (loading) {
     return (
-      <Box p={8} textAlign="center">
-        <Spinner size="xl" />
+      <Box p={8} textAlign='center'>
+        <Spinner size='xl' />
         <Text mt={4}>Loading flagged content...</Text>
       </Box>
     );
@@ -148,7 +154,7 @@ const ModeratorDashboard = () => {
   if (error) {
     return (
       <Box p={8}>
-        <Alert status="error">
+        <Alert status='error'>
           <AlertIcon />
           {error}
         </Alert>
@@ -157,37 +163,33 @@ const ModeratorDashboard = () => {
   }
 
   const totalFlagged =
-    flaggedContent.questions.length + flaggedContent.answers.length + flaggedContent.comments.length;
+    flaggedContent.questions.length +
+    flaggedContent.answers.length +
+    flaggedContent.comments.length;
 
   return (
     <Box p={8}>
-      <VStack align="stretch" spacing={6}>
+      <VStack align='stretch' spacing={6}>
         <Box>
-          <Heading size="lg" mb={2}>
+          <Heading size='lg' mb={2}>
             Moderator Dashboard
           </Heading>
-          <Text color="gray.600">
+          <Text color='gray.600'>
             Review and manage flagged content. Total flagged items: {totalFlagged}
           </Text>
         </Box>
 
         <Tabs>
           <TabList>
-            <Tab>
-              Questions ({flaggedContent.questions.length})
-            </Tab>
-            <Tab>
-              Answers ({flaggedContent.answers.length})
-            </Tab>
-            <Tab>
-              Comments ({flaggedContent.comments.length})
-            </Tab>
+            <Tab>Questions ({flaggedContent.questions.length})</Tab>
+            <Tab>Answers ({flaggedContent.answers.length})</Tab>
+            <Tab>Comments ({flaggedContent.comments.length})</Tab>
           </TabList>
 
           <TabPanels>
             <TabPanel>
               {flaggedContent.questions.length === 0 ? (
-                <Text color="gray.500" textAlign="center" py={8}>
+                <Text color='gray.500' textAlign='center' py={8}>
                   No flagged questions
                 </Text>
               ) : (
@@ -198,16 +200,18 @@ const ModeratorDashboard = () => {
             </TabPanel>
             <TabPanel>
               {flaggedContent.answers.length === 0 ? (
-                <Text color="gray.500" textAlign="center" py={8}>
+                <Text color='gray.500' textAlign='center' py={8}>
                   No flagged answers
                 </Text>
               ) : (
-                flaggedContent.answers.map((item, index) => renderFlaggedItem(item, 'answer', index))
+                flaggedContent.answers.map((item, index) =>
+                  renderFlaggedItem(item, 'answer', index),
+                )
               )}
             </TabPanel>
             <TabPanel>
               {flaggedContent.comments.length === 0 ? (
-                <Text color="gray.500" textAlign="center" py={8}>
+                <Text color='gray.500' textAlign='center' py={8}>
                   No flagged comments
                 </Text>
               ) : (
@@ -232,4 +236,3 @@ const ModeratorDashboard = () => {
 };
 
 export default ModeratorDashboard;
-
