@@ -12,6 +12,7 @@ const SideBarNav = () => {
   const location = useLocation();
 
   const isModerator = user.role === 'moderator' || user.role === 'admin';
+  const isAdmin = user.role === 'admin';
 
   const navigationItems = [
     { to: '/home', id: 'menu_questions', label: 'Questions' },
@@ -23,6 +24,9 @@ const SideBarNav = () => {
     { to: `/collections/${user.username}`, id: 'menu_collections', label: 'My Collections' },
     ...(isModerator
       ? [{ to: '/moderator/dashboard', id: 'menu_moderator_dashboard', label: 'Moderator Dashboard' }]
+      : []),
+    ...(isAdmin
+      ? [{ to: '/admin/dashboard', id: 'menu_admin_dashboard', label: 'Admin Dashboard' }]
       : []),
   ];
 
