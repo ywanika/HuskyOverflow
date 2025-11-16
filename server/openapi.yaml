@@ -1006,35 +1006,6 @@ paths:
         '500':
           $ref: '#/components/responses/ErrorResponse'
 
-  # --------------------
-  # ACCESS ESCALATION CONTROLLER
-  # --------------------
-  /access-escalation/request:
-    post:
-      tags:
-        - Access Escalation
-      summary: Request moderator or admin access.
-      requestBody:
-        required: true
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/AccessEscalationRequestBody'
-      responses:
-        '200':
-          description: Access escalation request successfully submitted.
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  message:
-                    type: string
-        '400':
-          $ref: '#/components/responses/ValidationError'
-        '500':
-          $ref: '#/components/responses/ErrorResponse'
-
 components:
   schemas:
     # --------------------
@@ -1486,31 +1457,6 @@ components:
     User:
       type: object
       description: A user profile object.
-
-    # --------------------
-    # ACCESS ESCALATION SCHEMAS
-    # --------------------
-    AccessEscalationRequestBody:
-      type: object
-      required:
-        - username
-        - requestedRole
-        - reason
-      properties:
-        username:
-          type: string
-          minLength: 1
-          description: The username of the user requesting access.
-        requestedRole:
-          type: string
-          enum:
-            - moderator
-            - admin
-          description: The role being requested.
-        reason:
-          type: string
-          minLength: 1
-          description: The reason for requesting access.
 
     SimpleErrorBody: # MODIFICATION: New schema for simple JSON errors like 403, 404
       type: object

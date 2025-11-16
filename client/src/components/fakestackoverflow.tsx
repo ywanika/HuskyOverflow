@@ -23,9 +23,8 @@ import AllCollectionsPage from './main/collections/allCollectionsPage';
 import CollectionPage from './main/collections/collectionPage';
 import NewCollectionPage from './main/collections/newCollectionPage';
 import MainMessagePage from './main/mainMessagePage';
-import ModeratorDashboard from './main/moderation/moderatorDashboard';
+import ModeratorDashboard from './main/moderatorDashboard';
 import CommunityGuidelines from './communityGuidelines';
-import NoAccess from './main/moderation/noAccess';
 
 const ProtectedRoute = ({
   user,
@@ -83,7 +82,6 @@ const FakeStackOverflow = ({ socket }: { socket: FakeSOSocket | null }) => {
               <Route path='/new/community' element={<NewCommunityPage />} />
               <Route path='/communities/:communityID' element={<CommunityPage />} />
               <Route path='/moderator/dashboard' element={<ModeratorDashboard />} />
-              <Route path='/moderator/NoAccess' element={<NoAccess />} />
             </Route>
           }
         </Routes>

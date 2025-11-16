@@ -181,9 +181,8 @@ describe('createUser', () => {
     await createUser(credentials);
 
     expect(mockApi.post).toHaveBeenCalledWith('/api/user/signup', credentials);
-    expect(mockApi.post).toHaveBeenCalledWith(
-      '/api/user/signup',
-      expect.objectContaining({ agreedToGuidelines: false }),
+    expect(mockApi.post).toHaveBeenCalledWith('/api/user/signup', 
+      expect.objectContaining({ agreedToGuidelines: false })
     );
   });
 });
@@ -326,3 +325,4 @@ describe('updateGuidelinesAgreement', () => {
     );
   });
 });
+
