@@ -1,3 +1,4 @@
+import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import {
   Box,
@@ -10,14 +11,8 @@ import {
   Card,
   CardBody,
   CardHeader,
-  Tabs,
-  TabList,
-  TabPanels,
-  Tab,
-  TabPanel,
   Spinner,
   Alert,
-  AlertIcon,
 } from '@chakra-ui/react';
 import Markdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
@@ -31,6 +26,7 @@ import './index.css';
 const ModeratorDashboard = () => {
   const navigate = useNavigate();
   const { user } = useUserContext();
+  const [activeTab, setActiveTab] = useState<'questions' | 'answers' | 'comments'>('questions');
   
   // Check if user is moderator or admin
   const isModerator = user.role === 'moderator' || user.role === 'admin';
@@ -166,7 +162,6 @@ const ModeratorDashboard = () => {
     return (
       <Box p={8}>
         <Alert status="error">
-          <AlertIcon />
           {error}
         </Alert>
       </Box>
@@ -188,53 +183,68 @@ const ModeratorDashboard = () => {
           </Text>
         </Box>
 
-        <Tabs>
-          <TabList>
-            <Tab>
+        <Box>
+          <HStack spacing={2} mb={4} borderBottom="1px" borderColor="gray.200">
+            <Button
+              variant={activeTab === 'questions' ? 'solid' : 'ghost'}
+              colorScheme={activeTab === 'questions' ? 'blue' : 'gray'}
+              onClick={() => setActiveTab('questions')}>
               Questions ({flaggedContent.questions.length})
-            </Tab>
-            <Tab>
+            </Button>
+            <Button
+              variant={activeTab === 'answers' ? 'solid' : 'ghost'}
+              colorScheme={activeTab === 'answers' ? 'blue' : 'gray'}
+              onClick={() => setActiveTab('answers')}>
               Answers ({flaggedContent.answers.length})
-            </Tab>
-            <Tab>
+            </Button>
+            <Button
+              variant={activeTab === 'comments' ? 'solid' : 'ghost'}
+              colorScheme={activeTab === 'comments' ? 'blue' : 'gray'}
+              onClick={() => setActiveTab('comments')}>
               Comments ({flaggedContent.comments.length})
-            </Tab>
-          </TabList>
+            </Button>
+          </HStack>
 
-          <TabPanels>
-            <TabPanel>
-              {flaggedContent.questions.length === 0 ? (
-                <Text color="gray.500" textAlign="center" py={8}>
-                  No flagged questions
-                </Text>
-              ) : (
-                flaggedContent.questions.map((item, index) =>
-                  renderFlaggedItem(item, 'question', index),
-                )
-              )}
-            </TabPanel>
-            <TabPanel>
-              {flaggedContent.answers.length === 0 ? (
-                <Text color="gray.500" textAlign="center" py={8}>
-                  No flagged answers
-                </Text>
-              ) : (
-                flaggedContent.answers.map((item, index) => renderFlaggedItem(item, 'answer', index))
-              )}
-            </TabPanel>
-            <TabPanel>
-              {flaggedContent.comments.length === 0 ? (
-                <Text color="gray.500" textAlign="center" py={8}>
-                  No flagged comments
-                </Text>
-              ) : (
-                flaggedContent.comments.map((item, index) =>
-                  renderFlaggedItem(item, 'comment', index),
-                )
-              )}
-            </TabPanel>
-          </TabPanels>
-        </Tabs>
+          <Box>
+            {activeTab === 'questions' && (
+              <Box>
+                {flaggedContent.questions.length === 0 ? (
+                  <Text color="gray.500" textAlign="center" py={8}>
+                    No flagged questions
+                  </Text>
+                ) : (
+                  flaggedContent.questions.map((item, index) =>
+                    renderFlaggedItem(item, 'question', index),
+                  )
+                )}
+              </Box>
+            )}
+            {activeTab === 'answers' && (
+              <Box>
+                {flaggedContent.answers.length === 0 ? (
+                  <Text color="gray.500" textAlign="center" py={8}>
+                    No flagged answers
+                  </Text>
+                ) : (
+                  flaggedContent.answers.map((item, index) => renderFlaggedItem(item, 'answer', index))
+                )}
+              </Box>
+            )}
+            {activeTab === 'comments' && (
+              <Box>
+                {flaggedContent.comments.length === 0 ? (
+                  <Text color="gray.500" textAlign="center" py={8}>
+                    No flagged comments
+                  </Text>
+                ) : (
+                  flaggedContent.comments.map((item, index) =>
+                    renderFlaggedItem(item, 'comment', index),
+                  )
+                )}
+              </Box>
+            )}
+          </Box>
+        </Box>
       </VStack>
 
       <DeleteContentModal

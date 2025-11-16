@@ -24,7 +24,6 @@ import CommunityPage from './main/communities/communityPage';
 import AllCollectionsPage from './main/collections/allCollectionsPage';
 import CollectionPage from './main/collections/collectionPage';
 import NewCollectionPage from './main/collections/newCollectionPage';
-import MainMessagePage from './main/mainMessagePage';
 import ModeratorDashboard from './main/moderatorDashboard';
 import AdminDashboard from './main/adminDashboard';
 
@@ -52,13 +51,13 @@ const FakeStackOverflow = ({ socket }: { socket: FakeSOSocket | null }) => {
   const [user, setUser] = useState<SafeDatabaseUser | null>(null);
 
   return (
-    <LoginContext.Provider value={{ setUser }}>
-      <Routes>
-        {/* Public Route */}
-        <Route path='/' element={<Login />} />
-        <Route path='/signup' element={<Signup />} />
-        {/* Protected Routes */}
-        {
+    <ThemeProvider>
+      <LoginContext.Provider value={{ setUser }}>
+        <Routes>
+          {/* Public Routes */}
+          <Route path='/' element={<Login />} />
+          <Route path='/signup' element={<Signup />} />
+          {/* Protected Routes */}
           <Route
             element={
               <ProtectedRoute user={user} socket={socket}>
@@ -66,8 +65,9 @@ const FakeStackOverflow = ({ socket }: { socket: FakeSOSocket | null }) => {
               </ProtectedRoute>
             }>
             <Route path='/home' element={<QuestionPage />} />
-            <Route path='tags' element={<TagPage />} />
-            <Route path='/messaging' element={<MainMessagePage />} />
+            <Route path='/tags' element={<TagPage />} />
+            <Route path='/messaging' element={<MessagingPage />} />
+            <Route path='/messaging/direct-message' element={<DirectMessage />} />
             <Route path='/question/:qid' element={<AnswerPage />} />
             <Route path='/new/question' element={<NewQuestionPage />} />
             <Route path='/new/answer/:qid' element={<NewAnswerPage />} />
@@ -83,45 +83,9 @@ const FakeStackOverflow = ({ socket }: { socket: FakeSOSocket | null }) => {
             <Route path='/communities/:communityID' element={<CommunityPage />} />
             <Route path='/moderator/dashboard' element={<ModeratorDashboard />} />
             <Route path='/admin/dashboard' element={<AdminDashboard />} />
+            {/* Catch-all route - redirect unknown routes to home */}
+            <Route path='*' element={<Navigate to='/home' replace />} />
           </Route>
-        }
-      </Routes>
-    </LoginContext.Provider>
-    <ThemeProvider>
-      <LoginContext.Provider value={{ setUser }}>
-        <Routes>
-          {/* Public Route */}
-          <Route path='/' element={<Login />} />
-          <Route path='/signup' element={<Signup />} />
-          {/* Protected Routes */}
-          {
-            <Route
-              element={
-                <ProtectedRoute user={user} socket={socket}>
-                  <Layout />
-                </ProtectedRoute>
-              }>
-              <Route path='/home' element={<QuestionPage />} />
-              <Route path='tags' element={<TagPage />} />
-              <Route path='/messaging' element={<MessagingPage />} />
-              <Route path='/messaging/direct-message' element={<DirectMessage />} />
-              <Route path='/question/:qid' element={<AnswerPage />} />
-              <Route path='/new/question' element={<NewQuestionPage />} />
-              <Route path='/new/answer/:qid' element={<NewAnswerPage />} />
-              <Route path='/users' element={<UsersListPage />} />
-              <Route path='/user/:username' element={<ProfileSettings />} />
-              <Route path='/new/collection' element={<NewCollectionPage />} />
-              <Route path='/collections/:username' element={<AllCollectionsPage />} />
-              <Route path='/collections/:username/:collectionId' element={<CollectionPage />} />
-              <Route path='/games' element={<AllGamesPage />} />
-              <Route path='/games/:gameID' element={<GamePage />} />
-              <Route path='/communities' element={<AllCommunitiesPage />} />
-              <Route path='/new/community' element={<NewCommunityPage />} />
-              <Route path='/communities/:communityID' element={<CommunityPage />} />
-              <Route path='/moderator/dashboard' element={<ModeratorDashboard />} />
-              <Route path='/admin/dashboard' element={<AdminDashboard />} />
-            </Route>
-          }
         </Routes>
       </LoginContext.Provider>
     </ThemeProvider>

@@ -10,13 +10,6 @@ import {
   SimpleGrid,
   Spinner,
   Alert,
-  AlertIcon,
-  Table,
-  Thead,
-  Tbody,
-  Tr,
-  Th,
-  Td,
   Badge,
 } from '@chakra-ui/react';
 import {
@@ -65,7 +58,6 @@ const AdminDashboard = () => {
     return (
       <Box p={8}>
         <Alert status="error">
-          <AlertIcon />
           {error}
         </Alert>
       </Box>
@@ -277,48 +269,48 @@ const AdminDashboard = () => {
               <Heading size="md">User Statistics</Heading>
             </CardHeader>
             <CardBody>
-              <Table variant="simple">
-                <Tbody>
-                  <Tr>
-                    <Td fontWeight="bold">Total Users</Td>
-                    <Td>{metrics.users.total}</Td>
-                  </Tr>
-                  <Tr>
-                    <Td fontWeight="bold">New This Week</Td>
-                    <Td>
+              <Box as="table" width="100%" borderCollapse="collapse">
+                <Box as="tbody">
+                  <Box as="tr">
+                    <Box as="td" fontWeight="bold" p={2}>Total Users</Box>
+                    <Box as="td" p={2}>{metrics.users.total}</Box>
+                  </Box>
+                  <Box as="tr">
+                    <Box as="td" fontWeight="bold" p={2}>New This Week</Box>
+                    <Box as="td" p={2}>
                       <Badge colorScheme="green">{metrics.users.newThisWeek}</Badge>
-                    </Td>
-                  </Tr>
-                  <Tr>
-                    <Td fontWeight="bold">New This Month</Td>
-                    <Td>
+                    </Box>
+                  </Box>
+                  <Box as="tr">
+                    <Box as="td" fontWeight="bold" p={2}>New This Month</Box>
+                    <Box as="td" p={2}>
                       <Badge colorScheme="blue">{metrics.users.newThisMonth}</Badge>
-                    </Td>
-                  </Tr>
-                  <Tr>
-                    <Td fontWeight="bold">Active (Last 7 Days)</Td>
-                    <Td>{metrics.users.active}</Td>
-                  </Tr>
-                  <Tr>
-                    <Td fontWeight="bold">Suspended</Td>
-                    <Td>
+                    </Box>
+                  </Box>
+                  <Box as="tr">
+                    <Box as="td" fontWeight="bold" p={2}>Active (Last 7 Days)</Box>
+                    <Box as="td" p={2}>{metrics.users.active}</Box>
+                  </Box>
+                  <Box as="tr">
+                    <Box as="td" fontWeight="bold" p={2}>Suspended</Box>
+                    <Box as="td" p={2}>
                       <Badge colorScheme="red">{metrics.users.suspended}</Badge>
-                    </Td>
-                  </Tr>
-                  <Tr>
-                    <Td fontWeight="bold">Regular Users</Td>
-                    <Td>{metrics.users.byRole.user}</Td>
-                  </Tr>
-                  <Tr>
-                    <Td fontWeight="bold">Moderators</Td>
-                    <Td>{metrics.users.byRole.moderator}</Td>
-                  </Tr>
-                  <Tr>
-                    <Td fontWeight="bold">Admins</Td>
-                    <Td>{metrics.users.byRole.admin}</Td>
-                  </Tr>
-                </Tbody>
-              </Table>
+                    </Box>
+                  </Box>
+                  <Box as="tr">
+                    <Box as="td" fontWeight="bold" p={2}>Regular Users</Box>
+                    <Box as="td" p={2}>{metrics.users.byRole.user}</Box>
+                  </Box>
+                  <Box as="tr">
+                    <Box as="td" fontWeight="bold" p={2}>Moderators</Box>
+                    <Box as="td" p={2}>{metrics.users.byRole.moderator}</Box>
+                  </Box>
+                  <Box as="tr">
+                    <Box as="td" fontWeight="bold" p={2}>Admins</Box>
+                    <Box as="td" p={2}>{metrics.users.byRole.admin}</Box>
+                  </Box>
+                </Box>
+              </Box>
             </CardBody>
           </Card>
 
@@ -327,46 +319,46 @@ const AdminDashboard = () => {
               <Heading size="md">Content Statistics</Heading>
             </CardHeader>
             <CardBody>
-              <Table variant="simple">
-                <Tbody>
-                  <Tr>
-                    <Td fontWeight="bold">Total Questions</Td>
-                    <Td>{metrics.content.questions.total}</Td>
-                  </Tr>
-                  <Tr>
-                    <Td fontWeight="bold">Questions with Answers</Td>
-                    <Td>{metrics.content.questions.withAnswers}</Td>
-                  </Tr>
-                  <Tr>
-                    <Td fontWeight="bold">Unanswered</Td>
-                    <Td>
+              <Box as="table" width="100%" borderCollapse="collapse">
+                <Box as="tbody">
+                  <Box as="tr">
+                    <Box as="td" fontWeight="bold" p={2}>Total Questions</Box>
+                    <Box as="td" p={2}>{metrics.content.questions.total}</Box>
+                  </Box>
+                  <Box as="tr">
+                    <Box as="td" fontWeight="bold" p={2}>Questions with Answers</Box>
+                    <Box as="td" p={2}>{metrics.content.questions.withAnswers}</Box>
+                  </Box>
+                  <Box as="tr">
+                    <Box as="td" fontWeight="bold" p={2}>Unanswered</Box>
+                    <Box as="td" p={2}>
                       <Badge colorScheme="orange">{metrics.content.questions.unanswered}</Badge>
-                    </Td>
-                  </Tr>
-                  <Tr>
-                    <Td fontWeight="bold">Flagged Questions</Td>
-                    <Td>
+                    </Box>
+                  </Box>
+                  <Box as="tr">
+                    <Box as="td" fontWeight="bold" p={2}>Flagged Questions</Box>
+                    <Box as="td" p={2}>
                       <Badge colorScheme="red">{metrics.content.questions.flagged}</Badge>
-                    </Td>
-                  </Tr>
-                  <Tr>
-                    <Td fontWeight="bold">Total Answers</Td>
-                    <Td>{metrics.content.answers.total}</Td>
-                  </Tr>
-                  <Tr>
-                    <Td fontWeight="bold">Total Comments</Td>
-                    <Td>{metrics.content.comments.total}</Td>
-                  </Tr>
-                  <Tr>
-                    <Td fontWeight="bold">Avg Answers/Question</Td>
-                    <Td>{metrics.engagement.averageAnswersPerQuestion}</Td>
-                  </Tr>
-                  <Tr>
-                    <Td fontWeight="bold">Avg Comments/Answer</Td>
-                    <Td>{metrics.engagement.averageCommentsPerAnswer}</Td>
-                  </Tr>
-                </Tbody>
-              </Table>
+                    </Box>
+                  </Box>
+                  <Box as="tr">
+                    <Box as="td" fontWeight="bold" p={2}>Total Answers</Box>
+                    <Box as="td" p={2}>{metrics.content.answers.total}</Box>
+                  </Box>
+                  <Box as="tr">
+                    <Box as="td" fontWeight="bold" p={2}>Total Comments</Box>
+                    <Box as="td" p={2}>{metrics.content.comments.total}</Box>
+                  </Box>
+                  <Box as="tr">
+                    <Box as="td" fontWeight="bold" p={2}>Avg Answers/Question</Box>
+                    <Box as="td" p={2}>{metrics.engagement.averageAnswersPerQuestion}</Box>
+                  </Box>
+                  <Box as="tr">
+                    <Box as="td" fontWeight="bold" p={2}>Avg Comments/Answer</Box>
+                    <Box as="td" p={2}>{metrics.engagement.averageCommentsPerAnswer}</Box>
+                  </Box>
+                </Box>
+              </Box>
             </CardBody>
           </Card>
         </SimpleGrid>
@@ -377,32 +369,32 @@ const AdminDashboard = () => {
             <Heading size="md">Most Used Tags</Heading>
           </CardHeader>
           <CardBody>
-            <Table variant="simple">
-              <Thead>
-                <Tr>
-                  <Th>Tag Name</Th>
-                  <Th isNumeric>Usage Count</Th>
-                </Tr>
-              </Thead>
-              <Tbody>
+            <Box as="table" width="100%" borderCollapse="collapse">
+              <Box as="thead">
+                <Box as="tr">
+                  <Box as="th" textAlign="left" p={2} borderBottom="1px" borderColor="gray.200">Tag Name</Box>
+                  <Box as="th" textAlign="right" p={2} borderBottom="1px" borderColor="gray.200">Usage Count</Box>
+                </Box>
+              </Box>
+              <Box as="tbody">
                 {metrics.tags.mostUsed.length > 0 ? (
                   metrics.tags.mostUsed.map((tag, index) => (
-                    <Tr key={tag.name}>
-                      <Td>
+                    <Box as="tr" key={tag.name}>
+                      <Box as="td" p={2}>
                         <Badge colorScheme="blue">{tag.name}</Badge>
-                      </Td>
-                      <Td isNumeric>{tag.count}</Td>
-                    </Tr>
+                      </Box>
+                      <Box as="td" textAlign="right" p={2}>{tag.count}</Box>
+                    </Box>
                   ))
                 ) : (
-                  <Tr>
-                    <Td colSpan={2} textAlign="center">
+                  <Box as="tr">
+                    <Box as="td" colSpan={2} textAlign="center" p={4}>
                       No tags available
-                    </Td>
-                  </Tr>
+                    </Box>
+                  </Box>
                 )}
-              </Tbody>
-            </Table>
+              </Box>
+            </Box>
           </CardBody>
         </Card>
 
