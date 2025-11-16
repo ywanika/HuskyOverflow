@@ -1,4 +1,3 @@
-import { useNavigate } from 'react-router-dom';
 import {
   Box,
   Heading,
@@ -11,33 +10,17 @@ import {
   CardBody,
   CardHeader,
   Tabs,
-  TabList,
-  TabPanels,
-  Tab,
-  TabPanel,
   Spinner,
   Alert,
-  AlertIcon,
 } from '@chakra-ui/react';
 import Markdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
-import useModeratorDashboard from '../../../hooks/useModeratorDashboard';
-import useUserContext from '../../../hooks/useUserContext';
-import DeleteContentModal from '../../moderation/DeleteContentModal';
-import { getMetaData } from '../../../tool';
-import { Navigate } from 'react-router-dom';
+import useModeratorDashboard from '../../../../hooks/useModeratorDashboard';
+import DeleteContentModal from '../DeleteContentModal';
+import { getMetaData } from '../../../../tool';
 import './index.css';
 
 const ModeratorDashboard = () => {
-  const navigate = useNavigate();
-  const { user } = useUserContext();
-  
-  // Check if user is moderator or admin
-  const isModerator = user.role === 'moderator' || user.role === 'admin';
-  
-  if (!isModerator) {
-    return <Navigate to="/home" />;
-  }
   const {
     flaggedContent,
     loading,
