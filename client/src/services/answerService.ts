@@ -1,4 +1,4 @@
-import { Answer, PopulatedDatabaseAnswer } from '../types/types';
+import { Answer, PopulatedDatabaseAnswer, VoteInterface } from '../types/types';
 import api from './config';
 import profanityService from './profanityService';
 import { checkGuidelinesAgreement } from './userService';

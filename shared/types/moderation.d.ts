@@ -110,15 +110,3 @@ export interface Appeal {
 export interface DatabaseAppeal extends Appeal {
   _id: ObjectId;
 }
-
-export interface AccessEscalationRequest {
-  _id: ObjectId;
-  username: string;
-  requestedRole: 'moderator' | 'admin';
-  reason: string;
-  status: 'pending' | 'approved' | 'rejected';
-  reviewedBy?: string;
-  reviewedAt?: Date;
-  responseMessage?: string;
-  timestamp: Date;
-}
