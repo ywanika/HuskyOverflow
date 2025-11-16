@@ -1,6 +1,5 @@
 import './index.css';
 import useAllCollectionsPage from '../../../../hooks/useAllCollectionsPage';
-import DeleteCollectionButton from '../deleteCollectionButton';
 import CollectionCard from '../collectionCard';
 import PageHeader from '../../baseComponents/pageHeader';
 
@@ -19,7 +18,7 @@ const AllCollectionsPage = () => {
 
   return (
     <div className='collections-page'>
-      <PageHeader title='Collections'>
+      <PageHeader title={`${usernameBeingViewed}'s Collections`}>
         {isOwner && (
           <button
             type='button'

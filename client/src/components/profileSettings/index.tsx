@@ -5,6 +5,7 @@ import remarkGfm from 'remark-gfm';
 import './index.css';
 import useProfileSettings from '../../hooks/useProfileSettings';
 import { Checkbox } from '@chakra-ui/react';
+import RequestAccessForm from '../main/moderation/requestAccessForm';
 
 const ProfileSettings: React.FC = () => {
   const {
@@ -285,6 +286,14 @@ const ProfileSettings: React.FC = () => {
                     </div>
                   </div>
                 </section>
+                {userData.role == 'user' && (
+                  <section className='profile-section' aria-labelledby='admin-access-heading'>
+                    <h2 id='admin-access-heading' className='section-title'>
+                      Request Admin Access
+                    </h2>
+                    <RequestAccessForm />
+                  </section>
+                )}
               </>
             )}
           </div>

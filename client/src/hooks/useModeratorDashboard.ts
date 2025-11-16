@@ -8,7 +8,8 @@ import {
   deleteAnswer,
   deleteComment,
 } from '../services/moderationService';
-import DeleteContentModal from '../components/moderation/DeleteContentModal';
+import DeleteContentModal from '../components/main/moderation/DeleteContentModal';
+import { useNavigate } from 'react-router-dom';
 
 interface FlaggedItem {
   _id: string;
@@ -41,6 +42,16 @@ const useModeratorDashboard = () => {
     type: 'question',
     contentId: '',
   });
+
+  const navigate = useNavigate();
+
+  // Check if user is moderator or admin
+  const isModerator = user.role === 'moderator' || user.role === 'admin';
+
+  if (!isModerator) {
+    navigate('/moderator/NoAccess');
+    return;
+  }
 
   const fetchFlaggedContent = async () => {
     try {
