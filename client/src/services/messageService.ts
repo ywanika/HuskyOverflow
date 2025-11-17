@@ -1,5 +1,7 @@
 import api from './config';
 import { DatabaseMessage, Message } from '../types/types';
+import profanityService from './profanityService';
+import { checkGuidelinesAgreement } from './userService';
 
 const MESSAGE_API_URL = `/api/message`;
 
@@ -15,12 +17,18 @@ interface AddMessageRequestBody {
  * Adds a new message to a specific chat with the given id.
  *
  * @param messageToAdd - The message object to add to the chat.
+ * @param username - The username of the user adding the message.
  * @throws an error if the request fails or the response status is not 200.
  */
-const addMessage = async (messageToAdd: Omit<Message, 'type'>): Promise<DatabaseMessage> => {
+const addMessage = async (
+  messageToAdd: Omit<Message, 'type'>,
+  username: string,
+): Promise<DatabaseMessage> => {
   const reqBody: AddMessageRequestBody = {
     messageToAdd,
   };
+  await checkGuidelinesAgreement(username);
+  await profanityService(messageToAdd.msg);
   const res = await api.post(`${MESSAGE_API_URL}/addMessage`, reqBody);
   if (res.status !== 200) {
     throw new Error('Error while adding a new message to a chat');

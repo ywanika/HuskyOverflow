@@ -35,11 +35,15 @@ const useDirectMessage = () => {
         msgDateTime: new Date(),
       };
 
-      const chat = await sendMessage(message, selectedChat._id);
+      try {
+        const chat = await sendMessage(message, selectedChat._id, user.username);
 
-      setSelectedChat(chat);
-      setError(null);
-      setNewMessage('');
+        setSelectedChat(chat);
+        setError(null);
+        setNewMessage('');
+      } catch (err) {
+        setError((err as Error).message);
+      }
     } else {
       setError('Message cannot be empty');
     }

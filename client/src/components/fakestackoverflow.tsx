@@ -11,8 +11,6 @@ import TagPage from './main/tagPage';
 import NewQuestionPage from './main/newQuestion';
 import NewAnswerPage from './main/newAnswer';
 import AnswerPage from './main/answerPage';
-import MessagingPage from './main/messagingPage';
-import DirectMessage from './main/directMessage';
 import Signup from './auth/signup';
 import UsersListPage from './main/usersListPage';
 import ProfileSettings from './profileSettings';
@@ -26,6 +24,7 @@ import CollectionPage from './main/collections/collectionPage';
 import NewCollectionPage from './main/collections/newCollectionPage';
 import ModeratorDashboard from './main/moderatorDashboard';
 import AdminDashboard from './main/adminDashboard';
+import CommunityGuidelines from './communityGuidelines';
 
 const ProtectedRoute = ({
   user,

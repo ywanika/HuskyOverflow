@@ -6,6 +6,7 @@ import {
   UserByUsernameRequest,
   FakeSOSocket,
   UpdateBiographyRequest,
+  SignUpUserRequest,
 } from '../types/types';
 import {
   deleteUserByUsername,
@@ -25,7 +26,7 @@ const userController = (socket: FakeSOSocket) => {
    * @param res The response, either returning the created user or an error.
    * @returns A promise resolving to void.
    */
-  const createUser = async (req: UserRequest, res: Response): Promise<void> => {
+  const createUser = async (req: SignUpUserRequest, res: Response): Promise<void> => {
     const requestUser = req.body;
 
     const user: User = {
@@ -193,6 +194,75 @@ const userController = (socket: FakeSOSocket) => {
     }
   };
 
+  /**
+   * Updates a user's community guidelines agreement status.
+   * @param req The request containing the username and agreedToGuidelines in the body.
+   * @param res The response, either confirming the update or returning an error.
+   * @returns A promise resolving to void.
+   */
+  const updateGuidelinesAgreement = async (req: Request, res: Response): Promise<void> => {
+    try {
+      const { username, agreedToGuidelines } = req.body;
+
+      if (typeof agreedToGuidelines !== 'boolean') {
+        throw new Error('agreedToGuidelines must be a boolean value');
+      }
+
+      const updatedUser = await updateUser(username, { agreedToGuidelines });
+
+      if ('error' in updatedUser) {
+        throw new Error(updatedUser.error);
+      }
+
+      // Emit socket event for real-time updates
+      socket.emit('userUpdate', {
+        user: updatedUser,
+        type: 'updated',
+      });
+
+      res.status(200).json(updatedUser);
+    } catch (error) {
+      res.status(500).send(`Error when updating guidelines agreement: ${error}`);
+    }
+  };
+
+  /**
+   * Checks if a user has agreed to the community guidelines.
+   * @param req The request containing the username as a route parameter.
+   * @param res The response, either confirming agreement or returning an error.
+   * @returns A promise resolving to void.
+   */
+  const checkGuidelinesAgreement = async (
+    req: UserByUsernameRequest,
+    res: Response,
+  ): Promise<void> => {
+    try {
+      const { username } = req.params;
+
+      const user = await getUserByUsername(username);
+
+      if ('error' in user) {
+        throw Error(user.error);
+      }
+
+      if (!user.agreedToGuidelines) {
+        res.status(403).json({
+          agreed: false,
+          message:
+            'You must agree to the community guidelines before posting. Please visit your profile settings to agree to the guidelines.',
+        });
+        return;
+      }
+
+      res.status(200).json({
+        agreed: true,
+        message: 'User has agreed to community guidelines.',
+      });
+    } catch (error) {
+      res.status(500).send(`Error when checking guidelines agreement: ${error}`);
+    }
+  };
+
   // Define routes for the user-related operations.
   router.post('/signup', createUser);
   router.post('/login', userLogin);
@@ -201,6 +271,8 @@ const userController = (socket: FakeSOSocket) => {
   router.get('/getUsers', getUsers);
   router.delete('/deleteUser/:username', deleteUser);
   router.patch('/updateBiography', updateBiography);
+  router.patch('/updateGuidelinesAgreement', updateGuidelinesAgreement);
+  router.get('/checkGuidelines/:username', checkGuidelinesAgreement);
   return router;
 };
 

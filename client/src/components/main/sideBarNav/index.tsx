@@ -23,7 +23,13 @@ const SideBarNav = () => {
     { to: '/communities', id: 'menu_communities', label: 'Communities' },
     { to: `/collections/${user.username}`, id: 'menu_collections', label: 'My Collections' },
     ...(isModerator
-      ? [{ to: '/moderator/dashboard', id: 'menu_moderator_dashboard', label: 'Moderator Dashboard' }]
+      ? [
+          {
+            to: '/moderator/dashboard',
+            id: 'menu_moderator_dashboard',
+            label: 'Moderator Dashboard',
+          },
+        ]
       : []),
     ...(isAdmin
       ? [{ to: '/admin/dashboard', id: 'menu_admin_dashboard', label: 'Admin Dashboard' }]
@@ -33,7 +39,7 @@ const SideBarNav = () => {
   return (
     <nav id='sideBarNav' className='sideBarNav' role='navigation' aria-label='Main navigation'>
       <ul className='nav-list'>
-        {navigationItems.map((item) => {
+        {navigationItems.map(item => {
           const isActive = location.pathname === item.to;
           return (
             <li key={item.id}>

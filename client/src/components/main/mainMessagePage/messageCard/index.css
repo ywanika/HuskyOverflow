@@ -1,0 +1,32 @@
+.message {
+  background-color: var(--color-bg-primary);
+  border: 1px solid var(--color-bg-tertiary);
+  border-radius: var(--radius-md);
+  padding: var(--spacing-md);
+  margin-bottom: var(--spacing-md);
+}
+
+.message-header {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: var(--spacing-sm);
+}
+
+.message-sender {
+  font-weight: 600;
+  color: var(--color-text-primary);
+}
+
+.message-time {
+  color: var(--color-text-muted);
+  font-size: var(--font-size-sm);
+}
+
+.message-body {
+  color: var(--color-text-primary);
+  line-height: 1.5;
+}
+
+
+
+

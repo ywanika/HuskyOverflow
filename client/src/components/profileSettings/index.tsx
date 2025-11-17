@@ -1,8 +1,10 @@
 import * as React from 'react';
+import { Link } from 'react-router-dom';
 import Markdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
 import './index.css';
 import useProfileSettings from '../../hooks/useProfileSettings';
+import { Checkbox } from '@chakra-ui/react';
 
 const ProfileSettings: React.FC = () => {
   const {
@@ -14,6 +16,7 @@ const ProfileSettings: React.FC = () => {
     confirmNewPassword,
     successMessage,
     errorMessage,
+    bioErrorMessage,
     showConfirmation,
     pendingAction,
     canEditProfile,
@@ -28,6 +31,7 @@ const ProfileSettings: React.FC = () => {
     handleUpdateBiography,
     handleDeleteUser,
     handleViewCollectionsPage,
+    handleGuidelinesAgreementChange,
   } = useProfileSettings();
 
   if (loading) {
@@ -64,7 +68,9 @@ const ProfileSettings: React.FC = () => {
         {userData ? (
           <div className='profile-content'>
             <section className='profile-section' aria-labelledby='general-info-heading'>
-              <h2 id='general-info-heading' className='section-title'>General Information</h2>
+              <h2 id='general-info-heading' className='section-title'>
+                General Information
+              </h2>
               <div className='info-item'>
                 <label className='info-label'>Username:</label>
                 <span className='info-value'>{userData.username}</span>
@@ -76,10 +82,53 @@ const ProfileSettings: React.FC = () => {
                   {userData.dateJoined ? new Date(userData.dateJoined).toLocaleDateString() : 'N/A'}
                 </span>
               </div>
+
+              <div className='info-item'>
+                <label className='info-label'>Community Guidelines:</label>
+                <span className='info-value'>
+                  {canEditProfile ? (
+                    <Checkbox.Root
+                      checked={userData.agreedToGuidelines || false}
+                      onCheckedChange={handleGuidelinesAgreementChange}>
+                      <Checkbox.HiddenInput />
+                      <Checkbox.Control>
+                        <Checkbox.Indicator />
+                      </Checkbox.Control>
+                      <Checkbox.Label>I agree to the Community Guidelines</Checkbox.Label>
+                    </Checkbox.Root>
+                  ) : (
+                    <span>
+                      {userData.agreedToGuidelines
+                        ? 'User has agreed to the Community Guidelines'
+                        : 'User has not agreed to the Community Guidelines'}
+                    </span>
+                  )}
+                  {userData.agreedToGuidelines ? (
+                    <span className='guidelines-status'>
+                      {' '}
+                      - You can view our{' '}
+                      <Link to='/guidelines' className='guidelines-link' target='_blank'>
+                        Community Guidelines
+                      </Link>
+                    </span>
+                  ) : (
+                    <span className='warning-text'>
+                      {' '}
+                      - You must{' '}
+                      <Link to='/guidelines' className='guidelines-link' target='_blank'>
+                        review and agree to the guidelines
+                      </Link>{' '}
+                      to post content in the community.
+                    </span>
+                  )}
+                </span>
+              </div>
             </section>
 
             <section className='profile-section' aria-labelledby='biography-heading'>
-              <h2 id='biography-heading' className='section-title'>Biography</h2>
+              <h2 id='biography-heading' className='section-title'>
+                Biography
+              </h2>
               <div className='bio-section'>
                 {!editBioMode && (
                   <div className='bio-display'>
@@ -133,6 +182,11 @@ const ProfileSettings: React.FC = () => {
                         onClick={() => setEditBioMode(false)}>
                         Cancel
                       </button>
+                      {bioErrorMessage && (
+                        <div className='form-error' role='alert' aria-live='polite'>
+                          {bioErrorMessage}
+                        </div>
+                      )}
                     </div>
                   </div>
                 )}
@@ -140,7 +194,9 @@ const ProfileSettings: React.FC = () => {
             </section>
 
             <section className='profile-section' aria-labelledby='collections-heading'>
-              <h2 id='collections-heading' className='section-title'>Collections</h2>
+              <h2 id='collections-heading' className='section-title'>
+                Collections
+              </h2>
               <button
                 type='button'
                 className='btn btn-primary'
@@ -156,7 +212,9 @@ const ProfileSettings: React.FC = () => {
             {canEditProfile && (
               <>
                 <section className='profile-section' aria-labelledby='password-heading'>
-                  <h2 id='password-heading' className='section-title'>Reset Password</h2>
+                  <h2 id='password-heading' className='section-title'>
+                    Reset Password
+                  </h2>
                   <div className='password-form'>
                     <div className='form-group'>
                       <label htmlFor='new-password' className='form-label required'>
@@ -208,7 +266,9 @@ const ProfileSettings: React.FC = () => {
                 </section>
 
                 <section className='profile-section danger-zone' aria-labelledby='danger-heading'>
-                  <h2 id='danger-heading' className='section-title danger-title'>Danger Zone</h2>
+                  <h2 id='danger-heading' className='section-title danger-title'>
+                    Danger Zone
+                  </h2>
                   <div className='danger-content'>
                     <p className='danger-warning'>
                       Once you delete your account, there is no going back. Please be certain.
@@ -236,10 +296,16 @@ const ProfileSettings: React.FC = () => {
 
         {/* Confirmation Modal for Delete */}
         {showConfirmation && (
-          <div className='modal-overlay' role='dialog' aria-labelledby='modal-title' aria-modal='true'>
+          <div
+            className='modal-overlay'
+            role='dialog'
+            aria-labelledby='modal-title'
+            aria-modal='true'>
             <div className='modal'>
               <div className='modal-content'>
-                <h3 id='modal-title' className='modal-title'>Confirm Account Deletion</h3>
+                <h3 id='modal-title' className='modal-title'>
+                  Confirm Account Deletion
+                </h3>
                 <p className='modal-message'>
                   Are you sure you want to delete user <strong>{userData?.username}</strong>? This
                   action cannot be undone.

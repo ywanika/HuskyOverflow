@@ -65,3 +65,7 @@ jobs:
       - name: Run tests for backend
         if: ${{ always() }}
         run: cd server; npm test
+
+      - name: Run tests for frontend
+        if: ${{ always() }}
+        run: cd client; npm test

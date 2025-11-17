@@ -11,10 +11,12 @@ const Signup = () => {
     username,
     password,
     passwordConfirmation,
+    agreedToGuidelines,
     showPassword,
     err,
     handleSubmit,
     handleInputChange,
+    handleGuidelinesChange,
     togglePasswordVisibility,
   } = useAuth('signup');
 
@@ -25,7 +27,7 @@ const Signup = () => {
           <h1 className='login-title'>Join FakeStackOverflow!</h1>
           <h2 className='login-subtitle'>Create your account to get started.</h2>
         </header>
-        
+
         <form onSubmit={handleSubmit} className='login-form' aria-labelledby='signup-heading'>
           <fieldset className='form-fieldset'>
             <legend id='signup-heading' className='sr-only'>
@@ -111,8 +113,35 @@ const Signup = () => {
               </div>
             </div>
 
+            <div className='form-group'>
+              <div className='checkbox-group'>
+                <input
+                  type='checkbox'
+                  id='guidelinesCheckbox'
+                  checked={agreedToGuidelines}
+                  onChange={handleGuidelinesChange}
+                  className='checkbox-input'
+                  required
+                  aria-describedby='guidelines-help'
+                />
+                <label htmlFor='guidelinesCheckbox' className='checkbox-label required'>
+                  I agree to the{' '}
+                  <Link to='/guidelines' target='_blank' className='guidelines-link'>
+                    Community Guidelines
+                  </Link>
+                </label>
+                <div id='guidelines-help' className='form-help'>
+                  You must agree to the community guidelines to create an account
+                </div>
+              </div>
+            </div>
+
             <div className='form-actions'>
-              <button type='submit' className='btn btn-primary btn-lg' aria-describedby='submit-help'>
+              <button
+                type='submit'
+                className='btn btn-primary btn-lg'
+                disabled={!agreedToGuidelines}
+                aria-describedby='submit-help'>
                 Create Account
               </button>
               <div id='submit-help' className='form-help'>
@@ -121,13 +150,13 @@ const Signup = () => {
             </div>
           </fieldset>
         </form>
-        
+
         {err && (
           <div className='form-error' role='alert' aria-live='polite'>
             {err}
           </div>
         )}
-        
+
         <div className='login-footer'>
           <Link to='/' className='signup-link'>
             Already have an account? Login here.

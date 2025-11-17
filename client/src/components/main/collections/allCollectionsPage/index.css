@@ -16,7 +16,7 @@
 
 .collections-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
   gap: var(--spacing-xl);
   width: 100%;
 }
@@ -34,108 +34,14 @@
 }
 
 .collections-create-btn:hover {
-  background-color: #591980;
+  background-color: var(--color-primary);
 }
 
 .collections-create-btn:active {
-  background-color: #591980;
+  background-color: var(--color-primary);
 }
 
-/* Collection Card */
-.collection-card {
-  background-color: var(--color-bg-primary);
-  border: 1px solid var(--color-bg-tertiary);
-  border-radius: var(--radius-lg);
-  padding: var(--spacing-xl);
-  box-shadow: var(--shadow-sm);
-  cursor: pointer;
-  transition: all var(--transition-normal);
-  position: relative;
-  overflow: hidden;
-  display: flex;
-  flex-direction: column;
-  min-height: 200px;
-}
-
-.collection-card:hover {
-  transform: translateY(-4px);
-  box-shadow: var(--shadow-lg);
-  border-color: var(--color-primary);
-}
-
-.collection-card:focus {
-  outline: 2px solid var(--color-focus);
-  outline-offset: 2px;
-  border-color: var(--color-focus);
-}
-
-.collection-card:focus-visible {
-  outline: 2px solid var(--color-focus);
-  outline-offset: 2px;
-  border-color: var(--color-focus);
-}
-
-.collection-card-header {
-  margin-bottom: var(--spacing-md);
-  padding-bottom: var(--spacing-sm);
-  border-bottom: 1px solid var(--color-bg-tertiary);
-}
-
-.collection-name {
-  font-size: var(--font-size-xl);
-  font-weight: 700;
-  color: var(--color-text-primary);
-  margin: 0;
-  line-height: 1.3;
-  word-break: break-word;
-}
-
-.collection-card-body {
-  flex: 1;
-  margin-bottom: var(--spacing-lg);
-}
-
-.collection-description {
-  color: var(--color-text-secondary);
-  font-size: var(--font-size-base);
-  margin: 0 0 var(--spacing-md) 0;
-  line-height: 1.6;
-  display: -webkit-box;
-  -webkit-line-clamp: 3;
-  -webkit-box-orient: vertical;
-  line-clamp: 3;
-  box-orient: vertical;
-  overflow: hidden;
-}
-
-.collection-meta {
-  display: grid;
-  grid-template-columns: auto 1fr;
-  gap: var(--spacing-xs) var(--spacing-sm);
-  margin: 0;
-}
-
-.meta-label {
-  font-size: var(--font-size-sm);
-  font-weight: 600;
-  color: var(--color-text-muted);
-  text-transform: uppercase;
-  letter-spacing: 0.5px;
-  margin: 0;
-}
-
-.meta-value {
-  font-size: var(--font-size-sm);
-  color: var(--color-text-primary);
-  font-weight: 500;
-  margin: 0;
-}
-
-.collection-card-actions {
-  margin-top: auto;
-  padding-top: var(--spacing-md);
-  border-top: 1px solid var(--color-bg-tertiary);
-}
+/* Card styles moved to collections/collectionCard/index.css */
 
 /* Responsive design */
 @media (max-width: 768px) {
@@ -159,33 +65,15 @@
     gap: var(--spacing-md);
   }
   
-  .collection-card {
-    padding: var(--spacing-lg);
-  }
-  
-  .collection-name {
-    font-size: var(--font-size-lg);
-  }
+  /* Card-specific responsive rules are in the card CSS */
 }
 
 /* High contrast mode */
 @media (prefers-contrast: high) {
-  .collection-card {
-    border-width: 2px;
-  }
-  
-  .collection-card:hover {
-    border-width: 3px;
-  }
+  /* High contrast handled in the card CSS */
 }
 
 /* Reduced motion */
 @media (prefers-reduced-motion: reduce) {
-  .collection-card {
-    transition: none;
-  }
-  
-  .collection-card:hover {
-    transform: none;
-  }
+  /* Reduced motion handled in the card CSS */
 }

@@ -38,13 +38,16 @@ const useNewCollectionPage = () => {
 
   const handleCreateCollection = async () => {
     try {
-      const collection: PopulatedDatabaseCollection = await createCollection({
-        name: collectionName,
-        description: collectionDescription,
-        isPrivate,
-        username: user.username,
-        questions: [],
-      });
+      const collection: PopulatedDatabaseCollection = await createCollection(
+        {
+          name: collectionName,
+          description: collectionDescription,
+          isPrivate,
+          username: user.username,
+          questions: [],
+        },
+        user.username,
+      );
 
       if (collection) {
         navigate(`/collections/${user.username}/${collection._id}`);

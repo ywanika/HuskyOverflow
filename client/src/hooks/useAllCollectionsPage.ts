@@ -30,6 +30,10 @@ const useAllCollectionsPage = () => {
     return;
   };
 
+  const handleLocalDeleteCollection = (collectionId: string) => {
+    setCollections(prev => prev.filter(c => c._id.toString() !== collectionId));
+  };
+
   useEffect(() => {
     const fetchCollections = async () => {
       if (usernameBeingViewed === undefined) {
@@ -84,6 +88,7 @@ const useAllCollectionsPage = () => {
     collections,
     handleCreateCollection,
     handleViewCollection,
+    handleLocalDeleteCollection,
     isOwner: currentUser.username === usernameBeingViewed,
   };
 };

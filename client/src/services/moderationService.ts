@@ -237,4 +237,3 @@ export const dismissFlag = async (
 
   return res.data;
 };
-

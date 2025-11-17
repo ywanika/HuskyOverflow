@@ -27,18 +27,24 @@ const Header = () => {
       className="header"
       bg={isDark ? 'gray.800' : 'gray.100'}
       p={6}
-      role="banner">
-      <Flex justify="space-between" align="center" maxW="100%">
-        <Heading as="h1" size="lg" color={isDark ? 'white' : 'black'} flexShrink={0} mr={8}>
-          <a
-            href="/home"
-            className="header-link"
-            aria-label="Fake Stack Overflow - Go to home"
-            style={{ textDecoration: 'none', color: 'inherit' }}>
+      role='banner'>
+      <Flex justify='space-between' align='center' maxW='100%' className='header-container'>
+        <Heading
+          as='h1'
+          size='lg'
+          color={isDark ? 'white' : 'black'}
+          flexShrink={0}
+          mr={8}
+          className='header-title'>
+          <Link
+            href='/home'
+            className='header-link'
+            aria-label='Fake Stack Overflow - Go to home'
+            _hover={{ textDecoration: 'none' }}>
             Fake Stack Overflow
           </a>
         </Heading>
-        <Flex gap={6} align="center" flexShrink={0} role="search">
+        <Flex gap={6} align='center' flexShrink={0} role='search' className='header-actions'>
           <Input
             id="searchBar"
             type="search"
@@ -46,7 +52,8 @@ const Header = () => {
             value={val}
             onChange={handleInputChange}
             onKeyDown={handleKeyDown}
-            w="300px"
+            className='search-input form-input'
+            w='300px'
             flexShrink={0}
             aria-label="Search the site"
             aria-describedby="search-help"
@@ -61,15 +68,14 @@ const Header = () => {
           <NotificationBell />
           <ThemeToggleButton />
           <Button
-            className="logout-button"
+            className='logout-button btn btn-secondary'
             onClick={handleSignOut}
-            variant="outline"
             flexShrink={0}
             aria-label="Sign out of your account">
             Log out
           </Button>
           <Button
-            className="view-profile-button"
+            className='view-profile-button btn btn-primary'
             onClick={() => navigate(`/user/${currentUser.username}`)}
             flexShrink={0}
             aria-label={`View profile for ${currentUser.username}`}>

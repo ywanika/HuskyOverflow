@@ -11,6 +11,12 @@
   z-index: 50;
 }
 
+/* Dark header for specific pages like tags and games */
+.games-page .page-header,
+.tag-page .page-header {
+  background: var(--color-bg-primary);
+}
+
 .page-header-content {
   display: flex;
   justify-content: space-between;

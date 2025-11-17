@@ -1,14 +1,25 @@
 import axios from 'axios';
 import { Collection, PopulatedDatabaseCollection } from '../types/types';
+import profanityService from './profanityService';
+import { checkGuidelinesAgreement } from './userService';
 
 const COLLECTION_API_URL = '/api/collection';
 
 /**
  * Creates a new collection.
  * @param collection - The collection object to be created
+ * @param username - The username of the user creating the collection
  * @returns {Promise<PopulatedDatabaseCollection>} - A promise that resolves to the created collection
  */
-const createCollection = async (collection: Collection): Promise<PopulatedDatabaseCollection> => {
+const createCollection = async (
+  collection: Collection,
+  username: string,
+): Promise<PopulatedDatabaseCollection> => {
+  await checkGuidelinesAgreement(username);
+  await profanityService(collection.name);
+  if (collection.description) {
+    await profanityService(collection.description);
+  }
   const res = await axios.post(`${COLLECTION_API_URL}/create`, collection);
 
   if (res.status !== 200) {

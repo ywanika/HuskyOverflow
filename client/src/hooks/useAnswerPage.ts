@@ -52,29 +52,22 @@ const useAnswerPage = () => {
   }, [qid, navigate]);
 
   /**
-   * Function to handle the submission of a new comment to a question or answer.
-   *
-   * @param comment - The comment object to be added.
-   * @param targetType - The type of target being commented on, either 'question' or 'answer'.
-   * @param targetId - The ID of the target being commented on.
+   * Function to handle the creation of a new comment.
+   * @param comment - The comment to be added.
+   * @param targetType - The type of target (question or answer).
+   * @param targetId - The ID of the target (question or answer).
    */
   const handleNewComment = async (
     comment: Comment,
     targetType: 'question' | 'answer',
     targetId: string | undefined,
   ) => {
-    try {
-      if (targetId === undefined) {
-        throw new Error('No target ID provided.');
-      }
-
-      await addComment(targetId, targetType, comment);
-    } catch (error) {
-      // eslint-disable-next-line no-console
-      console.error('Error adding comment:', error);
+    if (targetId === undefined) {
+      throw new Error('No target ID provided.');
     }
+    // Let the error propagate to the caller (CommentSection)
+    await addComment(targetId, targetType, comment, user.username);
   };
-
   useEffect(() => {
     /**
      * Function to fetch the question data based on the question ID.

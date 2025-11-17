@@ -46,7 +46,11 @@ const AnswerPage = () => {
     return null;
   }
 
-  const handleDeleteClick = (type: 'question' | 'answer' | 'comment', contentId: string, contentTitle?: string) => {
+  const handleDeleteClick = (
+    type: 'question' | 'answer' | 'comment',
+    contentId: string,
+    contentTitle?: string,
+  ) => {
     setDeleteModal({ isOpen: true, type, contentId, contentTitle });
   };
 
@@ -63,11 +67,9 @@ const AnswerPage = () => {
   // Don't show deleted content
   if (question.deleted?.isDeleted) {
     return (
-      <div className="right_padding">
+      <div className='right_padding'>
         <p>This question has been deleted by a moderator.</p>
-        {question.deleted.deleteReason && (
-          <p>Reason: {question.deleted.deleteReason}</p>
-        )}
+        {question.deleted.deleteReason && <p>Reason: {question.deleted.deleteReason}</p>}
       </div>
     );
   }

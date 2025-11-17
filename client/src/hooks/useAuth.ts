@@ -13,9 +13,11 @@ import { createUser, loginUser } from '../services/userService';
  *   - username: The current value of the username input.
  *   - password: The current value of the password input.
  *   - passwordConfirmation: The current value of the password confirmation input (for signup).
+ *   - agreedToGuidelines: Boolean indicating if user agreed to guidelines (for signup).
  *   - showPassword: Boolean indicating whether the password is visible.
  *   - err: The current error message, if any.
  *   - handleInputChange: Function to handle changes in input fields.
+ *   - handleGuidelinesChange: Function to handle guidelines checkbox change.
  *   - handleSubmit: Function to handle form submission.
  *   - togglePasswordVisibility: Function to toggle password visibility.
  */
@@ -23,6 +25,7 @@ const useAuth = (authType: 'login' | 'signup') => {
   const [username, setUsername] = useState<string>('');
   const [password, setPassword] = useState<string>('');
   const [passwordConfirmation, setPasswordConfirmation] = useState<string>('');
+  const [agreedToGuidelines, setAgreedToGuidelines] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
   const [err, setErr] = useState<string>('');
   const { setUser } = useLoginContext();
@@ -57,6 +60,15 @@ const useAuth = (authType: 'login' | 'signup') => {
   };
 
   /**
+   * Handles changes to the community guidelines checkbox.
+   *
+   * @param e - The checkbox change event.
+   */
+  const handleGuidelinesChange = (e: ChangeEvent<HTMLInputElement>) => {
+    setAgreedToGuidelines(e.target.checked);
+  };
+
+  /**
    * Validates the input fields for the form.
    * Ensures required fields are filled and passwords match (for signup).
    *
@@ -70,6 +82,11 @@ const useAuth = (authType: 'login' | 'signup') => {
 
     if (authType === 'signup' && password !== passwordConfirmation) {
       setErr('Passwords do not match');
+      return false;
+    }
+
+    if (authType === 'signup' && !agreedToGuidelines) {
+      setErr('You must agree to the community guidelines to create an account');
       return false;
     }
 
@@ -93,7 +110,7 @@ const useAuth = (authType: 'login' | 'signup') => {
 
     try {
       if (authType === 'signup') {
-        user = await createUser({ username, password });
+        user = await createUser({ username, password, agreedToGuidelines });
       } else if (authType === 'login') {
         user = await loginUser({ username, password });
       } else {
@@ -111,9 +128,11 @@ const useAuth = (authType: 'login' | 'signup') => {
     username,
     password,
     passwordConfirmation,
+    agreedToGuidelines,
     showPassword,
     err,
     handleInputChange,
+    handleGuidelinesChange,
     handleSubmit,
     togglePasswordVisibility,
   };

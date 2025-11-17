@@ -39,16 +39,16 @@ interface InputProps {
  * @param type The input type. Defaults to 'text'.
  * @param placeholder Optional placeholder text for the input field.
  */
-const Input = ({ 
-  title, 
-  hint, 
-  id, 
-  mandatory = true, 
-  val, 
-  setState, 
-  err, 
+const Input = ({
+  title,
+  hint,
+  id,
+  mandatory = true,
+  val,
+  setState,
+  err,
   type = 'text',
-  placeholder 
+  placeholder,
 }: InputProps) => (
   <div className='form-group'>
     <label htmlFor={id} className={`form-label ${mandatory ? 'required' : ''}`}>
@@ -66,8 +66,16 @@ const Input = ({
       aria-describedby={hint ? `${id}-hint` : undefined}
       aria-invalid={err ? 'true' : 'false'}
     />
-    {hint && <div id={`${id}-hint`} className='form-help'>{hint}</div>}
-    {err && <div className='form-error' role='alert' aria-live='polite'>{err}</div>}
+    {hint && (
+      <div id={`${id}-hint`} className='form-help'>
+        {hint}
+      </div>
+    )}
+    {err && (
+      <div className='form-error' role='alert' aria-live='polite'>
+        {err}
+      </div>
+    )}
   </div>
 );
 
