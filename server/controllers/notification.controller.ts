@@ -114,7 +114,9 @@ const notificationController = (socket: FakeSOSocket) => {
 
       res.json({ success: true, notification: result.notification });
     } catch (err: unknown) {
-      res.status(500).json({ error: `Error marking notification as read: ${(err as Error).message}` });
+      res
+        .status(500)
+        .json({ error: `Error marking notification as read: ${(err as Error).message}` });
     }
   };
 
@@ -147,7 +149,9 @@ const notificationController = (socket: FakeSOSocket) => {
 
       res.json({ success: true });
     } catch (err: unknown) {
-      res.status(500).json({ error: `Error marking all notifications as read: ${(err as Error).message}` });
+      res
+        .status(500)
+        .json({ error: `Error marking all notifications as read: ${(err as Error).message}` });
     }
   };
 
@@ -157,7 +161,10 @@ const notificationController = (socket: FakeSOSocket) => {
    * @param res - Response object
    * @returns Promise resolving to void
    */
-  const deleteNotificationRoute = async (req: NotificationRequest, res: Response): Promise<void> => {
+  const deleteNotificationRoute = async (
+    req: NotificationRequest,
+    res: Response,
+  ): Promise<void> => {
     const { notificationId } = req.params;
     const username = req.body.username || req.query.username;
 
@@ -201,4 +208,3 @@ const notificationController = (socket: FakeSOSocket) => {
 };
 
 export default notificationController;
-

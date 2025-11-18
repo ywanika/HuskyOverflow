@@ -76,9 +76,14 @@ export const markNotificationAsRead = async (
  * @param username - The username of the user
  * @returns Promise resolving to NotificationResponse
  */
-export const markAllNotificationsAsRead = async (username: string): Promise<NotificationResponse> => {
+export const markAllNotificationsAsRead = async (
+  username: string,
+): Promise<NotificationResponse> => {
   try {
-    await NotificationModel.updateMany({ recipientUsername: username, isRead: false }, { isRead: true });
+    await NotificationModel.updateMany(
+      { recipientUsername: username, isRead: false },
+      { isRead: true },
+    );
     return {};
   } catch (error) {
     return { error: `Error marking all notifications as read: ${(error as Error).message}` };
@@ -110,4 +115,3 @@ export const deleteNotification = async (
     return { error: `Error deleting notification: ${(error as Error).message}` };
   }
 };
-

@@ -2,7 +2,6 @@ import {
   Box,
   Heading,
   VStack,
-  HStack,
   Text,
   Card,
   CardBody,
@@ -42,13 +41,13 @@ const AdminDashboard = () => {
   const isAdmin = user.role === 'admin';
 
   if (!isAdmin) {
-    return <Navigate to="/home" />;
+    return <Navigate to='/home' />;
   }
 
   if (loading) {
     return (
-      <Box p={8} textAlign="center">
-        <Spinner size="xl" />
+      <Box p={8} textAlign='center'>
+        <Spinner size='xl' />
         <Text mt={4}>Loading dashboard metrics...</Text>
       </Box>
     );
@@ -57,9 +56,7 @@ const AdminDashboard = () => {
   if (error) {
     return (
       <Box p={8}>
-        <Alert status="error">
-          {error}
-        </Alert>
+        <Alert status='error'>{error}</Alert>
       </Box>
     );
   }
@@ -93,25 +90,25 @@ const AdminDashboard = () => {
 
   return (
     <Box p={8}>
-      <VStack align="stretch" spacing={6}>
+      <VStack align='stretch' spacing={6}>
         <Box>
-          <Heading size="lg" mb={2}>
+          <Heading size='lg' mb={2}>
             Admin Dashboard
           </Heading>
-          <Text color="gray.600">Comprehensive metrics and analytics for the platform</Text>
+          <Text color='gray.600'>Comprehensive metrics and analytics for the platform</Text>
         </Box>
 
         {/* Summary Cards */}
         <SimpleGrid columns={{ base: 1, md: 2, lg: 4 }} spacing={4}>
           <Card>
             <CardHeader>
-              <Text fontSize="sm" color="gray.600">
+              <Text fontSize='sm' color='gray.600'>
                 Total Users
               </Text>
             </CardHeader>
             <CardBody>
-              <Heading size="xl">{metrics.users.total}</Heading>
-              <Text fontSize="sm" color="gray.500">
+              <Heading size='xl'>{metrics.users.total}</Heading>
+              <Text fontSize='sm' color='gray.500'>
                 {metrics.users.newThisWeek} new this week
               </Text>
             </CardBody>
@@ -119,13 +116,13 @@ const AdminDashboard = () => {
 
           <Card>
             <CardHeader>
-              <Text fontSize="sm" color="gray.600">
+              <Text fontSize='sm' color='gray.600'>
                 Total Questions
               </Text>
             </CardHeader>
             <CardBody>
-              <Heading size="xl">{metrics.content.questions.total}</Heading>
-              <Text fontSize="sm" color="gray.500">
+              <Heading size='xl'>{metrics.content.questions.total}</Heading>
+              <Text fontSize='sm' color='gray.500'>
                 {metrics.content.questions.unanswered} unanswered
               </Text>
             </CardBody>
@@ -133,13 +130,13 @@ const AdminDashboard = () => {
 
           <Card>
             <CardHeader>
-              <Text fontSize="sm" color="gray.600">
+              <Text fontSize='sm' color='gray.600'>
                 Total Views
               </Text>
             </CardHeader>
             <CardBody>
-              <Heading size="xl">{metrics.engagement.totalViews.toLocaleString()}</Heading>
-              <Text fontSize="sm" color="gray.500">
+              <Heading size='xl'>{metrics.engagement.totalViews.toLocaleString()}</Heading>
+              <Text fontSize='sm' color='gray.500'>
                 Platform engagement
               </Text>
             </CardBody>
@@ -147,13 +144,13 @@ const AdminDashboard = () => {
 
           <Card>
             <CardHeader>
-              <Text fontSize="sm" color="gray.600">
+              <Text fontSize='sm' color='gray.600'>
                 Pending Review
               </Text>
             </CardHeader>
             <CardBody>
-              <Heading size="xl">{metrics.moderation.pendingReview}</Heading>
-              <Text fontSize="sm" color="gray.500">
+              <Heading size='xl'>{metrics.moderation.pendingReview}</Heading>
+              <Text fontSize='sm' color='gray.500'>
                 Flagged content
               </Text>
             </CardBody>
@@ -164,17 +161,17 @@ const AdminDashboard = () => {
         <SimpleGrid columns={{ base: 1, lg: 2 }} spacing={6}>
           <Card>
             <CardHeader>
-              <Heading size="md">User Growth (Last 12 Weeks)</Heading>
+              <Heading size='md'>User Growth (Last 12 Weeks)</Heading>
             </CardHeader>
             <CardBody>
-              <ResponsiveContainer width="100%" height={300}>
+              <ResponsiveContainer width='100%' height={300}>
                 <LineChart data={metrics.growth.usersByWeek}>
-                  <CartesianGrid strokeDasharray="3 3" />
-                  <XAxis dataKey="week" angle={-45} textAnchor="end" height={80} />
+                  <CartesianGrid strokeDasharray='3 3' />
+                  <XAxis dataKey='week' angle={-45} textAnchor='end' height={80} />
                   <YAxis />
                   <Tooltip />
                   <Legend />
-                  <Line type="monotone" dataKey="count" stroke="#8884d8" name="New Users" />
+                  <Line type='monotone' dataKey='count' stroke='#8884d8' name='New Users' />
                 </LineChart>
               </ResponsiveContainer>
             </CardBody>
@@ -182,17 +179,17 @@ const AdminDashboard = () => {
 
           <Card>
             <CardHeader>
-              <Heading size="md">Question Growth (Last 12 Weeks)</Heading>
+              <Heading size='md'>Question Growth (Last 12 Weeks)</Heading>
             </CardHeader>
             <CardBody>
-              <ResponsiveContainer width="100%" height={300}>
+              <ResponsiveContainer width='100%' height={300}>
                 <LineChart data={metrics.growth.questionsByWeek}>
-                  <CartesianGrid strokeDasharray="3 3" />
-                  <XAxis dataKey="week" angle={-45} textAnchor="end" height={80} />
+                  <CartesianGrid strokeDasharray='3 3' />
+                  <XAxis dataKey='week' angle={-45} textAnchor='end' height={80} />
                   <YAxis />
                   <Tooltip />
                   <Legend />
-                  <Line type="monotone" dataKey="count" stroke="#82ca9d" name="New Questions" />
+                  <Line type='monotone' dataKey='count' stroke='#82ca9d' name='New Questions' />
                 </LineChart>
               </ResponsiveContainer>
             </CardBody>
@@ -203,20 +200,20 @@ const AdminDashboard = () => {
         <SimpleGrid columns={{ base: 1, lg: 3 }} spacing={6}>
           <Card>
             <CardHeader>
-              <Heading size="md">Users by Role</Heading>
+              <Heading size='md'>Users by Role</Heading>
             </CardHeader>
             <CardBody>
-              <ResponsiveContainer width="100%" height={250}>
+              <ResponsiveContainer width='100%' height={250}>
                 <PieChart>
                   <Pie
                     data={userRoleData}
-                    cx="50%"
-                    cy="50%"
+                    cx='50%'
+                    cy='50%'
                     labelLine={false}
                     label={({ name, percent }) => `${name}: ${(percent * 100).toFixed(0)}%`}
                     outerRadius={80}
-                    fill="#8884d8"
-                    dataKey="value">
+                    fill='#8884d8'
+                    dataKey='value'>
                     {userRoleData.map((entry, index) => (
                       <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
                     ))}
@@ -229,16 +226,16 @@ const AdminDashboard = () => {
 
           <Card>
             <CardHeader>
-              <Heading size="md">Content Breakdown</Heading>
+              <Heading size='md'>Content Breakdown</Heading>
             </CardHeader>
             <CardBody>
-              <ResponsiveContainer width="100%" height={250}>
+              <ResponsiveContainer width='100%' height={250}>
                 <BarChart data={contentBreakdown}>
-                  <CartesianGrid strokeDasharray="3 3" />
-                  <XAxis dataKey="name" />
+                  <CartesianGrid strokeDasharray='3 3' />
+                  <XAxis dataKey='name' />
                   <YAxis />
                   <Tooltip />
-                  <Bar dataKey="value" fill="#8884d8" />
+                  <Bar dataKey='value' fill='#8884d8' />
                 </BarChart>
               </ResponsiveContainer>
             </CardBody>
@@ -246,16 +243,16 @@ const AdminDashboard = () => {
 
           <Card>
             <CardHeader>
-              <Heading size="md">Moderation Status</Heading>
+              <Heading size='md'>Moderation Status</Heading>
             </CardHeader>
             <CardBody>
-              <ResponsiveContainer width="100%" height={250}>
+              <ResponsiveContainer width='100%' height={250}>
                 <BarChart data={moderationStatus}>
-                  <CartesianGrid strokeDasharray="3 3" />
-                  <XAxis dataKey="name" />
+                  <CartesianGrid strokeDasharray='3 3' />
+                  <XAxis dataKey='name' />
                   <YAxis />
                   <Tooltip />
-                  <Bar dataKey="value" fill="#FF8042" />
+                  <Bar dataKey='value' fill='#FF8042' />
                 </BarChart>
               </ResponsiveContainer>
             </CardBody>
@@ -266,48 +263,74 @@ const AdminDashboard = () => {
         <SimpleGrid columns={{ base: 1, lg: 2 }} spacing={6}>
           <Card>
             <CardHeader>
-              <Heading size="md">User Statistics</Heading>
+              <Heading size='md'>User Statistics</Heading>
             </CardHeader>
             <CardBody>
-              <Box as="table" width="100%" borderCollapse="collapse">
-                <Box as="tbody">
-                  <Box as="tr">
-                    <Box as="td" fontWeight="bold" p={2}>Total Users</Box>
-                    <Box as="td" p={2}>{metrics.users.total}</Box>
-                  </Box>
-                  <Box as="tr">
-                    <Box as="td" fontWeight="bold" p={2}>New This Week</Box>
-                    <Box as="td" p={2}>
-                      <Badge colorScheme="green">{metrics.users.newThisWeek}</Badge>
+              <Box as='table' width='100%' borderCollapse='collapse'>
+                <Box as='tbody'>
+                  <Box as='tr'>
+                    <Box as='td' fontWeight='bold' p={2}>
+                      Total Users
+                    </Box>
+                    <Box as='td' p={2}>
+                      {metrics.users.total}
                     </Box>
                   </Box>
-                  <Box as="tr">
-                    <Box as="td" fontWeight="bold" p={2}>New This Month</Box>
-                    <Box as="td" p={2}>
-                      <Badge colorScheme="blue">{metrics.users.newThisMonth}</Badge>
+                  <Box as='tr'>
+                    <Box as='td' fontWeight='bold' p={2}>
+                      New This Week
+                    </Box>
+                    <Box as='td' p={2}>
+                      <Badge colorScheme='green'>{metrics.users.newThisWeek}</Badge>
                     </Box>
                   </Box>
-                  <Box as="tr">
-                    <Box as="td" fontWeight="bold" p={2}>Active (Last 7 Days)</Box>
-                    <Box as="td" p={2}>{metrics.users.active}</Box>
-                  </Box>
-                  <Box as="tr">
-                    <Box as="td" fontWeight="bold" p={2}>Suspended</Box>
-                    <Box as="td" p={2}>
-                      <Badge colorScheme="red">{metrics.users.suspended}</Badge>
+                  <Box as='tr'>
+                    <Box as='td' fontWeight='bold' p={2}>
+                      New This Month
+                    </Box>
+                    <Box as='td' p={2}>
+                      <Badge colorScheme='blue'>{metrics.users.newThisMonth}</Badge>
                     </Box>
                   </Box>
-                  <Box as="tr">
-                    <Box as="td" fontWeight="bold" p={2}>Regular Users</Box>
-                    <Box as="td" p={2}>{metrics.users.byRole.user}</Box>
+                  <Box as='tr'>
+                    <Box as='td' fontWeight='bold' p={2}>
+                      Active (Last 7 Days)
+                    </Box>
+                    <Box as='td' p={2}>
+                      {metrics.users.active}
+                    </Box>
                   </Box>
-                  <Box as="tr">
-                    <Box as="td" fontWeight="bold" p={2}>Moderators</Box>
-                    <Box as="td" p={2}>{metrics.users.byRole.moderator}</Box>
+                  <Box as='tr'>
+                    <Box as='td' fontWeight='bold' p={2}>
+                      Suspended
+                    </Box>
+                    <Box as='td' p={2}>
+                      <Badge colorScheme='red'>{metrics.users.suspended}</Badge>
+                    </Box>
                   </Box>
-                  <Box as="tr">
-                    <Box as="td" fontWeight="bold" p={2}>Admins</Box>
-                    <Box as="td" p={2}>{metrics.users.byRole.admin}</Box>
+                  <Box as='tr'>
+                    <Box as='td' fontWeight='bold' p={2}>
+                      Regular Users
+                    </Box>
+                    <Box as='td' p={2}>
+                      {metrics.users.byRole.user}
+                    </Box>
+                  </Box>
+                  <Box as='tr'>
+                    <Box as='td' fontWeight='bold' p={2}>
+                      Moderators
+                    </Box>
+                    <Box as='td' p={2}>
+                      {metrics.users.byRole.moderator}
+                    </Box>
+                  </Box>
+                  <Box as='tr'>
+                    <Box as='td' fontWeight='bold' p={2}>
+                      Admins
+                    </Box>
+                    <Box as='td' p={2}>
+                      {metrics.users.byRole.admin}
+                    </Box>
                   </Box>
                 </Box>
               </Box>
@@ -316,46 +339,74 @@ const AdminDashboard = () => {
 
           <Card>
             <CardHeader>
-              <Heading size="md">Content Statistics</Heading>
+              <Heading size='md'>Content Statistics</Heading>
             </CardHeader>
             <CardBody>
-              <Box as="table" width="100%" borderCollapse="collapse">
-                <Box as="tbody">
-                  <Box as="tr">
-                    <Box as="td" fontWeight="bold" p={2}>Total Questions</Box>
-                    <Box as="td" p={2}>{metrics.content.questions.total}</Box>
-                  </Box>
-                  <Box as="tr">
-                    <Box as="td" fontWeight="bold" p={2}>Questions with Answers</Box>
-                    <Box as="td" p={2}>{metrics.content.questions.withAnswers}</Box>
-                  </Box>
-                  <Box as="tr">
-                    <Box as="td" fontWeight="bold" p={2}>Unanswered</Box>
-                    <Box as="td" p={2}>
-                      <Badge colorScheme="orange">{metrics.content.questions.unanswered}</Badge>
+              <Box as='table' width='100%' borderCollapse='collapse'>
+                <Box as='tbody'>
+                  <Box as='tr'>
+                    <Box as='td' fontWeight='bold' p={2}>
+                      Total Questions
+                    </Box>
+                    <Box as='td' p={2}>
+                      {metrics.content.questions.total}
                     </Box>
                   </Box>
-                  <Box as="tr">
-                    <Box as="td" fontWeight="bold" p={2}>Flagged Questions</Box>
-                    <Box as="td" p={2}>
-                      <Badge colorScheme="red">{metrics.content.questions.flagged}</Badge>
+                  <Box as='tr'>
+                    <Box as='td' fontWeight='bold' p={2}>
+                      Questions with Answers
+                    </Box>
+                    <Box as='td' p={2}>
+                      {metrics.content.questions.withAnswers}
                     </Box>
                   </Box>
-                  <Box as="tr">
-                    <Box as="td" fontWeight="bold" p={2}>Total Answers</Box>
-                    <Box as="td" p={2}>{metrics.content.answers.total}</Box>
+                  <Box as='tr'>
+                    <Box as='td' fontWeight='bold' p={2}>
+                      Unanswered
+                    </Box>
+                    <Box as='td' p={2}>
+                      <Badge colorScheme='orange'>{metrics.content.questions.unanswered}</Badge>
+                    </Box>
                   </Box>
-                  <Box as="tr">
-                    <Box as="td" fontWeight="bold" p={2}>Total Comments</Box>
-                    <Box as="td" p={2}>{metrics.content.comments.total}</Box>
+                  <Box as='tr'>
+                    <Box as='td' fontWeight='bold' p={2}>
+                      Flagged Questions
+                    </Box>
+                    <Box as='td' p={2}>
+                      <Badge colorScheme='red'>{metrics.content.questions.flagged}</Badge>
+                    </Box>
                   </Box>
-                  <Box as="tr">
-                    <Box as="td" fontWeight="bold" p={2}>Avg Answers/Question</Box>
-                    <Box as="td" p={2}>{metrics.engagement.averageAnswersPerQuestion}</Box>
+                  <Box as='tr'>
+                    <Box as='td' fontWeight='bold' p={2}>
+                      Total Answers
+                    </Box>
+                    <Box as='td' p={2}>
+                      {metrics.content.answers.total}
+                    </Box>
                   </Box>
-                  <Box as="tr">
-                    <Box as="td" fontWeight="bold" p={2}>Avg Comments/Answer</Box>
-                    <Box as="td" p={2}>{metrics.engagement.averageCommentsPerAnswer}</Box>
+                  <Box as='tr'>
+                    <Box as='td' fontWeight='bold' p={2}>
+                      Total Comments
+                    </Box>
+                    <Box as='td' p={2}>
+                      {metrics.content.comments.total}
+                    </Box>
+                  </Box>
+                  <Box as='tr'>
+                    <Box as='td' fontWeight='bold' p={2}>
+                      Avg Answers/Question
+                    </Box>
+                    <Box as='td' p={2}>
+                      {metrics.engagement.averageAnswersPerQuestion}
+                    </Box>
+                  </Box>
+                  <Box as='tr'>
+                    <Box as='td' fontWeight='bold' p={2}>
+                      Avg Comments/Answer
+                    </Box>
+                    <Box as='td' p={2}>
+                      {metrics.engagement.averageCommentsPerAnswer}
+                    </Box>
                   </Box>
                 </Box>
               </Box>
@@ -366,29 +417,35 @@ const AdminDashboard = () => {
         {/* Most Used Tags Table */}
         <Card>
           <CardHeader>
-            <Heading size="md">Most Used Tags</Heading>
+            <Heading size='md'>Most Used Tags</Heading>
           </CardHeader>
           <CardBody>
-            <Box as="table" width="100%" borderCollapse="collapse">
-              <Box as="thead">
-                <Box as="tr">
-                  <Box as="th" textAlign="left" p={2} borderBottom="1px" borderColor="gray.200">Tag Name</Box>
-                  <Box as="th" textAlign="right" p={2} borderBottom="1px" borderColor="gray.200">Usage Count</Box>
+            <Box as='table' width='100%' borderCollapse='collapse'>
+              <Box as='thead'>
+                <Box as='tr'>
+                  <Box as='th' textAlign='left' p={2} borderBottom='1px' borderColor='gray.200'>
+                    Tag Name
+                  </Box>
+                  <Box as='th' textAlign='right' p={2} borderBottom='1px' borderColor='gray.200'>
+                    Usage Count
+                  </Box>
                 </Box>
               </Box>
-              <Box as="tbody">
+              <Box as='tbody'>
                 {metrics.tags.mostUsed.length > 0 ? (
                   metrics.tags.mostUsed.map((tag, index) => (
-                    <Box as="tr" key={tag.name}>
-                      <Box as="td" p={2}>
-                        <Badge colorScheme="blue">{tag.name}</Badge>
+                    <Box as='tr' key={tag.name}>
+                      <Box as='td' p={2}>
+                        <Badge colorScheme='blue'>{tag.name}</Badge>
                       </Box>
-                      <Box as="td" textAlign="right" p={2}>{tag.count}</Box>
+                      <Box as='td' textAlign='right' p={2}>
+                        {tag.count}
+                      </Box>
                     </Box>
                   ))
                 ) : (
-                  <Box as="tr">
-                    <Box as="td" colSpan={2} textAlign="center" p={4}>
+                  <Box as='tr'>
+                    <Box as='td' colSpan={2} textAlign='center' p={4}>
                       No tags available
                     </Box>
                   </Box>
@@ -401,27 +458,27 @@ const AdminDashboard = () => {
         {/* Engagement Metrics */}
         <Card>
           <CardHeader>
-            <Heading size="md">Engagement Metrics</Heading>
+            <Heading size='md'>Engagement Metrics</Heading>
           </CardHeader>
           <CardBody>
             <SimpleGrid columns={{ base: 1, md: 3 }} spacing={4}>
               <Box>
-                <Text fontSize="sm" color="gray.600">
+                <Text fontSize='sm' color='gray.600'>
                   Total Views
                 </Text>
-                <Heading size="lg">{metrics.engagement.totalViews.toLocaleString()}</Heading>
+                <Heading size='lg'>{metrics.engagement.totalViews.toLocaleString()}</Heading>
               </Box>
               <Box>
-                <Text fontSize="sm" color="gray.600">
+                <Text fontSize='sm' color='gray.600'>
                   Total Upvotes
                 </Text>
-                <Heading size="lg">{metrics.engagement.totalUpvotes.toLocaleString()}</Heading>
+                <Heading size='lg'>{metrics.engagement.totalUpvotes.toLocaleString()}</Heading>
               </Box>
               <Box>
-                <Text fontSize="sm" color="gray.600">
+                <Text fontSize='sm' color='gray.600'>
                   Total Downvotes
                 </Text>
-                <Heading size="lg">{metrics.engagement.totalDownvotes.toLocaleString()}</Heading>
+                <Heading size='lg'>{metrics.engagement.totalDownvotes.toLocaleString()}</Heading>
               </Box>
             </SimpleGrid>
           </CardBody>
@@ -431,13 +488,13 @@ const AdminDashboard = () => {
         <SimpleGrid columns={{ base: 1, md: 3 }} spacing={4}>
           <Card>
             <CardHeader>
-              <Text fontSize="sm" color="gray.600">
+              <Text fontSize='sm' color='gray.600'>
                 Communities
               </Text>
             </CardHeader>
             <CardBody>
-              <Heading size="lg">{metrics.communities.total}</Heading>
-              <Text fontSize="sm" color="gray.500">
+              <Heading size='lg'>{metrics.communities.total}</Heading>
+              <Text fontSize='sm' color='gray.500'>
                 {metrics.communities.public} public, {metrics.communities.private} private
               </Text>
             </CardBody>
@@ -445,23 +502,23 @@ const AdminDashboard = () => {
 
           <Card>
             <CardHeader>
-              <Text fontSize="sm" color="gray.600">
+              <Text fontSize='sm' color='gray.600'>
                 Collections
               </Text>
             </CardHeader>
             <CardBody>
-              <Heading size="lg">{metrics.collections.total}</Heading>
+              <Heading size='lg'>{metrics.collections.total}</Heading>
             </CardBody>
           </Card>
 
           <Card>
             <CardHeader>
-              <Text fontSize="sm" color="gray.600">
+              <Text fontSize='sm' color='gray.600'>
                 Messages
               </Text>
             </CardHeader>
             <CardBody>
-              <Heading size="lg">{metrics.messages.total}</Heading>
+              <Heading size='lg'>{metrics.messages.total}</Heading>
             </CardBody>
           </Card>
         </SimpleGrid>
@@ -471,4 +528,3 @@ const AdminDashboard = () => {
 };
 
 export default AdminDashboard;
-

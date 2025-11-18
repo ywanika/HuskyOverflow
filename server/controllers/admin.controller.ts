@@ -35,7 +35,9 @@ const adminController = (socket: FakeSOSocket) => {
       const metrics = await getDashboardMetrics();
       res.json(metrics);
     } catch (err: unknown) {
-      res.status(500).json({ error: `Error fetching dashboard metrics: ${(err as Error).message}` });
+      res
+        .status(500)
+        .json({ error: `Error fetching dashboard metrics: ${(err as Error).message}` });
     }
   };
 
@@ -46,4 +48,3 @@ const adminController = (socket: FakeSOSocket) => {
 };
 
 export default adminController;
-

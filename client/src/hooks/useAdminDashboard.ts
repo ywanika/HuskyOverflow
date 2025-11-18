@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import useUserContext from './useUserContext';
 import { getDashboardMetrics, DashboardMetrics } from '../services/adminService';
 
@@ -8,7 +8,7 @@ const useAdminDashboard = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string>('');
 
-  const fetchMetrics = async () => {
+  const fetchMetrics = useCallback(async () => {
     try {
       setLoading(true);
       setError('');
@@ -19,11 +19,11 @@ const useAdminDashboard = () => {
     } finally {
       setLoading(false);
     }
-  };
+  }, [user.username]);
 
   useEffect(() => {
     fetchMetrics();
-  }, []);
+  }, [fetchMetrics]);
 
   return {
     metrics,
@@ -34,4 +34,3 @@ const useAdminDashboard = () => {
 };
 
 export default useAdminDashboard;
-

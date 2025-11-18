@@ -1,3 +1,5 @@
+/* eslint-disable no-console */
+/* eslint-disable @typescript-eslint/naming-convention */
 import mongoose from 'mongoose';
 import UserModel from '../models/users.model';
 
@@ -16,11 +18,7 @@ async function updateUserRole(username: string, role: 'user' | 'moderator' | 'ad
     console.log('Connected to MongoDB');
 
     // Find and update the user
-    const user = await UserModel.findOneAndUpdate(
-      { username },
-      { role },
-      { new: true }
-    );
+    const user = await UserModel.findOneAndUpdate({ username }, { role }, { new: true });
 
     if (!user) {
       console.error(`User "${username}" not found`);
@@ -60,4 +58,3 @@ if (!['user', 'moderator', 'admin'].includes(role)) {
 }
 
 updateUserRole(username, role as 'user' | 'moderator' | 'admin');
-

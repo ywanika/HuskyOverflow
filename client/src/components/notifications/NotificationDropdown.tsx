@@ -19,7 +19,6 @@ const NotificationDropdown = ({
   onMarkAllAsRead,
   onDelete,
 }: NotificationDropdownProps) => {
-
   const getNotificationColor = (type: string, isRead: boolean) => {
     if (isRead) return 'gray.100';
     switch (type) {
@@ -57,62 +56,59 @@ const NotificationDropdown = ({
 
   return (
     <Box
-      position="absolute"
-      top="100%"
-      right="0"
+      position='absolute'
+      top='100%'
+      right='0'
       mt={2}
-      w="400px"
-      maxH="500px"
-      bg="white"
-      border="1px"
-      borderColor="gray.200"
-      borderRadius="md"
-      boxShadow="lg"
+      w='400px'
+      maxH='500px'
+      bg='white'
+      border='1px'
+      borderColor='gray.200'
+      borderRadius='md'
+      boxShadow='lg'
       zIndex={1000}
-      overflow="hidden"
-      role="dialog"
-      aria-label="Notifications"
-      aria-modal="false">
+      overflow='hidden'
+      role='dialog'
+      aria-label='Notifications'
+      aria-modal='false'>
       <Flex
-        justify="space-between"
-        align="center"
+        justify='space-between'
+        align='center'
         p={4}
-        borderBottom="1px"
-        borderColor="gray.200"
-        bg="gray.50">
-        <Text fontWeight="bold" fontSize="lg">
+        borderBottom='1px'
+        borderColor='gray.200'
+        bg='gray.50'>
+        <Text fontWeight='bold' fontSize='lg'>
           Notifications
         </Text>
         <HStack gap={2}>
           {notifications.length > 0 && (
             <Button
-              size="xs"
-              variant="ghost"
+              size='xs'
+              variant='ghost'
               onClick={async () => {
                 await onMarkAllAsRead();
               }}
-              aria-label="Mark all as read">
+              aria-label='Mark all as read'>
               ✓
             </Button>
           )}
-          <IconButton
-            aria-label="Close notifications"
-            onClick={onClose}
-            size="xs"
-            variant="ghost">
+          <IconButton aria-label='Close notifications' onClick={onClose} size='xs' variant='ghost'>
             ✕
           </IconButton>
         </HStack>
       </Flex>
 
-      <Box overflowY="auto" maxH="450px">
+      <Box overflowY='auto' maxH='450px'>
         {notifications.length === 0 ? (
-          <Box p={8} textAlign="center">
-            <Text color="gray.500">No notifications</Text>
+          <Box p={8} textAlign='center'>
+            <Text color='gray.500'>No notifications</Text>
           </Box>
         ) : (
-          <VStack align="stretch" gap={0}>
+          <VStack align='stretch' gap={0}>
             {notifications.map((notification, index) => (
+              // eslint-disable-next-line @typescript-eslint/no-base-to-string
               <Box key={notification._id.toString()}>
                 <Box
                   p={4}
@@ -126,46 +122,48 @@ const NotificationDropdown = ({
                         ? 'orange.500'
                         : 'blue.500'
                   }>
-                  <HStack justify="space-between" align="start" gap={2}>
-                    <Box flex="1">
+                  <HStack justify='space-between' align='start' gap={2}>
+                    <Box flex='1'>
                       <Text
-                        fontSize="sm"
+                        fontSize='sm'
                         fontWeight={notification.isRead ? 'normal' : 'bold'}
                         color={notification.isRead ? 'gray.600' : 'gray.900'}
                         mb={1}>
                         {notification.message}
                       </Text>
-                      <Text fontSize="xs" color="gray.500">
+                      <Text fontSize='xs' color='gray.500'>
                         {formatTimestamp(notification.timestamp)}
                       </Text>
                     </Box>
                     <HStack gap={1}>
                       {!notification.isRead && (
                         <IconButton
-                          aria-label="Mark as read"
+                          aria-label='Mark as read'
                           onClick={async () => {
+                            // eslint-disable-next-line @typescript-eslint/no-base-to-string
                             await onMarkAsRead(notification._id.toString());
                           }}
-                          size="xs"
-                          variant="ghost">
+                          size='xs'
+                          variant='ghost'>
                           ✓
                         </IconButton>
                       )}
                       <IconButton
-                        aria-label="Delete notification"
+                        aria-label='Delete notification'
                         onClick={async () => {
+                          // eslint-disable-next-line @typescript-eslint/no-base-to-string
                           await onDelete(notification._id.toString());
                         }}
-                        size="xs"
-                        variant="ghost"
-                        colorScheme="red">
+                        size='xs'
+                        variant='ghost'
+                        colorScheme='red'>
                         🗑️
                       </IconButton>
                     </HStack>
                   </HStack>
                 </Box>
                 {index < notifications.length - 1 && (
-                  <Box borderBottom="1px" borderColor="gray.200" />
+                  <Box borderBottom='1px' borderColor='gray.200' />
                 )}
               </Box>
             ))}
@@ -177,4 +175,3 @@ const NotificationDropdown = ({
 };
 
 export default NotificationDropdown;
-

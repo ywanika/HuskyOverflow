@@ -1,4 +1,4 @@
-import { ObjectId } from 'mongoose';
+import type { ObjectId } from 'mongoose';
 
 /**
  * Represents a notification in the application.
@@ -11,7 +11,13 @@ import { ObjectId } from 'mongoose';
  */
 export interface Notification {
   recipientUsername: string;
-  type: 'deletion' | 'appeal_result' | 'flag' | 'suspension' | 'role_change' | 'system_announcement';
+  type:
+    | 'deletion'
+    | 'appeal_result'
+    | 'flag'
+    | 'suspension'
+    | 'role_change'
+    | 'system_announcement';
   message: string;
   contentId: ObjectId | null;
   isRead: boolean;
@@ -31,4 +37,3 @@ export interface Notification {
 export interface DatabaseNotification extends Notification {
   _id: ObjectId;
 }
-

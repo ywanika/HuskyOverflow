@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, Navigate } from 'react-router-dom';
 import {
   Box,
   Heading,
@@ -20,20 +20,13 @@ import useModeratorDashboard from '../../../hooks/useModeratorDashboard';
 import useUserContext from '../../../hooks/useUserContext';
 import DeleteContentModal from '../../moderation/DeleteContentModal';
 import { getMetaData } from '../../../tool';
-import { Navigate } from 'react-router-dom';
 import './index.css';
 
 const ModeratorDashboard = () => {
   const navigate = useNavigate();
   const { user } = useUserContext();
   const [activeTab, setActiveTab] = useState<'questions' | 'answers' | 'comments'>('questions');
-  
-  // Check if user is moderator or admin
-  const isModerator = user.role === 'moderator' || user.role === 'admin';
-  
-  if (!isModerator) {
-    return <Navigate to="/home" />;
-  }
+
   const {
     flaggedContent,
     loading,
@@ -46,6 +39,14 @@ const ModeratorDashboard = () => {
     handleDeleteConfirm,
   } = useModeratorDashboard();
 
+  // Check if user is moderator or admin
+  const isModerator = user.role === 'moderator' || user.role === 'admin';
+
+  if (!isModerator) {
+    return <Navigate to='/home' />;
+  }
+
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const getContentTitle = (item: any, contentType: 'question' | 'answer' | 'comment'): string => {
     if (contentType === 'question') {
       return item.title || 'Untitled Question';
@@ -56,6 +57,7 @@ const ModeratorDashboard = () => {
     }
   };
 
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const getContentText = (item: any): string => {
     if (item.text) {
       return item.text;
@@ -67,79 +69,86 @@ const ModeratorDashboard = () => {
   };
 
   const renderFlaggedItem = (
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     item: any,
     contentType: 'question' | 'answer' | 'comment',
     index: number,
   ) => {
     const title = getContentTitle(item.content, contentType);
     const text = getContentText(item.content);
-    const author = item.content.askedBy || item.content.ansBy || item.content.commentBy || 'Unknown';
+    const author =
+      item.content.askedBy || item.content.ansBy || item.content.commentBy || 'Unknown';
     const date =
-      item.content.askDateTime || item.content.ansDateTime || item.content.commentDateTime || new Date();
+      item.content.askDateTime ||
+      item.content.ansDateTime ||
+      item.content.commentDateTime ||
+      new Date();
 
     return (
-      <Card key={`${contentType}-${item._id}`} mb={4} borderLeft="4px" borderColor="orange.500">
+      <Card key={`${contentType}-${item._id}`} mb={4} borderLeft='4px' borderColor='orange.500'>
         <CardHeader>
-          <HStack justify="space-between" align="start">
-            <VStack align="start" spacing={1} flex={1}>
+          <HStack justify='space-between' align='start'>
+            <VStack align='start' gap={1} flex={1}>
               <HStack>
-                <Badge colorScheme="orange">{contentType.toUpperCase()}</Badge>
-                <Badge colorScheme="red">{item.flaggedBy.length} flag{item.flaggedBy.length !== 1 ? 's' : ''}</Badge>
+                <Badge colorScheme='orange'>{contentType.toUpperCase()}</Badge>
+                <Badge colorScheme='red'>
+                  {item.flaggedBy.length} flag{item.flaggedBy.length !== 1 ? 's' : ''}
+                </Badge>
               </HStack>
-              <Heading size="sm">{title}</Heading>
-              <Text fontSize="sm" color="gray.600">
+              <Heading size='sm'>{title}</Heading>
+              <Text fontSize='sm' color='gray.600'>
                 By {author} • {getMetaData(new Date(date))}
               </Text>
             </VStack>
           </HStack>
         </CardHeader>
         <CardBody>
-          <Box mb={4} p={3} bg="gray.50" borderRadius="md" maxH="200px" overflowY="auto">
+          <Box mb={4} p={3} bg='gray.50' borderRadius='md' maxH='200px' overflowY='auto'>
             <Markdown remarkPlugins={[remarkGfm]}>{text}</Markdown>
           </Box>
-          <VStack align="start" spacing={2} mb={4}>
-            <Text fontSize="sm" fontWeight="bold">
+          <VStack align='start' gap={2} mb={4}>
+            <Text fontSize='sm' fontWeight='bold'>
               Flagged by:
             </Text>
-            <HStack wrap="wrap" spacing={2}>
+            <HStack wrap='wrap' gap={2}>
               {item.flaggedBy.map((username: string, idx: number) => (
-                <Badge key={idx} colorScheme="orange" variant="outline">
+                <Badge key={idx} colorScheme='orange' variant='outline'>
                   {username}
                 </Badge>
               ))}
             </HStack>
-            <Text fontSize="xs" color="gray.500">
+            <Text fontSize='xs' color='gray.500'>
               First flagged: {getMetaData(new Date(item.flaggedAt[0]))}
             </Text>
           </VStack>
-          <HStack spacing={2} flexWrap="wrap">
+          <HStack gap={2} flexWrap='wrap'>
             {contentType === 'question' && (
               <Button
-                size="sm"
-                colorScheme="blue"
-                variant="outline"
+                size='sm'
+                colorScheme='blue'
+                variant='outline'
                 onClick={() => navigate(`/question/${item._id}`)}>
                 View Question
               </Button>
             )}
             <Button
-              size="sm"
-              colorScheme="green"
-              variant="outline"
+              size='sm'
+              colorScheme='green'
+              variant='outline'
               onClick={() => handleMarkAsReviewed(contentType, item._id)}>
               Mark as Reviewed
             </Button>
             <Button
-              size="sm"
-              colorScheme="orange"
-              variant="outline"
+              size='sm'
+              colorScheme='orange'
+              variant='outline'
               onClick={() => handleDismissFlag(contentType, item._id)}>
               Dismiss Flag
             </Button>
             <Button
-              size="sm"
-              colorScheme="red"
-              variant="outline"
+              size='sm'
+              colorScheme='red'
+              variant='outline'
               onClick={() => handleDeleteClick(contentType, item._id, title)}>
               Delete
             </Button>
@@ -151,8 +160,8 @@ const ModeratorDashboard = () => {
 
   if (loading) {
     return (
-      <Box p={8} textAlign="center">
-        <Spinner size="xl" />
+      <Box p={8} textAlign='center'>
+        <Spinner size='xl' />
         <Text mt={4}>Loading flagged content...</Text>
       </Box>
     );
@@ -161,30 +170,30 @@ const ModeratorDashboard = () => {
   if (error) {
     return (
       <Box p={8}>
-        <Alert status="error">
-          {error}
-        </Alert>
+        <Alert status='error'>{error}</Alert>
       </Box>
     );
   }
 
   const totalFlagged =
-    flaggedContent.questions.length + flaggedContent.answers.length + flaggedContent.comments.length;
+    flaggedContent.questions.length +
+    flaggedContent.answers.length +
+    flaggedContent.comments.length;
 
   return (
     <Box p={8}>
-      <VStack align="stretch" spacing={6}>
+      <VStack align='stretch' gap={6}>
         <Box>
-          <Heading size="lg" mb={2}>
+          <Heading size='lg' mb={2}>
             Moderator Dashboard
           </Heading>
-          <Text color="gray.600">
+          <Text color='gray.600'>
             Review and manage flagged content. Total flagged items: {totalFlagged}
           </Text>
         </Box>
 
         <Box>
-          <HStack spacing={2} mb={4} borderBottom="1px" borderColor="gray.200">
+          <HStack gap={2} mb={4} borderBottom='1px' borderColor='gray.200'>
             <Button
               variant={activeTab === 'questions' ? 'solid' : 'ghost'}
               colorScheme={activeTab === 'questions' ? 'blue' : 'gray'}
@@ -209,7 +218,7 @@ const ModeratorDashboard = () => {
             {activeTab === 'questions' && (
               <Box>
                 {flaggedContent.questions.length === 0 ? (
-                  <Text color="gray.500" textAlign="center" py={8}>
+                  <Text color='gray.500' textAlign='center' py={8}>
                     No flagged questions
                   </Text>
                 ) : (
@@ -222,18 +231,20 @@ const ModeratorDashboard = () => {
             {activeTab === 'answers' && (
               <Box>
                 {flaggedContent.answers.length === 0 ? (
-                  <Text color="gray.500" textAlign="center" py={8}>
+                  <Text color='gray.500' textAlign='center' py={8}>
                     No flagged answers
                   </Text>
                 ) : (
-                  flaggedContent.answers.map((item, index) => renderFlaggedItem(item, 'answer', index))
+                  flaggedContent.answers.map((item, index) =>
+                    renderFlaggedItem(item, 'answer', index),
+                  )
                 )}
               </Box>
             )}
             {activeTab === 'comments' && (
               <Box>
                 {flaggedContent.comments.length === 0 ? (
-                  <Text color="gray.500" textAlign="center" py={8}>
+                  <Text color='gray.500' textAlign='center' py={8}>
                     No flagged comments
                   </Text>
                 ) : (
@@ -259,4 +270,3 @@ const ModeratorDashboard = () => {
 };
 
 export default ModeratorDashboard;
-

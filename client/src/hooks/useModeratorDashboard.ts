@@ -8,11 +8,11 @@ import {
   deleteAnswer,
   deleteComment,
 } from '../services/moderationService';
-import DeleteContentModal from '../components/moderation/DeleteContentModal';
 
 interface FlaggedItem {
   _id: string;
   contentType: 'question' | 'answer' | 'comment';
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   content: any;
   flaggedBy: string[];
   flaggedAt: Date[];

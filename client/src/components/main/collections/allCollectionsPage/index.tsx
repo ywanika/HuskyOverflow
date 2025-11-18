@@ -19,7 +19,11 @@ const AllCollectionsPage = () => {
 
   return (
     <div className='collections-page'>
-      <PageHeader title='Collections'>
+      <PageHeader
+        title={`${usernameBeingViewed}'s Collections`}
+        subtitle={isOwner ? 'Manage your question collections' : 'View user collections'}
+        count={collections.length}
+        countLabel='collections'>
         {isOwner && (
           <button
             type='button'

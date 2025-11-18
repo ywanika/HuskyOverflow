@@ -128,7 +128,11 @@ export const getDashboardMetrics = async (): Promise<DashboardMetrics> => {
         },
       },
     ]);
-    const roleMap: { user: number; moderator: number; admin: number } = { user: 0, moderator: 0, admin: 0 };
+    const roleMap: { user: number; moderator: number; admin: number } = {
+      user: 0,
+      moderator: 0,
+      admin: 0,
+    };
     usersByRole.forEach(item => {
       const role = (item._id || 'user') as 'user' | 'moderator' | 'admin';
       if (role in roleMap) {
@@ -332,4 +336,3 @@ export const getDashboardMetrics = async (): Promise<DashboardMetrics> => {
     throw new Error(`Error fetching dashboard metrics: ${(error as Error).message}`);
   }
 };
-

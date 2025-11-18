@@ -61,7 +61,9 @@ export const markNotificationAsRead = async (
  * @returns Promise resolving to success status
  * @throws Error if the API response status is not 200
  */
-export const markAllNotificationsAsRead = async (username: string): Promise<{ success: boolean }> => {
+export const markAllNotificationsAsRead = async (
+  username: string,
+): Promise<{ success: boolean }> => {
   const res = await api.patch(`${NOTIFICATION_API_URL}/read-all`, { username });
 
   if (res.status !== 200) {
@@ -92,4 +94,3 @@ export const deleteNotification = async (
 
   return res.data;
 };
-

@@ -158,6 +158,7 @@ export const getFlaggedContent = async (): Promise<{
   questions: Array<{
     _id: string;
     contentType: 'question';
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     content: any;
     flaggedBy: string[];
     flaggedAt: Date[];
@@ -165,6 +166,7 @@ export const getFlaggedContent = async (): Promise<{
   answers: Array<{
     _id: string;
     contentType: 'answer';
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     content: any;
     flaggedBy: string[];
     flaggedAt: Date[];
@@ -172,6 +174,7 @@ export const getFlaggedContent = async (): Promise<{
   comments: Array<{
     _id: string;
     contentType: 'comment';
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     content: any;
     flaggedBy: string[];
     flaggedAt: Date[];

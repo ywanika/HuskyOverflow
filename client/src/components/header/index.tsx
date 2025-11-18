@@ -22,9 +22,9 @@ const Header = () => {
 
   return (
     <Box
-      as="header"
-      id="header"
-      className="header"
+      as='header'
+      id='header'
+      className='header'
       bg={isDark ? 'gray.800' : 'gray.100'}
       p={6}
       role='banner'>
@@ -36,33 +36,33 @@ const Header = () => {
           flexShrink={0}
           mr={8}
           className='header-title'>
-          <Link
+          <a
             href='/home'
             className='header-link'
             aria-label='Fake Stack Overflow - Go to home'
-            _hover={{ textDecoration: 'none' }}>
+            style={{ textDecoration: 'none', color: 'inherit' }}>
             Fake Stack Overflow
           </a>
         </Heading>
         <Flex gap={6} align='center' flexShrink={0} role='search' className='header-actions'>
           <Input
-            id="searchBar"
-            type="search"
-            placeholder="Search questions, tags, users..."
+            id='searchBar'
+            type='search'
+            placeholder='Search questions, tags, users...'
             value={val}
             onChange={handleInputChange}
             onKeyDown={handleKeyDown}
             className='search-input form-input'
             w='300px'
             flexShrink={0}
-            aria-label="Search the site"
-            aria-describedby="search-help"
+            aria-label='Search the site'
+            aria-describedby='search-help'
             bg={isDark ? 'gray.700' : 'white'}
             color={isDark ? 'white' : 'black'}
             borderColor={isDark ? 'gray.600' : 'gray.200'}
             _placeholder={{ color: isDark ? 'gray.400' : 'gray.500' }}
           />
-          <Box id="search-help" className="sr-only">
+          <Box id='search-help' className='sr-only'>
             Press Enter to search. Use Tab to navigate to other options.
           </Box>
           <NotificationBell />
@@ -70,8 +70,9 @@ const Header = () => {
           <Button
             className='logout-button btn btn-secondary'
             onClick={handleSignOut}
+            variant='outline'
             flexShrink={0}
-            aria-label="Sign out of your account">
+            aria-label='Sign out of your account'>
             Log out
           </Button>
           <Button
