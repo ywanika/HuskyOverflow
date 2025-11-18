@@ -24,7 +24,7 @@ import CollectionPage from './main/collections/collectionPage';
 import NewCollectionPage from './main/collections/newCollectionPage';
 import ModeratorDashboard from './main/moderatorDashboard';
 import AdminDashboard from './main/adminDashboard';
-import CommunityGuidelines from './communityGuidelines';
+import MainMessagePage from './main/mainMessagePage';
 
 const ProtectedRoute = ({
   user,
@@ -65,8 +65,7 @@ const FakeStackOverflow = ({ socket }: { socket: FakeSOSocket | null }) => {
             }>
             <Route path='/home' element={<QuestionPage />} />
             <Route path='/tags' element={<TagPage />} />
-            <Route path='/messaging' element={<MessagingPage />} />
-            <Route path='/messaging/direct-message' element={<DirectMessage />} />
+            <Route path='/messaging' element={<MainMessagePage />} />
             <Route path='/question/:qid' element={<AnswerPage />} />
             <Route path='/new/question' element={<NewQuestionPage />} />
             <Route path='/new/answer/:qid' element={<NewAnswerPage />} />
