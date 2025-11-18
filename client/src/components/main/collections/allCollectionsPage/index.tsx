@@ -1,6 +1,5 @@
 import './index.css';
 import useAllCollectionsPage from '../../../../hooks/useAllCollectionsPage';
-import DeleteCollectionButton from '../deleteCollectionButton';
 import CollectionCard from '../collectionCard';
 import PageHeader from '../../baseComponents/pageHeader';
 

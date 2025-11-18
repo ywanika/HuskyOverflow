@@ -413,7 +413,7 @@ export const getFlaggedContent = async (): Promise<FlaggedContentResponse> => {
     // Check for null or undefined reviewedBy
     const flaggedQuestions = await QuestionModel.find({
       'flagged.isFlagged': true,
-      $or: [
+      '$or': [
         { 'flagged.reviewedBy': { $exists: false } },
         { 'flagged.reviewedBy': null },
         { 'flagged.reviewedBy': '' },
@@ -423,7 +423,7 @@ export const getFlaggedContent = async (): Promise<FlaggedContentResponse> => {
     // Get all flagged answers that haven't been reviewed
     const flaggedAnswers = await AnswerModel.find({
       'flagged.isFlagged': true,
-      $or: [
+      '$or': [
         { 'flagged.reviewedBy': { $exists: false } },
         { 'flagged.reviewedBy': null },
         { 'flagged.reviewedBy': '' },
@@ -433,7 +433,7 @@ export const getFlaggedContent = async (): Promise<FlaggedContentResponse> => {
     // Get all flagged comments that haven't been reviewed
     const flaggedComments = await CommentModel.find({
       'flagged.isFlagged': true,
-      $or: [
+      '$or': [
         { 'flagged.reviewedBy': { $exists: false } },
         { 'flagged.reviewedBy': null },
         { 'flagged.reviewedBy': '' },
