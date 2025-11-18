@@ -2,11 +2,13 @@ import useNewQuestion from '../../../hooks/useNewQuestion';
 import Form from '../baseComponents/form';
 import Input from '../baseComponents/input';
 import TextArea from '../baseComponents/textarea';
+import SimilarQuestionCard from './similarQuestionCard/index';
+import { PopulatedDatabaseQuestion } from '../../../types/types';
 import './index.css';
 
 /**
  * NewQuestionPage component allows users to submit a new question with a title,
- * description, tags, and username.
+ * description, tags, and username. It also displays similar questions as the user types.
  */
 const NewQuestionPage = () => {
   const {
@@ -23,6 +25,8 @@ const NewQuestionPage = () => {
     tagErr,
     generalErr,
     postQuestion,
+    similarQuestions,
+    isSimilarQuestionsLoading,
   } = useNewQuestion();
 
   return (
@@ -74,6 +78,21 @@ const NewQuestionPage = () => {
         {generalErr && <div className='error_message'>{generalErr}</div>}
         <div className='mandatory_indicator'>* indicates mandatory fields</div>
       </div>
+
+      {/* Similar Questions Section */}
+      {similarQuestions.length > 0 && (
+        <div className='similar-questions-section'>
+          <h3 className='similar-questions-title'>Check out these similar questions….</h3>
+          {isSimilarQuestionsLoading && (
+            <div className='similar-questions-loading'>Loading similar questions...</div>
+          )}
+          <div className='similar-questions-list'>
+            {similarQuestions.map((question: PopulatedDatabaseQuestion) => (
+              <SimilarQuestionCard key={question._id.toString()} question={question} />
+            ))}
+          </div>
+        </div>
+      )}
     </Form>
   );
 };

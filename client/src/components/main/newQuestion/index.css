@@ -29,3 +29,30 @@
 #formTextInput {
   border: 2px solid var(--color-bg-tertiary);
 }
+
+/* Similar Questions Section */
+.similar-questions-section {
+  margin-top: var(--spacing-2xl);
+  padding-top: var(--spacing-xl);
+  border-top: 2px solid var(--color-bg-tertiary);
+}
+
+.similar-questions-title {
+  font-size: var(--font-size-lg);
+  font-weight: 700;
+  color: var(--color-text-primary);
+  margin-bottom: var(--spacing-lg);
+}
+
+.similar-questions-loading {
+  font-size: var(--font-size-sm);
+  color: var(--color-text-muted);
+  font-style: italic;
+  margin-bottom: var(--spacing-md);
+}
+
+.similar-questions-list {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-sm);
+}
