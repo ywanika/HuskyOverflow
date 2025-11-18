@@ -21,7 +21,7 @@ interface UserHeaderProps {
  * @param userCount - The number of users displayed in the header.
  * @param setUserFilter - Function that sets the search bar filter value.
  */
-const UsersListHeader = ({ userCount, setUserFilter }: UserHeaderProps) => {
+const UsersListHeader = ({ userCount: _userCount, setUserFilter }: UserHeaderProps) => {
   const { val, handleInputChange } = useUserSearch(setUserFilter);
 
   return (

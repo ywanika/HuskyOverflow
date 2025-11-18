@@ -62,7 +62,7 @@ const AnswerView = ({
   meta,
   comments,
   handleAddComment,
-  answerId,
+  answerId: _answerId,
   isModerator,
   onDeleteClick,
   onDeleteComment,

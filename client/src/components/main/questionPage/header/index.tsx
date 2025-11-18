@@ -27,7 +27,7 @@ interface QuestionHeaderProps {
  * @param qcnt - The number of questions displayed in the header.
  * @param setQuestionOrder - Function to set the order of questions based on input message.
  */
-const QuestionHeader = ({ titleText, qcnt, setQuestionOrder }: QuestionHeaderProps) => (
+const QuestionHeader = ({ titleText, qcnt: _qcnt, setQuestionOrder }: QuestionHeaderProps) => (
   <PageHeader title={titleText}>
     <div className='question-header-actions'>
       <div className='order-buttons'>

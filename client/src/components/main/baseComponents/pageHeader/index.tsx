@@ -25,9 +25,9 @@ interface PageHeaderProps {
  */
 const PageHeader = ({
   title,
-  subtitle,
-  count,
-  countLabel,
+  subtitle: _subtitle,
+  count: _count,
+  countLabel: _countLabel,
   children,
   className = '',
 }: PageHeaderProps) => {

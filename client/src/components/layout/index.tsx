@@ -5,6 +5,7 @@ import SideBarNav from '../main/sideBarNav';
 import Header from '../header';
 import Breadcrumbs from '../Breadcrumbs';
 import { useTheme } from '../../contexts/ThemeContext';
+import FloatingChatbot from '../chatbot/FloatingChatbot';
 
 /**
  * Main component represents the layout of the main page, including a sidebar and the main content area.
@@ -57,6 +58,7 @@ const Layout = () => {
           <Outlet />
         </Box>
       </Flex>
+      <FloatingChatbot />
     </Box>
   );
 };

@@ -8,7 +8,6 @@ import {
   deleteAnswer,
   deleteComment,
 } from '../services/moderationService';
-import DeleteContentModal from '../components/moderation/DeleteContentModal';
 
 interface FlaggedItem {
   _id: string;

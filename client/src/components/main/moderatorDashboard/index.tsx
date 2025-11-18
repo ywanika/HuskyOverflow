@@ -8,16 +8,9 @@ import {
   Text,
   Badge,
   Card,
-  CardBody,
-  CardHeader,
   Tabs,
-  TabList,
-  TabPanels,
-  Tab,
-  TabPanel,
   Spinner,
   Alert,
-  AlertIcon,
 } from '@chakra-ui/react';
 import Markdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
@@ -73,7 +66,7 @@ const ModeratorDashboard = () => {
   const renderFlaggedItem = (
     item: any,
     contentType: 'question' | 'answer' | 'comment',
-    index: number,
+    _index: number,
   ) => {
     const title = getContentTitle(item.content, contentType);
     const text = getContentText(item.content);
@@ -82,10 +75,10 @@ const ModeratorDashboard = () => {
       item.content.askDateTime || item.content.ansDateTime || item.content.commentDateTime || new Date();
 
     return (
-      <Card key={`${contentType}-${item._id}`} mb={4} borderLeft="4px" borderColor="orange.500">
-        <CardHeader>
+      <Card.Root key={`${contentType}-${item._id}`} mb={4} borderLeft="4px" borderColor="orange.500">
+        <Card.Header>
           <HStack justify="space-between" align="start">
-            <VStack align="start" spacing={1} flex={1}>
+            <VStack align="start" gap={1} flex={1}>
               <HStack>
                 <Badge colorScheme="orange">{contentType.toUpperCase()}</Badge>
                 <Badge colorScheme="red">{item.flaggedBy.length} flag{item.flaggedBy.length !== 1 ? 's' : ''}</Badge>
@@ -96,16 +89,16 @@ const ModeratorDashboard = () => {
               </Text>
             </VStack>
           </HStack>
-        </CardHeader>
-        <CardBody>
+        </Card.Header>
+        <Card.Body>
           <Box mb={4} p={3} bg="gray.50" borderRadius="md" maxH="200px" overflowY="auto">
             <Markdown remarkPlugins={[remarkGfm]}>{text}</Markdown>
           </Box>
-          <VStack align="start" spacing={2} mb={4}>
+          <VStack align="start" gap={2} mb={4}>
             <Text fontSize="sm" fontWeight="bold">
               Flagged by:
             </Text>
-            <HStack wrap="wrap" spacing={2}>
+            <HStack wrap="wrap" gap={2}>
               {item.flaggedBy.map((username: string, idx: number) => (
                 <Badge key={idx} colorScheme="orange" variant="outline">
                   {username}
@@ -116,7 +109,7 @@ const ModeratorDashboard = () => {
               First flagged: {getMetaData(new Date(item.flaggedAt[0]))}
             </Text>
           </VStack>
-          <HStack spacing={2} flexWrap="wrap">
+          <HStack gap={2} flexWrap="wrap">
             {contentType === 'question' && (
               <Button
                 size="sm"
@@ -148,8 +141,8 @@ const ModeratorDashboard = () => {
               Delete
             </Button>
           </HStack>
-        </CardBody>
-      </Card>
+        </Card.Body>
+      </Card.Root>
     );
   };
 
@@ -165,10 +158,10 @@ const ModeratorDashboard = () => {
   if (error) {
     return (
       <Box p={8}>
-        <Alert status="error">
-          <AlertIcon />
-          {error}
-        </Alert>
+        <Alert.Root status="error">
+          <Alert.Indicator />
+          <Alert.Title>{error}</Alert.Title>
+        </Alert.Root>
       </Box>
     );
   }
@@ -178,7 +171,7 @@ const ModeratorDashboard = () => {
 
   return (
     <Box p={8}>
-      <VStack align="stretch" spacing={6}>
+      <VStack align="stretch" gap={6}>
         <Box>
           <Heading size="lg" mb={2}>
             Moderator Dashboard
@@ -188,53 +181,51 @@ const ModeratorDashboard = () => {
           </Text>
         </Box>
 
-        <Tabs>
-          <TabList>
-            <Tab>
+        <Tabs.Root defaultValue="questions">
+          <Tabs.List>
+            <Tabs.Trigger value="questions">
               Questions ({flaggedContent.questions.length})
-            </Tab>
-            <Tab>
+            </Tabs.Trigger>
+            <Tabs.Trigger value="answers">
               Answers ({flaggedContent.answers.length})
-            </Tab>
-            <Tab>
+            </Tabs.Trigger>
+            <Tabs.Trigger value="comments">
               Comments ({flaggedContent.comments.length})
-            </Tab>
-          </TabList>
+            </Tabs.Trigger>
+          </Tabs.List>
 
-          <TabPanels>
-            <TabPanel>
-              {flaggedContent.questions.length === 0 ? (
-                <Text color="gray.500" textAlign="center" py={8}>
-                  No flagged questions
-                </Text>
-              ) : (
-                flaggedContent.questions.map((item, index) =>
-                  renderFlaggedItem(item, 'question', index),
-                )
+          <Tabs.Content value="questions">
+            {flaggedContent.questions.length === 0 ? (
+              <Text color="gray.500" textAlign="center" py={8}>
+                No flagged questions
+              </Text>
+            ) : (
+              flaggedContent.questions.map((item, index) =>
+                renderFlaggedItem(item, 'question', index),
+              )
               )}
-            </TabPanel>
-            <TabPanel>
-              {flaggedContent.answers.length === 0 ? (
-                <Text color="gray.500" textAlign="center" py={8}>
-                  No flagged answers
-                </Text>
-              ) : (
-                flaggedContent.answers.map((item, index) => renderFlaggedItem(item, 'answer', index))
+          </Tabs.Content>
+          <Tabs.Content value="answers">
+            {flaggedContent.answers.length === 0 ? (
+              <Text color="gray.500" textAlign="center" py={8}>
+                No flagged answers
+              </Text>
+            ) : (
+              flaggedContent.answers.map((item, index) => renderFlaggedItem(item, 'answer', index))
               )}
-            </TabPanel>
-            <TabPanel>
-              {flaggedContent.comments.length === 0 ? (
-                <Text color="gray.500" textAlign="center" py={8}>
-                  No flagged comments
-                </Text>
-              ) : (
-                flaggedContent.comments.map((item, index) =>
-                  renderFlaggedItem(item, 'comment', index),
-                )
+          </Tabs.Content>
+          <Tabs.Content value="comments">
+            {flaggedContent.comments.length === 0 ? (
+              <Text color="gray.500" textAlign="center" py={8}>
+                No flagged comments
+              </Text>
+            ) : (
+              flaggedContent.comments.map((item, index) =>
+                renderFlaggedItem(item, 'comment', index),
+              )
               )}
-            </TabPanel>
-          </TabPanels>
-        </Tabs>
+          </Tabs.Content>
+        </Tabs.Root>
       </VStack>
 
       <DeleteContentModal
