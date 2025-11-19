@@ -82,6 +82,7 @@
   outline: 2px solid var(--color-bg-primary);
   outline-offset: -2px;
   text-decoration: none;
+}
 /* Dark mode support for menu selected */
 [data-theme='dark'] .menu_selected {
   background: #4a5568;
