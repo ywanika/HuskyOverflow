@@ -3,13 +3,13 @@ import {
   Heading,
   VStack,
   Text,
-  Card,
-  CardBody,
-  CardHeader,
   SimpleGrid,
   Spinner,
-  Alert,
   Badge,
+  CardRoot as Card,
+  CardBody,
+  CardHeader,
+  AlertRoot as Alert,
 } from '@chakra-ui/react';
 import {
   BarChart,
@@ -90,7 +90,7 @@ const AdminDashboard = () => {
 
   return (
     <Box p={8}>
-      <VStack align='stretch' spacing={6}>
+      <VStack align='stretch' gap={6}>
         <Box>
           <Heading size='lg' mb={2}>
             Admin Dashboard
@@ -99,7 +99,7 @@ const AdminDashboard = () => {
         </Box>
 
         {/* Summary Cards */}
-        <SimpleGrid columns={{ base: 1, md: 2, lg: 4 }} spacing={4}>
+        <SimpleGrid columns={{ base: 1, md: 2, lg: 4 }} gap={4}>
           <Card>
             <CardHeader>
               <Text fontSize='sm' color='gray.600'>
@@ -158,7 +158,7 @@ const AdminDashboard = () => {
         </SimpleGrid>
 
         {/* Charts Row 1 */}
-        <SimpleGrid columns={{ base: 1, lg: 2 }} spacing={6}>
+        <SimpleGrid columns={{ base: 1, lg: 2 }} gap={6}>
           <Card>
             <CardHeader>
               <Heading size='md'>User Growth (Last 12 Weeks)</Heading>
@@ -197,7 +197,7 @@ const AdminDashboard = () => {
         </SimpleGrid>
 
         {/* Charts Row 2 */}
-        <SimpleGrid columns={{ base: 1, lg: 3 }} spacing={6}>
+        <SimpleGrid columns={{ base: 1, lg: 3 }} gap={6}>
           <Card>
             <CardHeader>
               <Heading size='md'>Users by Role</Heading>
@@ -210,11 +210,11 @@ const AdminDashboard = () => {
                     cx='50%'
                     cy='50%'
                     labelLine={false}
-                    label={({ name, percent }) => `${name}: ${(percent * 100).toFixed(0)}%`}
+                    label={({ name, percent }) => `${name}: ${((percent ?? 0) * 100).toFixed(0)}%`}
                     outerRadius={80}
                     fill='#8884d8'
                     dataKey='value'>
-                    {userRoleData.map((entry, index) => (
+                    {userRoleData.map((_entry, index) => (
                       <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
                     ))}
                   </Pie>
@@ -260,7 +260,7 @@ const AdminDashboard = () => {
         </SimpleGrid>
 
         {/* Detailed Tables */}
-        <SimpleGrid columns={{ base: 1, lg: 2 }} spacing={6}>
+        <SimpleGrid columns={{ base: 1, lg: 2 }} gap={6}>
           <Card>
             <CardHeader>
               <Heading size='md'>User Statistics</Heading>
@@ -433,7 +433,7 @@ const AdminDashboard = () => {
               </Box>
               <Box as='tbody'>
                 {metrics.tags.mostUsed.length > 0 ? (
-                  metrics.tags.mostUsed.map((tag, index) => (
+                  metrics.tags.mostUsed.map(tag => (
                     <Box as='tr' key={tag.name}>
                       <Box as='td' p={2}>
                         <Badge colorScheme='blue'>{tag.name}</Badge>
@@ -445,7 +445,7 @@ const AdminDashboard = () => {
                   ))
                 ) : (
                   <Box as='tr'>
-                    <Box as='td' colSpan={2} textAlign='center' p={4}>
+                    <Box as='td' textAlign='center' p={4}>
                       No tags available
                     </Box>
                   </Box>
@@ -461,7 +461,7 @@ const AdminDashboard = () => {
             <Heading size='md'>Engagement Metrics</Heading>
           </CardHeader>
           <CardBody>
-            <SimpleGrid columns={{ base: 1, md: 3 }} spacing={4}>
+            <SimpleGrid columns={{ base: 1, md: 3 }} gap={4}>
               <Box>
                 <Text fontSize='sm' color='gray.600'>
                   Total Views
@@ -485,7 +485,7 @@ const AdminDashboard = () => {
         </Card>
 
         {/* Additional Statistics */}
-        <SimpleGrid columns={{ base: 1, md: 3 }} spacing={4}>
+        <SimpleGrid columns={{ base: 1, md: 3 }} gap={4}>
           <Card>
             <CardHeader>
               <Text fontSize='sm' color='gray.600'>

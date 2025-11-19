@@ -8,11 +8,11 @@ import {
   Button,
   Text,
   Badge,
-  Card,
+  Spinner,
+  CardRoot as Card,
   CardBody,
   CardHeader,
-  Spinner,
-  Alert,
+  AlertRoot as Alert,
 } from '@chakra-ui/react';
 import Markdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
@@ -72,7 +72,7 @@ const ModeratorDashboard = () => {
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     item: any,
     contentType: 'question' | 'answer' | 'comment',
-    index: number,
+    _index: number,
   ) => {
     const title = getContentTitle(item.content, contentType);
     const text = getContentText(item.content);
