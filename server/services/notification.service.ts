@@ -115,3 +115,40 @@ export const deleteNotification = async (
     return { error: `Error deleting notification: ${(error as Error).message}` };
   }
 };
+
+/**
+ * Creates a system-wide notification for all users
+ * @param message - The notification message
+ * @returns Promise resolving to NotificationResponse with count of notifications created
+ */
+export const createSystemNotification = async (
+  message: string,
+): Promise<NotificationResponse & { count?: number }> => {
+  try {
+    // Import UserModel to get all users
+    const UserModel = (await import('../models/users.model')).default;
+
+    // Get all users
+    const users = await UserModel.find({}, { username: 1 }).lean();
+
+    if (!users || users.length === 0) {
+      return { error: 'No users found' };
+    }
+
+    // Create notifications for all users
+    const notifications = users.map(user => ({
+      recipientUsername: user.username,
+      type: 'system_announcement' as const,
+      message,
+      contentId: null,
+      isRead: false,
+      timestamp: new Date(),
+    }));
+
+    const result = await NotificationModel.insertMany(notifications);
+
+    return { count: result.length };
+  } catch (error) {
+    return { error: `Error creating system notification: ${(error as Error).message}` };
+  }
+};

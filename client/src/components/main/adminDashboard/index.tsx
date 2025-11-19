@@ -10,6 +10,10 @@ import {
   CardBody,
   CardHeader,
   AlertRoot as Alert,
+  AlertDescription,
+  Field,
+  Input,
+  Button,
 } from '@chakra-ui/react';
 import {
   BarChart,
@@ -35,7 +39,15 @@ const COLORS = ['#0088FE', '#00C49F', '#FFBB28', '#FF8042', '#8884d8', '#82ca9d'
 
 const AdminDashboard = () => {
   const { user } = useUserContext();
-  const { metrics, loading, error } = useAdminDashboard();
+  const {
+    metrics,
+    loading,
+    error,
+    notificationMessage,
+    setNotificationMessage,
+    notificationStatus,
+    handleNotificationSubmit,
+  } = useAdminDashboard();
 
   // Check if user is admin
   const isAdmin = user.role === 'admin';
@@ -523,6 +535,30 @@ const AdminDashboard = () => {
           </Card>
         </SimpleGrid>
       </VStack>
+
+      {/* System Notification Section */}
+      <Box className='system-notification-section'>
+        <Heading className='system-notification-title'>Send System-Wide Notification</Heading>
+        <Field.Root>
+          <Field.Label>Notification Message</Field.Label>
+          <Input
+            placeholder='Enter notification text for all users...'
+            value={notificationMessage}
+            onChange={e => setNotificationMessage(e.target.value)}
+            className='system-notification-input'
+          />
+        </Field.Root>
+        {notificationStatus.type && (
+          <Alert
+            className='system-notification-alert'
+            status={notificationStatus.type === 'success' ? 'success' : 'error'}>
+            <AlertDescription>{notificationStatus.message}</AlertDescription>
+          </Alert>
+        )}
+        <Button className='system-notification-button' onClick={handleNotificationSubmit}>
+          Send Notification to All Users
+        </Button>
+      </Box>
     </Box>
   );
 };

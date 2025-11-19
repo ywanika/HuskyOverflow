@@ -6,7 +6,7 @@ import type { ObjectId } from 'mongoose';
  * - `type`: Type of notification (deletion, appeal_result, flag, suspension, role_change, system_announcement).
  * - `message`: Message content of the notification.
  * - `contentId`: ObjectId of the related content (for appeals, etc.).
- * - `isRead`: Whether the notification has been read.
+ * - `isRead`: Whether the notification has been read. Only for notifications with specific recipients (not system announcements).
  * - `timestamp`: Timestamp when the notification was created.
  */
 export interface Notification {
@@ -31,7 +31,7 @@ export interface Notification {
  * - `type`: Type of notification (deletion, appeal_result, flag, suspension, role_change, system_announcement).
  * - `message`: Message content of the notification.
  * - `contentId`: ObjectId of the related content (for appeals, etc.).
- * - `isRead`: Whether the notification has been read.
+ * - `isRead?`: Whether the notification has been read. Only for notifications with specific recipients (not system announcements).
  * - `timestamp`: Timestamp when the notification was created.
  */
 export interface DatabaseNotification extends Notification {
