@@ -56,6 +56,7 @@ const createDeletionNotification = async (
     });
   } catch (error) {
     // Log error but don't fail the deletion if notification fails
+    // eslint-disable-next-line no-console
     console.error('Error creating deletion notification:', error);
   }
 };
@@ -233,6 +234,7 @@ const createFlagNotification = async (
     await Promise.all(notifications);
   } catch (error) {
     // Log error but don't fail the flag if notification fails
+    // eslint-disable-next-line no-console
     console.error('Error creating flag notification:', error);
   }
 };
@@ -408,21 +410,34 @@ export interface FlaggedContentResponse {
 export const getFlaggedContent = async (): Promise<FlaggedContentResponse> => {
   try {
     // Get all flagged questions that haven't been reviewed
+    // Check for null or undefined reviewedBy
     const flaggedQuestions = await QuestionModel.find({
       'flagged.isFlagged': true,
-      'flagged.reviewedBy': null,
+      '$or': [
+        { 'flagged.reviewedBy': { $exists: false } },
+        { 'flagged.reviewedBy': null },
+        { 'flagged.reviewedBy': '' },
+      ],
     }).lean();
 
     // Get all flagged answers that haven't been reviewed
     const flaggedAnswers = await AnswerModel.find({
       'flagged.isFlagged': true,
-      'flagged.reviewedBy': null,
+      '$or': [
+        { 'flagged.reviewedBy': { $exists: false } },
+        { 'flagged.reviewedBy': null },
+        { 'flagged.reviewedBy': '' },
+      ],
     }).lean();
 
     // Get all flagged comments that haven't been reviewed
     const flaggedComments = await CommentModel.find({
       'flagged.isFlagged': true,
-      'flagged.reviewedBy': null,
+      '$or': [
+        { 'flagged.reviewedBy': { $exists: false } },
+        { 'flagged.reviewedBy': null },
+        { 'flagged.reviewedBy': '' },
+      ],
     }).lean();
 
     const questions: FlaggedContentItem[] = flaggedQuestions.map(q => ({

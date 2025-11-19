@@ -48,7 +48,7 @@ const QuestionBody = ({
   text,
   askby,
   meta,
-  questionId,
+  questionId: _questionId,
   isModerator,
   onDeleteClick,
   onFlagClick,

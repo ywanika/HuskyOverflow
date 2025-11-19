@@ -10,7 +10,7 @@ import eslintReactHooks from 'eslint-plugin-react-hooks';
 import eslintReactRefresh from 'eslint-plugin-react-refresh';
 
 export default defineConfig([
-  globalIgnores(['build/*', 'dist/*', '.stryker-tmp/*', 'coverage/*']),
+  globalIgnores(['build/*', 'dist/*', '.stryker-tmp/*', 'coverage/*', 'jest.setup.ts']),
   {
     files: ['**/*.{js,mjs,cjs,ts,jsx,tsx}'],
     extends: [

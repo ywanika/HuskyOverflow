@@ -16,7 +16,11 @@ const AllCommunitiesPage = () => {
 
   return (
     <div className='community-page'>
-      <PageHeader title='Communities'>
+      <PageHeader
+        title='Communities'
+        subtitle='Join communities and connect with other users'
+        count={filteredCommunities.length}
+        countLabel='communities'>
         <div className='community-header-actions'>
           <div className='community-search-container'>
             <label htmlFor='community-search' className='sr-only'>

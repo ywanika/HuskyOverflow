@@ -13,7 +13,11 @@ const TagPage = () => {
 
   return (
     <div className='tag-page'>
-      <PageHeader title='Tags'>
+      <PageHeader
+        title='Tags'
+        subtitle='Browse all available tags'
+        count={tlist.length}
+        countLabel='tags'>
         <AskQuestionButton />
       </PageHeader>
 

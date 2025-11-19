@@ -4,6 +4,7 @@ export * from './comment';
 export * from './game';
 export * from './message';
 export * from './moderation';
+export * from './notification';
 export * from './question';
 export * from './socket';
 export * from './tag';

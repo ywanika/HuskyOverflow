@@ -1,10 +1,11 @@
 import { useNavigate } from 'react-router-dom';
-import { Box, Button, Flex, Heading, Input, Link } from '@chakra-ui/react';
+import { Box, Button, Flex, Heading, Input } from '@chakra-ui/react';
 import useHeader from '../../hooks/useHeader';
 import './index.css';
 import useUserContext from '../../hooks/useUserContext';
 import ThemeToggleButton from '../layout/ThemeToggleButton';
 import { useTheme } from '../../contexts/ThemeContext';
+import NotificationBell from '../notifications/NotificationBell';
 
 /**
  * Header component that renders the main title and a search bar.
@@ -35,13 +36,13 @@ const Header = () => {
           flexShrink={0}
           mr={8}
           className='header-title'>
-          <Link
+          <a
             href='/home'
             className='header-link'
             aria-label='Fake Stack Overflow - Go to home'
-            _hover={{ textDecoration: 'none' }}>
+            style={{ textDecoration: 'none', color: 'inherit' }}>
             Fake Stack Overflow
-          </Link>
+          </a>
         </Heading>
         <Flex gap={6} align='center' flexShrink={0} role='search' className='header-actions'>
           <Input
@@ -64,10 +65,12 @@ const Header = () => {
           <Box id='search-help' className='sr-only'>
             Press Enter to search. Use Tab to navigate to other options.
           </Box>
+          <NotificationBell />
           <ThemeToggleButton />
           <Button
             className='logout-button btn btn-secondary'
             onClick={handleSignOut}
+            variant='outline'
             flexShrink={0}
             aria-label='Sign out of your account'>
             Log out

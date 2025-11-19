@@ -145,6 +145,18 @@ export interface ModerationUpdatePayload {
 }
 
 /**
+ * Payload for a notification update event.
+ * - `type`: The type of notification update (notificationRead, allNotificationsRead, notificationDeleted, newNotification).
+ * - `username`: The username of the user receiving the notification update.
+ * - `notificationId`: The ID of the notification (if applicable).
+ */
+export interface NotificationUpdatePayload {
+  type: 'notificationRead' | 'allNotificationsRead' | 'notificationDeleted' | 'newNotification';
+  username: string;
+  notificationId?: string;
+}
+
+/**
  * Interface representing the events the client can emit to the server.
  * - `makeMove`: Client can emit a move in the game.
  * - `joinGame`: Client can join a game.
@@ -175,6 +187,7 @@ export interface ClientToServerEvents {
  * - `communityUpdate`: Server sends updated community.
  * - `collectionUpdate`: Server sends updated collection.
  * - `moderationUpdate`: Server sends moderation action update (delete or flag).
+ * - `notificationUpdate`: Server sends notification update (read, deleted, new).
  */
 export interface ServerToClientEvents {
   questionUpdate: (question: PopulatedDatabaseQuestion) => void;
@@ -190,4 +203,5 @@ export interface ServerToClientEvents {
   communityUpdate: (community: CommunityUpdatePayload) => void;
   collectionUpdate: (community: CollectionUpdatePayload) => void;
   moderationUpdate: (moderation: ModerationUpdatePayload) => void;
+  notificationUpdate: (notification: NotificationUpdatePayload) => void;
 }

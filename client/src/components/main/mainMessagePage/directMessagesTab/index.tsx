@@ -32,6 +32,11 @@ const DirectMessagesTab = () => {
       </div>
 
       <div className='create-panel'>
+        <button
+          className='custom-button'
+          onClick={() => setShowCreatePanel(prevState => !prevState)}>
+          {showCreatePanel ? 'Hide Create Chat Panel' : 'Start a Chat'}
+        </button>
         {error && <div className='direct-message-error'>{error}</div>}
         {showCreatePanel && (
           <>

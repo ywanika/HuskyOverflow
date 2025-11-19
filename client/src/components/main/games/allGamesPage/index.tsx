@@ -23,7 +23,11 @@ const AllGamesPage = () => {
 
   return (
     <div className='games-page'>
-      <PageHeader title='Games'>
+      <PageHeader
+        title='Games'
+        subtitle='Play games with other users'
+        count={availableGames.length}
+        countLabel='available games'>
         <div className='games-header-actions'>
           <button
             type='button'
