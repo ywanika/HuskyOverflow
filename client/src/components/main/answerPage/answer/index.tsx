@@ -47,7 +47,6 @@ interface AnswerProps {
  * @param meta Additional metadata related to the answer.
  * @param comments An array of comments associated with the answer.
  * @param handleAddComment Function to handle adding a new comment.
- * @param answerId The ID of the answer
  * @param isModerator Whether the current user is a moderator
  * @param onDeleteClick Callback when delete button is clicked
  * @param onDeleteComment Callback when delete button is clicked for a comment
