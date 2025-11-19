@@ -228,7 +228,9 @@ const notificationController = (socket: FakeSOSocket) => {
 
       res.json({ success: true, count: result.count });
     } catch (err: unknown) {
-      res.status(500).json({ error: `Error creating system notification: ${(err as Error).message}` });
+      res
+        .status(500)
+        .json({ error: `Error creating system notification: ${(err as Error).message}` });
     }
   };
 
