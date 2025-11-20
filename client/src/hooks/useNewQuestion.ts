@@ -5,6 +5,7 @@ import { addQuestion } from '../services/questionService';
 import useUserContext from './useUserContext';
 import { DatabaseCommunity, Question } from '../types/types';
 import { getCommunities } from '../services/communityService';
+import useSimilarQuestions from './useSimilarQuestions';
 
 /**
  * Custom hook to handle question submission and form validation
@@ -16,6 +17,8 @@ import { getCommunities } from '../services/communityService';
  * @returns textErr - Error message for the text field, if any.
  * @returns tagErr - Error message for the tag field, if any.
  * @returns postQuestion - Function to validate the form and submit a new question.
+ * @returns similarQuestions - Array of questions similar to the one being written.
+ * @returns isSimilarQuestionsLoading - Boolean indicating if similar questions are being fetched.
  */
 const useNewQuestion = () => {
   const navigate = useNavigate();
@@ -31,6 +34,13 @@ const useNewQuestion = () => {
   const [generalErr, setErr] = useState<string>('');
 
   const [communityList, setCommunityList] = useState<DatabaseCommunity[]>([]);
+
+  // Use the similar questions hook to search for related questions
+  const { similarQuestions, isLoading: isSimilarQuestionsLoading } = useSimilarQuestions(
+    title,
+    text,
+    tagNames,
+  );
 
   /**
    * Function to validate the form before submitting the question.
@@ -163,6 +173,8 @@ const useNewQuestion = () => {
     postQuestion,
     communityList,
     handleDropdownChange,
+    similarQuestions,
+    isSimilarQuestionsLoading,
   };
 };
 

@@ -31,12 +31,10 @@
   "devDependencies": {
     "@eslint/js": "^9.24.0",
     "@jest/test-sequencer": "^30.2.0",
-    "@testing-library/jest-dom": "^6.9.1",
-    "@testing-library/react": "^16.3.0",
-    "@testing-library/user-event": "^14.6.1",
     "@types/jest": "^30.0.0",
     "@types/react": "^19.0.10",
     "@types/react-dom": "^19.0.4",
+    "@types/recharts": "^1.8.29",
     "@typescript-eslint/parser": "^8.29.0",
     "@vitejs/plugin-react": "^4.3.4",
     "dotenv": "^16.4.7",

@@ -6,6 +6,7 @@ import {
   markNotificationAsRead,
   markAllNotificationsAsRead,
   deleteNotification,
+  createSystemNotification,
 } from '../services/notification.service';
 
 /**
@@ -197,12 +198,49 @@ const notificationController = (socket: FakeSOSocket) => {
     }
   };
 
+  /**
+   * Creates a system-wide notification for all users
+   * @param req - Request containing message
+   * @param res - Response object
+   * @returns Promise resolving to void
+   */
+  const createSystemNotificationRoute = async (req: Request, res: Response): Promise<void> => {
+    const { message } = req.body;
+
+    if (!message) {
+      res.status(400).json({ error: 'Missing required field: message' });
+      return;
+    }
+
+    try {
+      const result = await createSystemNotification(message);
+
+      if (result.error) {
+        res.status(500).json({ error: result.error });
+        return;
+      }
+
+      // Broadcast notification to all connected users via socket
+      socket.emit('notificationUpdate', {
+        type: 'newNotification',
+        username: 'system', // System-wide notification
+      });
+
+      res.json({ success: true, count: result.count });
+    } catch (err: unknown) {
+      res
+        .status(500)
+        .json({ error: `Error creating system notification: ${(err as Error).message}` });
+    }
+  };
+
   // Register routes
   router.get('/:username', getNotificationsRoute);
   router.get('/unread/:username', getUnreadCountRoute);
   router.patch('/read/:notificationId', markAsReadRoute);
   router.patch('/read-all', markAllAsReadRoute);
   router.delete('/:notificationId', deleteNotificationRoute);
+  router.post('/system', createSystemNotificationRoute);
 
   return router;
 };

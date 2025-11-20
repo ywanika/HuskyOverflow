@@ -25,6 +25,7 @@ import NewCollectionPage from './main/collections/newCollectionPage';
 import ModeratorDashboard from './main/moderatorDashboard';
 import AdminDashboard from './main/adminDashboard';
 import MainMessagePage from './main/mainMessagePage';
+import CommunityGuidelines from './communityGuidelines';
 
 const ProtectedRoute = ({
   user,
@@ -56,6 +57,7 @@ const FakeStackOverflow = ({ socket }: { socket: FakeSOSocket | null }) => {
           {/* Public Routes */}
           <Route path='/' element={<Login />} />
           <Route path='/signup' element={<Signup />} />
+          <Route path='/guidelines' element={<CommunityGuidelines />} />
           {/* Protected Routes */}
           <Route
             element={
