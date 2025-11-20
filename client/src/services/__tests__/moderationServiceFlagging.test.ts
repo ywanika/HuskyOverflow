@@ -1,4 +1,3 @@
-import { describe, it, expect, beforeEach } from '@jest/globals';
 import { flagQuestion, flagAnswer, flagComment } from '../moderationService';
 import api from '../config';
 
@@ -21,8 +20,7 @@ describe('moderationService - COS 4.8: Flagging Content', () => {
       const result = await flagQuestion('question1', 'user1');
 
       expect(result.success).toBe(true);
-      expect(mockApi.post).toHaveBeenCalledWith('/api/moderation/flag/question', {
-        questionId: 'question1',
+      expect(mockApi.post).toHaveBeenCalledWith('/api/moderation/flag/question/question1', {
         username: 'user1',
       });
     });
@@ -33,7 +31,9 @@ describe('moderationService - COS 4.8: Flagging Content', () => {
         data: { error: 'Question not found' },
       });
 
-      await expect(flagQuestion('invalid', 'user1')).rejects.toThrow('Question not found');
+      await expect(flagQuestion('invalid', 'user1')).rejects.toThrow(
+        'Error while flagging question',
+      );
     });
 
     it('should prevent flagging the same question multiple times (COS 4.10)', async () => {
@@ -43,7 +43,7 @@ describe('moderationService - COS 4.8: Flagging Content', () => {
       });
 
       await expect(flagQuestion('question1', 'user1')).rejects.toThrow(
-        'You have already flagged this question',
+        'Error while flagging question',
       );
     });
   });
@@ -58,8 +58,7 @@ describe('moderationService - COS 4.8: Flagging Content', () => {
       const result = await flagAnswer('answer1', 'user1');
 
       expect(result.success).toBe(true);
-      expect(mockApi.post).toHaveBeenCalledWith('/api/moderation/flag/answer', {
-        answerId: 'answer1',
+      expect(mockApi.post).toHaveBeenCalledWith('/api/moderation/flag/answer/answer1', {
         username: 'user1',
       });
     });
@@ -70,7 +69,7 @@ describe('moderationService - COS 4.8: Flagging Content', () => {
         data: { error: 'Answer not found' },
       });
 
-      await expect(flagAnswer('invalid', 'user1')).rejects.toThrow('Answer not found');
+      await expect(flagAnswer('invalid', 'user1')).rejects.toThrow('Error while flagging answer');
     });
 
     it('should prevent flagging the same answer multiple times (COS 4.10)', async () => {
@@ -79,9 +78,7 @@ describe('moderationService - COS 4.8: Flagging Content', () => {
         data: { error: 'You have already flagged this answer' },
       });
 
-      await expect(flagAnswer('answer1', 'user1')).rejects.toThrow(
-        'You have already flagged this answer',
-      );
+      await expect(flagAnswer('answer1', 'user1')).rejects.toThrow('Error while flagging answer');
     });
   });
 
@@ -95,8 +92,7 @@ describe('moderationService - COS 4.8: Flagging Content', () => {
       const result = await flagComment('comment1', 'user1');
 
       expect(result.success).toBe(true);
-      expect(mockApi.post).toHaveBeenCalledWith('/api/moderation/flag/comment', {
-        commentId: 'comment1',
+      expect(mockApi.post).toHaveBeenCalledWith('/api/moderation/flag/comment/comment1', {
         username: 'user1',
       });
     });
@@ -107,7 +103,7 @@ describe('moderationService - COS 4.8: Flagging Content', () => {
         data: { error: 'Comment not found' },
       });
 
-      await expect(flagComment('invalid', 'user1')).rejects.toThrow('Comment not found');
+      await expect(flagComment('invalid', 'user1')).rejects.toThrow('Error while flagging comment');
     });
 
     it('should prevent flagging the same comment multiple times (COS 4.10)', async () => {
@@ -117,9 +113,8 @@ describe('moderationService - COS 4.8: Flagging Content', () => {
       });
 
       await expect(flagComment('comment1', 'user1')).rejects.toThrow(
-        'You have already flagged this comment',
+        'Error while flagging comment',
       );
     });
   });
 });
-

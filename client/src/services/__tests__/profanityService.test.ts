@@ -1,4 +1,3 @@
-import { describe, it, expect, beforeEach } from '@jest/globals';
 import profanityService from '../profanityService';
 
 // Mock fetch globally
@@ -62,7 +61,9 @@ describe('profanityService - COS 2.8: Profanity Detection', () => {
       json: async () => ({ isProfanity: false }),
     });
 
-    await expect(profanityService('You can use React hooks for state management.')).resolves.not.toThrow();
+    await expect(
+      profanityService('You can use React hooks for state management.'),
+    ).resolves.not.toThrow();
   });
 
   it('should check profanity for comments', async () => {

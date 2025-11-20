@@ -1,6 +1,5 @@
 import { render, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
-import { describe, it, expect, beforeEach } from '@jest/globals';
 import { ThemeProvider, useTheme } from '../ThemeContext';
 
 // Mock sessionStorage
@@ -121,4 +120,3 @@ describe('ThemeContext - COS 1.4: Dark Mode', () => {
     expect(document.documentElement.getAttribute('data-theme')).toBe('light');
   });
 });
-

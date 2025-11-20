@@ -4,12 +4,14 @@ import { ChakraProvider, createSystem, defaultConfig } from '@chakra-ui/react';
 import ModeratorDashboard from '../index';
 import useModeratorDashboard from '../../../../hooks/useModeratorDashboard';
 import useUserContext from '../../../../hooks/useUserContext';
+import { SafeDatabaseUser, FakeSOSocket } from '../../../../types/types';
 
 const system = createSystem(defaultConfig);
 
 jest.mock('../../../../hooks/useModeratorDashboard');
 jest.mock('../../../../hooks/useUserContext');
 jest.mock('../../../moderation/DeleteContentModal', () => {
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   return function MockDeleteContentModal({ isOpen, onClose, onConfirm }: any) {
     if (!isOpen) return null;
     return (
@@ -112,8 +114,8 @@ describe('ModeratorDashboard', () => {
         role: 'moderator',
         _id: 'mod1',
         dateJoined: new Date('2024-01-01'),
-      } as any,
-      socket: {} as any,
+      } as SafeDatabaseUser,
+      socket: {} as FakeSOSocket,
       setUser: jest.fn(),
       setSocket: jest.fn(),
     });
@@ -144,8 +146,8 @@ describe('ModeratorDashboard', () => {
           role: 'user',
           _id: 'user1',
           dateJoined: new Date('2024-01-01'),
-        } as any,
-        socket: {} as any,
+        } as SafeDatabaseUser,
+        socket: {} as FakeSOSocket,
         setUser: jest.fn(),
         setSocket: jest.fn(),
       });
@@ -169,8 +171,8 @@ describe('ModeratorDashboard', () => {
           role: 'admin',
           _id: 'admin1',
           dateJoined: new Date('2024-01-01'),
-        } as any,
-        socket: {} as any,
+        } as SafeDatabaseUser,
+        socket: {} as FakeSOSocket,
         setUser: jest.fn(),
         setSocket: jest.fn(),
       });

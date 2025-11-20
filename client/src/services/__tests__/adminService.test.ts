@@ -1,4 +1,3 @@
-import { describe, it, expect, beforeEach } from '@jest/globals';
 import { getDashboardMetrics, DashboardMetrics } from '../adminService';
 import api from '../config';
 
@@ -191,4 +190,3 @@ describe('adminService - COS 3.4: Admin Dashboard Metrics', () => {
     expect(result.engagement.totalDownvotes).toBe(500);
   });
 });
-

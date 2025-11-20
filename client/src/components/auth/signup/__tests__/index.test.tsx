@@ -1,14 +1,12 @@
-import { describe, it, expect } from '@jest/globals';
-
 /**
  * Signup Component Tests - COS 4.5: Community Guidelines Agreement
- * 
+ *
  * Note: Full component tests are covered in integration/E2E tests.
  * The guidelines agreement requirement is tested in:
  * - userService.test.ts (createUser with agreedToGuidelines)
  * - useAuth hook tests
  * - E2E tests in cypress
- * 
+ *
  * This file documents the COS 4.5 requirements:
  * - User must be able to view Community Guidelines during signup
  * - User must check a checkbox saying they agree with the Community Guidelines
@@ -29,4 +27,3 @@ describe('Signup Component - COS 4.5: Community Guidelines Agreement', () => {
     expect(true).toBe(true);
   });
 });
-

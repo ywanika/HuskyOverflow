@@ -1,7 +1,181 @@
 import api from './config';
-import { ModerationResponse } from '../types/types';
 
 const MODERATION_API_URL = `/api/moderation`;
+
+/**
+ * Response type for moderation operations
+ */
+export interface ModerationResponse {
+  success: boolean;
+  message?: string;
+  error?: string;
+}
+
+/**
+ * Flagged content item interface
+ */
+export interface FlaggedContentItem {
+  _id: string;
+  contentType: 'question' | 'answer' | 'comment';
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  content: any;
+  flaggedBy: string[];
+  flaggedAt: Date[];
+  reviewedBy?: string;
+  reviewedAt?: Date;
+}
+
+/**
+ * Response type for flagged content
+ */
+export interface FlaggedContentResponse {
+  questions: FlaggedContentItem[];
+  answers: FlaggedContentItem[];
+  comments: FlaggedContentItem[];
+  error?: string;
+}
+
+/**
+ * Gets all flagged content that hasn't been reviewed yet
+ * @returns Promise resolving to FlaggedContentResponse
+ */
+export const getFlaggedContent = async (): Promise<FlaggedContentResponse> => {
+  const res = await api.get(`${MODERATION_API_URL}/flagged`);
+
+  if (res.status !== 200) {
+    throw new Error('Error while fetching flagged content');
+  }
+
+  return res.data;
+};
+
+/**
+ * Marks flagged content as reviewed by a moderator
+ * @param contentType - Type of content being reviewed
+ * @param contentId - ID of the content
+ * @param moderatorUsername - Username of the moderator reviewing
+ * @returns Promise resolving to ModerationResponse
+ */
+export const markAsReviewed = async (
+  contentType: 'question' | 'answer' | 'comment',
+  contentId: string,
+  moderatorUsername: string,
+): Promise<ModerationResponse> => {
+  const res = await api.post(`${MODERATION_API_URL}/review`, {
+    contentType,
+    contentId,
+    moderatorUsername,
+  });
+
+  if (res.status !== 200) {
+    throw new Error('Error while marking content as reviewed');
+  }
+
+  return res.data;
+};
+
+/**
+ * Dismisses a flag (unflags content) - Moderator only
+ * @param contentType - Type of content
+ * @param contentId - ID of the content
+ * @param moderatorUsername - Username of the moderator
+ * @returns Promise resolving to ModerationResponse
+ */
+export const dismissFlag = async (
+  contentType: 'question' | 'answer' | 'comment',
+  contentId: string,
+  moderatorUsername: string,
+): Promise<ModerationResponse> => {
+  const res = await api.post(`${MODERATION_API_URL}/dismiss`, {
+    contentType,
+    contentId,
+    moderatorUsername,
+  });
+
+  if (res.status !== 200) {
+    throw new Error('Error while dismissing flag');
+  }
+
+  return res.data;
+};
+
+/**
+ * Deletes a question (marks as deleted) - Moderator only
+ * @param questionId - The ID of the question to delete
+ * @param moderatorUsername - The username of the moderator performing the deletion
+ * @param deleteReason - The reason for deletion
+ * @returns Promise resolving to ModerationResponse
+ */
+export const deleteQuestion = async (
+  questionId: string,
+  moderatorUsername: string,
+  deleteReason: string,
+): Promise<ModerationResponse> => {
+  const res = await api.delete(`${MODERATION_API_URL}/delete/question/${questionId}`, {
+    data: {
+      moderatorUsername,
+      deleteReason,
+    },
+  });
+
+  if (res.status !== 200) {
+    throw new Error('Error while deleting question');
+  }
+
+  return res.data;
+};
+
+/**
+ * Deletes an answer (marks as deleted) - Moderator only
+ * @param answerId - The ID of the answer to delete
+ * @param moderatorUsername - The username of the moderator performing the deletion
+ * @param deleteReason - The reason for deletion
+ * @returns Promise resolving to ModerationResponse
+ */
+export const deleteAnswer = async (
+  answerId: string,
+  moderatorUsername: string,
+  deleteReason: string,
+): Promise<ModerationResponse> => {
+  const res = await api.delete(`${MODERATION_API_URL}/delete/answer/${answerId}`, {
+    data: {
+      moderatorUsername,
+      deleteReason,
+    },
+  });
+
+  if (res.status !== 200) {
+    throw new Error('Error while deleting answer');
+  }
+
+  return res.data;
+};
+
+/**
+ * Deletes a comment (marks as deleted) - Moderator only
+ * @param commentId - The ID of the comment to delete
+ * @param moderatorUsername - The username of the moderator performing the deletion
+ * @param deleteReason - The reason for deletion
+ * @returns Promise resolving to ModerationResponse
+ */
+export const deleteComment = async (
+  commentId: string,
+  moderatorUsername: string,
+  deleteReason: string,
+): Promise<ModerationResponse> => {
+  const res = await api.delete(`${MODERATION_API_URL}/delete/comment/${commentId}`, {
+    data: {
+      moderatorUsername,
+      deleteReason,
+    },
+  });
+
+  if (res.status !== 200) {
+    throw new Error('Error while deleting comment');
+  }
+
+  return res.data;
+};
 
 /**
  * Flags a question
@@ -13,13 +187,12 @@ export const flagQuestion = async (
   questionId: string,
   username: string,
 ): Promise<ModerationResponse> => {
-  const res = await api.post(`${MODERATION_API_URL}/flag/question`, {
-    questionId,
+  const res = await api.post(`${MODERATION_API_URL}/flag/question/${questionId}`, {
     username,
   });
 
   if (res.status !== 200) {
-    throw new Error(res.data.error || 'Error flagging question');
+    throw new Error('Error while flagging question');
   }
 
   return res.data;
@@ -35,13 +208,12 @@ export const flagAnswer = async (
   answerId: string,
   username: string,
 ): Promise<ModerationResponse> => {
-  const res = await api.post(`${MODERATION_API_URL}/flag/answer`, {
-    answerId,
+  const res = await api.post(`${MODERATION_API_URL}/flag/answer/${answerId}`, {
     username,
   });
 
   if (res.status !== 200) {
-    throw new Error(res.data.error || 'Error flagging answer');
+    throw new Error('Error while flagging answer');
   }
 
   return res.data;
@@ -57,13 +229,12 @@ export const flagComment = async (
   commentId: string,
   username: string,
 ): Promise<ModerationResponse> => {
-  const res = await api.post(`${MODERATION_API_URL}/flag/comment`, {
-    commentId,
+  const res = await api.post(`${MODERATION_API_URL}/flag/comment/${commentId}`, {
     username,
   });
 
   if (res.status !== 200) {
-    throw new Error(res.data.error || 'Error flagging comment');
+    throw new Error('Error while flagging comment');
   }
 
   return res.data;

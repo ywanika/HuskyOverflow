@@ -1,4 +1,3 @@
-import { describe, it, expect, vi, beforeEach } from '@jest/globals';
 import { checkGuidelinesAgreement } from '../guidelinesCheck';
 
 describe('checkGuidelinesAgreement - COS 4.7: Guidelines Agreement Check', () => {
@@ -27,4 +26,3 @@ describe('checkGuidelinesAgreement - COS 4.7: Guidelines Agreement Check', () =>
     }
   });
 });
-

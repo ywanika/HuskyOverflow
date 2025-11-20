@@ -1,4 +1,3 @@
-import { describe, it, expect, beforeEach } from '@jest/globals';
 import {
   getNotifications,
   getUnreadNotificationCount,
@@ -217,7 +216,8 @@ describe('notificationService - COS 4.1, 4.4: Notifications', () => {
         _id: 'notif1',
         recipientUsername: 'user1',
         type: 'deletion',
-        message: 'Your question has been deleted by a moderator. Reason: Violates community guidelines',
+        message:
+          'Your question has been deleted by a moderator. Reason: Violates community guidelines',
         contentId: 'content1',
         isRead: false,
         timestamp: new Date(),
@@ -280,4 +280,3 @@ describe('notificationService - COS 4.1, 4.4: Notifications', () => {
     });
   });
 });
-

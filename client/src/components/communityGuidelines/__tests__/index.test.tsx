@@ -1,5 +1,4 @@
 import { render, screen } from '@testing-library/react';
-import { describe, it, expect } from '@jest/globals';
 import '@testing-library/jest-dom';
 import CommunityGuidelines from '../index';
 
@@ -31,4 +30,3 @@ describe('CommunityGuidelines Component', () => {
     expect(headings[0]).toHaveTextContent('Community Guidelines');
   });
 });
-
