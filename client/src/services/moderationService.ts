@@ -3,6 +3,38 @@ import api from './config';
 const MODERATION_API_URL = `/api/moderation`;
 
 /**
+ * Response type for moderation operations
+ */
+export interface ModerationResponse {
+  success: boolean;
+  message?: string;
+  error?: string;
+}
+
+/**
+ * Flagged content item interface
+ */
+export interface FlaggedContentItem {
+  _id: string;
+  contentType: 'question' | 'answer' | 'comment';
+  content: Record<string, unknown>;
+  flaggedBy: string[];
+  flaggedAt: Date[];
+  reviewedBy?: string;
+  reviewedAt?: Date;
+}
+
+/**
+ * Response type for flagged content
+ */
+export interface FlaggedContentResponse {
+  questions: FlaggedContentItem[];
+  answers: FlaggedContentItem[];
+  comments: FlaggedContentItem[];
+  error?: string;
+}
+
+/**
  * Deletes a question (marks as deleted) - Moderator only
  * @param questionId - The ID of the question to delete
  * @param moderatorUsername - The username of the moderator performing the deletion
@@ -150,36 +182,10 @@ export const flagComment = async (
 };
 
 /**
- * Gets all flagged content - Moderator only
- * @returns Promise resolving to flagged content
- * @throws Error if the API response status is not 200
+ * Gets all flagged content that hasn't been reviewed yet
+ * @returns Promise resolving to FlaggedContentResponse
  */
-export const getFlaggedContent = async (): Promise<{
-  questions: Array<{
-    _id: string;
-    contentType: 'question';
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    content: any;
-    flaggedBy: string[];
-    flaggedAt: Date[];
-  }>;
-  answers: Array<{
-    _id: string;
-    contentType: 'answer';
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    content: any;
-    flaggedBy: string[];
-    flaggedAt: Date[];
-  }>;
-  comments: Array<{
-    _id: string;
-    contentType: 'comment';
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    content: any;
-    flaggedBy: string[];
-    flaggedAt: Date[];
-  }>;
-}> => {
+export const getFlaggedContent = async (): Promise<FlaggedContentResponse> => {
   const res = await api.get(`${MODERATION_API_URL}/flagged`);
 
   if (res.status !== 200) {
@@ -190,18 +196,17 @@ export const getFlaggedContent = async (): Promise<{
 };
 
 /**
- * Marks flagged content as reviewed - Moderator only
- * @param contentType - Type of content
+ * Marks flagged content as reviewed by a moderator
+ * @param contentType - Type of content being reviewed
  * @param contentId - ID of the content
- * @param moderatorUsername - Username of the moderator
- * @returns Promise resolving to the result
- * @throws Error if the API response status is not 200
+ * @param moderatorUsername - Username of the moderator reviewing
+ * @returns Promise resolving to ModerationResponse
  */
 export const markAsReviewed = async (
   contentType: 'question' | 'answer' | 'comment',
   contentId: string,
   moderatorUsername: string,
-): Promise<{ success: boolean; message?: string }> => {
+): Promise<ModerationResponse> => {
   const res = await api.post(`${MODERATION_API_URL}/review`, {
     contentType,
     contentId,
@@ -216,18 +221,17 @@ export const markAsReviewed = async (
 };
 
 /**
- * Dismisses a flag - Moderator only
+ * Dismisses a flag (unflags content) - Moderator only
  * @param contentType - Type of content
  * @param contentId - ID of the content
  * @param moderatorUsername - Username of the moderator
- * @returns Promise resolving to the result
- * @throws Error if the API response status is not 200
+ * @returns Promise resolving to ModerationResponse
  */
 export const dismissFlag = async (
   contentType: 'question' | 'answer' | 'comment',
   contentId: string,
   moderatorUsername: string,
-): Promise<{ success: boolean; message?: string }> => {
+): Promise<ModerationResponse> => {
   const res = await api.post(`${MODERATION_API_URL}/dismiss`, {
     contentType,
     contentId,
