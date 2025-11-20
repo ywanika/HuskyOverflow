@@ -31,7 +31,12 @@ export default defineConfig([
       'import/no-extraneous-dependencies': [
         'error',
         {
-          devDependencies: ['**/*.spec.ts', 'eslint.config.*'],
+          devDependencies: [
+            '**/*.spec.ts',
+            '**/*.test.ts',
+            '**/*.test.tsx',
+            'eslint.config.*',
+          ],
           includeInternal: true,
         },
       ],
