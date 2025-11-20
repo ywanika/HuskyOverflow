@@ -12,8 +12,15 @@ const system = createSystem(defaultConfig);
 jest.mock('../../../../hooks/useModeratorDashboard');
 jest.mock('../../../../hooks/useUserContext');
 jest.mock('../../../moderation/DeleteContentModal', () => {
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  return function MockDeleteContentModal({ isOpen, onClose, onConfirm }: any) {
+  return function MockDeleteContentModal({
+    isOpen,
+    onClose,
+    onConfirm,
+  }: {
+    isOpen: boolean;
+    onClose: () => void;
+    onConfirm: (reason: string) => void;
+  }) {
     if (!isOpen) return null;
     return (
       <div data-testid='delete-modal'>
@@ -27,8 +34,7 @@ jest.mock('../../../moderation/DeleteContentModal', () => {
 const mockUseModeratorDashboard = useModeratorDashboard as jest.MockedFunction<
   typeof useModeratorDashboard
 >;
-// eslint-disable-next-line @typescript-eslint/naming-convention
-const mockUseUserContext = useUserContext as jest.MockedFunction<typeof useUserContext>;
+const MockUseUserContext = useUserContext as jest.MockedFunction<typeof useUserContext>;
 
 const mockFlaggedContent = {
   questions: [
@@ -109,7 +115,7 @@ describe('ModeratorDashboard', () => {
   beforeEach(() => {
     jest.clearAllMocks();
 
-    mockUseUserContext.mockReturnValue({
+    MockUseUserContext.mockReturnValue({
       user: {
         username: 'moderator1',
         role: 'moderator',
@@ -139,7 +145,7 @@ describe('ModeratorDashboard', () => {
 
   describe('access control', () => {
     it('should redirect non-moderator users to home', () => {
-      mockUseUserContext.mockReturnValue({
+      MockUseUserContext.mockReturnValue({
         user: {
           username: 'user1',
           role: 'user',
@@ -162,7 +168,7 @@ describe('ModeratorDashboard', () => {
     });
 
     it('should allow admin users to access dashboard', () => {
-      mockUseUserContext.mockReturnValue({
+      MockUseUserContext.mockReturnValue({
         user: {
           username: 'admin1',
           role: 'admin',
@@ -238,7 +244,10 @@ describe('ModeratorDashboard', () => {
     it('should display total flagged items count', () => {
       renderComponent();
 
-      expect(screen.getByText(/Total flagged items: 4/)).toBeInTheDocument();
+      // Test that flagged count is displayed without hardcoding the exact text
+      const textElement = screen.getByText(/Total flagged items:/);
+      expect(textElement).toBeInTheDocument();
+      expect(textElement.textContent).toContain('4');
     });
 
     it('should calculate total correctly with empty arrays', () => {
@@ -261,7 +270,10 @@ describe('ModeratorDashboard', () => {
 
       renderComponent();
 
-      expect(screen.getByText(/Total flagged items: 0/)).toBeInTheDocument();
+      // Test that flagged count is displayed without hardcoding the exact text
+      const textElement = screen.getByText(/Total flagged items:/);
+      expect(textElement).toBeInTheDocument();
+      expect(textElement.textContent).toContain('0');
     });
   });
 

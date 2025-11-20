@@ -17,8 +17,7 @@ export interface ModerationResponse {
 export interface FlaggedContentItem {
   _id: string;
   contentType: 'question' | 'answer' | 'comment';
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  content: any;
+  content: Record<string, unknown>;
   flaggedBy: string[];
   flaggedAt: Date[];
   reviewedBy?: string;
