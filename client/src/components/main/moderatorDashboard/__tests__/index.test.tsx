@@ -1,6 +1,7 @@
 import { render, screen, fireEvent } from '@testing-library/react';
 import { BrowserRouter } from 'react-router-dom';
 import { ChakraProvider, createSystem, defaultConfig } from '@chakra-ui/react';
+import { ObjectId } from 'mongodb';
 import ModeratorDashboard from '../index';
 import useModeratorDashboard from '../../../../hooks/useModeratorDashboard';
 import useUserContext from '../../../../hooks/useUserContext';
@@ -112,12 +113,10 @@ describe('ModeratorDashboard', () => {
       user: {
         username: 'moderator1',
         role: 'moderator',
-        _id: 'mod1',
+        _id: new ObjectId('507f1f77bcf86cd799439011'),
         dateJoined: new Date('2024-01-01'),
       } as SafeDatabaseUser,
       socket: {} as FakeSOSocket,
-      setUser: jest.fn(),
-      setSocket: jest.fn(),
     });
 
     mockUseModeratorDashboard.mockReturnValue({
@@ -144,12 +143,10 @@ describe('ModeratorDashboard', () => {
         user: {
           username: 'user1',
           role: 'user',
-          _id: 'user1',
+          _id: new ObjectId('507f1f77bcf86cd799439012'),
           dateJoined: new Date('2024-01-01'),
         } as SafeDatabaseUser,
         socket: {} as FakeSOSocket,
-        setUser: jest.fn(),
-        setSocket: jest.fn(),
       });
 
       renderComponent();
@@ -169,12 +166,10 @@ describe('ModeratorDashboard', () => {
         user: {
           username: 'admin1',
           role: 'admin',
-          _id: 'admin1',
+          _id: new ObjectId('507f1f77bcf86cd799439013'),
           dateJoined: new Date('2024-01-01'),
         } as SafeDatabaseUser,
         socket: {} as FakeSOSocket,
-        setUser: jest.fn(),
-        setSocket: jest.fn(),
       });
 
       renderComponent();

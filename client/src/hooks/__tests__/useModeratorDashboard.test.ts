@@ -1,8 +1,9 @@
 import { renderHook, waitFor, act } from '@testing-library/react';
+import { ObjectId } from 'mongodb';
 import useModeratorDashboard from '../useModeratorDashboard';
 import * as moderationService from '../../services/moderationService';
 import useUserContext from '../useUserContext';
-import { FakeSOSocket } from '../../types/types';
+import { FakeSOSocket, SafeDatabaseUser } from '../../types/types';
 
 jest.mock('../useUserContext');
 jest.mock('../../services/moderationService');
@@ -11,12 +12,12 @@ const MockUserContext = useUserContext as jest.MockedFunction<typeof useUserCont
 const mockModerationService = moderationService as jest.Mocked<typeof moderationService>;
 
 describe('useModeratorDashboard', () => {
-  const mockUser = {
+  const mockUser: SafeDatabaseUser = {
     username: 'moderator1',
     role: 'moderator',
-    _id: 'mod1' as unknown as string,
+    _id: new ObjectId('507f1f77bcf86cd799439011'),
     dateJoined: new Date('2024-01-01'),
-  };
+  } as SafeDatabaseUser;
 
   const mockSocket = {
     on: jest.fn(),
@@ -76,8 +77,6 @@ describe('useModeratorDashboard', () => {
     MockUserContext.mockReturnValue({
       user: mockUser,
       socket: mockSocket as unknown as FakeSOSocket,
-      setUser: jest.fn(),
-      setSocket: jest.fn(),
     });
   });
 
