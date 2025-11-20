@@ -5,4 +5,3 @@ const Markdown = ({ children }: { children: React.ReactNode }) => {
 };
 
 export default Markdown;
-
