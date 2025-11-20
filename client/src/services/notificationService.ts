@@ -94,3 +94,21 @@ export const deleteNotification = async (
 
   return res.data;
 };
+
+/**
+ * Sends a system-wide notification to all users
+ * @param message - The notification message
+ * @returns Promise resolving to success status and count
+ * @throws Error if the API response status is not 200
+ */
+export const sendSystemNotification = async (
+  message: string,
+): Promise<{ success: boolean; count: number }> => {
+  const res = await api.post(`${NOTIFICATION_API_URL}/system`, { message });
+
+  if (res.status !== 200) {
+    throw new Error('Error while sending system notification');
+  }
+
+  return res.data;
+};

@@ -1,2 +1,51 @@
 /* Admin Dashboard Styles */
 
+/* System Notification Section */
+.system-notification-section {
+  margin-top: var(--spacing-2xl);
+  padding: var(--spacing-xl);
+  border-width: 1px;
+  border-color: var(--color-bg-tertiary);
+  border-style: solid;
+  border-radius: var(--radius-lg);
+  background-color: var(--color-info-bg);
+}
+
+.system-notification-title {
+  font-size: var(--font-size-lg);
+  font-weight: 600;
+  margin-bottom: var(--spacing-lg);
+  color: var(--color-text-primary);
+}
+
+.system-notification-input {
+  margin-bottom: var(--spacing-md);
+}
+
+.system-notification-alert {
+  margin-bottom: var(--spacing-md);
+}
+
+.system-notification-button {
+  background-color: var(--color-primary);
+  color: var(--color-bg-primary);
+  padding: var(--spacing-sm) var(--spacing-md);
+  border-radius: var(--radius-md);
+  border: none;
+  cursor: pointer;
+  font-weight: 600;
+  transition: all var(--transition-fast);
+  min-height: 44px;
+}
+
+.system-notification-button:hover {
+  background-color: var(--color-secondary);
+  transform: translateY(-1px);
+  box-shadow: var(--shadow-md);
+}
+
+.system-notification-button:focus {
+  outline: 2px solid var(--color-focus);
+  outline-offset: 2px;
+  box-shadow: 0 0 0 3px var(--color-focus-ring);
+}
