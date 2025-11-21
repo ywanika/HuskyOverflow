@@ -1006,6 +1006,645 @@ paths:
         '500':
           $ref: '#/components/responses/ErrorResponse'
 
+  # --------------------
+  # NOTIFICATION CONTROLLER
+  # --------------------
+  /notification/{username}:
+    get:
+      tags:
+        - Notifications
+      summary: Retrieve all notifications for a specific user.
+      parameters:
+        - in: path
+          name: username
+          schema:
+            type: string
+          required: true
+          description: The username of the user whose notifications are being retrieved.
+      responses:
+        '200':
+          description: Successfully retrieved list of notifications.
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/DatabaseNotification'
+        '400':
+          $ref: '#/components/responses/ValidationError'
+        '500':
+          $ref: '#/components/responses/ErrorResponse'
+
+  /notification/unread/{username}:
+    get:
+      tags:
+        - Notifications
+      summary: Retrieve the unread notification count for a specific user.
+      parameters:
+        - in: path
+          name: username
+          schema:
+            type: string
+          required: true
+          description: The username of the user whose unread count is being retrieved.
+      responses:
+        '200':
+          description: Successfully retrieved unread count.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  count:
+                    type: integer
+                    minimum: 0
+                    description: The number of unread notifications.
+        '400':
+          $ref: '#/components/responses/ValidationError'
+        '500':
+          $ref: '#/components/responses/ErrorResponse'
+
+  /notification/read/{notificationId}:
+    patch:
+      tags:
+        - Notifications
+      summary: Mark a specific notification as read.
+      parameters:
+        - in: path
+          name: notificationId
+          schema:
+            type: string
+            format: object-id
+          required: true
+          description: The unique ID of the notification to mark as read.
+        - in: query
+          name: username
+          schema:
+            type: string
+          required: true
+          description: The username of the user performing the action (for authorization).
+      requestBody:
+        required: false
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                username:
+                  type: string
+                  description: The username of the user performing the action (alternative to query parameter).
+      responses:
+        '200':
+          description: Notification successfully marked as read.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                  notification:
+                    $ref: '#/components/schemas/DatabaseNotification'
+        '400':
+          $ref: '#/components/responses/ValidationError'
+        '404':
+          description: Notification not found.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SimpleErrorBody'
+        '500':
+          $ref: '#/components/responses/ErrorResponse'
+
+  /notification/read-all:
+    patch:
+      tags:
+        - Notifications
+      summary: Mark all notifications as read for a specific user.
+      parameters:
+        - in: query
+          name: username
+          schema:
+            type: string
+          required: true
+          description: The username of the user whose notifications are being marked as read.
+      requestBody:
+        required: false
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                username:
+                  type: string
+                  description: The username of the user (alternative to query parameter).
+      responses:
+        '200':
+          description: All notifications successfully marked as read.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+        '400':
+          $ref: '#/components/responses/ValidationError'
+        '500':
+          $ref: '#/components/responses/ErrorResponse'
+
+  /notification/{notificationId}:
+    delete:
+      tags:
+        - Notifications
+      summary: Delete a specific notification.
+      parameters:
+        - in: path
+          name: notificationId
+          schema:
+            type: string
+            format: object-id
+          required: true
+          description: The unique ID of the notification to delete.
+        - in: query
+          name: username
+          schema:
+            type: string
+          required: true
+          description: The username of the user performing the action (for authorization).
+      requestBody:
+        required: false
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                username:
+                  type: string
+                  description: The username of the user performing the action (alternative to query parameter).
+      responses:
+        '200':
+          description: Notification successfully deleted.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+        '400':
+          $ref: '#/components/responses/ValidationError'
+        '404':
+          description: Notification not found.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SimpleErrorBody'
+        '500':
+          $ref: '#/components/responses/ErrorResponse'
+
+  /notification/system:
+    post:
+      tags:
+        - Notifications
+      summary: Create a system-wide notification for all users.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateSystemNotificationBody'
+      responses:
+        '200':
+          description: System notification successfully created.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                  count:
+                    type: integer
+                    description: The number of notifications created (one per user).
+        '400':
+          $ref: '#/components/responses/ValidationError'
+        '500':
+          $ref: '#/components/responses/ErrorResponse'
+
+  # --------------------
+  # ADMIN CONTROLLER
+  # --------------------
+  /admin/metrics:
+    get:
+      tags:
+        - Admin
+      summary: Retrieve dashboard metrics (Admin only).
+      parameters:
+        - in: query
+          name: username
+          schema:
+            type: string
+          required: true
+          description: The username of the admin requesting metrics (for authorization).
+      responses:
+        '200':
+          description: Successfully retrieved dashboard metrics.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DashboardMetrics'
+        '400':
+          $ref: '#/components/responses/ValidationError'
+        '403':
+          description: Forbidden - User is not an admin.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SimpleErrorBody'
+        '500':
+          $ref: '#/components/responses/ErrorResponse'
+
+  # --------------------
+  # MODERATION CONTROLLER
+  # --------------------
+  /moderation/delete/question/{questionId}:
+    delete:
+      tags:
+        - Moderation
+      summary: Delete a question (marks as deleted) - Moderator only.
+      parameters:
+        - in: path
+          name: questionId
+          schema:
+            type: string
+            format: object-id
+          required: true
+          description: The unique ID of the question to delete.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/DeleteContentBody'
+      responses:
+        '200':
+          description: Question successfully deleted.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                  message:
+                    type: string
+        '400':
+          $ref: '#/components/responses/ValidationError'
+        '403':
+          description: Forbidden - User is not a moderator or admin.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SimpleErrorBody'
+        '404':
+          description: Question not found.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SimpleErrorBody'
+        '500':
+          $ref: '#/components/responses/ErrorResponse'
+
+  /moderation/delete/answer/{answerId}:
+    delete:
+      tags:
+        - Moderation
+      summary: Delete an answer (marks as deleted) - Moderator only.
+      parameters:
+        - in: path
+          name: answerId
+          schema:
+            type: string
+            format: object-id
+          required: true
+          description: The unique ID of the answer to delete.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/DeleteContentBody'
+      responses:
+        '200':
+          description: Answer successfully deleted.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                  message:
+                    type: string
+        '400':
+          $ref: '#/components/responses/ValidationError'
+        '403':
+          description: Forbidden - User is not a moderator or admin.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SimpleErrorBody'
+        '404':
+          description: Answer not found.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SimpleErrorBody'
+        '500':
+          $ref: '#/components/responses/ErrorResponse'
+
+  /moderation/delete/comment/{commentId}:
+    delete:
+      tags:
+        - Moderation
+      summary: Delete a comment (marks as deleted) - Moderator only.
+      parameters:
+        - in: path
+          name: commentId
+          schema:
+            type: string
+            format: object-id
+          required: true
+          description: The unique ID of the comment to delete.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/DeleteContentBody'
+      responses:
+        '200':
+          description: Comment successfully deleted.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                  message:
+                    type: string
+        '400':
+          $ref: '#/components/responses/ValidationError'
+        '403':
+          description: Forbidden - User is not a moderator or admin.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SimpleErrorBody'
+        '404':
+          description: Comment not found.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SimpleErrorBody'
+        '500':
+          $ref: '#/components/responses/ErrorResponse'
+
+  /moderation/flag/question/{questionId}:
+    post:
+      tags:
+        - Moderation
+      summary: Flag a question - Any user can flag.
+      parameters:
+        - in: path
+          name: questionId
+          schema:
+            type: string
+            format: object-id
+          required: true
+          description: The unique ID of the question to flag.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/FlagContentBody'
+      responses:
+        '200':
+          description: Question successfully flagged.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                  message:
+                    type: string
+        '400':
+          description: Bad Request - Question already flagged or missing fields.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SimpleErrorBody'
+        '404':
+          description: Question not found.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SimpleErrorBody'
+        '500':
+          $ref: '#/components/responses/ErrorResponse'
+
+  /moderation/flag/answer/{answerId}:
+    post:
+      tags:
+        - Moderation
+      summary: Flag an answer - Any user can flag.
+      parameters:
+        - in: path
+          name: answerId
+          schema:
+            type: string
+            format: object-id
+          required: true
+          description: The unique ID of the answer to flag.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/FlagContentBody'
+      responses:
+        '200':
+          description: Answer successfully flagged.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                  message:
+                    type: string
+        '400':
+          description: Bad Request - Answer already flagged or missing fields.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SimpleErrorBody'
+        '404':
+          description: Answer not found.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SimpleErrorBody'
+        '500':
+          $ref: '#/components/responses/ErrorResponse'
+
+  /moderation/flag/comment/{commentId}:
+    post:
+      tags:
+        - Moderation
+      summary: Flag a comment - Any user can flag.
+      parameters:
+        - in: path
+          name: commentId
+          schema:
+            type: string
+            format: object-id
+          required: true
+          description: The unique ID of the comment to flag.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/FlagContentBody'
+      responses:
+        '200':
+          description: Comment successfully flagged.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                  message:
+                    type: string
+        '400':
+          description: Bad Request - Comment already flagged or missing fields.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SimpleErrorBody'
+        '404':
+          description: Comment not found.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SimpleErrorBody'
+        '500':
+          $ref: '#/components/responses/ErrorResponse'
+
+  /moderation/flagged:
+    get:
+      tags:
+        - Moderation
+      summary: Retrieve all flagged content - Moderator only.
+      responses:
+        '200':
+          description: Successfully retrieved flagged content.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/FlaggedContentResponse'
+        '500':
+          $ref: '#/components/responses/ErrorResponse'
+
+  /moderation/review:
+    post:
+      tags:
+        - Moderation
+      summary: Mark flagged content as reviewed - Moderator only.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ReviewContentBody'
+      responses:
+        '200':
+          description: Content successfully marked as reviewed.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                  message:
+                    type: string
+        '400':
+          $ref: '#/components/responses/ValidationError'
+        '403':
+          description: Forbidden - User is not a moderator or admin.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SimpleErrorBody'
+        '404':
+          description: Content not found.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SimpleErrorBody'
+        '500':
+          $ref: '#/components/responses/ErrorResponse'
+
+  /moderation/dismiss:
+    post:
+      tags:
+        - Moderation
+      summary: Dismiss a flag - Moderator only.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ReviewContentBody'
+      responses:
+        '200':
+          description: Flag successfully dismissed.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                  message:
+                    type: string
+        '400':
+          $ref: '#/components/responses/ValidationError'
+        '403':
+          description: Forbidden - User is not a moderator or admin.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SimpleErrorBody'
+        '404':
+          description: Content not found.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SimpleErrorBody'
+        '500':
+          $ref: '#/components/responses/ErrorResponse'
+
 components:
   schemas:
     # --------------------
@@ -1457,6 +2096,318 @@ components:
     User:
       type: object
       description: A user profile object.
+
+    # --------------------
+    # NOTIFICATION SCHEMAS
+    # --------------------
+    NotificationType:
+      type: string
+      enum:
+        - deletion
+        - appeal_result
+        - flag
+        - suspension
+        - role_change
+        - system_announcement
+      description: The type of notification.
+
+    DatabaseNotification:
+      type: object
+      description: A notification object as stored in the database.
+      properties:
+        _id:
+          type: string
+          format: object-id
+          description: Unique identifier for the notification.
+        recipientUsername:
+          type: string
+          description: Username of the user receiving the notification.
+        type:
+          $ref: '#/components/schemas/NotificationType'
+        message:
+          type: string
+          description: Message content of the notification.
+        contentId:
+          type: string
+          format: object-id
+          nullable: true
+          description: ObjectId of the related content (for appeals, etc.).
+        isRead:
+          type: boolean
+          description: Whether the notification has been read.
+        timestamp:
+          type: string
+          format: date-time
+          description: Timestamp when the notification was created.
+
+    CreateSystemNotificationBody:
+      type: object
+      required:
+        - message
+      properties:
+        message:
+          type: string
+          minLength: 1
+          description: The message content for the system-wide notification.
+
+    # --------------------
+    # ADMIN SCHEMAS
+    # --------------------
+    DashboardMetrics:
+      type: object
+      description: Comprehensive dashboard metrics for admin users.
+      properties:
+        users:
+          type: object
+          properties:
+            total:
+              type: integer
+            newThisWeek:
+              type: integer
+            newThisMonth:
+              type: integer
+            byRole:
+              type: object
+              properties:
+                user:
+                  type: integer
+                moderator:
+                  type: integer
+                admin:
+                  type: integer
+            active:
+              type: integer
+              description: Users active in last 7 days
+            suspended:
+              type: integer
+        content:
+          type: object
+          properties:
+            questions:
+              type: object
+              properties:
+                total:
+                  type: integer
+                withAnswers:
+                  type: integer
+                unanswered:
+                  type: integer
+                flagged:
+                  type: integer
+                deleted:
+                  type: integer
+            answers:
+              type: object
+              properties:
+                total:
+                  type: integer
+                flagged:
+                  type: integer
+                deleted:
+                  type: integer
+            comments:
+              type: object
+              properties:
+                total:
+                  type: integer
+                flagged:
+                  type: integer
+                deleted:
+                  type: integer
+        engagement:
+          type: object
+          properties:
+            totalViews:
+              type: integer
+            totalUpvotes:
+              type: integer
+            totalDownvotes:
+              type: integer
+            averageAnswersPerQuestion:
+              type: number
+            averageCommentsPerAnswer:
+              type: number
+        moderation:
+          type: object
+          properties:
+            totalFlagged:
+              type: integer
+            totalReviewed:
+              type: integer
+            totalDeleted:
+              type: integer
+            pendingReview:
+              type: integer
+        tags:
+          type: object
+          properties:
+            total:
+              type: integer
+            mostUsed:
+              type: array
+              items:
+                type: object
+                properties:
+                  name:
+                    type: string
+                  count:
+                    type: integer
+        communities:
+          type: object
+          properties:
+            total:
+              type: integer
+            public:
+              type: integer
+            private:
+              type: integer
+        collections:
+          type: object
+          properties:
+            total:
+              type: integer
+        messages:
+          type: object
+          properties:
+            total:
+              type: integer
+        growth:
+          type: object
+          properties:
+            questionsByWeek:
+              type: array
+              items:
+                type: object
+                properties:
+                  week:
+                    type: string
+                  count:
+                    type: integer
+            usersByWeek:
+              type: array
+              items:
+                type: object
+                properties:
+                  week:
+                    type: string
+                  count:
+                    type: integer
+
+    # --------------------
+    # MODERATION SCHEMAS
+    # --------------------
+    DeleteContentBody:
+      type: object
+      required:
+        - moderatorUsername
+        - deleteReason
+      properties:
+        moderatorUsername:
+          type: string
+          minLength: 1
+          description: The username of the moderator performing the deletion.
+        deleteReason:
+          type: string
+          minLength: 1
+          description: The reason for deleting the content.
+
+    FlagContentBody:
+      type: object
+      required:
+        - username
+      properties:
+        username:
+          type: string
+          minLength: 1
+          description: The username of the user flagging the content.
+
+    ReviewContentBody:
+      type: object
+      required:
+        - contentType
+        - contentId
+        - moderatorUsername
+      properties:
+        contentType:
+          type: string
+          enum:
+            - question
+            - answer
+            - comment
+          description: The type of content being reviewed or dismissed.
+        contentId:
+          type: string
+          format: object-id
+          description: The unique ID of the content.
+        moderatorUsername:
+          type: string
+          minLength: 1
+          description: The username of the moderator performing the action.
+
+    FlaggedContentItem:
+      type: object
+      description: A flagged content item with metadata.
+      properties:
+        _id:
+          type: string
+          description: The unique ID of the flagged content.
+        contentType:
+          type: string
+          enum:
+            - question
+            - answer
+            - comment
+          description: The type of content.
+        content:
+          description: The actual content object (question, answer, or comment).
+          oneOf:
+            - $ref: '#/components/schemas/PopulatedQuestion'
+            - $ref: '#/components/schemas/DatabaseAnswer'
+            - $ref: '#/components/schemas/DatabaseComment'
+        flaggedBy:
+          type: array
+          items:
+            type: string
+          description: Array of usernames who flagged this content.
+        flaggedAt:
+          type: array
+          items:
+            type: string
+            format: date-time
+          description: Array of timestamps when the content was flagged.
+        reviewedBy:
+          type: string
+          nullable: true
+          description: Username of the moderator who reviewed this content (if reviewed).
+        reviewedAt:
+          type: string
+          format: date-time
+          nullable: true
+          description: Timestamp when the content was reviewed (if reviewed).
+
+    FlaggedContentResponse:
+      type: object
+      description: Response containing all flagged content organized by type.
+      properties:
+        questions:
+          type: array
+          items:
+            $ref: '#/components/schemas/FlaggedContentItem'
+          description: Array of flagged questions.
+        answers:
+          type: array
+          items:
+            $ref: '#/components/schemas/FlaggedContentItem'
+          description: Array of flagged answers.
+        comments:
+          type: array
+          items:
+            $ref: '#/components/schemas/FlaggedContentItem'
+          description: Array of flagged comments.
+        error:
+          type: string
+          nullable: true
+          description: Error message if an error occurred.
 
     SimpleErrorBody: # MODIFICATION: New schema for simple JSON errors like 403, 404
       type: object
