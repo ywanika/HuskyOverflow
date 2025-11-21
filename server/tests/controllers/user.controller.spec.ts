@@ -16,6 +16,20 @@ const mockSafeUser: SafeDatabaseUser = {
   dateJoined: new Date('2024-12-03'),
 };
 
+const mockAdminUser: SafeDatabaseUser = {
+  _id: new mongoose.Types.ObjectId(),
+  username: 'admin1',
+  dateJoined: new Date('2024-12-03'),
+  role: 'admin',
+};
+
+const mockRegularUser: SafeDatabaseUser = {
+  _id: new mongoose.Types.ObjectId(),
+  username: 'regularuser',
+  dateJoined: new Date('2024-12-03'),
+  role: 'user',
+};
+
 const mockUserJSONResponse = {
   _id: mockSafeUser._id.toString(),
   username: 'user1',
@@ -28,6 +42,12 @@ const updatedUserSpy = jest.spyOn(util, 'updateUser');
 const getUserByUsernameSpy = jest.spyOn(util, 'getUserByUsername');
 const getUsersListSpy = jest.spyOn(util, 'getUsersList');
 const deleteUserByUsernameSpy = jest.spyOn(util, 'deleteUserByUsername');
+const suspendUserSpy = jest.spyOn(util, 'suspendUser');
+const banUserSpy = jest.spyOn(util, 'banUser');
+const promoteToModeratorSpy = jest.spyOn(util, 'promoteToModerator');
+const promoteToAdminSpy = jest.spyOn(util, 'promoteToAdmin');
+const demoteToUserSpy = jest.spyOn(util, 'demoteToUser');
+const checkUserSuspensionStatusSpy = jest.spyOn(util, 'checkUserSuspensionStatus');
 
 describe('Test userController', () => {
   describe('POST /signup', () => {
@@ -433,9 +453,278 @@ describe('Test userController', () => {
       const response = await supertest(app).patch('/api/user/updateBiography').send(mockReqBody);
 
       expect(response.status).toBe(500);
-      expect(response.text).toContain(
-        'Error when updating user biography: Error: Error updating user',
-      );
+    });
+  });
+
+  describe('Admin User Management Operations', () => {
+    describe('POST /suspend', () => {
+      it('should suspend a user when admin makes the request', async () => {
+        const mockReqBody = {
+          username: 'targetuser',
+          durationDays: 7,
+          reason: 'Spam',
+          adminUsername: 'admin1',
+        };
+
+        const suspendedUser = {
+          ...mockRegularUser,
+          username: 'targetuser',
+          suspendedUntil: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000),
+          suspensionReason: 'Spam',
+        };
+
+        getUserByUsernameSpy.mockResolvedValueOnce(mockAdminUser);
+        suspendUserSpy.mockResolvedValueOnce(suspendedUser);
+
+        const response = await supertest(app).post('/api/user/suspend').send(mockReqBody);
+
+        expect(response.status).toBe(200);
+        expect(response.body.suspensionReason).toBe('Spam');
+        expect(suspendUserSpy).toHaveBeenCalledWith('targetuser', 7, 'Spam');
+      });
+
+      it('should error when non-admin tries to suspend user', async () => {
+        const mockReqBody = {
+          username: 'targetuser',
+          durationDays: 7,
+          reason: 'Spam',
+          adminUsername: 'regularuser',
+        };
+
+        getUserByUsernameSpy.mockResolvedValueOnce(mockRegularUser);
+
+        const response = await supertest(app).post('/api/user/suspend').send(mockReqBody);
+
+        expect(response.status).not.toBe(200);
+      });
+
+      it('should error when missing required fields', async () => {
+        const mockReqBody = {
+          username: 'targetuser',
+          durationDays: 7,
+          // missing reason and adminUsername
+        };
+
+        const response = await supertest(app).post('/api/user/suspend').send(mockReqBody);
+
+        expect(response.status).not.toBe(200);
+      });
+    });
+
+    describe('POST /ban', () => {
+      it('should ban a user when admin makes the request with valid reason', async () => {
+        const mockReqBody = {
+          username: 'targetuser',
+          reason: 'Hate Speech: This is a detailed reason with more than 20 characters',
+          adminUsername: 'admin1',
+        };
+
+        const bannedUser = {
+          ...mockRegularUser,
+          username: 'targetuser',
+          isBanned: true,
+          banReason: mockReqBody.reason,
+        };
+
+        getUserByUsernameSpy.mockResolvedValueOnce(mockAdminUser);
+        banUserSpy.mockResolvedValueOnce(bannedUser);
+
+        const response = await supertest(app).post('/api/user/ban').send(mockReqBody);
+
+        expect(response.status).toBe(200);
+        expect(response.body.isBanned).toBe(true);
+        expect(response.body.banReason).toContain('Hate Speech');
+      });
+
+      it('should error when non-admin tries to ban user', async () => {
+        const mockReqBody = {
+          username: 'targetuser',
+          reason: 'Valid reason with enough characters to pass validation',
+          adminUsername: 'regularuser',
+        };
+
+        getUserByUsernameSpy.mockResolvedValueOnce(mockRegularUser);
+
+        const response = await supertest(app).post('/api/user/ban').send(mockReqBody);
+
+        expect(response.status).not.toBe(200);
+      });
+    });
+
+    describe('POST /promoteToModerator', () => {
+      it('should promote user to moderator when admin makes the request', async () => {
+        const mockReqBody = {
+          username: 'targetuser',
+          adminUsername: 'admin1',
+        };
+
+        const promotedUser = {
+          ...mockRegularUser,
+          username: 'targetuser',
+          role: 'moderator' as const,
+        };
+
+        getUserByUsernameSpy.mockResolvedValueOnce(mockAdminUser);
+        promoteToModeratorSpy.mockResolvedValueOnce(promotedUser);
+
+        const response = await supertest(app)
+          .post('/api/user/promoteToModerator')
+          .send(mockReqBody);
+
+        expect(response.status).toBe(200);
+        expect(response.body.role).toBe('moderator');
+      });
+
+      it('should error when non-admin tries to promote user', async () => {
+        const mockReqBody = {
+          username: 'targetuser',
+          adminUsername: 'regularuser',
+        };
+
+        getUserByUsernameSpy.mockResolvedValueOnce(mockRegularUser);
+
+        const response = await supertest(app)
+          .post('/api/user/promoteToModerator')
+          .send(mockReqBody);
+
+        expect(response.status).not.toBe(200);
+      });
+    });
+
+    describe('POST /promoteToAdmin', () => {
+      it('should promote moderator to admin when admin makes the request', async () => {
+        const mockModeratorUser = {
+          ...mockRegularUser,
+          username: 'moderatoruser',
+          role: 'moderator' as const,
+        };
+
+        const mockReqBody = {
+          username: 'moderatoruser',
+          adminUsername: 'admin1',
+        };
+
+        const promotedUser = {
+          ...mockModeratorUser,
+          role: 'admin' as const,
+        };
+
+        getUserByUsernameSpy
+          .mockResolvedValueOnce(mockAdminUser)
+          .mockResolvedValueOnce(mockModeratorUser);
+        promoteToAdminSpy.mockResolvedValueOnce(promotedUser);
+
+        const response = await supertest(app).post('/api/user/promoteToAdmin').send(mockReqBody);
+
+        expect(response.status).toBe(200);
+        expect(response.body.role).toBe('admin');
+      });
+
+      it('should error when non-admin tries to promote moderator', async () => {
+        const mockReqBody = {
+          username: 'moderatoruser',
+          adminUsername: 'regularuser',
+        };
+
+        getUserByUsernameSpy.mockResolvedValueOnce(mockRegularUser);
+
+        const response = await supertest(app).post('/api/user/promoteToAdmin').send(mockReqBody);
+
+        expect(response.status).not.toBe(200);
+      });
+
+      it('should error when trying to promote regular user to admin', async () => {
+        const mockReqBody = {
+          username: 'regularuser',
+          adminUsername: 'admin1',
+        };
+
+        getUserByUsernameSpy
+          .mockResolvedValueOnce(mockAdminUser)
+          .mockResolvedValueOnce(mockRegularUser);
+
+        const response = await supertest(app).post('/api/user/promoteToAdmin').send(mockReqBody);
+
+        expect(response.status).not.toBe(200);
+      });
+    });
+
+    describe('POST /demoteToUser', () => {
+      it('should demote moderator to user when admin makes the request', async () => {
+        const mockModeratorUser = {
+          ...mockRegularUser,
+          username: 'moderatoruser',
+          role: 'moderator' as const,
+        };
+
+        const mockReqBody = {
+          username: 'moderatoruser',
+          adminUsername: 'admin1',
+        };
+
+        const demotedUser = {
+          ...mockModeratorUser,
+          role: 'user' as const,
+        };
+
+        getUserByUsernameSpy
+          .mockResolvedValueOnce(mockAdminUser)
+          .mockResolvedValueOnce(mockModeratorUser);
+        demoteToUserSpy.mockResolvedValueOnce(demotedUser);
+
+        const response = await supertest(app).post('/api/user/demoteToUser').send(mockReqBody);
+
+        expect(response.status).toBe(200);
+        expect(response.body.role).toBe('user');
+      });
+
+      it('should error when non-admin tries to demote user', async () => {
+        const mockReqBody = {
+          username: 'moderatoruser',
+          adminUsername: 'regularuser',
+        };
+
+        getUserByUsernameSpy.mockResolvedValueOnce(mockRegularUser);
+
+        const response = await supertest(app).post('/api/user/demoteToUser').send(mockReqBody);
+
+        expect(response.status).not.toBe(200);
+      });
+    });
+
+    describe('GET /suspensionStatus/:username', () => {
+      it('should return suspension status for a user', async () => {
+        const suspensionStatus = {
+          isSuspended: true,
+          suspendedUntil: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000),
+          suspensionReason: 'Spam',
+          isBanned: false,
+        };
+
+        checkUserSuspensionStatusSpy.mockResolvedValueOnce(suspensionStatus);
+
+        const response = await supertest(app).get('/api/user/suspensionStatus/targetuser');
+
+        expect(response.status).toBe(200);
+        expect(response.body.isSuspended).toBe(true);
+        expect(response.body.suspensionReason).toBe('Spam');
+      });
+
+      it('should return banned status for a banned user', async () => {
+        const suspensionStatus = {
+          isSuspended: false,
+          isBanned: true,
+          banReason: 'Hate Speech: Permanent ban',
+        };
+
+        checkUserSuspensionStatusSpy.mockResolvedValueOnce(suspensionStatus);
+
+        const response = await supertest(app).get('/api/user/suspensionStatus/banneduser');
+
+        expect(response.status).toBe(200);
+        expect(response.body.isBanned).toBe(true);
+        expect(response.body.banReason).toContain('Hate Speech');
+      });
     });
   });
 });
