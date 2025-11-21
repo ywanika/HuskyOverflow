@@ -1,5 +1,17 @@
 import { Box, Text, Button, VStack, HStack, IconButton, Flex } from '@chakra-ui/react';
 import { DatabaseNotification } from '@fake-stack-overflow/shared';
+import type { ObjectId } from 'mongoose';
+
+/**
+ * Helper function to safely convert ObjectId to string
+ */
+const objectIdToString = (id: ObjectId | string): string => {
+  if (typeof id === 'string') {
+    return id;
+  }
+  // ObjectId from mongoose has toString() method
+  return String(id);
+};
 
 interface NotificationDropdownProps {
   notifications: DatabaseNotification[];
@@ -108,8 +120,7 @@ const NotificationDropdown = ({
         ) : (
           <VStack align='stretch' gap={0}>
             {notifications.map((notification, index) => (
-              // eslint-disable-next-line @typescript-eslint/no-base-to-string
-              <Box key={notification._id.toString()}>
+              <Box key={objectIdToString(notification._id)}>
                 <Box
                   p={4}
                   bg={getNotificationColor(notification.type, notification.isRead)}
@@ -140,8 +151,7 @@ const NotificationDropdown = ({
                         <IconButton
                           aria-label='Mark as read'
                           onClick={async () => {
-                            // eslint-disable-next-line @typescript-eslint/no-base-to-string
-                            await onMarkAsRead(notification._id.toString());
+                            await onMarkAsRead(objectIdToString(notification._id));
                           }}
                           size='xs'
                           variant='ghost'>
@@ -151,8 +161,7 @@ const NotificationDropdown = ({
                       <IconButton
                         aria-label='Delete notification'
                         onClick={async () => {
-                          // eslint-disable-next-line @typescript-eslint/no-base-to-string
-                          await onDelete(notification._id.toString());
+                          await onDelete(objectIdToString(notification._id));
                         }}
                         size='xs'
                         variant='ghost'

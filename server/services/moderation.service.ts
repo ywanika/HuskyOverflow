@@ -55,9 +55,7 @@ const createDeletionNotification = async (
       timestamp: new Date(),
     });
   } catch (error) {
-    // Log error but don't fail the deletion if notification fails
-    // eslint-disable-next-line no-console
-    console.error('Error creating deletion notification:', error);
+    // Error handled silently - don't fail the deletion if notification fails
   }
 };
 
@@ -233,9 +231,7 @@ const createFlagNotification = async (
 
     await Promise.all(notifications);
   } catch (error) {
-    // Log error but don't fail the flag if notification fails
-    // eslint-disable-next-line no-console
-    console.error('Error creating flag notification:', error);
+    // Error handled silently - don't fail the flag if notification fails
   }
 };
 

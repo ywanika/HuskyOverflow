@@ -1,5 +1,4 @@
 /** @type {import('ts-jest').JestConfigWithTsJest} **/
-// eslint-disable-next-line import/no-commonjs
 module.exports = {
   preset: 'ts-jest',
   testEnvironment: 'node',

@@ -1,5 +1,3 @@
-/* eslint-disable no-console */
-/* eslint-disable @typescript-eslint/naming-convention */
 import mongoose from 'mongoose';
 import UserModel from '../models/users.model';
 

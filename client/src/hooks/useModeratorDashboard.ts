@@ -12,8 +12,7 @@ import {
 interface FlaggedItem {
   _id: string;
   contentType: 'question' | 'answer' | 'comment';
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  content: any;
+  content: Record<string, unknown>;
   flaggedBy: string[];
   flaggedAt: Date[];
 }
@@ -47,12 +46,8 @@ const useModeratorDashboard = () => {
       setLoading(true);
       setError('');
       const data = await getFlaggedContent();
-      // eslint-disable-next-line no-console
-      console.log('Flagged content received:', data);
       setFlaggedContent(data);
     } catch (err) {
-      // eslint-disable-next-line no-console
-      console.error('Error fetching flagged content:', err);
       setError((err as Error).message || 'Failed to fetch flagged content');
     } finally {
       setLoading(false);

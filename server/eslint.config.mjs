@@ -103,5 +103,18 @@ export default defineConfig([
       '@typescript-eslint/no-explicit-any': 'off',
     },
   },
+  {
+    files: ['scripts/**/*.ts', 'seedData/**/*.ts'],
+    rules: {
+      'no-console': 'off',
+      '@typescript-eslint/naming-convention': 'off',
+    },
+  },
+  {
+    files: ['jest.config.ts'],
+    rules: {
+      'import/no-commonjs': 'off',
+    },
+  },
   eslintPluginPrettierRecommended,
 ]);

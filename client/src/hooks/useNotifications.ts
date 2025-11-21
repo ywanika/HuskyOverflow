@@ -1,6 +1,18 @@
 import { useEffect, useState, useCallback } from 'react';
 import { DatabaseNotification } from '@fake-stack-overflow/shared';
 import { FakeSOSocket } from '../types/types';
+import type { ObjectId } from 'mongoose';
+
+/**
+ * Helper function to safely convert ObjectId to string
+ */
+const objectIdToString = (id: ObjectId | string): string => {
+  if (typeof id === 'string') {
+    return id;
+  }
+  // ObjectId from mongoose has toString() method
+  return String(id);
+};
 import {
   getNotifications,
   getUnreadNotificationCount,
@@ -41,8 +53,6 @@ const useNotifications = (socket: FakeSOSocket | null) => {
       setUnreadCount(count);
     } catch (err) {
       setError('Failed to fetch notifications.');
-      // eslint-disable-next-line no-console
-      console.error('Error fetching notifications:', err);
     } finally {
       setLoading(false);
     }
@@ -59,14 +69,12 @@ const useNotifications = (socket: FakeSOSocket | null) => {
         await markNotificationAsRead(notificationId, user.username);
         setNotifications(prev =>
           prev.map(notif =>
-            // eslint-disable-next-line @typescript-eslint/no-base-to-string
-            notif._id.toString() === notificationId ? { ...notif, isRead: true } : notif,
+            objectIdToString(notif._id) === notificationId ? { ...notif, isRead: true } : notif,
           ),
         );
         setUnreadCount(prev => Math.max(0, prev - 1));
       } catch (err) {
-        // eslint-disable-next-line no-console
-        console.error('Error marking notification as read:', err);
+        setError('Failed to mark notification as read.');
       }
     },
     [user?.username],
@@ -83,8 +91,7 @@ const useNotifications = (socket: FakeSOSocket | null) => {
       setNotifications(prev => prev.map(notif => ({ ...notif, isRead: true })));
       setUnreadCount(0);
     } catch (err) {
-      // eslint-disable-next-line no-console
-      console.error('Error marking all notifications as read:', err);
+      setError('Failed to mark all notifications as read.');
     }
   }, [user?.username]);
 
@@ -98,19 +105,16 @@ const useNotifications = (socket: FakeSOSocket | null) => {
       try {
         await deleteNotification(notificationId, user.username);
         const deletedNotification = notifications.find(
-          // eslint-disable-next-line @typescript-eslint/no-base-to-string
-          notif => notif._id.toString() === notificationId,
+          notif => objectIdToString(notif._id) === notificationId,
         );
         setNotifications(prev =>
-          // eslint-disable-next-line @typescript-eslint/no-base-to-string
-          prev.filter(notif => notif._id.toString() !== notificationId),
+          prev.filter(notif => objectIdToString(notif._id) !== notificationId),
         );
         if (deletedNotification && !deletedNotification.isRead) {
           setUnreadCount(prev => Math.max(0, prev - 1));
         }
       } catch (err) {
-        // eslint-disable-next-line no-console
-        console.error('Error deleting notification:', err);
+        setError('Failed to delete notification.');
       }
     },
     [user?.username, notifications],
