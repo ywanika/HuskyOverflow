@@ -7,6 +7,9 @@ import {
   flagQuestion,
   flagAnswer,
   flagComment,
+  unflagQuestion,
+  unflagAnswer,
+  unflagComment,
   getFlaggedContent,
   markAsReviewed,
   dismissFlag,
@@ -386,6 +389,132 @@ const moderationController = (socket: FakeSOSocket) => {
   };
 
   /**
+   * Unflags a question - Any user can unflag their own flag
+   * @param req - Request containing questionId and username
+   * @param res - Response object
+   * @returns Promise resolving to void
+   */
+  const unflagQuestionRoute = async (req: FlagContentRequest, res: Response): Promise<void> => {
+    const { questionId } = req.params;
+    const { username } = req.body;
+
+    if (!questionId || !username) {
+      res.status(400).json({ error: 'Missing required fields: questionId or username' });
+      return;
+    }
+
+    try {
+      const result = await unflagQuestion(questionId, username);
+
+      if (!result.success) {
+        if (result.error?.includes('not flagged')) {
+          res.status(400).json({ error: result.error });
+        } else if (result.error?.includes('not found')) {
+          res.status(404).json({ error: result.error });
+        } else {
+          res.status(500).json({ error: result.error });
+        }
+        return;
+      }
+
+      // Emit socket event for real-time updates
+      socket.emit('moderationUpdate', {
+        type: 'questionUnflagged',
+        questionId,
+        unflaggedBy: username,
+      });
+
+      res.json({ success: true, message: result.message });
+    } catch (err: unknown) {
+      res.status(500).json({ error: `Error unflagging question: ${(err as Error).message}` });
+    }
+  };
+
+  /**
+   * Unflags an answer - Any user can unflag their own flag
+   * @param req - Request containing answerId and username
+   * @param res - Response object
+   * @returns Promise resolving to void
+   */
+  const unflagAnswerRoute = async (req: FlagContentRequest, res: Response): Promise<void> => {
+    const { answerId } = req.params;
+    const { username } = req.body;
+
+    if (!answerId || !username) {
+      res.status(400).json({ error: 'Missing required fields: answerId or username' });
+      return;
+    }
+
+    try {
+      const result = await unflagAnswer(answerId, username);
+
+      if (!result.success) {
+        if (result.error?.includes('not flagged')) {
+          res.status(400).json({ error: result.error });
+        } else if (result.error?.includes('not found')) {
+          res.status(404).json({ error: result.error });
+        } else {
+          res.status(500).json({ error: result.error });
+        }
+        return;
+      }
+
+      // Emit socket event for real-time updates
+      socket.emit('moderationUpdate', {
+        type: 'answerUnflagged',
+        answerId,
+        unflaggedBy: username,
+      });
+
+      res.json({ success: true, message: result.message });
+    } catch (err: unknown) {
+      res.status(500).json({ error: `Error unflagging answer: ${(err as Error).message}` });
+    }
+  };
+
+  /**
+   * Unflags a comment - Any user can unflag their own flag
+   * @param req - Request containing commentId and username
+   * @param res - Response object
+   * @returns Promise resolving to void
+   */
+  const unflagCommentRoute = async (req: FlagContentRequest, res: Response): Promise<void> => {
+    const { commentId } = req.params;
+    const { username } = req.body;
+
+    if (!commentId || !username) {
+      res.status(400).json({ error: 'Missing required fields: commentId or username' });
+      return;
+    }
+
+    try {
+      const result = await unflagComment(commentId, username);
+
+      if (!result.success) {
+        if (result.error?.includes('not flagged')) {
+          res.status(400).json({ error: result.error });
+        } else if (result.error?.includes('not found')) {
+          res.status(404).json({ error: result.error });
+        } else {
+          res.status(500).json({ error: result.error });
+        }
+        return;
+      }
+
+      // Emit socket event for real-time updates
+      socket.emit('moderationUpdate', {
+        type: 'commentUnflagged',
+        commentId,
+        unflaggedBy: username,
+      });
+
+      res.json({ success: true, message: result.message });
+    } catch (err: unknown) {
+      res.status(500).json({ error: `Error unflagging comment: ${(err as Error).message}` });
+    }
+  };
+
+  /**
    * Dismisses a flag - Moderator only
    * @param req - Request containing contentType, contentId, and moderatorUsername
    * @param res - Response object
@@ -447,6 +576,9 @@ const moderationController = (socket: FakeSOSocket) => {
   router.post('/flag/question/:questionId', flagQuestionRoute);
   router.post('/flag/answer/:answerId', flagAnswerRoute);
   router.post('/flag/comment/:commentId', flagCommentRoute);
+  router.post('/unflag/question/:questionId', unflagQuestionRoute);
+  router.post('/unflag/answer/:answerId', unflagAnswerRoute);
+  router.post('/unflag/comment/:commentId', unflagCommentRoute);
   router.get('/flagged', getFlaggedContentRoute);
   router.post('/review', markAsReviewedRoute);
   router.post('/dismiss', dismissFlagRoute);
