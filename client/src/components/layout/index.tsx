@@ -1,9 +1,8 @@
 import './index.css';
-import { Outlet, useLocation } from 'react-router-dom';
+import { Outlet } from 'react-router-dom';
 import { Box, Flex } from '@chakra-ui/react';
 import SideBarNav from '../main/sideBarNav';
 import Header from '../header';
-import Breadcrumbs from '../Breadcrumbs';
 import { useTheme } from '../../contexts/ThemeContext';
 
 /**
@@ -12,11 +11,6 @@ import { useTheme } from '../../contexts/ThemeContext';
 const Layout = () => {
   const { theme } = useTheme();
   const isDark = theme === 'dark';
-  const location = useLocation();
-  const firstPathSegment = location.pathname.split('/').filter(segment => segment !== '')[0];
-  const hideBreadcrumbs = ['question', 'games', 'communities', 'collections'].includes(
-    firstPathSegment ?? '',
-  );
 
   return (
     <Box h='100vh' display='flex' flexDirection='column' bg={isDark ? 'gray.900' : 'white'}>
@@ -53,7 +47,6 @@ const Layout = () => {
           role='main'
           aria-label='Main content'
           as='main'>
-          {!hideBreadcrumbs && <Breadcrumbs />}
           <Outlet />
         </Box>
       </Flex>
