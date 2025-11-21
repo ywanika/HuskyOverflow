@@ -1,3 +1,4 @@
+import bcrypt from 'bcrypt';
 import mongoose, { Query } from 'mongoose';
 import UserModel from '../../models/users.model';
 import {
@@ -8,7 +9,7 @@ import {
   saveUser,
   updateUser,
 } from '../../services/user.service';
-import { SafeDatabaseUser, User, UserCredentials } from '../../types/types';
+import { DatabaseUser, SafeDatabaseUser, User, UserCredentials } from '../../types/types';
 import { user, safeUser } from '../mockData.models';
 
 describe('User model', () => {
@@ -142,13 +143,15 @@ describe('loginUser', () => {
   });
 
   it('should return the user if authentication succeeds', async () => {
-    jest.spyOn(UserModel, 'findOne').mockImplementation((filter?: any) => {
-      expect(filter.username).toBeDefined();
-      expect(filter.password).toBeDefined();
-      const query: any = {};
-      query.select = jest.fn().mockReturnValue(Promise.resolve(safeUser));
-      return query;
-    });
+    const databaseUser: DatabaseUser = {
+      ...safeUser,
+      password: '$2b$10$hashedPasswordHere', // Mock hashed password
+      biography: '',
+      agreedToGuidelines: true,
+    };
+
+    jest.spyOn(UserModel, 'findOne').mockResolvedValueOnce(databaseUser);
+    jest.spyOn(bcrypt, 'compare').mockResolvedValueOnce(true as never);
 
     const credentials: UserCredentials = {
       username: user.username,
@@ -157,12 +160,22 @@ describe('loginUser', () => {
 
     const loggedInUser = (await loginUser(credentials)) as SafeDatabaseUser;
 
+    expect(UserModel.findOne).toHaveBeenCalledWith({ username: user.username });
+    expect(bcrypt.compare).toHaveBeenCalledWith(user.password, databaseUser.password);
     expect(loggedInUser.username).toEqual(user.username);
     expect(loggedInUser.dateJoined).toEqual(user.dateJoined);
   });
 
   it('should return the user if the password fails', async () => {
-    jest.spyOn(UserModel, 'findOne').mockResolvedValueOnce(null);
+    const databaseUser: DatabaseUser = {
+      ...safeUser,
+      password: '$2b$10$hashedPasswordHere',
+      biography: '',
+      agreedToGuidelines: true,
+    };
+
+    jest.spyOn(UserModel, 'findOne').mockResolvedValueOnce(databaseUser);
+    jest.spyOn(bcrypt, 'compare').mockResolvedValueOnce(false as never);
 
     const credentials: UserCredentials = {
       username: user.username,
