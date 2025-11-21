@@ -152,8 +152,6 @@ const populateCollection = async (
  * @param {'question' | 'answer' | 'chat'} type - Specifies the type of document to fetch.
  * @returns {Promise<QuestionResponse | AnswerResponse | ChatResponse>} - A promise resolving to the populated document or an error message if the operation fails.
  */
-// eslint-disable is for testing purposes only, so that Jest spy functions can be used.
-// eslint-disable-next-line import/prefer-default-export
 export const populateDocument = async (
   id: string,
   type: 'question' | 'answer' | 'chat' | 'collection',

@@ -77,13 +77,13 @@ const useAnswerPage = () => {
         const res = await getQuestionById(questionID, user.username);
         setQuestion(res || null);
       } catch (error) {
-        // eslint-disable-next-line no-console
-        console.error('Error fetching question:', error);
+        // Error handled silently - question state remains null
       }
     };
 
-    // eslint-disable-next-line no-console
-    fetchData().catch(e => console.log(e));
+    fetchData().catch(() => {
+      // Error handled silently
+    });
   }, [questionID, user.username]);
 
   useEffect(() => {
@@ -182,8 +182,7 @@ const useAnswerPage = () => {
         const res = await getQuestionById(questionID, user.username);
         setQuestion(res || null);
       } catch (error) {
-        // eslint-disable-next-line no-console
-        console.error('Error fetching question after moderation update:', error);
+        // Error handled silently - question state remains unchanged
       }
     };
 

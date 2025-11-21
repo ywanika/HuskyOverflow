@@ -19,6 +19,7 @@ import remarkGfm from 'remark-gfm';
 import useModeratorDashboard from '../../../hooks/useModeratorDashboard';
 import useUserContext from '../../../hooks/useUserContext';
 import DeleteContentModal from '../../moderation/DeleteContentModal';
+import { FlaggedContentItem } from '../../../services/moderationService';
 import { getMetaData } from '../../../tool';
 import './index.css';
 
@@ -46,42 +47,49 @@ const ModeratorDashboard = () => {
     return <Navigate to='/home' />;
   }
 
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const getContentTitle = (item: any, contentType: 'question' | 'answer' | 'comment'): string => {
+  const getContentTitle = (
+    item: Record<string, unknown>,
+    contentType: 'question' | 'answer' | 'comment',
+  ): string => {
     if (contentType === 'question') {
-      return item.title || 'Untitled Question';
+      return (
+        (typeof item.title === 'string' ? item.title : 'Untitled Question') || 'Untitled Question'
+      );
     } else if (contentType === 'answer') {
-      return item.text?.substring(0, 50) || 'Answer';
+      const text = typeof item.text === 'string' ? item.text : '';
+      return text.substring(0, 50) || 'Answer';
     } else {
-      return item.text?.substring(0, 50) || 'Comment';
+      const text = typeof item.text === 'string' ? item.text : '';
+      return text.substring(0, 50) || 'Comment';
     }
   };
 
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const getContentText = (item: any): string => {
-    if (item.text) {
+  const getContentText = (item: Record<string, unknown>): string => {
+    if (typeof item.text === 'string') {
       return item.text;
     }
-    if (item.title) {
+    if (typeof item.title === 'string') {
       return item.title;
     }
     return 'No content';
   };
 
   const renderFlaggedItem = (
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    item: any,
+    item: FlaggedContentItem,
     contentType: 'question' | 'answer' | 'comment',
     _index: number,
   ) => {
     const title = getContentTitle(item.content, contentType);
     const text = getContentText(item.content);
     const author =
-      item.content.askedBy || item.content.ansBy || item.content.commentBy || 'Unknown';
+      (typeof item.content.askedBy === 'string' ? item.content.askedBy : null) ||
+      (typeof item.content.ansBy === 'string' ? item.content.ansBy : null) ||
+      (typeof item.content.commentBy === 'string' ? item.content.commentBy : null) ||
+      'Unknown';
     const date =
-      item.content.askDateTime ||
-      item.content.ansDateTime ||
-      item.content.commentDateTime ||
+      (item.content.askDateTime instanceof Date ? item.content.askDateTime : null) ||
+      (item.content.ansDateTime instanceof Date ? item.content.ansDateTime : null) ||
+      (item.content.commentDateTime instanceof Date ? item.content.commentDateTime : null) ||
       new Date();
 
     return (

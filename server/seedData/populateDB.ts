@@ -1,4 +1,3 @@
-/* eslint-disable no-console */
 import mongoose from 'mongoose';
 import 'dotenv/config';
 
@@ -105,8 +104,14 @@ async function main(args: string[]) {
 
     const { model, resolver } = collectionMapping[collectionName];
 
-    /* eslint-disable @typescript-eslint/no-explicit-any */
-    await processCollection<any, any, any>(model, resolver, docs, insertedDocs, collectionName);
+    // Type assertion needed for complex mongoose model and resolver types
+    await processCollection(
+      model as mongoose.Model<unknown>,
+      resolver as (doc: unknown, insertedDocs: InsertedDocs) => unknown,
+      docs,
+      insertedDocs,
+      collectionName,
+    );
   }
 
   await mongoose.disconnect();

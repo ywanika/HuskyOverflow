@@ -31,7 +31,7 @@ export default defineConfig([
       ],
       'import/no-import-module-exports': 'error',
       'import/no-named-as-default-member': 'off',
-      'import/prefer-default-export': 'error',
+      'import/prefer-default-export': ['error', { target: 'single' }],
       'no-console': 'error',
       'no-param-reassign': 'error',
       'no-plusplus': 'error',
@@ -101,6 +101,25 @@ export default defineConfig([
     files: ['**/*.spec.ts', '**/*.test.ts'],
     rules: {
       '@typescript-eslint/no-explicit-any': 'off',
+    },
+  },
+  {
+    files: ['scripts/**/*.ts', 'seedData/**/*.ts'],
+    rules: {
+      'no-console': 'off',
+      '@typescript-eslint/naming-convention': 'off',
+    },
+  },
+  {
+    files: ['jest.config.ts'],
+    rules: {
+      'import/no-commonjs': 'off',
+    },
+  },
+  {
+    files: ['utils/database.util.ts'],
+    rules: {
+      'import/prefer-default-export': 'off',
     },
   },
   eslintPluginPrettierRecommended,
