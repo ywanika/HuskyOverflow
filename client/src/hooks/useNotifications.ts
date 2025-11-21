@@ -5,13 +5,16 @@ import type { ObjectId } from 'mongoose';
 
 /**
  * Helper function to safely convert ObjectId to string
+ * ObjectId from mongoose has a proper toString() method that returns a string representation
  */
 const objectIdToString = (id: ObjectId | string): string => {
   if (typeof id === 'string') {
     return id;
   }
-  // ObjectId from mongoose has toString() method
-  return String(id);
+  // ObjectId from mongoose has a toString method that returns hex string
+  // Type assertion needed because TypeScript doesn't recognize ObjectId's custom toString
+  const objectId = id as { toString(): string };
+  return objectId.toString();
 };
 import {
   getNotifications,
