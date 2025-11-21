@@ -1,3 +1,4 @@
+import React from 'react';
 import { createChatBotMessage } from 'react-chatbot-kit';
 import MainMenuWidget from './widgets/MainMenuWidget';
 import QuestionsMenuWidget from './widgets/QuestionsMenuWidget';
