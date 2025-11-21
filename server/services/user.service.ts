@@ -1,4 +1,3 @@
-import bcrypt from 'bcrypt';
 import UserModel from '../models/users.model';
 import {
   DatabaseUser,
@@ -11,18 +10,13 @@ import {
 
 /**
  * Saves a new user to the database.
- * Passwords are hashed using bcrypt before storage.
  *
  * @param {User} user - The user object to be saved, containing user details like username, password, etc.
  * @returns {Promise<UserResponse>} - Resolves with the saved user object (without the password) or an error message.
  */
 export const saveUser = async (user: User): Promise<UserResponse> => {
   try {
-    // Hash password before saving
-    const hashedPassword = await bcrypt.hash(user.password, 10);
-    const userWithHashedPassword = { ...user, password: hashedPassword };
-
-    const result: DatabaseUser = await UserModel.create(userWithHashedPassword);
+    const result: DatabaseUser = await UserModel.create(user);
 
     if (!result) {
       throw Error('Failed to create user');
@@ -85,7 +79,6 @@ export const getUsersList = async (): Promise<UsersResponse> => {
 
 /**
  * Authenticates a user by verifying their username and password.
- * Compares the provided password with the hashed password stored in the database.
  *
  * @param {UserCredentials} loginCredentials - An object containing the username and password.
  * @returns {Promise<UserResponse>} - Resolves with the authenticated user object (without the password) or an error message.
@@ -94,30 +87,15 @@ export const loginUser = async (loginCredentials: UserCredentials): Promise<User
   const { username, password } = loginCredentials;
 
   try {
-    // Find user by username (password is included here to compare)
-    const user: DatabaseUser | null = await UserModel.findOne({ username });
+    const user: SafeDatabaseUser | null = await UserModel.findOne({ username, password }).select(
+      '-password',
+    );
 
     if (!user) {
       throw Error('Authentication failed');
     }
 
-    // Compare provided password with hashed password
-    const isPasswordValid = await bcrypt.compare(password, user.password);
-
-    if (!isPasswordValid) {
-      throw Error('Authentication failed');
-    }
-
-    // Return user without password
-    const safeUser: SafeDatabaseUser = {
-      _id: user._id,
-      username: user.username,
-      dateJoined: user.dateJoined,
-      biography: user.biography,
-      agreedToGuidelines: user.agreedToGuidelines,
-    };
-
-    return safeUser;
+    return user;
   } catch (error) {
     return { error: `Error occurred when authenticating user: ${error}` };
   }
@@ -147,7 +125,6 @@ export const deleteUserByUsername = async (username: string): Promise<UserRespon
 
 /**
  * Updates user information in the database.
- * If a password is being updated, it will be hashed before storage.
  *
  * @param {string} username - The username of the user to update.
  * @param {Partial<User>} updates - An object containing the fields to update and their new values.
@@ -158,15 +135,9 @@ export const updateUser = async (
   updates: Partial<User>,
 ): Promise<UserResponse> => {
   try {
-    // If password is being updated, hash it first
-    const updateData = { ...updates };
-    if (updateData.password) {
-      updateData.password = await bcrypt.hash(updateData.password, 10);
-    }
-
     const updatedUser: SafeDatabaseUser | null = await UserModel.findOneAndUpdate(
       { username },
-      { $set: updateData },
+      { $set: updates },
       { new: true },
     ).select('-password');
 
