@@ -34,11 +34,11 @@
 }
 
 .collections-create-btn:hover {
-  background-color: var(--color-primary);
+  background-color: var(--color-primary-button);
 }
 
 .collections-create-btn:active {
-  background-color: var(--color-primary);
+  background-color: var(--color-primary-button);
 }
 
 /* Card styles moved to collections/collectionCard/index.css */

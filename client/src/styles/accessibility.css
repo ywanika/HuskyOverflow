@@ -2,36 +2,8 @@
    ACCESSIBILITY SYSTEM - WCAG 2.1 AA COMPLIANT
    ======================================== */
 
-/* Color Palette Variables with WCAG AA Contrast Ratios */
+/* Spacing */
 :root {
-  /* Primary Colors - High Contrast */
-  --color-primary: #F9B1BA;      /* Soft Pink - 4.5:1 contrast on white */
-  --color-secondary: #F9A672;    /* Warm Orange - 4.5:1 contrast on white */
-  --color-accent: #F6CB60;       /* Golden Yellow - 4.5:1 contrast on white */
-  --color-success: #BBD269;      /* Green - 4.5:1 contrast on white */
-  --color-info: #89C992;         /* Teal Green - 4.5:1 contrast on white */
-  
-  /* High Contrast Text Colors */
-  --color-text-primary: #1a1a1a;    /* Near black - 21:1 contrast on white */
-  --color-text-secondary: #2d2d2d;  /* Dark gray - 15:1 contrast on white */
-  --color-text-muted: #404040;      /* Medium gray - 12:1 contrast on white */
-  --color-text-light: #666666;      /* Light gray - 7:1 contrast on white */
-  
-  /* Background Colors */
-  --color-bg-primary: #ffffff;
-  --color-bg-secondary: #f8f9fa;
-  --color-bg-tertiary: #e9ecef;
-  
-  /* Status Colors with High Contrast */
-  --color-error: #d32f2f;         /* Red - 4.5:1 contrast on white */
-  --color-warning: #f57c00;       /* Orange - 4.5:1 contrast on white */
-  --color-success-text: #2e7d32;  /* Dark green - 4.5:1 contrast on white */
-  
-  /* Focus and Interactive States */
-  --color-focus: #007bff;         /* Blue - 4.5:1 contrast on white */
-  --color-focus-ring: rgba(0, 123, 255, 0.25);
-  --color-hover: rgba(0, 123, 255, 0.1);
-  --color-active: rgba(0, 123, 255, 0.2);
   
   /* Spacing System */
   --spacing-xs: 0.25rem;   /* 4px */
@@ -154,32 +126,32 @@
 
 /* Button Variants */
 .btn-primary {
-  background-color: var(--color-primary);
+  background-color: var(--color-primary-button);
   color: var(--color-text-primary);
-  border-color: var(--color-primary);
+  border-color: var(--color-primary-button);
 }
 
 .btn-primary:hover {
-  background-color: var(--color-secondary);
-  border-color: var(--color-secondary);
+  background-color: var(--color-secondary-button);
+  border-color: var(--color-secondary-button);
   transform: translateY(-1px);
   box-shadow: var(--shadow-md);
 }
 
 .btn-primary:active {
-  background-color: var(--color-accent);
-  border-color: var(--color-accent);
+  background-color: var(--color-accent-button);
+  border-color: var(--color-accent-button);
   transform: translateY(0);
 }
 
 .btn-secondary {
   background-color: transparent;
   color: var(--color-text-primary);
-  border-color: var(--color-primary);
+  border-color: var(--color-primary-button);
 }
 
 .btn-secondary:hover {
-  background-color: var(--color-primary);
+  background-color: var(--color-primary-button);
   color: var(--color-text-primary);
   transform: translateY(-1px);
   box-shadow: var(--shadow-md);
@@ -397,7 +369,7 @@
 }
 
 .nav-item.active {
-  background-color: var(--color-primary);
+  background-color: var(--color-primary-button);
   color: var(--color-text-primary);
   font-weight: 600;
 }
