@@ -4,21 +4,23 @@ import { app } from '../../app';
 import * as notificationService from '../../services/notification.service';
 import { DatabaseNotification } from '../../types/types';
 
+const mockNotificationId = new ObjectId();
+
 const mockNotification: DatabaseNotification = {
-  _id: new ObjectId() as any,
+  _id: mockNotificationId as unknown as DatabaseNotification['_id'],
   recipientUsername: 'testuser',
   type: 'deletion',
   message: 'Your question has been deleted. Reason: Violation of guidelines',
-  contentId: new ObjectId() as any,
+  contentId: new ObjectId() as unknown as DatabaseNotification['contentId'],
   isRead: false,
   timestamp: new Date(),
 };
 
-const mockNotifications: DatabaseNotification[] = [
+const MOCK_NOTIFICATIONS: DatabaseNotification[] = [
   mockNotification,
   {
     ...mockNotification,
-    _id: new ObjectId() as any,
+    _id: new ObjectId() as unknown as DatabaseNotification['_id'],
     type: 'flag',
     message: 'A question has been flagged',
     isRead: true,
@@ -27,15 +29,9 @@ const mockNotifications: DatabaseNotification[] = [
 
 // Mock the notification service
 const getNotificationsByUserSpy = jest.spyOn(notificationService, 'getNotificationsByUser');
-const getUnreadNotificationCountSpy = jest.spyOn(
-  notificationService,
-  'getUnreadNotificationCount',
-);
+const getUnreadNotificationCountSpy = jest.spyOn(notificationService, 'getUnreadNotificationCount');
 const markNotificationAsReadSpy = jest.spyOn(notificationService, 'markNotificationAsRead');
-const markAllNotificationsAsReadSpy = jest.spyOn(
-  notificationService,
-  'markAllNotificationsAsRead',
-);
+const markAllNotificationsAsReadSpy = jest.spyOn(notificationService, 'markAllNotificationsAsRead');
 const deleteNotificationSpy = jest.spyOn(notificationService, 'deleteNotification');
 const createSystemNotificationSpy = jest.spyOn(notificationService, 'createSystemNotification');
 
@@ -47,7 +43,7 @@ describe('Notification Controller', () => {
   describe('GET /api/notification/:username', () => {
     it('should return all notifications for a user', async () => {
       const username = 'testuser';
-      getNotificationsByUserSpy.mockResolvedValueOnce({ notifications: mockNotifications });
+      getNotificationsByUserSpy.mockResolvedValueOnce({ notifications: MOCK_NOTIFICATIONS });
 
       const response = await supertest(app).get(`/api/notification/${username}`);
 
@@ -119,7 +115,7 @@ describe('Notification Controller', () => {
 
   describe('PATCH /api/notification/read/:notificationId', () => {
     it('should mark a notification as read', async () => {
-      const notificationId = mockNotification._id.toString();
+      const notificationId = mockNotificationId.toString();
       const username = 'testuser';
       const updatedNotification = { ...mockNotification, isRead: true };
       markNotificationAsReadSpy.mockResolvedValueOnce({ notification: updatedNotification });
@@ -143,7 +139,7 @@ describe('Notification Controller', () => {
     });
 
     it('should return 400 when username is missing', async () => {
-      const notificationId = mockNotification._id.toString();
+      const notificationId = mockNotificationId.toString();
 
       const response = await supertest(app)
         .patch(`/api/notification/read/${notificationId}`)
@@ -154,7 +150,7 @@ describe('Notification Controller', () => {
     });
 
     it('should return 404 when notification is not found', async () => {
-      const notificationId = mockNotification._id.toString();
+      const notificationId = mockNotificationId.toString();
       const username = 'testuser';
       markNotificationAsReadSpy.mockResolvedValueOnce({
         error: 'Notification not found or unauthorized',
@@ -169,7 +165,7 @@ describe('Notification Controller', () => {
     });
 
     it('should return 500 when service returns error', async () => {
-      const notificationId = mockNotification._id.toString();
+      const notificationId = mockNotificationId.toString();
       const username = 'testuser';
       markNotificationAsReadSpy.mockResolvedValueOnce({
         error: 'Database error',
@@ -188,9 +184,7 @@ describe('Notification Controller', () => {
       const username = 'testuser';
       markAllNotificationsAsReadSpy.mockResolvedValueOnce({});
 
-      const response = await supertest(app)
-        .patch('/api/notification/read-all')
-        .send({ username });
+      const response = await supertest(app).patch('/api/notification/read-all').send({ username });
 
       expect(response.status).toBe(200);
       expect(response.body.success).toBe(true);
@@ -210,9 +204,7 @@ describe('Notification Controller', () => {
         error: 'Database error',
       });
 
-      const response = await supertest(app)
-        .patch('/api/notification/read-all')
-        .send({ username });
+      const response = await supertest(app).patch('/api/notification/read-all').send({ username });
 
       expect(response.status).toBe(500);
     });
@@ -220,7 +212,7 @@ describe('Notification Controller', () => {
 
   describe('DELETE /api/notification/:notificationId', () => {
     it('should delete a notification', async () => {
-      const notificationId = mockNotification._id.toString();
+      const notificationId = mockNotificationId.toString();
       const username = 'testuser';
       deleteNotificationSpy.mockResolvedValueOnce({ notification: mockNotification });
 
@@ -242,18 +234,16 @@ describe('Notification Controller', () => {
     });
 
     it('should return 400 when username is missing', async () => {
-      const notificationId = mockNotification._id.toString();
+      const notificationId = mockNotificationId.toString();
 
-      const response = await supertest(app)
-        .delete(`/api/notification/${notificationId}`)
-        .send({});
+      const response = await supertest(app).delete(`/api/notification/${notificationId}`).send({});
 
       expect(response.status).toBe(400);
       expect(response.body.error).toContain('Missing required fields');
     });
 
     it('should return 404 when notification is not found', async () => {
-      const notificationId = mockNotification._id.toString();
+      const notificationId = mockNotificationId.toString();
       const username = 'testuser';
       deleteNotificationSpy.mockResolvedValueOnce({
         error: 'Notification not found or unauthorized',
@@ -268,7 +258,7 @@ describe('Notification Controller', () => {
     });
 
     it('should return 500 when service returns error', async () => {
-      const notificationId = mockNotification._id.toString();
+      const notificationId = mockNotificationId.toString();
       const username = 'testuser';
       deleteNotificationSpy.mockResolvedValueOnce({
         error: 'Database error',
@@ -287,9 +277,7 @@ describe('Notification Controller', () => {
       const message = 'System maintenance scheduled for tonight';
       createSystemNotificationSpy.mockResolvedValueOnce({ count: 10 });
 
-      const response = await supertest(app)
-        .post('/api/notification/system')
-        .send({ message });
+      const response = await supertest(app).post('/api/notification/system').send({ message });
 
       expect(response.status).toBe(200);
       expect(response.body.success).toBe(true);
@@ -310,13 +298,10 @@ describe('Notification Controller', () => {
         error: 'No users found',
       });
 
-      const response = await supertest(app)
-        .post('/api/notification/system')
-        .send({ message });
+      const response = await supertest(app).post('/api/notification/system').send({ message });
 
       expect(response.status).toBe(500);
       expect(response.body.error).toContain('No users found');
     });
   });
 });
-
