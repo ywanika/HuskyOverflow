@@ -87,13 +87,18 @@ try {
   );
 
   // Custom Error Handler for express-openapi-validator errors
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  app.use((err: any, req: Request, res: Response, next: NextFunction) => {
+  app.use((err: unknown, req: Request, res: Response, next: NextFunction) => {
     // Format error response for validation errors
-    if (err.status && err.errors) {
-      res.status(err.status).json({
+    if (
+      typeof err === 'object' &&
+      err !== null &&
+      'status' in err &&
+      'errors' in err &&
+      typeof (err as { status: unknown }).status === 'number'
+    ) {
+      res.status((err as { status: number }).status).json({
         message: 'Request Validation Failed',
-        errors: err.errors,
+        errors: (err as { errors: unknown }).errors,
       });
     } else {
       next(err); // Pass through other errors

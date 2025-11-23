@@ -89,8 +89,7 @@ export async function processCollection<T, D, R = T>(
     insertedDocs[collectionName].set(key, doc._id);
   });
 
-  // eslint-disable-next-line no-console
-  console.log(`Inserted ${inserted.length} documents into ${collectionName}`);
+  // Document insertion completed
 }
 
 /**

@@ -152,3 +152,111 @@ export const createSystemNotification = async (
     return { error: `Error creating system notification: ${(error as Error).message}` };
   }
 };
+
+/**
+ * Creates a notification for appeal result (approved or rejected)
+ * @param recipientUsername - Username of the user who made the appeal
+ * @param contentType - Type of content that was appealed
+ * @param contentId - ID of the appealed content
+ * @param status - Status of the appeal (approved or rejected)
+ * @param modResponse - Response from the moderator (optional)
+ * @returns Promise resolving to void (errors handled silently)
+ */
+export const createAppealResultNotification = async (
+  recipientUsername: string,
+  contentType: 'question' | 'answer' | 'comment' | 'message',
+  contentId: string,
+  status: 'approved' | 'rejected',
+  modResponse?: string,
+): Promise<void> => {
+  try {
+    const { ObjectId: objectIdCtor } = await import('mongodb');
+    const message =
+      status === 'approved'
+        ? `Your appeal for your ${contentType} has been approved. Your content has been restored.${modResponse ? ` Moderator response: ${modResponse}` : ''}`
+        : `Your appeal for your ${contentType} has been rejected.${modResponse ? ` Moderator response: ${modResponse}` : ''}`;
+
+    await NotificationModel.create({
+      recipientUsername,
+      type: 'appeal_result',
+      message,
+      contentId: new objectIdCtor(contentId),
+      isRead: false,
+      timestamp: new Date(),
+    });
+  } catch (error) {
+    // Error handled silently - don't fail the appeal processing if notification fails
+  }
+};
+
+/**
+ * Creates a notification for role changes (user promoted to moderator, moderator demoted to user, etc.)
+ * @param recipientUsername - Username of the user whose role changed
+ * @param newRole - The new role assigned to the user
+ * @param changedBy - Username of the admin who made the change
+ * @returns Promise resolving to void (errors handled silently)
+ */
+export const createRoleChangeNotification = async (
+  recipientUsername: string,
+  newRole: 'user' | 'moderator' | 'admin',
+  changedBy: string,
+): Promise<void> => {
+  try {
+    const roleMessages: Record<string, string> = {
+      user: 'Your role has been changed to regular user.',
+      moderator: 'You have been promoted to moderator. You now have access to moderation tools.',
+      admin: 'You have been promoted to administrator. You now have access to admin tools.',
+    };
+
+    const message = `${roleMessages[newRole]} Changed by: ${changedBy}`;
+
+    await NotificationModel.create({
+      recipientUsername,
+      type: 'role_change',
+      message,
+      contentId: null,
+      isRead: false,
+      timestamp: new Date(),
+    });
+  } catch (error) {
+    // Error handled silently - don't fail the role change if notification fails
+  }
+};
+
+/**
+ * Creates a notification for user suspension
+ * @param recipientUsername - Username of the suspended user
+ * @param suspendedUntil - Date until which the user is suspended
+ * @param reason - Reason for suspension
+ * @param suspendedBy - Username of the admin who suspended the user
+ * @returns Promise resolving to void (errors handled silently)
+ */
+export const createSuspensionNotification = async (
+  recipientUsername: string,
+  suspendedUntil: Date,
+  reason: string,
+  suspendedBy: string,
+): Promise<void> => {
+  try {
+    const now = new Date();
+    const isPermanent = suspendedUntil.getTime() > now.getTime() + 365 * 24 * 60 * 60 * 1000; // More than 1 year = permanent
+
+    const suspensionType = isPermanent ? 'permanently banned' : 'suspended';
+    const untilMessage = isPermanent
+      ? ''
+      : ` Your suspension will be lifted on ${suspendedUntil.toLocaleDateString()}.`;
+
+    const message = `You have been ${suspensionType} from the platform.${untilMessage} Reason: ${reason}. Suspended by: ${suspendedBy}`;
+
+    await NotificationModel.create({
+      recipientUsername,
+      type: 'suspension',
+      message,
+      contentId: null,
+      isRead: false,
+      timestamp: new Date(),
+    });
+  } catch (error) {
+    // Error handled silently - don't fail the suspension if notification fails
+  }
+};

@@ -50,8 +50,7 @@ const useSimilarQuestions = (title: string, text: string, tagNames: string) => {
           setSimilarQuestions([]);
         }
       } catch (error) {
-        // eslint-disable-next-line no-console
-        console.error('Error fetching similar questions:', error);
+        // Error handled silently - similar questions remain empty
         setSimilarQuestions([]);
       } finally {
         setIsLoading(false);

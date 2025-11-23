@@ -1,7 +1,7 @@
 import './index.css';
 import OrderButton from './orderButton';
 import { OrderType } from '../../../../types/types';
-import { orderTypeDisplayName } from '../../../../types/constants';
+import orderTypeDisplayName from '../../../../types/constants';
 import AskQuestionButton from '../../askQuestionButton';
 import PageHeader from '../../baseComponents/pageHeader';
 
