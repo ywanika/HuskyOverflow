@@ -1006,6 +1006,173 @@ paths:
         '500':
           $ref: '#/components/responses/ErrorResponse'
 
+  /user/suspend:
+    post:
+      tags:
+        - Users
+      summary: Suspend a user for a specified duration (admin only).
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/SuspendUserBody'
+      responses:
+        '200':
+          description: User successfully suspended.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/User'
+        '400':
+          $ref: '#/components/responses/ValidationError'
+        '403':
+          description: Forbidden - Only administrators can suspend users.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SimpleErrorBody'
+        '500':
+          $ref: '#/components/responses/ErrorResponse'
+
+  /user/ban:
+    post:
+      tags:
+        - Users
+      summary: Ban a user permanently with mandatory reason (admin only).
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/BanUserBody'
+      responses:
+        '200':
+          description: User successfully banned.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/User'
+        '400':
+          $ref: '#/components/responses/ValidationError'
+        '403':
+          description: Forbidden - Only administrators can ban users.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SimpleErrorBody'
+        '500':
+          $ref: '#/components/responses/ErrorResponse'
+
+  /user/promoteToModerator:
+    post:
+      tags:
+        - Users
+      summary: Promote a user to moderator role (admin only).
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UserRoleChangeBody'
+      responses:
+        '200':
+          description: User successfully promoted to moderator.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/User'
+        '400':
+          $ref: '#/components/responses/ValidationError'
+        '403':
+          description: Forbidden - Only administrators can promote users.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SimpleErrorBody'
+        '500':
+          $ref: '#/components/responses/ErrorResponse'
+
+  /user/promoteToAdmin:
+    post:
+      tags:
+        - Users
+      summary: Promote a moderator to admin role (admin only).
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UserRoleChangeBody'
+      responses:
+        '200':
+          description: Moderator successfully promoted to admin.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/User'
+        '400':
+          $ref: '#/components/responses/ValidationError'
+        '403':
+          description: Forbidden - Only administrators can promote moderators.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SimpleErrorBody'
+        '500':
+          $ref: '#/components/responses/ErrorResponse'
+
+  /user/demoteToUser:
+    post:
+      tags:
+        - Users
+      summary: Demote a moderator or admin to regular user (admin only).
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UserRoleChangeBody'
+      responses:
+        '200':
+          description: User successfully demoted to regular user.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/User'
+        '400':
+          $ref: '#/components/responses/ValidationError'
+        '403':
+          description: Forbidden - Only administrators can demote users.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SimpleErrorBody'
+        '500':
+          $ref: '#/components/responses/ErrorResponse'
+
+  /user/suspensionStatus/{username}:
+    get:
+      tags:
+        - Users
+      summary: Check a user's suspension/ban status.
+      parameters:
+        - in: path
+          name: username
+          schema:
+            type: string
+          required: true
+          description: The username to check suspension status for.
+      responses:
+        '200':
+          description: Successfully retrieved suspension status.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SuspensionStatusResponse'
+        '500':
+          $ref: '#/components/responses/ErrorResponse'
+
   # --------------------
   # NOTIFICATION CONTROLLER
   # --------------------
@@ -1645,172 +1812,7 @@ paths:
         '500':
           $ref: '#/components/responses/ErrorResponse'
 
-  /user/suspend:
-    post:
-      tags:
-        - Users
-      summary: Suspend a user for a specified duration (admin only).
-      requestBody:
-        required: true
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/SuspendUserBody'
-      responses:
-        '200':
-          description: User successfully suspended.
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/User'
-        '400':
-          $ref: '#/components/responses/ValidationError'
-        '403':
-          description: Forbidden - Only administrators can suspend users.
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/SimpleErrorBody'
-        '500':
-          $ref: '#/components/responses/ErrorResponse'
-
-  /user/ban:
-    post:
-      tags:
-        - Users
-      summary: Ban a user permanently with mandatory reason (admin only).
-      requestBody:
-        required: true
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/BanUserBody'
-      responses:
-        '200':
-          description: User successfully banned.
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/User'
-        '400':
-          $ref: '#/components/responses/ValidationError'
-        '403':
-          description: Forbidden - Only administrators can ban users.
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/SimpleErrorBody'
-        '500':
-          $ref: '#/components/responses/ErrorResponse'
-
-  /user/promoteToModerator:
-    post:
-      tags:
-        - Users
-      summary: Promote a user to moderator role (admin only).
-      requestBody:
-        required: true
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/UserRoleChangeBody'
-      responses:
-        '200':
-          description: User successfully promoted to moderator.
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/User'
-        '400':
-          $ref: '#/components/responses/ValidationError'
-        '403':
-          description: Forbidden - Only administrators can promote users.
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/SimpleErrorBody'
-        '500':
-          $ref: '#/components/responses/ErrorResponse'
-
-  /user/promoteToAdmin:
-    post:
-      tags:
-        - Users
-      summary: Promote a moderator to admin role (admin only).
-      requestBody:
-        required: true
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/UserRoleChangeBody'
-      responses:
-        '200':
-          description: Moderator successfully promoted to admin.
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/User'
-        '400':
-          $ref: '#/components/responses/ValidationError'
-        '403':
-          description: Forbidden - Only administrators can promote moderators.
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/SimpleErrorBody'
-        '500':
-          $ref: '#/components/responses/ErrorResponse'
-
-  /user/demoteToUser:
-    post:
-      tags:
-        - Users
-      summary: Demote a moderator or admin to regular user (admin only).
-      requestBody:
-        required: true
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/UserRoleChangeBody'
-      responses:
-        '200':
-          description: User successfully demoted to regular user.
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/User'
-        '400':
-          $ref: '#/components/responses/ValidationError'
-        '403':
-          description: Forbidden - Only administrators can demote users.
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/SimpleErrorBody'
-        '500':
-          $ref: '#/components/responses/ErrorResponse'
-
-  /user/suspensionStatus/{username}:
-    get:
-      tags:
-        - Users
-      summary: Check a user's suspension/ban status.
-      parameters:
-        - in: path
-          name: username
-          schema:
-            type: string
-          required: true
-          description: The username to check suspension status for.
-      responses:
-        '200':
-          description: Successfully retrieved suspension status.
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/SuspensionStatusResponse'
-        '500':
-          $ref: '#/components/responses/ErrorResponse'
+  
 
 components:
   schemas:
