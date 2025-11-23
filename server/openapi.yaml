@@ -2359,11 +2359,8 @@ components:
             - comment
           description: The type of content.
         content:
+          type: object
           description: The actual content object (question, answer, or comment).
-          oneOf:
-            - $ref: '#/components/schemas/PopulatedQuestion'
-            - $ref: '#/components/schemas/DatabaseAnswer'
-            - $ref: '#/components/schemas/DatabaseComment'
         flaggedBy:
           type: array
           items:
