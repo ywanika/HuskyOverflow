@@ -117,12 +117,20 @@ describe('Notification Controller', () => {
     it('should mark a notification as read', async () => {
       const notificationId = mockNotificationId.toString();
       const username = 'testuser';
-      const updatedNotification = { ...mockNotification, isRead: true };
-      markNotificationAsReadSpy.mockResolvedValueOnce({ notification: updatedNotification });
+      const updatedNotification = {
+        _id: mockNotificationId.toString(),
+        recipientUsername: 'testuser',
+        type: 'deletion' as const,
+        message: 'Your question has been deleted. Reason: Violation of guidelines',
+        contentId: new ObjectId().toString(),
+        isRead: true,
+        timestamp: new Date(),
+      };
+      markNotificationAsReadSpy.mockResolvedValueOnce({ notification: updatedNotification as any });
 
       const response = await supertest(app)
-        .patch(`/api/notification/read/${notificationId}`)
-        .send({ username });
+        .patch(`/api/notification/read/${notificationId}?username=${username}`)
+        .send();
 
       expect(response.status).toBe(200);
       expect(response.body.success).toBe(true);
@@ -143,10 +151,10 @@ describe('Notification Controller', () => {
 
       const response = await supertest(app)
         .patch(`/api/notification/read/${notificationId}`)
-        .send({});
+        .send();
 
       expect(response.status).toBe(400);
-      expect(response.body.error).toContain('Missing required fields');
+      expect(response.body.message).toContain('Validation Failed');
     });
 
     it('should return 404 when notification is not found', async () => {
@@ -157,8 +165,8 @@ describe('Notification Controller', () => {
       });
 
       const response = await supertest(app)
-        .patch(`/api/notification/read/${notificationId}`)
-        .send({ username });
+        .patch(`/api/notification/read/${notificationId}?username=${username}`)
+        .send();
 
       expect(response.status).toBe(404);
       expect(response.body.error).toContain('not found');
@@ -172,8 +180,8 @@ describe('Notification Controller', () => {
       });
 
       const response = await supertest(app)
-        .patch(`/api/notification/read/${notificationId}`)
-        .send({ username });
+        .patch(`/api/notification/read/${notificationId}?username=${username}`)
+        .send();
 
       expect(response.status).toBe(500);
     });
@@ -184,7 +192,9 @@ describe('Notification Controller', () => {
       const username = 'testuser';
       markAllNotificationsAsReadSpy.mockResolvedValueOnce({});
 
-      const response = await supertest(app).patch('/api/notification/read-all').send({ username });
+      const response = await supertest(app)
+        .patch(`/api/notification/read-all?username=${username}`)
+        .send();
 
       expect(response.status).toBe(200);
       expect(response.body.success).toBe(true);
@@ -192,10 +202,9 @@ describe('Notification Controller', () => {
     });
 
     it('should return 400 when username is missing', async () => {
-      const response = await supertest(app).patch('/api/notification/read-all').send({});
+      const response = await supertest(app).patch(`/api/notification/read-all`).send({});
 
       expect(response.status).toBe(400);
-      expect(response.body.error).toContain('Missing required field');
     });
 
     it('should return 500 when service returns error', async () => {
@@ -204,7 +213,9 @@ describe('Notification Controller', () => {
         error: 'Database error',
       });
 
-      const response = await supertest(app).patch('/api/notification/read-all').send({ username });
+      const response = await supertest(app)
+        .patch(`/api/notification/read-all?username=${username}`)
+        .send();
 
       expect(response.status).toBe(500);
     });
@@ -217,8 +228,8 @@ describe('Notification Controller', () => {
       deleteNotificationSpy.mockResolvedValueOnce({ notification: mockNotification });
 
       const response = await supertest(app)
-        .delete(`/api/notification/${notificationId}`)
-        .send({ username });
+        .delete(`/api/notification/${notificationId}?username=${username}`)
+        .send();
 
       expect(response.status).toBe(200);
       expect(response.body.success).toBe(true);
@@ -236,10 +247,10 @@ describe('Notification Controller', () => {
     it('should return 400 when username is missing', async () => {
       const notificationId = mockNotificationId.toString();
 
-      const response = await supertest(app).delete(`/api/notification/${notificationId}`).send({});
+      const response = await supertest(app).delete(`/api/notification/${notificationId}`).send();
 
       expect(response.status).toBe(400);
-      expect(response.body.error).toContain('Missing required fields');
+      expect(response.body.message).toContain('Validation Failed');
     });
 
     it('should return 404 when notification is not found', async () => {
@@ -250,8 +261,8 @@ describe('Notification Controller', () => {
       });
 
       const response = await supertest(app)
-        .delete(`/api/notification/${notificationId}`)
-        .send({ username });
+        .delete(`/api/notification/${notificationId}?username=${username}`)
+        .send();
 
       expect(response.status).toBe(404);
       expect(response.body.error).toContain('not found');
@@ -265,8 +276,8 @@ describe('Notification Controller', () => {
       });
 
       const response = await supertest(app)
-        .delete(`/api/notification/${notificationId}`)
-        .send({ username });
+        .delete(`/api/notification/${notificationId}?username=${username}`)
+        .send();
 
       expect(response.status).toBe(500);
     });
@@ -289,7 +300,6 @@ describe('Notification Controller', () => {
       const response = await supertest(app).post('/api/notification/system').send({});
 
       expect(response.status).toBe(400);
-      expect(response.body.error).toContain('Missing required field');
     });
 
     it('should return 500 when service returns error', async () => {

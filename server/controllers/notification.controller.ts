@@ -94,10 +94,8 @@ const notificationController = (socket: FakeSOSocket) => {
       res.status(400).json({ error: 'Missing required fields: notificationId or username' });
       return;
     }
-
     try {
       const result = await markNotificationAsRead(notificationId, username);
-
       if (result.error) {
         if (result.error.includes('not found')) {
           res.status(404).json({ error: result.error });
@@ -113,7 +111,7 @@ const notificationController = (socket: FakeSOSocket) => {
         notificationId,
       });
 
-      res.json({ success: true, notification: result.notification });
+      res.status(200).json({ success: true, notification: result.notification });
     } catch (err: unknown) {
       res
         .status(500)
@@ -148,7 +146,7 @@ const notificationController = (socket: FakeSOSocket) => {
         username,
       });
 
-      res.json({ success: true });
+      res.status(200).json({ success: true });
     } catch (err: unknown) {
       res
         .status(500)
