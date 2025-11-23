@@ -51,7 +51,8 @@ describe('Moderation Controller', () => {
         });
 
       expect(response.status).toBe(400);
-      expect(response.body.error).toContain('Missing required fields');
+      expect(response.body.message).toBe('Request Validation Failed');
+      expect(response.body.errors).toBeDefined();
     });
 
     it('should return 403 if user is not authorized', async () => {
@@ -145,7 +146,8 @@ describe('Moderation Controller', () => {
         });
 
       expect(response.status).toBe(400);
-      expect(response.body.error).toContain('Missing required fields');
+      expect(response.body.message).toBe('Request Validation Failed');
+      expect(response.body.errors).toBeDefined();
     });
   });
 
@@ -182,7 +184,8 @@ describe('Moderation Controller', () => {
         });
 
       expect(response.status).toBe(400);
-      expect(response.body.error).toContain('Missing required fields');
+      expect(response.body.message).toBe('Request Validation Failed');
+      expect(response.body.errors).toBeDefined();
     });
   });
 
@@ -215,7 +218,8 @@ describe('Moderation Controller', () => {
         .send({});
 
       expect(response.status).toBe(400);
-      expect(response.body.error).toContain('Missing required fields');
+      expect(response.body.message).toBe('Request Validation Failed');
+      expect(response.body.errors).toBeDefined();
     });
 
     it('should return 400 if user already flagged', async () => {
@@ -282,7 +286,8 @@ describe('Moderation Controller', () => {
         .send({});
 
       expect(response.status).toBe(400);
-      expect(response.body.error).toContain('Missing required fields');
+      expect(response.body.message).toBe('Request Validation Failed');
+      expect(response.body.errors).toBeDefined();
     });
   });
 
@@ -313,7 +318,8 @@ describe('Moderation Controller', () => {
         .send({});
 
       expect(response.status).toBe(400);
-      expect(response.body.error).toContain('Missing required fields');
+      expect(response.body.message).toBe('Request Validation Failed');
+      expect(response.body.errors).toBeDefined();
     });
   });
 
@@ -381,7 +387,8 @@ describe('Moderation Controller', () => {
       });
 
       expect(response.status).toBe(400);
-      expect(response.body.error).toContain('Missing required fields');
+      expect(response.body.message).toBe('Request Validation Failed');
+      expect(response.body.errors).toBeDefined();
     });
 
     it('should return 403 if user is not authorized', async () => {
@@ -433,7 +440,8 @@ describe('Moderation Controller', () => {
       });
 
       expect(response.status).toBe(400);
-      expect(response.body.error).toContain('Missing required fields');
+      expect(response.body.message).toBe('Request Validation Failed');
+      expect(response.body.errors).toBeDefined();
     });
 
     it('should return 403 if user is not authorized', async () => {

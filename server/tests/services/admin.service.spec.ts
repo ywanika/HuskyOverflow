@@ -107,21 +107,27 @@ describe('Admin Service', () => {
       jest.spyOn(QuestionModel, 'countDocuments').mockResolvedValueOnce(150); // questionsWithAnswers
       jest.spyOn(QuestionModel, 'countDocuments').mockResolvedValueOnce(5); // flaggedQuestions
       jest.spyOn(QuestionModel, 'countDocuments').mockResolvedValueOnce(3); // deletedQuestions
-      jest.spyOn(QuestionModel, 'find').mockResolvedValueOnce([
-        { views: ['user1', 'user2'], upVotes: ['user1'], downVotes: [], answers: ['ans1', 'ans2'] },
-        { views: ['user3'], upVotes: [], downVotes: ['user1'], answers: ['ans3'] },
-      ] as unknown as never);
+      jest.spyOn(QuestionModel, 'find').mockReturnValue({
+        lean: jest.fn().mockResolvedValueOnce([
+          {
+            views: ['user1', 'user2'],
+            upVotes: ['user1'],
+            downVotes: [],
+            answers: ['ans1', 'ans2'],
+          },
+          { views: ['user3'], upVotes: [], downVotes: ['user1'], answers: ['ans3'] },
+        ]),
+      } as any);
 
       // Mock answer counts
       jest.spyOn(AnswerModel, 'countDocuments').mockResolvedValueOnce(300); // totalAnswers
       jest.spyOn(AnswerModel, 'countDocuments').mockResolvedValueOnce(10); // flaggedAnswers
       jest.spyOn(AnswerModel, 'countDocuments').mockResolvedValueOnce(5); // deletedAnswers
-      jest
-        .spyOn(AnswerModel, 'find')
-        .mockResolvedValueOnce([
-          { comments: ['com1', 'com2'] },
-          { comments: ['com3'] },
-        ] as unknown as never);
+      jest.spyOn(AnswerModel, 'find').mockReturnValue({
+        lean: jest
+          .fn()
+          .mockResolvedValueOnce([{ comments: ['com1', 'com2'] }, { comments: ['com3'] }]),
+      } as any);
 
       // Mock comment counts
       jest.spyOn(CommentModel, 'countDocuments').mockResolvedValueOnce(500); // totalComments
@@ -137,10 +143,12 @@ describe('Admin Service', () => {
         { _id: new ObjectId(), count: 20 },
         { _id: new ObjectId(), count: 15 },
       ]);
-      jest.spyOn(TagModel, 'find').mockResolvedValueOnce([
-        { _id: new ObjectId(), name: 'javascript' },
-        { _id: new ObjectId(), name: 'react' },
-      ] as unknown as never);
+      jest.spyOn(TagModel, 'find').mockReturnValue({
+        lean: jest.fn().mockResolvedValueOnce([
+          { _id: new ObjectId(), name: 'javascript' },
+          { _id: new ObjectId(), name: 'react' },
+        ]),
+      } as any);
 
       // Mock community counts
       jest.spyOn(CommunityModel, 'countDocuments').mockResolvedValueOnce(25); // totalCommunities
@@ -216,9 +224,15 @@ describe('Admin Service', () => {
       jest.spyOn(MessageModel, 'countDocuments').mockResolvedValue(0);
       jest.spyOn(UserModel, 'aggregate').mockResolvedValue([]);
       jest.spyOn(QuestionModel, 'aggregate').mockResolvedValue([]);
-      jest.spyOn(QuestionModel, 'find').mockResolvedValue([] as unknown as never);
-      jest.spyOn(AnswerModel, 'find').mockResolvedValue([] as unknown as never);
-      jest.spyOn(TagModel, 'find').mockResolvedValue([] as unknown as never);
+      jest.spyOn(QuestionModel, 'find').mockReturnValue({
+        lean: jest.fn().mockResolvedValue([]),
+      } as any);
+      jest.spyOn(AnswerModel, 'find').mockReturnValue({
+        lean: jest.fn().mockResolvedValue([]),
+      } as any);
+      jest.spyOn(TagModel, 'find').mockReturnValue({
+        lean: jest.fn().mockResolvedValue([]),
+      } as any);
 
       const metrics = await getDashboardMetrics();
 
