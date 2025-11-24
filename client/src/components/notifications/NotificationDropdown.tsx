@@ -22,6 +22,7 @@ interface NotificationDropdownProps {
   onMarkAsRead: (notificationId: string) => Promise<void>;
   onMarkAllAsRead: () => Promise<void>;
   onDelete: (notificationId: string) => Promise<void>;
+  onAppeal?: (contentId: string, contentType: 'question' | 'answer' | 'comment') => void;
 }
 
 /**
@@ -33,7 +34,17 @@ const NotificationDropdown = ({
   onMarkAsRead,
   onMarkAllAsRead,
   onDelete,
+  onAppeal,
 }: NotificationDropdownProps) => {
+  /**
+   * Extracts content type from deletion notification message
+   */
+  const getContentTypeFromMessage = (message: string): 'question' | 'answer' | 'comment' | null => {
+    if (message.includes('question')) return 'question';
+    if (message.includes('answer')) return 'answer';
+    if (message.includes('comment')) return 'comment';
+    return null;
+  };
   const getNotificationColor = (type: string, isRead: boolean) => {
     if (isRead) return 'gray.100';
     switch (type) {
@@ -41,6 +52,8 @@ const NotificationDropdown = ({
         return 'red.50';
       case 'flag':
         return 'orange.50';
+      case 'appeal_result':
+        return 'blue.50';
       case 'suspension':
         return 'red.100';
       case 'role_change':
@@ -134,7 +147,9 @@ const NotificationDropdown = ({
                       ? 'red.500'
                       : notification.type === 'flag'
                         ? 'orange.500'
-                        : 'blue.500'
+                        : notification.type === 'appeal_result'
+                          ? 'blue.500'
+                          : 'blue.500'
                   }>
                   <HStack justify='space-between' align='start' gap={2}>
                     <Box flex='1'>
@@ -148,6 +163,26 @@ const NotificationDropdown = ({
                       <Text fontSize='xs' color='gray.500'>
                         {formatTimestamp(notification.timestamp)}
                       </Text>
+                      {notification.type === 'deletion' && notification.contentId && onAppeal && (
+                        <Button
+                          size='xs'
+                          colorScheme='blue'
+                          variant='outline'
+                          mt={2}
+                          onClick={() => {
+                            const contentType = getContentTypeFromMessage(notification.message);
+                            if (contentType && notification.contentId) {
+                              onAppeal(
+                                typeof notification.contentId === 'string'
+                                  ? notification.contentId
+                                  : objectIdToString(notification.contentId),
+                                contentType,
+                              );
+                            }
+                          }}>
+                          Appeal
+                        </Button>
+                      )}
                     </Box>
                     <HStack gap={1}>
                       {!notification.isRead && (

@@ -4,7 +4,9 @@ import AnswerModel from '../models/answers.model';
 import CommentModel from '../models/comments.model';
 import UserModel from '../models/users.model';
 import NotificationModel from '../models/notifications.model';
+import AppealModel from '../models/appeals.model';
 import { DatabaseUser, DatabaseQuestion, DatabaseAnswer, DatabaseComment } from '../types/types';
+import { DatabaseAppeal, AppealItem, AppealsResponse } from '@fake-stack-overflow/shared';
 
 /**
  * Response type for moderation operations
@@ -13,6 +15,8 @@ export interface ModerationResponse {
   success: boolean;
   message?: string;
   error?: string;
+  recipientUsername?: string; // For deletion notifications
+  recipientUsernames?: string[]; // For flag/appeal notifications (multiple recipients)
 }
 
 /**
@@ -38,18 +42,28 @@ export const isModerator = async (username: string): Promise<boolean> => {
  * @param contentType - Type of content that was deleted
  * @param contentId - ID of the deleted content
  * @param reason - Reason for deletion
+ * @param content - The content object (question, answer, or comment)
  */
 const createDeletionNotification = async (
   recipientUsername: string,
   contentType: 'question' | 'answer' | 'comment',
   contentId: string,
   reason: string,
+  content: DatabaseQuestion | DatabaseAnswer | DatabaseComment,
 ): Promise<void> => {
   try {
+    // Extract first 100 characters of the content
+    let contentPreview = '';
+    if (contentType === 'question') {
+      contentPreview = (content as DatabaseQuestion).title.substring(0, 100);
+    } else {
+      contentPreview = (content as DatabaseAnswer | DatabaseComment).text.substring(0, 100);
+    }
+
     await NotificationModel.create({
       recipientUsername,
       type: 'deletion',
-      message: `Your ${contentType} has been deleted by a moderator. Reason: ${reason}`,
+      message: `Your ${contentType} "${contentPreview}" has been deleted by a moderator. Reason: ${reason}`,
       contentId: new ObjectId(contentId),
       isRead: false,
       timestamp: new Date(),
@@ -98,9 +112,19 @@ export const deleteQuestion = async (
     }
 
     // Create notification for the question author
-    await createDeletionNotification(question.askedBy, 'question', questionId, deleteReason);
+    await createDeletionNotification(
+      question.askedBy,
+      'question',
+      questionId,
+      deleteReason,
+      question,
+    );
 
-    return { success: true, message: 'Question deleted successfully' };
+    return {
+      success: true,
+      message: 'Question deleted successfully',
+      recipientUsername: question.askedBy,
+    };
   } catch (error) {
     return { success: false, error: `Error deleting question: ${(error as Error).message}` };
   }
@@ -145,9 +169,13 @@ export const deleteAnswer = async (
     }
 
     // Create notification for the answer author
-    await createDeletionNotification(answer.ansBy, 'answer', answerId, deleteReason);
+    await createDeletionNotification(answer.ansBy, 'answer', answerId, deleteReason, answer);
 
-    return { success: true, message: 'Answer deleted successfully' };
+    return {
+      success: true,
+      message: 'Answer deleted successfully',
+      recipientUsername: answer.ansBy,
+    };
   } catch (error) {
     return { success: false, error: `Error deleting answer: ${(error as Error).message}` };
   }
@@ -192,9 +220,19 @@ export const deleteComment = async (
     }
 
     // Create notification for the comment author
-    await createDeletionNotification(comment.commentBy, 'comment', commentId, deleteReason);
+    await createDeletionNotification(
+      comment.commentBy,
+      'comment',
+      commentId,
+      deleteReason,
+      comment,
+    );
 
-    return { success: true, message: 'Comment deleted successfully' };
+    return {
+      success: true,
+      message: 'Comment deleted successfully',
+      recipientUsername: comment.commentBy,
+    };
   } catch (error) {
     return { success: false, error: `Error deleting comment: ${(error as Error).message}` };
   }
@@ -210,7 +248,7 @@ const createFlagNotification = async (
   contentType: 'question' | 'answer' | 'comment',
   contentId: string,
   flaggedBy: string,
-): Promise<void> => {
+): Promise<string[]> => {
   try {
     // Get all moderators and admins
     const moderators = await UserModel.find({
@@ -230,8 +268,10 @@ const createFlagNotification = async (
     );
 
     await Promise.all(notifications);
+    return moderators.map(m => m.username);
   } catch (error) {
     // Error handled silently - don't fail the flag if notification fails
+    return [];
   }
 };
 
@@ -274,9 +314,13 @@ export const flagQuestion = async (
     }
 
     // Create notification for moderators
-    await createFlagNotification('question', questionId, username);
+    const recipientUsernames = await createFlagNotification('question', questionId, username);
 
-    return { success: true, message: 'Question flagged successfully' };
+    return {
+      success: true,
+      message: 'Question flagged successfully',
+      recipientUsernames,
+    };
   } catch (error) {
     return { success: false, error: `Error flagging question: ${(error as Error).message}` };
   }
@@ -321,9 +365,13 @@ export const flagAnswer = async (
     }
 
     // Create notification for moderators
-    await createFlagNotification('answer', answerId, username);
+    const recipientUsernames = await createFlagNotification('answer', answerId, username);
 
-    return { success: true, message: 'Answer flagged successfully' };
+    return {
+      success: true,
+      message: 'Answer flagged successfully',
+      recipientUsernames,
+    };
   } catch (error) {
     return { success: false, error: `Error flagging answer: ${(error as Error).message}` };
   }
@@ -368,9 +416,13 @@ export const flagComment = async (
     }
 
     // Create notification for moderators
-    await createFlagNotification('comment', commentId, username);
+    const recipientUsernames = await createFlagNotification('comment', commentId, username);
 
-    return { success: true, message: 'Comment flagged successfully' };
+    return {
+      success: true,
+      message: 'Comment flagged successfully',
+      recipientUsernames,
+    };
   } catch (error) {
     return { success: false, error: `Error flagging comment: ${(error as Error).message}` };
   }
@@ -765,5 +817,383 @@ export const dismissFlag = async (
     return { success: true, message: 'Flag dismissed successfully' };
   } catch (error) {
     return { success: false, error: `Error dismissing flag: ${(error as Error).message}` };
+  }
+};
+
+/**
+ * Checks if an appeal already exists for the given content
+ * @param contentId - ID of the content
+ * @param appealUser - Username of the user making the appeal
+ * @returns Promise resolving to true if appeal exists, false otherwise
+ */
+export const checkExistingAppeal = async (
+  contentId: string,
+  appealUser: string,
+): Promise<boolean> => {
+  try {
+    const existingAppeal = await AppealModel.findOne({
+      contentId: new ObjectId(contentId),
+      appealUser,
+    });
+    return !!existingAppeal;
+  } catch (error) {
+    return false;
+  }
+};
+
+/**
+ * Creates a notification for moderators when an appeal is submitted
+ * @param contentType - Type of content being appealed
+ * @param contentId - ID of the content being appealed
+ * @param appealUser - Username of the user making the appeal
+ */
+const createAppealNotification = async (
+  contentType: 'question' | 'answer' | 'comment',
+  contentId: string,
+  appealUser: string,
+): Promise<string[]> => {
+  try {
+    // Get all moderators and admins
+    const moderators = await UserModel.find({
+      role: { $in: ['moderator', 'admin'] },
+    });
+
+    // Create notifications for all moderators
+    const notifications = moderators.map(moderator =>
+      NotificationModel.create({
+        recipientUsername: moderator.username,
+        type: 'flag',
+        message: `An appeal has been submitted for a deleted ${contentType} by ${appealUser}`,
+        contentId: new ObjectId(contentId),
+        isRead: false,
+        timestamp: new Date(),
+      }),
+    );
+
+    await Promise.all(notifications);
+    return moderators.map(m => m.username);
+  } catch (error) {
+    // Error handled silently - don't fail the appeal if notification fails
+    return [];
+  }
+};
+
+/**
+ * Creates a notification for the user when their appeal is processed
+ * @param recipientUsername - Username of the user who submitted the appeal
+ * @param contentType - Type of content that was appealed
+ * @param contentId - ID of the content
+ * @param status - Status of the appeal (approved or rejected)
+ * @param modResponse - Response from the moderator
+ */
+const createAppealResultNotification = async (
+  recipientUsername: string,
+  contentType: 'question' | 'answer' | 'comment',
+  contentId: string,
+  status: 'approved' | 'rejected',
+  modResponse?: string,
+): Promise<void> => {
+  try {
+    const message =
+      status === 'approved'
+        ? `Your appeal for your deleted ${contentType} has been approved. ${modResponse || ''}`
+        : `Your appeal for your deleted ${contentType} has been rejected. ${modResponse || ''}`;
+
+    await NotificationModel.create({
+      recipientUsername,
+      type: 'appeal_result',
+      message,
+      contentId: new ObjectId(contentId),
+      isRead: false,
+      timestamp: new Date(),
+    });
+  } catch (error) {
+    // Error handled silently - don't fail the appeal processing if notification fails
+  }
+};
+
+/**
+ * Submits an appeal for deleted content
+ * @param contentId - ID of the content being appealed
+ * @param contentType - Type of content being appealed
+ * @param appealUser - Username of the user making the appeal
+ * @param reason - Reason for the appeal (must be 50-500 characters and at least 3 words)
+ * @returns Promise resolving to ModerationResponse
+ */
+export const submitAppeal = async (
+  contentId: string,
+  contentType: 'question' | 'answer' | 'comment',
+  appealUser: string,
+  reason: string,
+): Promise<ModerationResponse> => {
+  try {
+    // Validate reason length (50-500 characters)
+    if (reason.length < 50 || reason.length > 500) {
+      return {
+        success: false,
+        error: 'Appeal reason must be between 50 and 500 characters',
+      };
+    }
+
+    // Validate minimum word count (at least 3 words)
+    const wordCount = reason
+      .trim()
+      .split(/\s+/)
+      .filter(word => word.length > 0).length;
+    if (wordCount < 3) {
+      return {
+        success: false,
+        error: 'Appeal reason must contain at least 3 words',
+      };
+    }
+
+    // Check if user has already appealed this content
+    const hasExistingAppeal = await checkExistingAppeal(contentId, appealUser);
+    if (hasExistingAppeal) {
+      return {
+        success: false,
+        error: 'You have already submitted an appeal for this content',
+      };
+    }
+
+    // Verify the content exists and is deleted
+    let content: DatabaseQuestion | DatabaseAnswer | DatabaseComment | null = null;
+    if (contentType === 'question') {
+      content = await QuestionModel.findById(contentId);
+    } else if (contentType === 'answer') {
+      content = await AnswerModel.findById(contentId);
+    } else if (contentType === 'comment') {
+      content = await CommentModel.findById(contentId);
+    }
+
+    if (!content) {
+      return { success: false, error: 'Content not found' };
+    }
+
+    if (!content.deleted?.isDeleted) {
+      return { success: false, error: 'Content is not deleted' };
+    }
+
+    // Verify the user is the author of the content
+    let isAuthor = false;
+    if (contentType === 'question') {
+      isAuthor = (content as DatabaseQuestion).askedBy === appealUser;
+    } else if (contentType === 'answer') {
+      isAuthor = (content as DatabaseAnswer).ansBy === appealUser;
+    } else if (contentType === 'comment') {
+      isAuthor = (content as DatabaseComment).commentBy === appealUser;
+    }
+
+    if (!isAuthor) {
+      return { success: false, error: 'You can only appeal your own content' };
+    }
+
+    // Create the appeal
+    await AppealModel.create({
+      contentId: new ObjectId(contentId),
+      contentType,
+      appealUser,
+      reason,
+      status: 'pending',
+      timestamp: new Date(),
+    });
+
+    // Create notifications for moderators
+    const recipientUsernames = await createAppealNotification(contentType, contentId, appealUser);
+
+    return {
+      success: true,
+      message: 'Appeal submitted successfully',
+      recipientUsernames,
+    };
+  } catch (error) {
+    return { success: false, error: `Error submitting appeal: ${(error as Error).message}` };
+  }
+};
+
+/**
+ * Gets all appeals for deleted content - Moderator only
+ * @returns Promise resolving to AppealsResponse
+ */
+export const getAppeals = async (): Promise<AppealsResponse> => {
+  try {
+    const appeals = await AppealModel.find({ status: 'pending' }).lean();
+
+    const appealItems: AppealItem[] = await Promise.all(
+      appeals
+        .filter(appeal => appeal.contentType !== 'message') // Filter out message type as it's not supported
+        .map(async appeal => {
+          let content: DatabaseQuestion | DatabaseAnswer | DatabaseComment | null = null;
+
+          if (appeal.contentType === 'question') {
+            content = await QuestionModel.findById(appeal.contentId).lean();
+          } else if (appeal.contentType === 'answer') {
+            content = await AnswerModel.findById(appeal.contentId).lean();
+          } else if (appeal.contentType === 'comment') {
+            content = await CommentModel.findById(appeal.contentId).lean();
+          }
+
+          return {
+            _id: appeal._id.toString(),
+            contentId: appeal.contentId.toString(),
+            contentType: appeal.contentType as 'question' | 'answer' | 'comment',
+            appealUser: appeal.appealUser,
+            reason: appeal.reason,
+            status: appeal.status,
+            modResponse: appeal.modResponse,
+            processedBy: appeal.processedBy,
+            timestamp: appeal.timestamp,
+            processedAt: appeal.processedAt,
+            content: (content as unknown as Record<string, unknown>) || {},
+          };
+        }),
+    );
+
+    return { appeals: appealItems };
+  } catch (error) {
+    return {
+      appeals: [],
+      error: `Error fetching appeals: ${(error as Error).message}`,
+    };
+  }
+};
+
+/**
+ * Approves an appeal - Moderator only
+ * @param appealId - ID of the appeal
+ * @param moderatorUsername - Username of the moderator
+ * @param modResponse - Optional response from the moderator
+ * @returns Promise resolving to ModerationResponse
+ */
+export const approveAppeal = async (
+  appealId: string,
+  moderatorUsername: string,
+  modResponse?: string,
+): Promise<ModerationResponse> => {
+  try {
+    // Check if user is moderator/admin
+    const hasPermission = await isModerator(moderatorUsername);
+    if (!hasPermission) {
+      return {
+        success: false,
+        error: 'Unauthorized: Only moderators and admins can approve appeals',
+      };
+    }
+
+    // Find the appeal
+    const appeal: DatabaseAppeal | null = await AppealModel.findById(appealId);
+    if (!appeal) {
+      return { success: false, error: 'Appeal not found' };
+    }
+
+    if (appeal.status !== 'pending') {
+      return { success: false, error: 'Appeal has already been processed' };
+    }
+
+    // Update the appeal
+    await AppealModel.findByIdAndUpdate(appealId, {
+      status: 'approved',
+      modResponse: modResponse || '',
+      processedBy: moderatorUsername,
+      processedAt: new Date(),
+    });
+
+    // Restore the content (set isDeleted to false)
+    if (appeal.contentType === 'question') {
+      await QuestionModel.findByIdAndUpdate(appeal.contentId, {
+        'deleted.isDeleted': false,
+        'deleted.restoredAt': new Date(),
+      });
+    } else if (appeal.contentType === 'answer') {
+      await AnswerModel.findByIdAndUpdate(appeal.contentId, {
+        'deleted.isDeleted': false,
+        'deleted.restoredAt': new Date(),
+      });
+    } else if (appeal.contentType === 'comment') {
+      await CommentModel.findByIdAndUpdate(appeal.contentId, {
+        'deleted.isDeleted': false,
+        'deleted.restoredAt': new Date(),
+      });
+    }
+
+    // Create notification for the user
+    if (appeal.contentType !== 'message') {
+      await createAppealResultNotification(
+        appeal.appealUser,
+        appeal.contentType,
+        appeal.contentId.toString(),
+        'approved',
+        modResponse,
+      );
+    }
+
+    return {
+      success: true,
+      message: 'Appeal approved successfully',
+      recipientUsername: appeal.appealUser,
+    };
+  } catch (error) {
+    return { success: false, error: `Error approving appeal: ${(error as Error).message}` };
+  }
+};
+
+/**
+ * Rejects an appeal - Moderator only
+ * @param appealId - ID of the appeal
+ * @param moderatorUsername - Username of the moderator
+ * @param modResponse - Optional response from the moderator
+ * @returns Promise resolving to ModerationResponse
+ */
+export const rejectAppeal = async (
+  appealId: string,
+  moderatorUsername: string,
+  modResponse?: string,
+): Promise<ModerationResponse> => {
+  try {
+    // Check if user is moderator/admin
+    const hasPermission = await isModerator(moderatorUsername);
+    if (!hasPermission) {
+      return {
+        success: false,
+        error: 'Unauthorized: Only moderators and admins can reject appeals',
+      };
+    }
+
+    // Find the appeal
+    const appeal: DatabaseAppeal | null = await AppealModel.findById(appealId);
+    if (!appeal) {
+      return { success: false, error: 'Appeal not found' };
+    }
+
+    if (appeal.status !== 'pending') {
+      return { success: false, error: 'Appeal has already been processed' };
+    }
+
+    // Update the appeal
+    await AppealModel.findByIdAndUpdate(appealId, {
+      status: 'rejected',
+      modResponse: modResponse || '',
+      processedBy: moderatorUsername,
+      processedAt: new Date(),
+    });
+
+    // Create notification for the user
+    if (appeal.contentType !== 'message') {
+      await createAppealResultNotification(
+        appeal.appealUser,
+        appeal.contentType,
+        appeal.contentId.toString(),
+        'rejected',
+        modResponse,
+      );
+    }
+
+    return {
+      success: true,
+      message: 'Appeal rejected successfully',
+      recipientUsername: appeal.appealUser,
+    };
+  } catch (error) {
+    return { success: false, error: `Error rejecting appeal: ${(error as Error).message}` };
   }
 };
