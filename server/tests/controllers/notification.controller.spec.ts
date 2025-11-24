@@ -4,17 +4,14 @@ import { app } from '../../app';
 import * as notificationService from '../../services/notification.service';
 import { DatabaseNotification } from '../../types/types';
 
-// Helper function to convert ObjectId to string
-const objectIdToString = (id: any): string => {
-  return typeof id === 'string' ? id : id.toString();
-};
+const mockNotificationId = new ObjectId();
 
 const mockNotification: DatabaseNotification = {
-  _id: new ObjectId() as any,
+  _id: mockNotificationId as unknown as DatabaseNotification['_id'],
   recipientUsername: 'testuser',
   type: 'deletion',
   message: 'Your question has been deleted. Reason: Violation of guidelines',
-  contentId: new ObjectId() as any,
+  contentId: new ObjectId() as unknown as DatabaseNotification['contentId'],
   isRead: false,
   timestamp: new Date(),
 };
@@ -23,7 +20,7 @@ const MOCK_NOTIFICATIONS: DatabaseNotification[] = [
   mockNotification,
   {
     ...mockNotification,
-    _id: new ObjectId() as any,
+    _id: new ObjectId() as unknown as DatabaseNotification['_id'],
     type: 'flag',
     message: 'A question has been flagged',
     isRead: true,
@@ -118,14 +115,22 @@ describe('Notification Controller', () => {
 
   describe('PATCH /api/notification/read/:notificationId', () => {
     it('should mark a notification as read', async () => {
-      const notificationId = objectIdToString(mockNotification._id);
+      const notificationId = mockNotificationId.toString();
       const username = 'testuser';
-      const updatedNotification = { ...mockNotification, isRead: true };
-      markNotificationAsReadSpy.mockResolvedValueOnce({ notification: updatedNotification });
+      const updatedNotification = {
+        _id: mockNotificationId.toString(),
+        recipientUsername: 'testuser',
+        type: 'deletion' as const,
+        message: 'Your question has been deleted. Reason: Violation of guidelines',
+        contentId: new ObjectId().toString(),
+        isRead: true,
+        timestamp: new Date(),
+      };
+      markNotificationAsReadSpy.mockResolvedValueOnce({ notification: updatedNotification as any });
 
       const response = await supertest(app)
         .patch(`/api/notification/read/${notificationId}?username=${username}`)
-        .send({});
+        .send();
 
       expect(markNotificationAsReadSpy).toHaveBeenCalledWith(notificationId, username);
       expect(response.status).toBe(200);
@@ -142,11 +147,11 @@ describe('Notification Controller', () => {
     });
 
     it('should return 400 when username is missing', async () => {
-      const notificationId = objectIdToString(mockNotification._id);
+      const notificationId = mockNotificationId.toString();
 
       const response = await supertest(app)
         .patch(`/api/notification/read/${notificationId}`)
-        .send({});
+        .send();
 
       expect(response.status).toBe(400);
       expect(response.body.message).toBe('Request Validation Failed');
@@ -154,7 +159,7 @@ describe('Notification Controller', () => {
     });
 
     it('should return 404 when notification is not found', async () => {
-      const notificationId = objectIdToString(mockNotification._id);
+      const notificationId = mockNotificationId.toString();
       const username = 'testuser';
       markNotificationAsReadSpy.mockResolvedValueOnce({
         error: 'Notification not found or unauthorized',
@@ -169,7 +174,7 @@ describe('Notification Controller', () => {
     });
 
     it('should return 500 when service returns error', async () => {
-      const notificationId = objectIdToString(mockNotification._id);
+      const notificationId = mockNotificationId.toString();
       const username = 'testuser';
       markNotificationAsReadSpy.mockResolvedValueOnce({
         error: 'Database error',
@@ -198,7 +203,7 @@ describe('Notification Controller', () => {
     });
 
     it('should return 400 when username is missing', async () => {
-      const response = await supertest(app).patch('/api/notification/read-all').send({});
+      const response = await supertest(app).patch(`/api/notification/read-all`).send({});
 
       expect(response.status).toBe(400);
       expect(response.body.message).toBe('Request Validation Failed');
@@ -221,7 +226,7 @@ describe('Notification Controller', () => {
 
   describe('DELETE /api/notification/:notificationId', () => {
     it('should delete a notification', async () => {
-      const notificationId = objectIdToString(mockNotification._id);
+      const notificationId = mockNotificationId.toString();
       const username = 'testuser';
       deleteNotificationSpy.mockResolvedValueOnce({ notification: mockNotification });
 
@@ -243,9 +248,9 @@ describe('Notification Controller', () => {
     });
 
     it('should return 400 when username is missing', async () => {
-      const notificationId = objectIdToString(mockNotification._id);
+      const notificationId = mockNotificationId.toString();
 
-      const response = await supertest(app).delete(`/api/notification/${notificationId}`).send({});
+      const response = await supertest(app).delete(`/api/notification/${notificationId}`).send();
 
       expect(response.status).toBe(400);
       expect(response.body.message).toBe('Request Validation Failed');
@@ -253,7 +258,7 @@ describe('Notification Controller', () => {
     });
 
     it('should return 404 when notification is not found', async () => {
-      const notificationId = objectIdToString(mockNotification._id);
+      const notificationId = mockNotificationId.toString();
       const username = 'testuser';
       deleteNotificationSpy.mockResolvedValueOnce({
         error: 'Notification not found or unauthorized',
@@ -268,7 +273,7 @@ describe('Notification Controller', () => {
     });
 
     it('should return 500 when service returns error', async () => {
-      const notificationId = objectIdToString(mockNotification._id);
+      const notificationId = mockNotificationId.toString();
       const username = 'testuser';
       deleteNotificationSpy.mockResolvedValueOnce({
         error: 'Database error',

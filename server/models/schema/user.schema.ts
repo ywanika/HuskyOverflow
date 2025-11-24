@@ -43,6 +43,14 @@ const userSchema: Schema = new Schema(
       type: String,
       default: '',
     },
+    isBanned: {
+      type: Boolean,
+      default: false,
+    },
+    banReason: {
+      type: String,
+      default: '',
+    },
     lastActive: {
       type: Date,
       default: Date.now,

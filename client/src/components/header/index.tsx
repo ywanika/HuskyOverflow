@@ -4,7 +4,7 @@ import useHeader from '../../hooks/useHeader';
 import './index.css';
 import useUserContext from '../../hooks/useUserContext';
 import ThemeToggleButton from '../layout/ThemeToggleButton';
-import { useTheme } from '../../contexts/ThemeContext';
+import { useTheme } from '../../hooks/useTheme';
 import NotificationBell from '../notifications/NotificationBell';
 
 /**

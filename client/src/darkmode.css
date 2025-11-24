@@ -17,7 +17,7 @@
   /* Accents remain the same across themes for consistent branding */
   --color-primary: #F9B1BA;
   --color-secondary: #F9A672;
-  --color-accent: #F6CB60;
+  --color-accent: #f5ba24;
   --color-success: #BBD269;
   --color-info: #89C992;
   /* Keep danger identical across themes (e.g., Delete remains red) */

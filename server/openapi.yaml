@@ -1006,6 +1006,173 @@ paths:
         '500':
           $ref: '#/components/responses/ErrorResponse'
 
+  /user/suspend:
+    post:
+      tags:
+        - Users
+      summary: Suspend a user for a specified duration (admin only).
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/SuspendUserBody'
+      responses:
+        '200':
+          description: User successfully suspended.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/User'
+        '400':
+          $ref: '#/components/responses/ValidationError'
+        '403':
+          description: Forbidden - Only administrators can suspend users.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SimpleErrorBody'
+        '500':
+          $ref: '#/components/responses/ErrorResponse'
+
+  /user/ban:
+    post:
+      tags:
+        - Users
+      summary: Ban a user permanently with mandatory reason (admin only).
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/BanUserBody'
+      responses:
+        '200':
+          description: User successfully banned.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/User'
+        '400':
+          $ref: '#/components/responses/ValidationError'
+        '403':
+          description: Forbidden - Only administrators can ban users.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SimpleErrorBody'
+        '500':
+          $ref: '#/components/responses/ErrorResponse'
+
+  /user/promoteToModerator:
+    post:
+      tags:
+        - Users
+      summary: Promote a user to moderator role (admin only).
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UserRoleChangeBody'
+      responses:
+        '200':
+          description: User successfully promoted to moderator.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/User'
+        '400':
+          $ref: '#/components/responses/ValidationError'
+        '403':
+          description: Forbidden - Only administrators can promote users.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SimpleErrorBody'
+        '500':
+          $ref: '#/components/responses/ErrorResponse'
+
+  /user/promoteToAdmin:
+    post:
+      tags:
+        - Users
+      summary: Promote a moderator to admin role (admin only).
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UserRoleChangeBody'
+      responses:
+        '200':
+          description: Moderator successfully promoted to admin.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/User'
+        '400':
+          $ref: '#/components/responses/ValidationError'
+        '403':
+          description: Forbidden - Only administrators can promote moderators.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SimpleErrorBody'
+        '500':
+          $ref: '#/components/responses/ErrorResponse'
+
+  /user/demoteToUser:
+    post:
+      tags:
+        - Users
+      summary: Demote a moderator or admin to regular user (admin only).
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UserRoleChangeBody'
+      responses:
+        '200':
+          description: User successfully demoted to regular user.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/User'
+        '400':
+          $ref: '#/components/responses/ValidationError'
+        '403':
+          description: Forbidden - Only administrators can demote users.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SimpleErrorBody'
+        '500':
+          $ref: '#/components/responses/ErrorResponse'
+
+  /user/suspensionStatus/{username}:
+    get:
+      tags:
+        - Users
+      summary: Check a user's suspension/ban status.
+      parameters:
+        - in: path
+          name: username
+          schema:
+            type: string
+          required: true
+          description: The username to check suspension status for.
+      responses:
+        '200':
+          description: Successfully retrieved suspension status.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SuspensionStatusResponse'
+        '500':
+          $ref: '#/components/responses/ErrorResponse'
+
   # --------------------
   # NOTIFICATION CONTROLLER
   # --------------------
@@ -1645,6 +1812,8 @@ paths:
         '500':
           $ref: '#/components/responses/ErrorResponse'
 
+  
+
 components:
   schemas:
     # --------------------
@@ -2093,6 +2262,90 @@ components:
         biography:
           type: string
 
+    SuspendUserBody:
+      type: object
+      required:
+        - username
+        - durationDays
+        - reason
+        - adminUsername
+      properties:
+        username:
+          type: string
+          minLength: 1
+          description: The username of the user to suspend.
+        durationDays:
+          type: integer
+          minimum: 1
+          maximum: 30
+          description: Duration of suspension in days (1-30).
+        reason:
+          type: string
+          minLength: 1
+          description: Reason for suspension.
+        adminUsername:
+          type: string
+          minLength: 1
+          description: The username of the admin performing the action.
+
+    BanUserBody:
+      type: object
+      required:
+        - username
+        - reason
+        - adminUsername
+      properties:
+        username:
+          type: string
+          minLength: 1
+          description: The username of the user to ban.
+        reason:
+          type: string
+          minLength: 20
+          description: Detailed reason for ban (minimum 20 characters).
+        adminUsername:
+          type: string
+          minLength: 1
+          description: The username of the admin performing the action.
+
+    UserRoleChangeBody:
+      type: object
+      required:
+        - username
+        - adminUsername
+      properties:
+        username:
+          type: string
+          minLength: 1
+          description: The username of the user whose role is being changed.
+        adminUsername:
+          type: string
+          minLength: 1
+          description: The username of the admin performing the action.
+
+    SuspensionStatusResponse:
+      type: object
+      properties:
+        isSuspended:
+          type: boolean
+          description: Whether the user is currently suspended.
+        suspendedUntil:
+          type: string
+          format: date-time
+          nullable: true
+          description: The date/time when suspension ends (null if not suspended).
+        suspensionReason:
+          type: string
+          nullable: true
+          description: Reason for suspension (null if not suspended).
+        isBanned:
+          type: boolean
+          description: Whether the user is permanently banned.
+        banReason:
+          type: string
+          nullable: true
+          description: Reason for ban (null if not banned).
+
     User:
       type: object
       description: A user profile object.
@@ -2359,11 +2612,8 @@ components:
             - comment
           description: The type of content.
         content:
+          type: object
           description: The actual content object (question, answer, or comment).
-          oneOf:
-            - $ref: '#/components/schemas/PopulatedQuestion'
-            - $ref: '#/components/schemas/DatabaseAnswer'
-            - $ref: '#/components/schemas/DatabaseComment'
         flaggedBy:
           type: array
           items:
