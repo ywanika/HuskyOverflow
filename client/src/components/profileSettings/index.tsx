@@ -75,7 +75,10 @@ const ProfileSettings: React.FC = () => {
                 <label className='info-label'>Username:</label>
                 <span className='info-value'>{userData.username}</span>
               </div>
-
+              <div className='info-item'>
+                <label className='info-label'>Role:</label>
+                <span className='info-value'>{userData.role}</span>
+              </div>
               <div className='info-item'>
                 <label className='info-label'>Date Joined:</label>
                 <span className='info-value'>

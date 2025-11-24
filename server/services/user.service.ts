@@ -1,5 +1,5 @@
-import bcrypt from 'bcrypt';
 import UserModel from '../models/users.model';
+import NotificationModel from '../models/notifications.model';
 import {
   DatabaseUser,
   SafeDatabaseUser,
@@ -11,18 +11,13 @@ import {
 
 /**
  * Saves a new user to the database.
- * Passwords are hashed using bcrypt before storage.
  *
  * @param {User} user - The user object to be saved, containing user details like username, password, etc.
  * @returns {Promise<UserResponse>} - Resolves with the saved user object (without the password) or an error message.
  */
 export const saveUser = async (user: User): Promise<UserResponse> => {
   try {
-    // Hash password before saving
-    const hashedPassword = await bcrypt.hash(user.password, 10);
-    const userWithHashedPassword = { ...user, password: hashedPassword };
-
-    const result: DatabaseUser = await UserModel.create(userWithHashedPassword);
+    const result: DatabaseUser = await UserModel.create(user);
 
     if (!result) {
       throw Error('Failed to create user');
@@ -85,7 +80,6 @@ export const getUsersList = async (): Promise<UsersResponse> => {
 
 /**
  * Authenticates a user by verifying their username and password.
- * Compares the provided password with the hashed password stored in the database.
  *
  * @param {UserCredentials} loginCredentials - An object containing the username and password.
  * @returns {Promise<UserResponse>} - Resolves with the authenticated user object (without the password) or an error message.
@@ -94,30 +88,15 @@ export const loginUser = async (loginCredentials: UserCredentials): Promise<User
   const { username, password } = loginCredentials;
 
   try {
-    // Find user by username (password is included here to compare)
-    const user: DatabaseUser | null = await UserModel.findOne({ username });
+    const user: SafeDatabaseUser | null = await UserModel.findOne({ username, password }).select(
+      '-password',
+    );
 
     if (!user) {
       throw Error('Authentication failed');
     }
 
-    // Compare provided password with hashed password
-    const isPasswordValid = await bcrypt.compare(password, user.password);
-
-    if (!isPasswordValid) {
-      throw Error('Authentication failed');
-    }
-
-    // Return user without password
-    const safeUser: SafeDatabaseUser = {
-      _id: user._id,
-      username: user.username,
-      dateJoined: user.dateJoined,
-      biography: user.biography,
-      agreedToGuidelines: user.agreedToGuidelines,
-    };
-
-    return safeUser;
+    return user;
   } catch (error) {
     return { error: `Error occurred when authenticating user: ${error}` };
   }
@@ -147,7 +126,6 @@ export const deleteUserByUsername = async (username: string): Promise<UserRespon
 
 /**
  * Updates user information in the database.
- * If a password is being updated, it will be hashed before storage.
  *
  * @param {string} username - The username of the user to update.
  * @param {Partial<User>} updates - An object containing the fields to update and their new values.
@@ -158,15 +136,9 @@ export const updateUser = async (
   updates: Partial<User>,
 ): Promise<UserResponse> => {
   try {
-    // If password is being updated, hash it first
-    const updateData = { ...updates };
-    if (updateData.password) {
-      updateData.password = await bcrypt.hash(updateData.password, 10);
-    }
-
     const updatedUser: SafeDatabaseUser | null = await UserModel.findOneAndUpdate(
       { username },
-      { $set: updateData },
+      { $set: updates },
       { new: true },
     ).select('-password');
 
@@ -177,5 +149,280 @@ export const updateUser = async (
     return updatedUser;
   } catch (error) {
     return { error: `Error occurred when updating user: ${error}` };
+  }
+};
+
+/**
+ * Suspends a user for a specific duration with a violation reason.
+ *
+ * @param {string} username - The username of the user to suspend.
+ * @param {number} durationDays - Number of days to suspend the user.
+ * @param {string} reason - The violation reason for the suspension.
+ * @returns {Promise<UserResponse>} - Resolves with the updated user object or an error message.
+ */
+export const suspendUser = async (
+  username: string,
+  durationDays: number,
+  reason: string,
+): Promise<UserResponse> => {
+  try {
+    const suspendedUntil = new Date();
+    suspendedUntil.setDate(suspendedUntil.getDate() + durationDays);
+
+    const updatedUser: SafeDatabaseUser | null = await UserModel.findOneAndUpdate(
+      { username },
+      {
+        $set: {
+          suspendedUntil: suspendedUntil,
+          suspensionReason: reason,
+        },
+      },
+      { new: true },
+    ).select('-password');
+
+    if (!updatedUser) {
+      throw Error('User not found');
+    }
+
+    // Send notification to the user
+    await NotificationModel.create({
+      recipientUsername: username,
+      type: 'suspension',
+      message: `Your account has been suspended until ${suspendedUntil.toLocaleDateString()}. Reason: ${reason}`,
+      contentId: null,
+      isRead: false,
+      timestamp: new Date(),
+    });
+
+    return updatedUser;
+  } catch (error) {
+    return { error: `Error occurred when suspending user: ${error}` };
+  }
+};
+
+/**
+ * Bans a user permanently with a mandatory reason.
+ *
+ * @param {string} username - The username of the user to ban.
+ * @param {string} reason - The reason for the ban (minimum 20 characters).
+ * @returns {Promise<UserResponse>} - Resolves with the updated user object or an error message.
+ */
+export const banUser = async (username: string, reason: string): Promise<UserResponse> => {
+  try {
+    if (reason.length < 20) {
+      throw Error('Ban reason must be at least 20 characters');
+    }
+
+    const updatedUser: SafeDatabaseUser | null = await UserModel.findOneAndUpdate(
+      { username },
+      {
+        $set: {
+          isBanned: true,
+          banReason: reason,
+        },
+      },
+      { new: true },
+    ).select('-password');
+
+    if (!updatedUser) {
+      throw Error('User not found');
+    }
+
+    // Send notification to the user
+    await NotificationModel.create({
+      recipientUsername: username,
+      type: 'suspension',
+      message: `Your account has been permanently banned. Reason: ${reason}`,
+      contentId: null,
+      isRead: false,
+      timestamp: new Date(),
+    });
+
+    return updatedUser;
+  } catch (error) {
+    return { error: `Error occurred when banning user: ${error}` };
+  }
+};
+
+/**
+ * Promotes a user to moderator role.
+ *
+ * @param {string} username - The username of the user to promote.
+ * @returns {Promise<UserResponse>} - Resolves with the updated user object or an error message.
+ */
+export const promoteToModerator = async (username: string): Promise<UserResponse> => {
+  try {
+    const user = await UserModel.findOne({ username });
+
+    if (!user) {
+      throw Error('User not found');
+    }
+
+    // Check if user is banned
+    if (user.isBanned) {
+      throw Error('Cannot promote a banned user');
+    }
+
+    // Check if user is currently suspended
+    if (user.suspendedUntil && new Date(user.suspendedUntil) > new Date()) {
+      throw Error('Cannot promote a suspended user');
+    }
+
+    const updatedUser: SafeDatabaseUser | null = await UserModel.findOneAndUpdate(
+      { username },
+      { $set: { role: 'moderator' } },
+      { new: true },
+    ).select('-password');
+
+    if (!updatedUser) {
+      throw Error('User not found');
+    }
+
+    // Send notification to the user
+    await NotificationModel.create({
+      recipientUsername: username,
+      type: 'role_change',
+      message: 'Your account has been promoted to Moderator.',
+      contentId: null,
+      isRead: false,
+      timestamp: new Date(),
+    });
+
+    return updatedUser;
+  } catch (error) {
+    return { error: `Error occurred when promoting user to moderator: ${error}` };
+  }
+};
+
+/**
+ * Promotes a moderator to admin role.
+ *
+ * @param {string} username - The username of the moderator to promote.
+ * @returns {Promise<UserResponse>} - Resolves with the updated user object or an error message.
+ */
+export const promoteToAdmin = async (username: string): Promise<UserResponse> => {
+  try {
+    const user = await UserModel.findOne({ username });
+
+    if (!user) {
+      throw Error('User not found');
+    }
+
+    if (user.role !== 'moderator') {
+      throw Error('User must be a moderator to be promoted to admin');
+    }
+
+    const updatedUser: SafeDatabaseUser | null = await UserModel.findOneAndUpdate(
+      { username },
+      { $set: { role: 'admin' } },
+      { new: true },
+    ).select('-password');
+
+    if (!updatedUser) {
+      throw Error('Failed to update user');
+    }
+
+    // Send notification to the user
+    await NotificationModel.create({
+      recipientUsername: username,
+      type: 'role_change',
+      message: 'Your account has been promoted to Admin.',
+      contentId: null,
+      isRead: false,
+      timestamp: new Date(),
+    });
+
+    return updatedUser;
+  } catch (error) {
+    return { error: `Error occurred when promoting moderator to admin: ${error}` };
+  }
+};
+
+/**
+ * Demotes a user back to regular user role.
+ *
+ * @param {string} username - The username of the user to demote.
+ * @returns {Promise<UserResponse>} - Resolves with the updated user object or an error message.
+ */
+export const demoteToUser = async (username: string): Promise<UserResponse> => {
+  try {
+    const user = await UserModel.findOne({ username });
+
+    if (!user) {
+      throw Error('User not found');
+    }
+
+    if (user.role !== 'moderator' && user.role !== 'admin') {
+      throw Error('User must be a moderator to be demoted to user');
+    }
+
+    const updatedUser: SafeDatabaseUser | null = await UserModel.findOneAndUpdate(
+      { username },
+      { $set: { role: 'user' } },
+      { new: true },
+    ).select('-password');
+
+    if (!updatedUser) {
+      throw Error('User not found');
+    }
+
+    // Send notification to the user
+    await NotificationModel.create({
+      recipientUsername: username,
+      type: 'role_change',
+      message: 'Your account has been demoted to User.',
+      contentId: null,
+      isRead: false,
+      timestamp: new Date(),
+    });
+
+    return updatedUser;
+  } catch (error) {
+    return { error: `Error occurred when demoting user: ${error}` };
+  }
+};
+
+/**
+ * Checks if a user is currently suspended or banned.
+ *
+ * @param {string} username - The username to check.
+ * @returns {Promise<{ isSuspended: boolean; suspendedUntil?: Date; suspensionReason?: string; isBanned?: boolean; banReason?: string } | { error: string }>}
+ */
+export const checkUserSuspensionStatus = async (
+  username: string,
+): Promise<
+  | {
+      isSuspended: boolean;
+      suspendedUntil?: Date;
+      suspensionReason?: string;
+      isBanned?: boolean;
+      banReason?: string;
+    }
+  | { error: string }
+> => {
+  try {
+    const user = await UserModel.findOne({ username }).select(
+      'suspendedUntil suspensionReason isBanned banReason',
+    );
+
+    if (!user) {
+      throw Error('User not found');
+    }
+
+    const now = new Date();
+    const isSuspended =
+      user.suspendedUntil !== null &&
+      user.suspendedUntil !== undefined &&
+      new Date(user.suspendedUntil) > now;
+
+    return {
+      isSuspended,
+      suspendedUntil: user.suspendedUntil,
+      suspensionReason: user.suspensionReason,
+      isBanned: user.isBanned,
+      banReason: user.banReason,
+    };
+  } catch (error) {
+    return { error: `Error occurred when checking suspension status: ${error}` };
   }
 };
