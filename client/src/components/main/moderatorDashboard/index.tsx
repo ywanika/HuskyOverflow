@@ -13,6 +13,7 @@ import {
   CardHeader,
   AlertRoot as Alert,
   Textarea,
+  Badge,
 } from '@chakra-ui/react';
 import Markdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
