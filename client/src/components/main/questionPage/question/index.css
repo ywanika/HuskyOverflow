@@ -4,7 +4,6 @@
   border-top: 1px dashed var(--color-bg-tertiary);
   padding: var(--spacing-md) 0;
   background-color: var(--color-bg-primary);
-  color: var(--color-text-primary);
 }
 
 .postStats {
@@ -21,7 +20,6 @@
 }
 
 .postTitle {
-  color: var(--color-primary);
   font-size: var(--font-size-lg);
   font-weight: 600;
   margin-bottom: var(--spacing-xs);
@@ -29,7 +27,7 @@
 }
 
 .postTitle:hover {
-  color: var(--color-secondary);
+  color: var(--color-secondary-text);
 }
 
 .question_tags {
@@ -40,7 +38,6 @@
 }
 
 .question_tag_button {
-  color: var(--color-text-primary);
   background: var(--color-bg-tertiary);
   border: 2px solid var(--color-bg-tertiary);
   border-radius: var(--radius-md);
@@ -53,8 +50,8 @@
 }
 
 .question_tag_button:hover {
-  background: var(--color-primary);
-  border-color: var(--color-primary);
+  background: var(--color-primary-button);
+  border-color: var(--color-primary-button);
   color: #1a202c;
   transform: translateY(-1px);
 }
@@ -73,20 +70,19 @@
 }
 
 .question_author {
-  color: var(--color-accent);
+  color: var(--color-accent-text);
   font-weight: 600;
 }
 
 .question_meta {
-  color: var(--color-info);
   font-weight: 500;
 }
 
 .question .collections-btn {
-  background-color: var(--color-accent);
+  background-color: var(--color-accent-button);
   font-weight: 600;
   color: #1a202c;
-  border: 2px solid var(--color-accent);
+  border: 2px solid var(--color-accent-button);
   border-radius: var(--radius-md);
   padding: var(--spacing-sm) var(--spacing-md);
   font-size: var(--font-size-sm);
@@ -100,15 +96,15 @@
 }
 
 .question .collections-btn:hover {
-  background-color: var(--color-primary);
-  border-color: var(--color-primary);
+  background-color: var(--color-primary-button);
+  border-color: var(--color-primary-button);
   transform: translateY(-1px);
   box-shadow: var(--shadow-md);
 }
 
 .question .collections-btn:active {
-  background-color: var(--color-primary);
-  border-color: var(--color-primary);
+  background-color: var(--color-primary-button);
+  border-color: var(--color-primary-button);
   transform: translateY(0);
   box-shadow: var(--shadow-sm);
 }

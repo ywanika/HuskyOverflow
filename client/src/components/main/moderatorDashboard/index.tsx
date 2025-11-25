@@ -7,7 +7,6 @@ import {
   HStack,
   Button,
   Text,
-  Badge,
   Spinner,
   CardRoot as Card,
   CardBody,
@@ -102,74 +101,64 @@ const ModeratorDashboard = () => {
       new Date();
 
     return (
-      <Card key={`${contentType}-${item._id}`} mb={4} borderLeft='4px' borderColor='orange.500'>
+      <Card key={`${contentType}-${item._id}`} className='flagged-card'>
         <CardHeader>
-          <HStack justify='space-between' align='start'>
+          <div className='flagged-card-header'>
             <VStack align='start' gap={1} flex={1}>
-              <HStack>
-                <Badge colorScheme='orange'>{contentType.toUpperCase()}</Badge>
-                <Badge colorScheme='red'>
+              <div className='flagged-card-badges'>
+                <span className='badge-content-type'>{contentType}</span>
+                <span className='badge-flag-count'>
                   {item.flaggedBy.length} flag{item.flaggedBy.length !== 1 ? 's' : ''}
-                </Badge>
-              </HStack>
-              <Heading size='sm'>{title}</Heading>
-              <Text fontSize='sm' color='gray.600'>
+                </span>
+              </div>
+              <Heading className='flagged-card-title'>{title}</Heading>
+              <Text className='flagged-card-meta'>
                 By {author} • {getMetaData(new Date(date))}
               </Text>
             </VStack>
-          </HStack>
+          </div>
         </CardHeader>
         <CardBody>
-          <Box mb={4} p={3} bg='gray.50' borderRadius='md' maxH='200px' overflowY='auto'>
+          <Box className='flagged-content-box'>
             <Markdown remarkPlugins={[remarkGfm]}>{text}</Markdown>
           </Box>
-          <VStack align='start' gap={2} mb={4}>
-            <Text fontSize='sm' fontWeight='bold'>
-              Flagged by:
-            </Text>
-            <HStack wrap='wrap' gap={2}>
+          <div className='flagged-by-section'>
+            <Text className='flagged-by-label'>Flagged by:</Text>
+            <div className='flagged-by-users'>
               {item.flaggedBy.map((username: string, idx: number) => (
-                <Badge key={idx} colorScheme='orange' variant='outline'>
+                <span key={idx} className='badge-user-outline'>
                   {username}
-                </Badge>
+                </span>
               ))}
-            </HStack>
-            <Text fontSize='xs' color='gray.500'>
+            </div>
+            <Text className='flagged-date'>
               First flagged: {getMetaData(new Date(item.flaggedAt[0]))}
             </Text>
-          </VStack>
-          <HStack gap={2} flexWrap='wrap'>
+          </div>
+          <div className='flagged-actions'>
             {contentType === 'question' && (
               <Button
-                size='sm'
-                colorScheme='blue'
-                variant='outline'
+                className='btn-view-question'
                 onClick={() => navigate(`/question/${item._id}`)}>
                 View Question
               </Button>
             )}
             <Button
-              size='sm'
-              colorScheme='green'
-              variant='outline'
+              className='btn-mark-reviewed'
               onClick={() => handleMarkAsReviewed(contentType, item._id)}>
               Mark as Reviewed
             </Button>
             <Button
-              size='sm'
-              colorScheme='orange'
-              variant='outline'
+              className='btn-dismiss-flag'
               onClick={() => handleDismissFlag(contentType, item._id)}>
               Dismiss Flag
             </Button>
             <Button
-              size='sm'
-              colorScheme='red'
-              variant='outline'
+              className='btn-delete-content'
               onClick={() => handleDeleteClick(contentType, item._id, title)}>
               Delete
             </Button>
-          </HStack>
+          </div>
         </CardBody>
       </Card>
     );
@@ -177,16 +166,16 @@ const ModeratorDashboard = () => {
 
   if (loading) {
     return (
-      <Box p={8} textAlign='center'>
+      <Box className='moderator-loading'>
         <Spinner size='xl' />
-        <Text mt={4}>Loading flagged content...</Text>
+        <Text className='moderator-loading-text'>Loading flagged content...</Text>
       </Box>
     );
   }
 
   if (error) {
     return (
-      <Box p={8}>
+      <Box className='moderator-error'>
         <Alert status='error'>{error}</Alert>
       </Box>
     );
@@ -299,35 +288,31 @@ const ModeratorDashboard = () => {
     flaggedContent.comments.length;
 
   return (
-    <Box p={8}>
+    <Box className='moderator-dashboard'>
       <VStack align='stretch' gap={6}>
-        <Box>
+        <Box className='moderator-dashboard-header'>
           <Heading size='lg' mb={2}>
             Moderator Dashboard
           </Heading>
-          <Text color='gray.600'>
-            Review and manage flagged content and appeals. Total flagged items: {totalFlagged},
-            Pending appeals: {appeals.length}
+          <Text className='moderator-dashboard-subtitle'>
+            Review and manage flagged content. Total flagged items: {totalFlagged}
           </Text>
         </Box>
 
         <Box>
-          <HStack gap={2} mb={4} borderBottom='1px' borderColor='gray.200'>
+          <HStack gap={2} className='moderator-tabs'>
             <Button
-              variant={activeTab === 'questions' ? 'solid' : 'ghost'}
-              colorScheme={activeTab === 'questions' ? 'blue' : 'gray'}
+              className={`moderator-tab ${activeTab === 'questions' ? 'moderator-tab-active' : ''}`}
               onClick={() => setActiveTab('questions')}>
               Questions ({flaggedContent.questions.length})
             </Button>
             <Button
-              variant={activeTab === 'answers' ? 'solid' : 'ghost'}
-              colorScheme={activeTab === 'answers' ? 'blue' : 'gray'}
+              className={`moderator-tab ${activeTab === 'answers' ? 'moderator-tab-active' : ''}`}
               onClick={() => setActiveTab('answers')}>
               Answers ({flaggedContent.answers.length})
             </Button>
             <Button
-              variant={activeTab === 'comments' ? 'solid' : 'ghost'}
-              colorScheme={activeTab === 'comments' ? 'blue' : 'gray'}
+              className={`moderator-tab ${activeTab === 'comments' ? 'moderator-tab-active' : ''}`}
               onClick={() => setActiveTab('comments')}>
               Comments ({flaggedContent.comments.length})
             </Button>
@@ -343,9 +328,7 @@ const ModeratorDashboard = () => {
             {activeTab === 'questions' && (
               <Box>
                 {flaggedContent.questions.length === 0 ? (
-                  <Text color='gray.500' textAlign='center' py={8}>
-                    No flagged questions
-                  </Text>
+                  <Text className='empty-state'>No flagged questions</Text>
                 ) : (
                   flaggedContent.questions.map((item, index) =>
                     renderFlaggedItem(item, 'question', index),
@@ -356,9 +339,7 @@ const ModeratorDashboard = () => {
             {activeTab === 'answers' && (
               <Box>
                 {flaggedContent.answers.length === 0 ? (
-                  <Text color='gray.500' textAlign='center' py={8}>
-                    No flagged answers
-                  </Text>
+                  <Text className='empty-state'>No flagged answers</Text>
                 ) : (
                   flaggedContent.answers.map((item, index) =>
                     renderFlaggedItem(item, 'answer', index),
@@ -369,9 +350,7 @@ const ModeratorDashboard = () => {
             {activeTab === 'comments' && (
               <Box>
                 {flaggedContent.comments.length === 0 ? (
-                  <Text color='gray.500' textAlign='center' py={8}>
-                    No flagged comments
-                  </Text>
+                  <Text className='empty-state'>No flagged comments</Text>
                 ) : (
                   flaggedContent.comments.map((item, index) =>
                     renderFlaggedItem(item, 'comment', index),

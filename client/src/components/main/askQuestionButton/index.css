@@ -14,8 +14,8 @@
 }
 
 .ask-question-btn:active {
-  background-color: var(--color-primary);
-  border-color: var(--color-primary);
+  background-color: var(--color-primary-button);
+  border-color: var(--color-primary-button);
   transform: translateY(0);
   box-shadow: var(--shadow-sm);
 }

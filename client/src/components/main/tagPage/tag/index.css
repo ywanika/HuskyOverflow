@@ -16,14 +16,14 @@
 }
 
 .tagNode:hover {
-  border-color: var(--color-primary);
+  border-color: var(--color-primary-button);
   background-color: var(--color-bg-secondary);
   transform: translateY(-2px);
   box-shadow: var(--shadow-md);
 }
 
 .tagName {
-  color: var(--color-primary);
+  color: var(--color-primary-text);
   font-size: var(--font-size-lg);
   font-weight: 600;
   text-align: center;
@@ -31,5 +31,5 @@
 }
 
 .tagNode:hover .tagName {
-  color: var(--color-secondary);
+  color: var(--color-secondary-text);
 }

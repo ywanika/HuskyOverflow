@@ -68,7 +68,7 @@ const Header = () => {
           <NotificationBell />
           <ThemeToggleButton />
           <Button
-            className='logout-button btn btn-secondary'
+            className='logout-button btn btn-primary'
             onClick={handleSignOut}
             variant='outline'
             flexShrink={0}

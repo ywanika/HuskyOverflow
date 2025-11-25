@@ -39,7 +39,7 @@
 
 /* Active state - consistent with dark mode */
 .nav-item.active {
-  background-color: var(--color-primary);
+  background-color: var(--color-primary-button);
   color: #1a202c;
   font-weight: 600;
   box-shadow: var(--shadow-sm);
@@ -52,7 +52,7 @@
   top: 0;
   bottom: 0;
   width: 4px;
-  background-color: var(--color-accent);
+  background-color: var(--color-accent-button);
 }
 
 /* Menu buttons from colorBlindness_Accessibility_Sprint1 */
