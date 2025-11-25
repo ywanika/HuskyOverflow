@@ -3,6 +3,7 @@ import { Outlet } from 'react-router-dom';
 import { Box, Flex } from '@chakra-ui/react';
 import SideBarNav from '../main/sideBarNav';
 import Header from '../header';
+import { useTheme } from '../../contexts/ThemeContext';
 import { useTheme } from '../../hooks/useTheme';
 
 /**
