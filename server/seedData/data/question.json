@@ -10,7 +10,21 @@
     "upVotes": ["user123", "user456"],
     "downVotes": [],
     "comments": ["comment1"],
-    "community": "community1"
+    "community": "community1",
+    "flagged": {
+      "isFlagged": false,
+      "flaggedBy": [],
+      "flaggedAt": [],
+      "reviewedBy": null,
+      "reviewedAt": null
+    },
+    "deleted": {
+      "isDeleted": true,
+      "deletedBy": "moderator1",
+      "deleteReason": "Duplicate question - already answered multiple times in the community.",
+      "deletedAt": "2025-04-20T10:00:00Z",
+      "restoredAt": null
+    }
   },
   "question2": {
     "title": "Node.js memory issues when handling large file uploads",
@@ -23,7 +37,21 @@
     "upVotes": ["user234", "user345", "user456"],
     "downVotes": [],
     "comments": ["comment5"],
-    "community": null
+    "community": null,
+    "flagged": {
+      "isFlagged": true,
+      "flaggedBy": ["user123"],
+      "flaggedAt": ["2025-04-21T15:30:00Z"],
+      "reviewedBy": null,
+      "reviewedAt": null
+    },
+    "deleted": {
+      "isDeleted": false,
+      "deletedBy": null,
+      "deleteReason": "",
+      "deletedAt": null,
+      "restoredAt": null
+    }
   },
   "question3": {
     "title": "Webpack configuration issues with latest JavaScript features",
@@ -36,7 +64,21 @@
     "upVotes": ["user234"],
     "downVotes": ["user345"],
     "comments": ["comment3", "comment6"],
-    "community": null
+    "community": null,
+    "flagged": {
+      "isFlagged": false,
+      "flaggedBy": ["user456"],
+      "flaggedAt": ["2025-04-20T14:00:00Z"],
+      "reviewedBy": "moderator2",
+      "reviewedAt": "2025-04-21T16:00:00Z"
+    },
+    "deleted": {
+      "isDeleted": false,
+      "deletedBy": null,
+      "deleteReason": "",
+      "deletedAt": null,
+      "restoredAt": null
+    }
   },
   "question4": {
     "title": "Optimizing a slow PostgreSQL query with JOINs",
@@ -58,7 +100,21 @@
     "upVotes": ["user234", "user345", "user456", "user567"],
     "downVotes": [],
     "comments": ["comment7"],
-    "community": "community2"
+    "community": "community2",
+    "flagged": {
+      "isFlagged": false,
+      "flaggedBy": [],
+      "flaggedAt": [],
+      "reviewedBy": null,
+      "reviewedAt": null
+    },
+    "deleted": {
+      "isDeleted": false,
+      "deletedBy": null,
+      "deleteReason": "",
+      "deletedAt": null,
+      "restoredAt": null
+    }
   },
   "question5": {
     "title": "How to handle edge cases in JavaScript array processing",
@@ -71,7 +127,21 @@
     "upVotes": ["user123"],
     "downVotes": [],
     "comments": ["comment8"],
-    "community": null
+    "community": null,
+    "flagged": {
+      "isFlagged": false,
+      "flaggedBy": [],
+      "flaggedAt": [],
+      "reviewedBy": null,
+      "reviewedAt": null
+    },
+    "deleted": {
+      "isDeleted": false,
+      "deletedBy": null,
+      "deleteReason": "",
+      "deletedAt": null,
+      "restoredAt": null
+    }
   },
   "question6": {
     "title": "Fixing CORS issues with fetch API in React frontend",
@@ -84,7 +154,21 @@
     "upVotes": ["user234", "user345"],
     "downVotes": [],
     "comments": ["comment9"],
-    "community": null
+    "community": null,
+    "flagged": {
+      "isFlagged": false,
+      "flaggedBy": [],
+      "flaggedAt": [],
+      "reviewedBy": null,
+      "reviewedAt": null
+    },
+    "deleted": {
+      "isDeleted": false,
+      "deletedBy": null,
+      "deleteReason": "",
+      "deletedAt": null,
+      "restoredAt": null
+    }
   },
   "question7": {
     "title": "Improving performance of Python data processing script",
@@ -97,7 +181,21 @@
     "upVotes": ["user123", "user234"],
     "downVotes": [],
     "comments": ["comment5"],
-    "community": "community3"
+    "community": "community3",
+    "flagged": {
+      "isFlagged": false,
+      "flaggedBy": [],
+      "flaggedAt": [],
+      "reviewedBy": null,
+      "reviewedAt": null
+    },
+    "deleted": {
+      "isDeleted": false,
+      "deletedBy": null,
+      "deleteReason": "",
+      "deletedAt": null,
+      "restoredAt": null
+    }
   },
   "question8": {
     "title": "Docker container environment variable configuration",
@@ -110,7 +208,21 @@
     "upVotes": ["user234", "user345", "user456"],
     "downVotes": [],
     "comments": [],
-    "community": "community4"
+    "community": "community4",
+    "flagged": {
+      "isFlagged": false,
+      "flaggedBy": [],
+      "flaggedAt": [],
+      "reviewedBy": null,
+      "reviewedAt": null
+    },
+    "deleted": {
+      "isDeleted": false,
+      "deletedBy": null,
+      "deleteReason": "",
+      "deletedAt": null,
+      "restoredAt": null
+    }
   },
   "question9": {
     "title": "Proper way to handle async/await in JavaScript",
@@ -123,7 +235,21 @@
     "upVotes": ["user123"],
     "downVotes": [],
     "comments": ["comment1"],
-    "community": "community1"
+    "community": "community1",
+    "flagged": {
+      "isFlagged": false,
+      "flaggedBy": [],
+      "flaggedAt": [],
+      "reviewedBy": null,
+      "reviewedAt": null
+    },
+    "deleted": {
+      "isDeleted": false,
+      "deletedBy": null,
+      "deleteReason": "",
+      "deletedAt": null,
+      "restoredAt": null
+    }
   },
   "question10": {
     "title": "Preventing memory leaks in React applications",
@@ -136,6 +262,20 @@
     "upVotes": ["user123", "user234"],
     "downVotes": [],
     "comments": ["comment2"],
-    "community": "community1"
+    "community": "community1",
+    "flagged": {
+      "isFlagged": false,
+      "flaggedBy": [],
+      "flaggedAt": [],
+      "reviewedBy": null,
+      "reviewedAt": null
+    },
+    "deleted": {
+      "isDeleted": false,
+      "deletedBy": null,
+      "deleteReason": "",
+      "deletedAt": null,
+      "restoredAt": null
+    }
   }
 }

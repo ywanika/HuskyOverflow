@@ -1,6 +1,7 @@
 import { useState, useRef, useEffect } from 'react';
 import { Box, Badge, IconButton } from '@chakra-ui/react';
 import NotificationDropdown from './NotificationDropdown';
+import AppealModal from '../moderation/AppealModal';
 import useNotifications from '../../hooks/useNotifications';
 import useUserContext from '../../hooks/useUserContext';
 
@@ -17,6 +18,15 @@ const NotificationBell = () => {
     deleteNotification: handleDelete,
   } = useNotifications(socket);
   const [isOpen, setIsOpen] = useState(false);
+  const [appealModal, setAppealModal] = useState<{
+    isOpen: boolean;
+    contentId: string;
+    contentType: 'question' | 'answer' | 'comment';
+  }>({
+    isOpen: false,
+    contentId: '',
+    contentType: 'question',
+  });
   const dropdownRef = useRef<HTMLDivElement>(null);
 
   // Close dropdown when clicking outside
@@ -70,8 +80,18 @@ const NotificationBell = () => {
           onMarkAsRead={markAsRead}
           onMarkAllAsRead={markAllAsRead}
           onDelete={handleDelete}
+          onAppeal={(contentId, contentType) => {
+            setAppealModal({ isOpen: true, contentId, contentType });
+            setIsOpen(false);
+          }}
         />
       )}
+      <AppealModal
+        isOpen={appealModal.isOpen}
+        onClose={() => setAppealModal({ ...appealModal, isOpen: false })}
+        contentType={appealModal.contentType}
+        contentId={appealModal.contentId}
+      />
     </Box>
   );
 };

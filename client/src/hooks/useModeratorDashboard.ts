@@ -7,7 +7,11 @@ import {
   deleteQuestion,
   deleteAnswer,
   deleteComment,
+  getAppeals,
+  approveAppeal,
+  rejectAppeal,
 } from '../services/moderationService';
+import { AppealItem } from '@fake-stack-overflow/shared';
 
 interface FlaggedItem {
   _id: string;
@@ -28,6 +32,7 @@ const useModeratorDashboard = () => {
     answers: [],
     comments: [],
   });
+  const [appeals, setAppeals] = useState<AppealItem[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string>('');
   const [deleteModal, setDeleteModal] = useState<{
@@ -54,13 +59,25 @@ const useModeratorDashboard = () => {
     }
   };
 
+  const fetchAppeals = async () => {
+    try {
+      setError('');
+      const data = await getAppeals();
+      setAppeals(data.appeals || []);
+    } catch (err) {
+      setError((err as Error).message || 'Failed to fetch appeals');
+    }
+  };
+
   useEffect(() => {
     fetchFlaggedContent();
+    fetchAppeals();
   }, []);
 
   useEffect(() => {
     const handleModerationUpdate = () => {
       fetchFlaggedContent();
+      fetchAppeals();
     };
 
     socket.on('moderationUpdate', handleModerationUpdate);
@@ -69,6 +86,16 @@ const useModeratorDashboard = () => {
       socket.off('moderationUpdate', handleModerationUpdate);
     };
   }, [socket]);
+
+  // Poll every 60 seconds to ensure updates within 1 minute
+  useEffect(() => {
+    const interval = setInterval(() => {
+      fetchFlaggedContent();
+      fetchAppeals();
+    }, 60000); // 60 seconds
+
+    return () => clearInterval(interval);
+  }, []);
 
   const handleMarkAsReviewed = async (
     contentType: 'question' | 'answer' | 'comment',
@@ -118,8 +145,28 @@ const useModeratorDashboard = () => {
     }
   };
 
+  const handleApproveAppeal = async (appealId: string, modResponse?: string) => {
+    try {
+      await approveAppeal(appealId, user.username, modResponse);
+      await fetchAppeals();
+      await fetchFlaggedContent();
+    } catch (err) {
+      setError((err as Error).message || 'Failed to approve appeal');
+    }
+  };
+
+  const handleRejectAppeal = async (appealId: string, modResponse?: string) => {
+    try {
+      await rejectAppeal(appealId, user.username, modResponse);
+      await fetchAppeals();
+    } catch (err) {
+      setError((err as Error).message || 'Failed to reject appeal');
+    }
+  };
+
   return {
     flaggedContent,
+    appeals,
     loading,
     error,
     handleMarkAsReviewed,
@@ -129,6 +176,8 @@ const useModeratorDashboard = () => {
     setDeleteModal,
     handleDeleteConfirm,
     fetchFlaggedContent,
+    handleApproveAppeal,
+    handleRejectAppeal,
   };
 };
 

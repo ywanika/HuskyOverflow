@@ -304,6 +304,12 @@ const userController = (socket: FakeSOSocket) => {
         type: 'updated',
       });
 
+      // Emit notification update for the suspended user
+      socket.emit('notificationUpdate', {
+        type: 'newNotification',
+        username: result.username,
+      });
+
       res.status(200).json(result);
     } catch (error) {
       res.status(500).send(`Error when suspending user: ${error}`);
@@ -341,6 +347,12 @@ const userController = (socket: FakeSOSocket) => {
       socket.emit('userUpdate', {
         user: result,
         type: 'updated',
+      });
+
+      // Emit notification update for the banned user
+      socket.emit('notificationUpdate', {
+        type: 'newNotification',
+        username: result.username,
       });
 
       res.status(200).json(result);
