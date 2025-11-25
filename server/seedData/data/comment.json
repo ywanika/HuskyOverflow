@@ -2,101 +2,381 @@
   "comment1": {
     "text": "Have you tried using the async/await pattern instead? It might make your code more readable.",
     "commentBy": "typescriptfan",
-    "commentDateTime": "2025-03-15T08:24:13Z"
+    "commentDateTime": "2025-03-15T08:24:13Z",
+    "flagged": {
+      "isFlagged": false,
+      "flaggedBy": [],
+      "flaggedAt": [],
+      "reviewedBy": null,
+      "reviewedAt": null
+    },
+    "deleted": {
+      "isDeleted": false,
+      "deletedBy": null,
+      "deleteReason": "",
+      "deletedAt": null,
+      "restoredAt": null
+    }
   },
   "comment2": {
     "text": "This is a common issue with React's useEffect hook. You need to handle the cleanup function properly.",
     "commentBy": "webpackwizard",
-    "commentDateTime": "2025-03-18T14:36:42Z"
+    "commentDateTime": "2025-03-18T14:36:42Z",
+    "flagged": {
+      "isFlagged": false,
+      "flaggedBy": [],
+      "flaggedAt": [],
+      "reviewedBy": null,
+      "reviewedAt": null
+    },
+    "deleted": {
+      "isDeleted": false,
+      "deletedBy": null,
+      "deleteReason": "",
+      "deletedAt": null,
+      "restoredAt": null
+    }
   },
   "comment3": {
     "text": "The issue is probably in your webpack configuration. Check your babel settings.",
     "commentBy": "webpackwizard",
-    "commentDateTime": "2025-03-20T09:12:55Z"
+    "commentDateTime": "2025-03-20T09:12:55Z",
+    "flagged": {
+      "isFlagged": false,
+      "flaggedBy": [],
+      "flaggedAt": [],
+      "reviewedBy": null,
+      "reviewedAt": null
+    },
+    "deleted": {
+      "isDeleted": true,
+      "deletedBy": "moderator1",
+      "deleteReason": "Comment contains misleading technical information",
+      "deletedAt": "2025-04-16T11:00:00Z",
+      "restoredAt": null
+    }
   },
   "comment4": {
     "text": "You should consider using TypeScript for this. It would catch these errors at compile time.",
     "commentBy": "docreader",
-    "commentDateTime": "2025-03-22T11:47:33Z"
+    "commentDateTime": "2025-03-22T11:47:33Z",
+    "flagged": {
+      "isFlagged": false,
+      "flaggedBy": [],
+      "flaggedAt": [],
+      "reviewedBy": null,
+      "reviewedAt": null
+    },
+    "deleted": {
+      "isDeleted": false,
+      "deletedBy": null,
+      "deleteReason": "",
+      "deletedAt": null,
+      "restoredAt": null
+    }
   },
   "comment5": {
     "text": "This approach works, but it's not very memory efficient. You might want to consider a streaming solution.",
     "commentBy": "perfoptimizer",
-    "commentDateTime": "2025-03-25T15:28:09Z"
+    "commentDateTime": "2025-03-25T15:28:09Z",
+    "flagged": {
+      "isFlagged": false,
+      "flaggedBy": [],
+      "flaggedAt": [],
+      "reviewedBy": null,
+      "reviewedAt": null
+    },
+    "deleted": {
+      "isDeleted": false,
+      "deletedBy": null,
+      "deleteReason": "",
+      "deletedAt": null,
+      "restoredAt": null
+    }
   },
   "comment6": {
     "text": "Have you checked the documentation for v3.2? The API changed significantly in that release.",
     "commentBy": "jsdeveloper",
-    "commentDateTime": "2025-03-27T17:52:21Z"
+    "commentDateTime": "2025-03-27T17:52:21Z",
+    "flagged": {
+      "isFlagged": false,
+      "flaggedBy": [],
+      "flaggedAt": [],
+      "reviewedBy": null,
+      "reviewedAt": null
+    },
+    "deleted": {
+      "isDeleted": false,
+      "deletedBy": null,
+      "deleteReason": "",
+      "deletedAt": null,
+      "restoredAt": null
+    }
   },
   "comment7": {
     "text": "Your SQL query could be optimized by adding an index on that column.",
     "commentBy": "serverdev",
-    "commentDateTime": "2025-03-30T20:14:39Z"
+    "commentDateTime": "2025-03-30T20:14:39Z",
+    "flagged": {
+      "isFlagged": false,
+      "flaggedBy": [],
+      "flaggedAt": [],
+      "reviewedBy": null,
+      "reviewedAt": null
+    },
+    "deleted": {
+      "isDeleted": false,
+      "deletedBy": null,
+      "deleteReason": "",
+      "deletedAt": null,
+      "restoredAt": null
+    }
   },
   "comment8": {
     "text": "This solution doesn't account for edge cases like empty arrays or null values.",
     "commentBy": "edgecaseexpert",
-    "commentDateTime": "2025-04-02T13:09:27Z"
+    "commentDateTime": "2025-04-02T13:09:27Z",
+    "flagged": {
+      "isFlagged": false,
+      "flaggedBy": [],
+      "flaggedAt": [],
+      "reviewedBy": null,
+      "reviewedAt": null
+    },
+    "deleted": {
+      "isDeleted": false,
+      "deletedBy": null,
+      "deleteReason": "",
+      "deletedAt": null,
+      "restoredAt": null
+    }
   },
   "comment9": {
     "text": "You might be running into CORS issues. Check your server's response headers.",
     "commentBy": "frontenddev",
-    "commentDateTime": "2025-04-05T10:42:18Z"
+    "commentDateTime": "2025-04-05T10:42:18Z",
+    "flagged": {
+      "isFlagged": false,
+      "flaggedBy": [],
+      "flaggedAt": [],
+      "reviewedBy": null,
+      "reviewedAt": null
+    },
+    "deleted": {
+      "isDeleted": false,
+      "deletedBy": null,
+      "deleteReason": "",
+      "deletedAt": null,
+      "restoredAt": null
+    }
   },
   "comment10": {
     "text": "Have you considered using a linter? It would catch many of these style inconsistencies automatically.",
     "commentBy": "pythonuser",
-    "commentDateTime": "2025-04-08T16:37:52Z"
+    "commentDateTime": "2025-04-08T16:37:52Z",
+    "flagged": {
+      "isFlagged": false,
+      "flaggedBy": [],
+      "flaggedAt": [],
+      "reviewedBy": null,
+      "reviewedAt": null
+    },
+    "deleted": {
+      "isDeleted": false,
+      "deletedBy": null,
+      "deleteReason": "",
+      "deletedAt": null,
+      "restoredAt": null
+    }
   },
   "comment11": {
     "text": "Great solution! I'd also recommend adding error boundaries to catch any rendering errors that might occur when the data doesn't match the expected format.",
     "commentBy": "reactexpert",
-    "commentDateTime": "2025-03-16T14:22:51Z"
+    "commentDateTime": "2025-03-16T14:22:51Z",
+    "flagged": {
+      "isFlagged": false,
+      "flaggedBy": [],
+      "flaggedAt": [],
+      "reviewedBy": null,
+      "reviewedAt": null
+    },
+    "deleted": {
+      "isDeleted": false,
+      "deletedBy": null,
+      "deleteReason": "",
+      "deletedAt": null,
+      "restoredAt": null
+    }
   },
   "comment12": {
     "text": "This approach works well, but you might also want to consider using a library like Busboy for even more efficient streaming of multipart form data.",
     "commentBy": "dbnovice",
-    "commentDateTime": "2025-03-20T09:15:33Z"
+    "commentDateTime": "2025-03-20T09:15:33Z",
+    "flagged": {
+      "isFlagged": false,
+      "flaggedBy": [],
+      "flaggedAt": [],
+      "reviewedBy": null,
+      "reviewedAt": null
+    },
+    "deleted": {
+      "isDeleted": false,
+      "deletedBy": null,
+      "deleteReason": "",
+      "deletedAt": null,
+      "restoredAt": null
+    }
   },
   "comment13": {
     "text": "Don't forget that some of these plugins require additional dependencies. You might need to install @babel/runtime as a runtime dependency as well.",
     "commentBy": "webpackwizard",
-    "commentDateTime": "2025-03-22T16:48:12Z"
+    "commentDateTime": "2025-03-22T16:48:12Z",
+    "flagged": {
+      "isFlagged": false,
+      "flaggedBy": [],
+      "flaggedAt": [],
+      "reviewedBy": null,
+      "reviewedAt": null
+    },
+    "deleted": {
+      "isDeleted": false,
+      "deletedBy": null,
+      "deleteReason": "",
+      "deletedAt": null,
+      "restoredAt": null
+    }
   },
   "comment14": {
     "text": "For high-traffic applications, you might also want to consider partitioning your tables. This can significantly improve query performance when dealing with time-series data.",
     "commentBy": "devopsengineer",
-    "commentDateTime": "2025-04-01T11:27:38Z"
+    "commentDateTime": "2025-04-01T11:27:38Z",
+    "flagged": {
+      "isFlagged": false,
+      "flaggedBy": [],
+      "flaggedAt": [],
+      "reviewedBy": null,
+      "reviewedAt": null
+    },
+    "deleted": {
+      "isDeleted": false,
+      "deletedBy": null,
+      "deleteReason": "",
+      "deletedAt": null,
+      "restoredAt": null
+    }
   },
   "comment15": {
     "text": "Nice solution! For even better error handling, you could also implement retry logic for specific types of errors that might be transient.",
     "commentBy": "edgecaseexpert",
-    "commentDateTime": "2025-04-04T08:19:25Z"
+    "commentDateTime": "2025-04-04T08:19:25Z",
+    "flagged": {
+      "isFlagged": false,
+      "flaggedBy": [],
+      "flaggedAt": [],
+      "reviewedBy": null,
+      "reviewedAt": null
+    },
+    "deleted": {
+      "isDeleted": false,
+      "deletedBy": null,
+      "deleteReason": "",
+      "deletedAt": null,
+      "restoredAt": null
+    }
   },
   "comment16": {
     "text": "If you're dealing with a more complex API setup, you might also need to handle preflight requests carefully. Watch out for OPTIONS requests with complex headers.",
     "commentBy": "frontenddev",
-    "commentDateTime": "2025-04-07T13:45:16Z"
+    "commentDateTime": "2025-04-07T13:45:16Z",
+    "flagged": {
+      "isFlagged": false,
+      "flaggedBy": [],
+      "flaggedAt": [],
+      "reviewedBy": null,
+      "reviewedAt": null
+    },
+    "deleted": {
+      "isDeleted": false,
+      "deletedBy": null,
+      "deleteReason": "",
+      "deletedAt": null,
+      "restoredAt": null
+    }
   },
   "comment17": {
     "text": "This is a good start, but for extremely large datasets, you might want to look into Dask, which provides NumPy-like interfaces for datasets that don't fit in memory.",
     "commentBy": "datascientist",
-    "commentDateTime": "2025-04-10T10:12:43Z"
+    "commentDateTime": "2025-04-10T10:12:43Z",
+    "flagged": {
+      "isFlagged": false,
+      "flaggedBy": [],
+      "flaggedAt": [],
+      "reviewedBy": null,
+      "reviewedAt": null
+    },
+    "deleted": {
+      "isDeleted": false,
+      "deletedBy": null,
+      "deleteReason": "",
+      "deletedAt": null,
+      "restoredAt": null
+    }
   },
   "comment18": {
     "text": "A small tip: you can also use Docker secrets for more sensitive information rather than environment variables for production deployments.",
     "commentBy": "devopsengineer",
-    "commentDateTime": "2025-04-12T17:33:29Z"
+    "commentDateTime": "2025-04-12T17:33:29Z",
+    "flagged": {
+      "isFlagged": false,
+      "flaggedBy": [],
+      "flaggedAt": [],
+      "reviewedBy": null,
+      "reviewedAt": null
+    },
+    "deleted": {
+      "isDeleted": false,
+      "deletedBy": null,
+      "deleteReason": "",
+      "deletedAt": null,
+      "restoredAt": null
+    }
   },
   "comment19": {
     "text": "Another approach worth considering is using AbortController for cancellable fetch requests, especially useful in React when components might unmount during pending requests.",
     "commentBy": "jsdev123",
-    "commentDateTime": "2025-04-15T09:56:47Z"
+    "commentDateTime": "2025-04-15T09:56:47Z",
+    "flagged": {
+      "isFlagged": false,
+      "flaggedBy": [],
+      "flaggedAt": [],
+      "reviewedBy": null,
+      "reviewedAt": null
+    },
+    "deleted": {
+      "isDeleted": false,
+      "deletedBy": null,
+      "deleteReason": "",
+      "deletedAt": null,
+      "restoredAt": null
+    }
   },
   "comment20": {
     "text": "Great explanation! You might also want to mention useCallback for memoizing event handlers when they're passed to child components to prevent unnecessary re-renders.",
     "commentBy": "reactninja",
-    "commentDateTime": "2025-04-18T15:27:38Z"
+    "commentDateTime": "2025-04-18T15:27:38Z",
+    "flagged": {
+      "isFlagged": false,
+      "flaggedBy": [],
+      "flaggedAt": [],
+      "reviewedBy": null,
+      "reviewedAt": null
+    },
+    "deleted": {
+      "isDeleted": false,
+      "deletedBy": null,
+      "deleteReason": "",
+      "deletedAt": null,
+      "restoredAt": null
+    }
   }
 }
