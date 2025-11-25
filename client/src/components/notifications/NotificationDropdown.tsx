@@ -1,5 +1,20 @@
 import { Box, Text, Button, VStack, HStack, IconButton, Flex } from '@chakra-ui/react';
 import { DatabaseNotification } from '@fake-stack-overflow/shared';
+import type { ObjectId } from 'mongoose';
+
+/**
+ * Helper function to safely convert ObjectId to string
+ * ObjectId from mongoose has a proper toString() method that returns a string representation
+ */
+const objectIdToString = (id: ObjectId | string): string => {
+  if (typeof id === 'string') {
+    return id;
+  }
+  // ObjectId from mongoose has a toString method that returns hex string
+  // Type assertion needed because TypeScript doesn't recognize ObjectId's custom toString
+  const objectId = id as { toString(): string };
+  return objectId.toString();
+};
 
 interface NotificationDropdownProps {
   notifications: DatabaseNotification[];
@@ -7,6 +22,7 @@ interface NotificationDropdownProps {
   onMarkAsRead: (notificationId: string) => Promise<void>;
   onMarkAllAsRead: () => Promise<void>;
   onDelete: (notificationId: string) => Promise<void>;
+  onAppeal?: (contentId: string, contentType: 'question' | 'answer' | 'comment') => void;
 }
 
 /**
@@ -18,7 +34,17 @@ const NotificationDropdown = ({
   onMarkAsRead,
   onMarkAllAsRead,
   onDelete,
+  onAppeal,
 }: NotificationDropdownProps) => {
+  /**
+   * Extracts content type from deletion notification message
+   */
+  const getContentTypeFromMessage = (message: string): 'question' | 'answer' | 'comment' | null => {
+    if (message.includes('question')) return 'question';
+    if (message.includes('answer')) return 'answer';
+    if (message.includes('comment')) return 'comment';
+    return null;
+  };
   const getNotificationColor = (type: string, isRead: boolean) => {
     if (isRead) return 'gray.100';
     switch (type) {
@@ -26,6 +52,8 @@ const NotificationDropdown = ({
         return 'red.50';
       case 'flag':
         return 'orange.50';
+      case 'appeal_result':
+        return 'blue.50';
       case 'suspension':
         return 'red.100';
       case 'role_change':
@@ -108,8 +136,7 @@ const NotificationDropdown = ({
         ) : (
           <VStack align='stretch' gap={0}>
             {notifications.map((notification, index) => (
-              // eslint-disable-next-line @typescript-eslint/no-base-to-string
-              <Box key={notification._id.toString()}>
+              <Box key={objectIdToString(notification._id)}>
                 <Box
                   p={4}
                   bg={getNotificationColor(notification.type, notification.isRead)}
@@ -120,7 +147,9 @@ const NotificationDropdown = ({
                       ? 'red.500'
                       : notification.type === 'flag'
                         ? 'orange.500'
-                        : 'blue.500'
+                        : notification.type === 'appeal_result'
+                          ? 'blue.500'
+                          : 'blue.500'
                   }>
                   <HStack justify='space-between' align='start' gap={2}>
                     <Box flex='1'>
@@ -134,14 +163,33 @@ const NotificationDropdown = ({
                       <Text fontSize='xs' color='gray.500'>
                         {formatTimestamp(notification.timestamp)}
                       </Text>
+                      {notification.type === 'deletion' && notification.contentId && onAppeal && (
+                        <Button
+                          size='xs'
+                          colorScheme='blue'
+                          variant='outline'
+                          mt={2}
+                          onClick={() => {
+                            const contentType = getContentTypeFromMessage(notification.message);
+                            if (contentType && notification.contentId) {
+                              onAppeal(
+                                typeof notification.contentId === 'string'
+                                  ? notification.contentId
+                                  : objectIdToString(notification.contentId),
+                                contentType,
+                              );
+                            }
+                          }}>
+                          Appeal
+                        </Button>
+                      )}
                     </Box>
                     <HStack gap={1}>
                       {!notification.isRead && (
                         <IconButton
                           aria-label='Mark as read'
                           onClick={async () => {
-                            // eslint-disable-next-line @typescript-eslint/no-base-to-string
-                            await onMarkAsRead(notification._id.toString());
+                            await onMarkAsRead(objectIdToString(notification._id));
                           }}
                           size='xs'
                           variant='ghost'>
@@ -151,8 +199,7 @@ const NotificationDropdown = ({
                       <IconButton
                         aria-label='Delete notification'
                         onClick={async () => {
-                          // eslint-disable-next-line @typescript-eslint/no-base-to-string
-                          await onDelete(notification._id.toString());
+                          await onDelete(objectIdToString(notification._id));
                         }}
                         size='xs'
                         variant='ghost'

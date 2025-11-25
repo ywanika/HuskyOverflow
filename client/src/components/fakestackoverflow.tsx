@@ -1,4 +1,4 @@
-import { JSX, useState } from 'react';
+import { JSX, useState, useEffect } from 'react';
 import { Routes, Route, Navigate } from 'react-router-dom';
 import Layout from './layout';
 import Login from './auth/login';
@@ -26,6 +26,7 @@ import ModeratorDashboard from './main/moderatorDashboard';
 import AdminDashboard from './main/adminDashboard';
 import MainMessagePage from './main/mainMessagePage';
 import CommunityGuidelines from './communityGuidelines';
+import SuspendedPage from './suspendedPage';
 
 const ProtectedRoute = ({
   user,
@@ -50,6 +51,25 @@ const ProtectedRoute = ({
 const FakeStackOverflow = ({ socket }: { socket: FakeSOSocket | null }) => {
   const [user, setUser] = useState<SafeDatabaseUser | null>(null);
 
+  useEffect(() => {
+    if (!socket || !user) return;
+
+    // Listen for user updates (role changes, suspensions, etc.)
+    const handleUserUpdate = (data: { user: SafeDatabaseUser }) => {
+      // Only update if it's the current user
+      if (data.user.username === user.username) {
+        setUser(data.user);
+      }
+    };
+
+    socket.on('userUpdate', handleUserUpdate);
+
+    // Cleanup listener on unmount
+    return () => {
+      socket.off('userUpdate', handleUserUpdate);
+    };
+  }, [socket, user]);
+
   return (
     <ThemeProvider>
       <LoginContext.Provider value={{ setUser }}>
@@ -58,6 +78,17 @@ const FakeStackOverflow = ({ socket }: { socket: FakeSOSocket | null }) => {
           <Route path='/' element={<Login />} />
           <Route path='/signup' element={<Signup />} />
           <Route path='/guidelines' element={<CommunityGuidelines />} />
+
+          {/* Suspended Page - Special protected route */}
+          <Route
+            path='/suspended'
+            element={
+              <ProtectedRoute user={user} socket={socket}>
+                <SuspendedPage />
+              </ProtectedRoute>
+            }
+          />
+
           {/* Protected Routes */}
           <Route
             element={

@@ -15,6 +15,12 @@ import {
   loginUser,
   saveUser,
   updateUser,
+  suspendUser,
+  banUser,
+  promoteToModerator,
+  promoteToAdmin,
+  demoteToUser,
+  checkUserSuspensionStatus,
 } from '../services/user.service';
 
 const userController = (socket: FakeSOSocket) => {
@@ -263,6 +269,279 @@ const userController = (socket: FakeSOSocket) => {
     }
   };
 
+  /**
+   * Suspends a user for a specific duration with a violation reason.
+   * @param req The request containing username, durationDays, and reason in the body.
+   * @param res The response, either confirming suspension or returning an error.
+   * @returns A promise resolving to void.
+   */
+  const suspendUserRoute = async (req: Request, res: Response): Promise<void> => {
+    try {
+      const { username, durationDays, reason, adminUsername } = req.body;
+
+      if (!username || !durationDays || !reason || !adminUsername) {
+        res
+          .status(400)
+          .send('Missing required fields: username, durationDays, reason, adminUsername');
+        return;
+      }
+
+      // Verify the requesting user is an admin
+      const adminUser = await getUserByUsername(adminUsername);
+      if ('error' in adminUser || adminUser.role !== 'admin') {
+        res.status(403).send('Only administrators can suspend users');
+        return;
+      }
+
+      const result = await suspendUser(username, durationDays, reason);
+
+      if ('error' in result) {
+        throw Error(result.error);
+      }
+
+      socket.emit('userUpdate', {
+        user: result,
+        type: 'updated',
+      });
+
+      // Emit notification update for the suspended user
+      socket.emit('notificationUpdate', {
+        type: 'newNotification',
+        username: result.username,
+      });
+
+      res.status(200).json(result);
+    } catch (error) {
+      res.status(500).send(`Error when suspending user: ${error}`);
+    }
+  };
+
+  /**
+   * Bans a user permanently with a mandatory reason.
+   * @param req The request containing username and reason in the body.
+   * @param res The response, either confirming ban or returning an error.
+   * @returns A promise resolving to void.
+   */
+  const banUserRoute = async (req: Request, res: Response): Promise<void> => {
+    try {
+      const { username, reason, adminUsername } = req.body;
+
+      if (!username || !reason || !adminUsername) {
+        res.status(400).send('Missing required fields: username, reason, adminUsername');
+        return;
+      }
+
+      // Verify the requesting user is an admin
+      const adminUser = await getUserByUsername(adminUsername);
+      if ('error' in adminUser || adminUser.role !== 'admin') {
+        res.status(403).send('Only administrators can ban users');
+        return;
+      }
+
+      const result = await banUser(username, reason);
+
+      if ('error' in result) {
+        throw Error(result.error);
+      }
+
+      socket.emit('userUpdate', {
+        user: result,
+        type: 'updated',
+      });
+
+      // Emit notification update for the banned user
+      socket.emit('notificationUpdate', {
+        type: 'newNotification',
+        username: result.username,
+      });
+
+      res.status(200).json(result);
+    } catch (error) {
+      res.status(500).send(`Error when banning user: ${error}`);
+    }
+  };
+
+  /**
+   * Promotes a user to moderator role.
+   * @param req The request containing username in the body.
+   * @param res The response, either confirming promotion or returning an error.
+   * @returns A promise resolving to void.
+   */
+  const promoteToModeratorRoute = async (req: Request, res: Response): Promise<void> => {
+    try {
+      const { username, adminUsername } = req.body;
+
+      if (!username || !adminUsername) {
+        res.status(400).send('Missing required fields: username, adminUsername');
+        return;
+      }
+
+      // Verify the requesting user is an admin
+      const adminUser = await getUserByUsername(adminUsername);
+      if ('error' in adminUser || adminUser.role !== 'admin') {
+        res.status(403).send('Only administrators can promote users to moderator');
+        return;
+      }
+
+      const result = await promoteToModerator(username);
+
+      if ('error' in result) {
+        throw Error(result.error);
+      }
+
+      socket.emit('userUpdate', {
+        user: result,
+        type: 'updated',
+      });
+
+      socket.emit('notificationUpdate', {
+        type: 'newNotification',
+        username: result.username,
+      });
+
+      res.status(200).json(result);
+    } catch (error) {
+      res.status(500).send(`Error when promoting user to moderator: ${error}`);
+    }
+  };
+
+  /**
+   * Promotes a moderator to admin role.
+   * @param req The request containing username in the body.
+   * @param res The response, either confirming promotion or returning an error.
+   * @returns A promise resolving to void.
+   */
+  const promoteToAdminRoute = async (req: Request, res: Response): Promise<void> => {
+    try {
+      const { username, adminUsername } = req.body;
+
+      if (!username || !adminUsername) {
+        res.status(400).send('Missing required fields: username, adminUsername');
+        return;
+      }
+
+      // Verify the requesting user is an admin
+      const adminUser = await getUserByUsername(adminUsername);
+      if ('error' in adminUser || adminUser.role !== 'admin') {
+        res.status(403).send('Only administrators can promote moderators to admin');
+        return;
+      }
+
+      //check if user is moderator
+      const user = await getUserByUsername(username);
+
+      if ('error' in user) {
+        throw Error(user.error);
+      }
+
+      if (user.role !== 'moderator') {
+        res.status(400).send('User must be a moderator to be promoted to admin');
+        return;
+      }
+
+      const result = await promoteToAdmin(username);
+
+      if ('error' in result) {
+        throw Error(result.error);
+      }
+
+      socket.emit('userUpdate', {
+        user: result,
+        type: 'updated',
+      });
+
+      socket.emit('notificationUpdate', {
+        type: 'newNotification',
+        username: result.username,
+      });
+
+      res.status(200).json(result);
+    } catch (error) {
+      res.status(500).send(`Error when promoting moderator to admin: ${error}`);
+    }
+  };
+
+  /**
+   * Demotes a user back to regular user role.
+   * @param req The request containing username in the body.
+   * @param res The response, either confirming demotion or returning an error.
+   * @returns A promise resolving to void.
+   */
+  const demoteToUserRoute = async (req: Request, res: Response): Promise<void> => {
+    try {
+      const { username, adminUsername } = req.body;
+
+      if (!username || !adminUsername) {
+        res.status(400).send('Missing required fields: username, adminUsername');
+        return;
+      }
+
+      // Verify the requesting user is an admin
+      const adminUser = await getUserByUsername(adminUsername);
+      if ('error' in adminUser || adminUser.role !== 'admin') {
+        res.status(403).send('Only administrators can demote users');
+        return;
+      }
+
+      //check if user is moderator
+      const user = await getUserByUsername(username);
+
+      if ('error' in user) {
+        throw Error(user.error);
+      }
+
+      if (user.role !== 'moderator' && user.role !== 'admin') {
+        res.status(400).send('User must be a moderator or admin to be demoted to user');
+        return;
+      }
+
+      const result = await demoteToUser(username);
+
+      if ('error' in result) {
+        throw Error(result.error);
+      }
+
+      socket.emit('userUpdate', {
+        user: result,
+        type: 'updated',
+      });
+
+      socket.emit('notificationUpdate', {
+        type: 'newNotification',
+        username: result.username,
+      });
+
+      res.status(200).json(result);
+    } catch (error) {
+      res.status(500).send(`Error when demoting user: ${error}`);
+    }
+  };
+
+  /**
+   * Checks if a user is currently suspended or banned.
+   * @param req The request containing the username as a route parameter.
+   * @param res The response with suspension status information.
+   * @returns A promise resolving to void.
+   */
+  const checkSuspensionStatusRoute = async (
+    req: UserByUsernameRequest,
+    res: Response,
+  ): Promise<void> => {
+    try {
+      const { username } = req.params;
+
+      const result = await checkUserSuspensionStatus(username);
+
+      if ('error' in result) {
+        throw Error(result.error);
+      }
+
+      res.status(200).json(result);
+    } catch (error) {
+      res.status(500).send(`Error when checking suspension status: ${error}`);
+    }
+  };
+
   // Define routes for the user-related operations.
   router.post('/signup', createUser);
   router.post('/login', userLogin);
@@ -273,6 +552,12 @@ const userController = (socket: FakeSOSocket) => {
   router.patch('/updateBiography', updateBiography);
   router.patch('/updateGuidelinesAgreement', updateGuidelinesAgreement);
   router.get('/checkGuidelines/:username', checkGuidelinesAgreement);
+  router.post('/suspend', suspendUserRoute);
+  router.post('/ban', banUserRoute);
+  router.post('/promoteToModerator', promoteToModeratorRoute);
+  router.post('/promoteToAdmin', promoteToAdminRoute);
+  router.post('/demoteToUser', demoteToUserRoute);
+  router.get('/suspensionStatus/:username', checkSuspensionStatusRoute);
   return router;
 };
 

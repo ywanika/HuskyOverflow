@@ -1,0 +1,82 @@
+{
+  "notification1": {
+    "recipientUsername": "newbiereactdev",
+    "type": "deletion",
+    "message": "Your question \"How to properly handle async data fetching in React?\" has been deleted by a moderator. Reason: Duplicate question - already answered multiple times in the community.",
+    "contentId": "question1",
+    "isRead": false,
+    "timestamp": "2025-04-20T10:00:00Z"
+  },
+  "notification2": {
+    "recipientUsername": "jsdeveloper",
+    "type": "appeal_result",
+    "message": "Your appeal for your deleted answer has been approved. After review, your answer is technically sound and provides valuable information. The deletion was a mistake. Your content has been restored.",
+    "contentId": "answer5",
+    "isRead": true,
+    "timestamp": "2025-04-19T10:30:00Z"
+  },
+  "notification3": {
+    "recipientUsername": "webpacknewbie",
+    "type": "appeal_result",
+    "message": "Your appeal for your deleted comment has been rejected. While your comment may have been well-intentioned, it contained inaccurate information about babel configuration that could mislead other users. The deletion stands.",
+    "contentId": "comment3",
+    "isRead": true,
+    "timestamp": "2025-04-17T08:20:00Z"
+  },
+  "notification4": {
+    "recipientUsername": "moderator1",
+    "type": "flag",
+    "message": "A question has been flagged by user123",
+    "contentId": "question2",
+    "isRead": false,
+    "timestamp": "2025-04-21T15:30:00Z"
+  },
+  "notification5": {
+    "recipientUsername": "moderator2",
+    "type": "flag",
+    "message": "An appeal has been submitted for a deleted answer by jsdeveloper",
+    "contentId": "answer5",
+    "isRead": true,
+    "timestamp": "2025-04-18T09:15:00Z"
+  },
+  "notification6": {
+    "recipientUsername": "serverdev",
+    "type": "deletion",
+    "message": "Your answer \"You should use streams to handle large files. Here's how to implement it with multer and st\" has been deleted by a moderator. Reason: Code contains security vulnerabilities that could harm users.",
+    "contentId": "answer2",
+    "isRead": false,
+    "timestamp": "2025-04-22T11:00:00Z"
+  },
+  "notification7": {
+    "recipientUsername": "user123",
+    "type": "suspension",
+    "message": "Your account has been temporarily suspended for 7 days due to repeated violations of community guidelines. Reason: Posting spam content and harassing other users.",
+    "contentId": null,
+    "isRead": false,
+    "timestamp": "2025-04-23T09:00:00Z"
+  },
+  "notification8": {
+    "recipientUsername": "moderator1",
+    "type": "role_change",
+    "message": "Congratulations! You have been promoted to moderator. You now have additional privileges to help maintain the community.",
+    "contentId": null,
+    "isRead": true,
+    "timestamp": "2025-03-01T10:00:00Z"
+  },
+  "notification9": {
+    "recipientUsername": "newbiereactdev",
+    "type": "system_announcement",
+    "message": "Welcome to FakeStackOverflow! Please read our community guidelines before posting your first question.",
+    "contentId": null,
+    "isRead": true,
+    "timestamp": "2025-03-10T08:00:00Z"
+  },
+  "notification10": {
+    "recipientUsername": "dbnovice",
+    "type": "system_announcement",
+    "message": "System maintenance scheduled for April 25th, 2025 from 2:00 AM to 4:00 AM EST. The site will be temporarily unavailable during this time.",
+    "contentId": null,
+    "isRead": false,
+    "timestamp": "2025-04-24T12:00:00Z"
+  }
+}

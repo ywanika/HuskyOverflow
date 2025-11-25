@@ -5,6 +5,8 @@ const config = {
   roots: ['<rootDir>/src'],
   moduleNameMapper: {
     '\\.(css|less|scss|sass)$': '<rootDir>/src/testUtils/styleMock.ts',
+    '^react-markdown$': '<rootDir>/src/testUtils/markdownMock.tsx',
+    '^remark-gfm$': '<rootDir>/src/testUtils/remarkGfmMock.ts',
   },
   extensionsToTreatAsEsm: ['.ts', '.tsx'],
   transform: {
@@ -17,6 +19,7 @@ const config = {
     ],
   },
   setupFiles: ['<rootDir>/jest.setup.ts'],
+  setupFilesAfterEnv: ['<rootDir>/jest.setupAfterEnv.ts'],
 };
 
 export default config;

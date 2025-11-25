@@ -10,7 +10,14 @@ import eslintReactHooks from 'eslint-plugin-react-hooks';
 import eslintReactRefresh from 'eslint-plugin-react-refresh';
 
 export default defineConfig([
-  globalIgnores(['build/*', 'dist/*', '.stryker-tmp/*', 'coverage/*', 'jest.setup.ts']),
+  globalIgnores([
+    'build/*',
+    'dist/*',
+    '.stryker-tmp/*',
+    'coverage/*',
+    'jest.setup.ts',
+    'jest.setupAfterEnv.ts',
+  ]),
   {
     files: ['**/*.{js,mjs,cjs,ts,jsx,tsx}'],
     extends: [
@@ -31,7 +38,7 @@ export default defineConfig([
       'import/no-extraneous-dependencies': [
         'error',
         {
-          devDependencies: ['**/*.spec.ts', 'eslint.config.*'],
+          devDependencies: ['**/*.spec.ts', '**/*.test.ts', '**/*.test.tsx', 'eslint.config.*'],
           includeInternal: true,
         },
       ],
@@ -47,6 +54,7 @@ export default defineConfig([
   },
   {
     files: ['**/*.{ts,tsx}'],
+    ignores: ['jest.setupAfterEnv.ts'],
     extends: tseslint.configs.recommendedTypeChecked,
     languageOptions: {
       parserOptions: {
