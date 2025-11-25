@@ -1,5 +1,6 @@
 import mongoose, { Query } from 'mongoose';
 import UserModel from '../../models/users.model';
+import NotificationModel from '../../models/notifications.model';
 import {
   deleteUserByUsername,
   getUserByUsername,
@@ -7,6 +8,12 @@ import {
   loginUser,
   saveUser,
   updateUser,
+  suspendUser,
+  banUser,
+  promoteToModerator,
+  promoteToAdmin,
+  demoteToUser,
+  checkUserSuspensionStatus,
 } from '../../services/user.service';
 import { SafeDatabaseUser, User, UserCredentials } from '../../types/types';
 import { user, safeUser } from '../mockData.models';
@@ -346,5 +353,331 @@ describe('updateUser', () => {
     const updatedError = await updateUser(user.username, biographyUpdates);
 
     expect('error' in updatedError).toBe(true);
+  });
+});
+
+describe('Admin User Management', () => {
+  beforeEach(() => {
+    jest.resetAllMocks();
+  });
+
+  describe('suspendUser', () => {
+    it('should suspend a user for specified duration with reason', async () => {
+      const suspendedUser = {
+        ...safeUser,
+        suspendedUntil: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000),
+        suspensionReason: 'Spam',
+      };
+
+      jest.spyOn(UserModel, 'findOneAndUpdate').mockReturnValue({
+        select: jest.fn().mockResolvedValue(suspendedUser),
+      } as unknown as Query<SafeDatabaseUser, typeof UserModel>);
+
+      jest.spyOn(NotificationModel, 'create').mockResolvedValueOnce({} as any);
+
+      const result = (await suspendUser('testuser', 7, 'Spam')) as SafeDatabaseUser;
+
+      expect(result.suspendedUntil).toBeDefined();
+      expect(result.suspensionReason).toEqual('Spam');
+      expect(NotificationModel.create).toHaveBeenCalledWith(
+        expect.objectContaining({
+          recipientUsername: 'testuser',
+          type: 'suspension',
+          message: expect.stringContaining('suspended until'),
+        }),
+      );
+    });
+
+    it('should return error if user not found', async () => {
+      jest.spyOn(UserModel, 'findOneAndUpdate').mockReturnValue({
+        select: jest.fn().mockResolvedValue(null),
+      } as unknown as Query<SafeDatabaseUser, typeof UserModel>);
+
+      const result = await suspendUser('nonexistent', 7, 'Spam');
+
+      expect('error' in result).toBe(true);
+    });
+  });
+
+  describe('banUser', () => {
+    it('should permanently ban a user with valid reason', async () => {
+      const bannedUser = {
+        ...safeUser,
+        isBanned: true,
+        banReason: 'Hate Speech: This is a detailed reason for the permanent ban',
+      };
+
+      jest.spyOn(UserModel, 'findOneAndUpdate').mockReturnValue({
+        select: jest.fn().mockResolvedValue(bannedUser),
+      } as unknown as Query<SafeDatabaseUser, typeof UserModel>);
+
+      jest.spyOn(NotificationModel, 'create').mockResolvedValueOnce({} as any);
+
+      const result = (await banUser(
+        'testuser',
+        'Hate Speech: This is a detailed reason for the permanent ban',
+      )) as SafeDatabaseUser;
+
+      expect(result.isBanned).toBe(true);
+      expect(result.banReason).toContain('Hate Speech');
+      expect(NotificationModel.create).toHaveBeenCalledWith(
+        expect.objectContaining({
+          recipientUsername: 'testuser',
+          type: 'suspension',
+          message: expect.stringContaining('permanently banned'),
+        }),
+      );
+    });
+
+    it('should return error if ban reason is less than 20 characters', async () => {
+      const result = await banUser('testuser', 'Too short');
+
+      expect('error' in result).toBe(true);
+      expect((result as { error: string }).error).toContain('at least 20 characters');
+    });
+
+    it('should return error if user not found', async () => {
+      jest.spyOn(UserModel, 'findOneAndUpdate').mockReturnValue({
+        select: jest.fn().mockResolvedValue(null),
+      } as unknown as Query<SafeDatabaseUser, typeof UserModel>);
+
+      const result = await banUser('nonexistent', 'Valid reason with enough characters here');
+
+      expect('error' in result).toBe(true);
+    });
+  });
+
+  describe('promoteToModerator', () => {
+    it('should promote a user to moderator role', async () => {
+      const regularUser = { ...safeUser, role: 'user', isBanned: false, suspendedUntil: null };
+      const promotedUser = { ...safeUser, role: 'moderator' };
+
+      jest.spyOn(UserModel, 'findOne').mockResolvedValueOnce(regularUser as any);
+      jest.spyOn(UserModel, 'findOneAndUpdate').mockReturnValue({
+        select: jest.fn().mockResolvedValue(promotedUser),
+      } as unknown as Query<SafeDatabaseUser, typeof UserModel>);
+
+      jest.spyOn(NotificationModel, 'create').mockResolvedValueOnce({} as any);
+
+      const result = (await promoteToModerator('testuser')) as SafeDatabaseUser;
+
+      expect(result.role).toEqual('moderator');
+      expect(NotificationModel.create).toHaveBeenCalledWith(
+        expect.objectContaining({
+          recipientUsername: 'testuser',
+          type: 'role_change',
+          message: expect.stringContaining('promoted to Moderator'),
+        }),
+      );
+    });
+
+    it('should not promote a banned user', async () => {
+      const bannedUser = { ...safeUser, role: 'user', isBanned: true };
+
+      jest.spyOn(UserModel, 'findOne').mockResolvedValueOnce(bannedUser as any);
+
+      const result = await promoteToModerator('banneduser');
+
+      expect('error' in result).toBe(true);
+      expect((result as { error: string }).error).toContain('Cannot promote a banned user');
+    });
+
+    it('should not promote a suspended user', async () => {
+      const suspendedUser = {
+        ...safeUser,
+        role: 'user',
+        isBanned: false,
+        suspendedUntil: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000),
+      };
+
+      jest.spyOn(UserModel, 'findOne').mockResolvedValueOnce(suspendedUser as any);
+
+      const result = await promoteToModerator('suspendeduser');
+
+      expect('error' in result).toBe(true);
+      expect((result as { error: string }).error).toContain('Cannot promote a suspended user');
+    });
+
+    it('should return error if user not found', async () => {
+      jest.spyOn(UserModel, 'findOne').mockResolvedValueOnce(null);
+
+      const result = await promoteToModerator('nonexistent');
+
+      expect('error' in result).toBe(true);
+    });
+  });
+
+  describe('promoteToAdmin', () => {
+    it('should promote a moderator to admin role', async () => {
+      const moderatorUser = { ...safeUser, role: 'moderator' };
+      const adminUser = { ...safeUser, role: 'admin' };
+
+      jest.spyOn(UserModel, 'findOne').mockResolvedValueOnce(moderatorUser as any);
+      jest.spyOn(UserModel, 'findOneAndUpdate').mockReturnValue({
+        select: jest.fn().mockResolvedValue(adminUser),
+      } as unknown as Query<SafeDatabaseUser, typeof UserModel>);
+
+      jest.spyOn(NotificationModel, 'create').mockResolvedValueOnce({} as any);
+
+      const result = (await promoteToAdmin('testmoderator')) as SafeDatabaseUser;
+
+      expect(result.role).toEqual('admin');
+      expect(NotificationModel.create).toHaveBeenCalledWith(
+        expect.objectContaining({
+          recipientUsername: 'testmoderator',
+          type: 'role_change',
+          message: expect.stringContaining('promoted to Admin'),
+        }),
+      );
+    });
+
+    it('should not promote a regular user to admin', async () => {
+      const regularUser = { ...safeUser, role: 'user' };
+
+      jest.spyOn(UserModel, 'findOne').mockResolvedValueOnce(regularUser as any);
+
+      const result = await promoteToAdmin('regularuser');
+
+      expect('error' in result).toBe(true);
+      expect((result as { error: string }).error).toContain(
+        'must be a moderator to be promoted to admin',
+      );
+    });
+
+    it('should return error if user not found', async () => {
+      jest.spyOn(UserModel, 'findOne').mockResolvedValueOnce(null);
+
+      const result = await promoteToAdmin('nonexistent');
+
+      expect('error' in result).toBe(true);
+    });
+  });
+
+  describe('demoteToUser', () => {
+    it('should demote a moderator to user role', async () => {
+      const moderatorUser = { ...safeUser, role: 'moderator' };
+      const demotedUser = { ...safeUser, role: 'user' };
+
+      jest.spyOn(UserModel, 'findOne').mockResolvedValueOnce(moderatorUser as any);
+      jest.spyOn(UserModel, 'findOneAndUpdate').mockReturnValue({
+        select: jest.fn().mockResolvedValue(demotedUser),
+      } as unknown as Query<SafeDatabaseUser, typeof UserModel>);
+
+      jest.spyOn(NotificationModel, 'create').mockResolvedValueOnce({} as any);
+
+      const result = (await demoteToUser('testmoderator')) as SafeDatabaseUser;
+
+      expect(result.role).toEqual('user');
+      expect(NotificationModel.create).toHaveBeenCalledWith(
+        expect.objectContaining({
+          recipientUsername: 'testmoderator',
+          type: 'role_change',
+          message: expect.stringContaining('demoted to User'),
+        }),
+      );
+    });
+
+    it('should demote an admin to user role', async () => {
+      const adminUser = { ...safeUser, role: 'admin' };
+      const demotedUser = { ...safeUser, role: 'user' };
+
+      jest.spyOn(UserModel, 'findOne').mockResolvedValueOnce(adminUser as any);
+      jest.spyOn(UserModel, 'findOneAndUpdate').mockReturnValue({
+        select: jest.fn().mockResolvedValue(demotedUser),
+      } as unknown as Query<SafeDatabaseUser, typeof UserModel>);
+
+      jest.spyOn(NotificationModel, 'create').mockResolvedValueOnce({} as any);
+
+      const result = (await demoteToUser('testadmin')) as SafeDatabaseUser;
+
+      expect(result.role).toEqual('user');
+    });
+
+    it('should not demote a regular user', async () => {
+      const regularUser = { ...safeUser, role: 'user' };
+
+      jest.spyOn(UserModel, 'findOne').mockResolvedValueOnce(regularUser as any);
+
+      const result = await demoteToUser('regularuser');
+
+      expect('error' in result).toBe(true);
+      expect((result as { error: string }).error).toContain('must be a moderator');
+    });
+  });
+
+  describe('checkUserSuspensionStatus', () => {
+    it('should return suspended status for currently suspended user', async () => {
+      const futureDate = new Date(Date.now() + 7 * 24 * 60 * 60 * 1000);
+      const suspendedUser = {
+        suspendedUntil: futureDate,
+        suspensionReason: 'Spam',
+        isBanned: false,
+        banReason: undefined,
+      };
+
+      jest.spyOn(UserModel, 'findOne').mockReturnValue({
+        select: jest.fn().mockResolvedValue(suspendedUser),
+      } as unknown as Query<any, typeof UserModel>);
+
+      const result = await checkUserSuspensionStatus('testuser');
+
+      expect('error' in result).toBe(false);
+      if (!('error' in result)) {
+        expect(result.isSuspended).toBe(true);
+        expect(result.suspensionReason).toEqual('Spam');
+      }
+    });
+
+    it('should return banned status for banned user', async () => {
+      const bannedUser = {
+        suspendedUntil: null,
+        suspensionReason: undefined,
+        isBanned: true,
+        banReason: 'Hate Speech: Permanent ban reason',
+      };
+
+      jest.spyOn(UserModel, 'findOne').mockReturnValue({
+        select: jest.fn().mockResolvedValue(bannedUser),
+      } as unknown as Query<any, typeof UserModel>);
+
+      const result = await checkUserSuspensionStatus('banneduser');
+
+      expect('error' in result).toBe(false);
+      if (!('error' in result)) {
+        expect(result.isBanned).toBe(true);
+        expect(result.banReason).toContain('Hate Speech');
+      }
+    });
+
+    it('should return not suspended for user with past suspension', async () => {
+      const pastDate = new Date(Date.now() - 7 * 24 * 60 * 60 * 1000);
+      const previouslySuspendedUser = {
+        suspendedUntil: pastDate,
+        suspensionReason: 'Spam',
+        isBanned: false,
+        banReason: undefined,
+      };
+
+      jest.spyOn(UserModel, 'findOne').mockReturnValue({
+        select: jest.fn().mockResolvedValue(previouslySuspendedUser),
+      } as unknown as Query<any, typeof UserModel>);
+
+      const result = await checkUserSuspensionStatus('testuser');
+
+      expect('error' in result).toBe(false);
+      if (!('error' in result)) {
+        expect(result.isSuspended).toBe(false);
+      }
+    });
+
+    it('should return error if user not found', async () => {
+      jest.spyOn(UserModel, 'findOne').mockReturnValue({
+        select: jest.fn().mockResolvedValue(null),
+      } as unknown as Query<any, typeof UserModel>);
+
+      const result = await checkUserSuspensionStatus('nonexistent');
+
+      expect('error' in result).toBe(true);
+    });
   });
 });

@@ -170,7 +170,7 @@ export const createAppealResultNotification = async (
   modResponse?: string,
 ): Promise<void> => {
   try {
-    const { ObjectId } = await import('mongodb');
+    const { ObjectId: objectIdCtor } = await import('mongodb');
     const message =
       status === 'approved'
         ? `Your appeal for your ${contentType} has been approved. Your content has been restored.${modResponse ? ` Moderator response: ${modResponse}` : ''}`
@@ -180,7 +180,7 @@ export const createAppealResultNotification = async (
       recipientUsername,
       type: 'appeal_result',
       message,
-      contentId: new ObjectId(contentId),
+      contentId: new objectIdCtor(contentId),
       isRead: false,
       timestamp: new Date(),
     });

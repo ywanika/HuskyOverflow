@@ -136,9 +136,7 @@ describe('Notification Service', () => {
         timestamp: new Date(),
       };
 
-      jest
-        .spyOn(NotificationModel, 'findOneAndUpdate')
-        .mockResolvedValue(mockNotification as any);
+      jest.spyOn(NotificationModel, 'findOneAndUpdate').mockResolvedValue(mockNotification as any);
 
       const result = await markNotificationAsRead(notificationId, username);
 
@@ -199,9 +197,7 @@ describe('Notification Service', () => {
     it('should return error when database operation fails', async () => {
       const username = 'testuser';
 
-      jest
-        .spyOn(NotificationModel, 'updateMany')
-        .mockRejectedValue(new Error('Database error'));
+      jest.spyOn(NotificationModel, 'updateMany').mockRejectedValue(new Error('Database error'));
 
       const result = await markAllNotificationsAsRead(username);
 
@@ -223,9 +219,7 @@ describe('Notification Service', () => {
         timestamp: new Date(),
       };
 
-      jest
-        .spyOn(NotificationModel, 'findOneAndDelete')
-        .mockResolvedValue(mockNotification as any);
+      jest.spyOn(NotificationModel, 'findOneAndDelete').mockResolvedValue(mockNotification as any);
 
       const result = await deleteNotification(notificationId, username);
 
@@ -321,9 +315,7 @@ describe('Notification Service', () => {
         lean: jest.fn().mockResolvedValue(mockUsers),
       } as any);
 
-      jest
-        .spyOn(NotificationModel, 'insertMany')
-        .mockRejectedValue(new Error('Database error'));
+      jest.spyOn(NotificationModel, 'insertMany').mockRejectedValue(new Error('Database error'));
 
       const result = await createSystemNotification(message);
 
@@ -519,4 +511,3 @@ describe('Notification Service', () => {
     });
   });
 });
-

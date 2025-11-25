@@ -15,6 +15,7 @@ import useUserContext from '../../../hooks/useUserContext';
  * - isModerator - Whether the current user is a moderator or admin
  * - onDeleteComment - Callback function when delete button is clicked for a comment
  * - onFlagComment - Callback function when flag button is clicked for a comment
+ * - onUnflagComment - Callback function when unflag button is clicked for a comment
  * - getIsFlagged - Function to check if a comment is already flagged by the current user
  */
 interface CommentSectionProps {
@@ -23,6 +24,7 @@ interface CommentSectionProps {
   isModerator?: boolean;
   onDeleteComment?: (commentId: string) => void;
   onFlagComment?: (commentId: string) => void;
+  onUnflagComment?: (commentId: string) => void;
   getIsFlagged?: (commentId: string) => boolean;
 }
 
@@ -34,6 +36,7 @@ interface CommentSectionProps {
  * @param isModerator: whether the current user is a moderator
  * @param onDeleteComment: callback when delete button is clicked for a comment
  * @param onFlagComment: callback when flag button is clicked for a comment
+ * @param onUnflagComment: callback when unflag button is clicked for a comment
  * @param getIsFlagged: function to check if a comment is already flagged
  */
 const CommentSection = ({
@@ -42,6 +45,7 @@ const CommentSection = ({
   isModerator,
   onDeleteComment,
   onFlagComment,
+  onUnflagComment,
   getIsFlagged,
 }: CommentSectionProps) => {
   const { user } = useUserContext();
@@ -101,23 +105,32 @@ const CommentSection = ({
                       {comment.commentBy}, {getMetaData(new Date(comment.commentDateTime))}
                     </small>
                     <div style={{ display: 'flex', gap: '4px' }}>
-                      {onFlagComment && (
+                      {getIsFlagged && getIsFlagged(String(comment._id)) && onUnflagComment ? (
                         <Button
                           size='xs'
                           colorScheme='orange'
-                          variant='outline'
+                          variant='solid'
                           onClick={e => {
                             e.stopPropagation();
-                            onFlagComment(String(comment._id));
+                            onUnflagComment(String(comment._id));
                           }}
-                          disabled={getIsFlagged ? getIsFlagged(String(comment._id)) : false}
-                          aria-label={
-                            getIsFlagged && getIsFlagged(String(comment._id))
-                              ? 'Already flagged'
-                              : `Flag comment by ${comment.commentBy}`
-                          }>
-                          {getIsFlagged && getIsFlagged(String(comment._id)) ? 'Flagged' : 'Flag'}
+                          aria-label={`Unflag comment by ${comment.commentBy}`}>
+                          Unflag
                         </Button>
+                      ) : (
+                        onFlagComment && (
+                          <Button
+                            size='xs'
+                            colorScheme='orange'
+                            variant='outline'
+                            onClick={e => {
+                              e.stopPropagation();
+                              onFlagComment(String(comment._id));
+                            }}
+                            aria-label={`Flag comment by ${comment.commentBy}`}>
+                            Flag
+                          </Button>
+                        )
                       )}
                       {isModerator && onDeleteComment && (
                         <Button

@@ -72,3 +72,41 @@ export interface Appeal {
 export interface DatabaseAppeal extends Appeal {
   _id: ObjectId;
 }
+
+/**
+ * Interface for appeal items returned by the API.
+ * - `_id`: Unique identifier for the appeal.
+ * - `contentId`: ID of the content being appealed.
+ * - `contentType`: Type of content being appealed.
+ * - `appealUser`: Username of the user making the appeal.
+ * - `reason`: Reason for the appeal.
+ * - `status`: Current status of the appeal.
+ * - `modResponse`: Optional response from the moderator.
+ * - `processedBy`: Optional username of the moderator who processed the appeal.
+ * - `timestamp`: Timestamp when the appeal was submitted.
+ * - `processedAt`: Optional timestamp when the appeal was processed.
+ * - `content`: The content object being appealed (question, answer, or comment).
+ */
+export interface AppealItem {
+  _id: string;
+  contentId: string;
+  contentType: 'question' | 'answer' | 'comment';
+  appealUser: string;
+  reason: string;
+  status: 'pending' | 'approved' | 'rejected';
+  modResponse?: string;
+  processedBy?: string;
+  timestamp: Date;
+  processedAt?: Date;
+  content: Record<string, unknown>;
+}
+
+/**
+ * Response type for getting appeals.
+ * - `appeals`: Array of appeal items.
+ * - `error`: Optional error message.
+ */
+export interface AppealsResponse {
+  appeals: AppealItem[];
+  error?: string;
+}

@@ -29,9 +29,11 @@ import {
   Legend,
   ResponsiveContainer,
 } from 'recharts';
+import { useState } from 'react';
 import useAdminDashboard from '../../../hooks/useAdminDashboard';
 import useUserContext from '../../../hooks/useUserContext';
 import { Navigate } from 'react-router-dom';
+import UserManagementTab from './UserManagementTab';
 import './index.css';
 
 // Chart colors - using hex values for Recharts compatibility
@@ -39,6 +41,7 @@ const COLORS = ['#0A999E', '#48BB78', '#9137B7', '#ED8936', '#CB9F00', '#9E6C00'
 
 const AdminDashboard = () => {
   const { user } = useUserContext();
+  const [activeTab, setActiveTab] = useState<'metrics' | 'users'>('metrics');
   const {
     metrics,
     loading,
@@ -460,29 +463,32 @@ const AdminDashboard = () => {
         </SimpleGrid>
       </VStack>
 
-      {/* System Notification Section */}
-      <Box className='system-notification-section'>
-        <Heading className='system-notification-title'>Send System-Wide Notification</Heading>
-        <Field.Root>
-          <Field.Label>Notification Message</Field.Label>
-          <Input
-            placeholder='Enter notification text for all users...'
-            value={notificationMessage}
-            onChange={e => setNotificationMessage(e.target.value)}
-            className='system-notification-input'
-          />
-        </Field.Root>
-        {notificationStatus.type && (
-          <Alert
-            className='system-notification-alert'
-            status={notificationStatus.type === 'success' ? 'success' : 'error'}>
-            <AlertDescription>{notificationStatus.message}</AlertDescription>
-          </Alert>
+            {/* System Notification Section */}
+            <Box className='system-notification-section'>
+              <Heading className='system-notification-title'>Send System-Wide Notification</Heading>
+              <Field.Root>
+                <Field.Label>Notification Message</Field.Label>
+                <Input
+                  placeholder='Enter notification text for all users...'
+                  value={notificationMessage}
+                  onChange={e => setNotificationMessage(e.target.value)}
+                  className='system-notification-input'
+                />
+              </Field.Root>
+              {notificationStatus.type && (
+                <Alert
+                  className='system-notification-alert'
+                  status={notificationStatus.type === 'success' ? 'success' : 'error'}>
+                  <AlertDescription>{notificationStatus.message}</AlertDescription>
+                </Alert>
+              )}
+              <Button className='system-notification-button' onClick={handleNotificationSubmit}>
+                Send Notification to All Users
+              </Button>
+            </Box>
+          </>
         )}
-        <Button className='system-notification-button' onClick={handleNotificationSubmit}>
-          Send Notification to All Users
-        </Button>
-      </Box>
+      </VStack>
     </Box>
   );
 };

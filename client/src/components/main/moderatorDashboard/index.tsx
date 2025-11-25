@@ -12,6 +12,7 @@ import {
   CardBody,
   CardHeader,
   AlertRoot as Alert,
+  Textarea,
 } from '@chakra-ui/react';
 import Markdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
@@ -19,16 +20,22 @@ import useModeratorDashboard from '../../../hooks/useModeratorDashboard';
 import useUserContext from '../../../hooks/useUserContext';
 import DeleteContentModal from '../../moderation/DeleteContentModal';
 import { FlaggedContentItem } from '../../../services/moderationService';
+import { AppealItem } from '@fake-stack-overflow/shared';
 import { getMetaData } from '../../../tool';
 import './index.css';
 
 const ModeratorDashboard = () => {
   const navigate = useNavigate();
   const { user } = useUserContext();
-  const [activeTab, setActiveTab] = useState<'questions' | 'answers' | 'comments'>('questions');
+  const [activeTab, setActiveTab] = useState<'questions' | 'answers' | 'comments' | 'appeals'>(
+    'questions',
+  );
+  const [appealModResponse, setAppealModResponse] = useState<{ [key: string]: string }>({});
+  const [processingAppeal, setProcessingAppeal] = useState<string | null>(null);
 
   const {
     flaggedContent,
+    appeals,
     loading,
     error,
     handleMarkAsReviewed,
@@ -37,6 +44,8 @@ const ModeratorDashboard = () => {
     deleteModal,
     setDeleteModal,
     handleDeleteConfirm,
+    handleApproveAppeal,
+    handleRejectAppeal,
   } = useModeratorDashboard();
 
   // Check if user is moderator or admin
@@ -172,6 +181,107 @@ const ModeratorDashboard = () => {
     );
   }
 
+  const renderAppealItem = (appeal: AppealItem, _index: number) => {
+    const content = appeal.content;
+    const title = getContentTitle(content, appeal.contentType);
+    const text = getContentText(content);
+    const author = appeal.appealUser;
+    const deletedInfo = content.deleted as
+      | { deleteReason?: string; deletedBy?: string }
+      | undefined;
+
+    return (
+      <Card key={`appeal-${appeal._id}`} mb={4} borderLeft='4px' borderColor='blue.500'>
+        <CardHeader>
+          <VStack align='start' gap={1} flex={1}>
+            <HStack>
+              <Badge colorScheme='blue'>APPEAL</Badge>
+              <Badge colorScheme='red'>{appeal.contentType.toUpperCase()}</Badge>
+            </HStack>
+            <Heading size='sm'>{title}</Heading>
+            <Text fontSize='sm' color='gray.600'>
+              Appealed by {author} • {getMetaData(new Date(appeal.timestamp))}
+            </Text>
+            {deletedInfo && (
+              <Text fontSize='sm' color='red.600'>
+                Deleted by {deletedInfo.deletedBy || 'Unknown'} • Reason:{' '}
+                {deletedInfo.deleteReason || 'No reason provided'}
+              </Text>
+            )}
+          </VStack>
+        </CardHeader>
+        <CardBody>
+          <Box mb={4} p={3} bg='gray.50' borderRadius='md' maxH='200px' overflowY='auto'>
+            <Markdown remarkPlugins={[remarkGfm]}>{text}</Markdown>
+          </Box>
+          <VStack align='start' gap={2} mb={4}>
+            <Text fontSize='sm' fontWeight='bold'>
+              Appeal Reason:
+            </Text>
+            <Box p={3} bg='blue.50' borderRadius='md' w='100%'>
+              <Text fontSize='sm'>{appeal.reason}</Text>
+            </Box>
+          </VStack>
+          <Box mb={4}>
+            <Text fontSize='sm' fontWeight='bold' mb={2}>
+              Moderator Response (optional):
+            </Text>
+            <Textarea
+              value={appealModResponse[appeal._id] || ''}
+              onChange={e =>
+                setAppealModResponse({ ...appealModResponse, [appeal._id]: e.target.value })
+              }
+              placeholder='Optional response to the user...'
+              rows={3}
+              disabled={processingAppeal === appeal._id}
+            />
+          </Box>
+          <HStack gap={2} flexWrap='wrap'>
+            {appeal.contentType === 'question' && (
+              <Button
+                size='sm'
+                colorScheme='blue'
+                variant='outline'
+                onClick={() => navigate(`/question/${appeal.contentId}`)}>
+                View Question
+              </Button>
+            )}
+            <Button
+              size='sm'
+              colorScheme='green'
+              variant='solid'
+              onClick={async () => {
+                setProcessingAppeal(appeal._id);
+                await handleApproveAppeal(appeal._id, appealModResponse[appeal._id] || undefined);
+                setAppealModResponse({ ...appealModResponse, [appeal._id]: '' });
+                setProcessingAppeal(null);
+              }}
+              disabled={processingAppeal === appeal._id}
+              loading={processingAppeal === appeal._id}
+              loadingText='Approving...'>
+              Approve Appeal
+            </Button>
+            <Button
+              size='sm'
+              colorScheme='red'
+              variant='solid'
+              onClick={async () => {
+                setProcessingAppeal(appeal._id);
+                await handleRejectAppeal(appeal._id, appealModResponse[appeal._id] || undefined);
+                setAppealModResponse({ ...appealModResponse, [appeal._id]: '' });
+                setProcessingAppeal(null);
+              }}
+              disabled={processingAppeal === appeal._id}
+              loading={processingAppeal === appeal._id}
+              loadingText='Rejecting...'>
+              Reject Appeal
+            </Button>
+          </HStack>
+        </CardBody>
+      </Card>
+    );
+  };
+
   const totalFlagged =
     flaggedContent.questions.length +
     flaggedContent.answers.length +
@@ -206,6 +316,12 @@ const ModeratorDashboard = () => {
               onClick={() => setActiveTab('comments')}>
               Comments ({flaggedContent.comments.length})
             </Button>
+            <Button
+              variant={activeTab === 'appeals' ? 'solid' : 'ghost'}
+              colorScheme={activeTab === 'appeals' ? 'blue' : 'gray'}
+              onClick={() => setActiveTab('appeals')}>
+              Appeals ({appeals.length})
+            </Button>
           </HStack>
 
           <Box>
@@ -239,6 +355,17 @@ const ModeratorDashboard = () => {
                   flaggedContent.comments.map((item, index) =>
                     renderFlaggedItem(item, 'comment', index),
                   )
+                )}
+              </Box>
+            )}
+            {activeTab === 'appeals' && (
+              <Box>
+                {appeals.length === 0 ? (
+                  <Text color='gray.500' textAlign='center' py={8}>
+                    No pending appeals
+                  </Text>
+                ) : (
+                  appeals.map((appeal, index) => renderAppealItem(appeal, index))
                 )}
               </Box>
             )}

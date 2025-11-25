@@ -5,6 +5,7 @@ import { ObjectId } from 'mongodb';
 import ModeratorDashboard from '../index';
 import useModeratorDashboard from '../../../../hooks/useModeratorDashboard';
 import useUserContext from '../../../../hooks/useUserContext';
+import type { AppealItem } from '@fake-stack-overflow/shared';
 import { SafeDatabaseUser, FakeSOSocket } from '../../../../types/types';
 
 const system = createSystem(defaultConfig);
@@ -95,6 +96,30 @@ const mockFlaggedContent = {
   ],
 };
 
+const mockAppeals: AppealItem[] = [
+  {
+    _id: 'appeal1',
+    contentId: 'q3',
+    contentType: 'question',
+    appealUser: 'user12',
+    reason:
+      'My post follows the community guidelines and provides helpful information for other developers.',
+    status: 'pending',
+    timestamp: new Date('2024-02-01'),
+    content: {
+      _id: 'q3',
+      title: 'Deleted Question',
+      text: 'Deleted content body',
+      askedBy: 'user12',
+      askDateTime: new Date('2024-01-30'),
+      deleted: {
+        deleteReason: 'off-topic',
+        deletedBy: 'mod1',
+      },
+    },
+  },
+];
+
 const renderComponent = () => {
   return render(
     <ChakraProvider value={system}>
@@ -111,6 +136,31 @@ describe('ModeratorDashboard', () => {
   const mockHandleDeleteClick = jest.fn();
   const mockHandleDeleteConfirm = jest.fn();
   const mockSetDeleteModal = jest.fn();
+  const mockHandleApproveAppeal = jest.fn();
+  const mockHandleRejectAppeal = jest.fn();
+
+  const buildHookReturn = (
+    overrides: Partial<ReturnType<typeof useModeratorDashboard>> = {},
+  ) => ({
+    flaggedContent: mockFlaggedContent,
+    appeals: mockAppeals,
+    loading: false,
+    error: '',
+    handleMarkAsReviewed: mockHandleMarkAsReviewed,
+    handleDismissFlag: mockHandleDismissFlag,
+    handleDeleteClick: mockHandleDeleteClick,
+    deleteModal: {
+      isOpen: false,
+      type: 'question' as const,
+      contentId: '',
+    },
+    setDeleteModal: mockSetDeleteModal,
+    handleDeleteConfirm: mockHandleDeleteConfirm,
+    fetchFlaggedContent: jest.fn(),
+    handleApproveAppeal: mockHandleApproveAppeal,
+    handleRejectAppeal: mockHandleRejectAppeal,
+    ...overrides,
+  });
 
   beforeEach(() => {
     jest.clearAllMocks();
@@ -125,22 +175,7 @@ describe('ModeratorDashboard', () => {
       socket: {} as FakeSOSocket,
     });
 
-    mockUseModeratorDashboard.mockReturnValue({
-      flaggedContent: mockFlaggedContent,
-      loading: false,
-      error: '',
-      handleMarkAsReviewed: mockHandleMarkAsReviewed,
-      handleDismissFlag: mockHandleDismissFlag,
-      handleDeleteClick: mockHandleDeleteClick,
-      deleteModal: {
-        isOpen: false,
-        type: 'question',
-        contentId: '',
-      },
-      setDeleteModal: mockSetDeleteModal,
-      handleDeleteConfirm: mockHandleDeleteConfirm,
-      fetchFlaggedContent: jest.fn(),
-    });
+    mockUseModeratorDashboard.mockReturnValue(buildHookReturn());
   });
 
   describe('access control', () => {
@@ -186,22 +221,12 @@ describe('ModeratorDashboard', () => {
 
   describe('loading state', () => {
     it('should display loading spinner when loading', () => {
-      mockUseModeratorDashboard.mockReturnValue({
-        flaggedContent: { questions: [], answers: [], comments: [] },
-        loading: true,
-        error: '',
-        handleMarkAsReviewed: mockHandleMarkAsReviewed,
-        handleDismissFlag: mockHandleDismissFlag,
-        handleDeleteClick: mockHandleDeleteClick,
-        deleteModal: {
-          isOpen: false,
-          type: 'question',
-          contentId: '',
-        },
-        setDeleteModal: mockSetDeleteModal,
-        handleDeleteConfirm: mockHandleDeleteConfirm,
-        fetchFlaggedContent: jest.fn(),
-      });
+      mockUseModeratorDashboard.mockReturnValue(
+        buildHookReturn({
+          flaggedContent: { questions: [], answers: [], comments: [] },
+          loading: true,
+        }),
+      );
 
       renderComponent();
 
@@ -211,22 +236,12 @@ describe('ModeratorDashboard', () => {
 
   describe('error state', () => {
     it('should display error message when error occurs', () => {
-      mockUseModeratorDashboard.mockReturnValue({
-        flaggedContent: { questions: [], answers: [], comments: [] },
-        loading: false,
-        error: 'Failed to fetch flagged content',
-        handleMarkAsReviewed: mockHandleMarkAsReviewed,
-        handleDismissFlag: mockHandleDismissFlag,
-        handleDeleteClick: mockHandleDeleteClick,
-        deleteModal: {
-          isOpen: false,
-          type: 'question',
-          contentId: '',
-        },
-        setDeleteModal: mockSetDeleteModal,
-        handleDeleteConfirm: mockHandleDeleteConfirm,
-        fetchFlaggedContent: jest.fn(),
-      });
+      mockUseModeratorDashboard.mockReturnValue(
+        buildHookReturn({
+          flaggedContent: { questions: [], answers: [], comments: [] },
+          error: 'Failed to fetch flagged content',
+        }),
+      );
 
       renderComponent();
 
@@ -251,22 +266,11 @@ describe('ModeratorDashboard', () => {
     });
 
     it('should calculate total correctly with empty arrays', () => {
-      mockUseModeratorDashboard.mockReturnValue({
-        flaggedContent: { questions: [], answers: [], comments: [] },
-        loading: false,
-        error: '',
-        handleMarkAsReviewed: mockHandleMarkAsReviewed,
-        handleDismissFlag: mockHandleDismissFlag,
-        handleDeleteClick: mockHandleDeleteClick,
-        deleteModal: {
-          isOpen: false,
-          type: 'question',
-          contentId: '',
-        },
-        setDeleteModal: mockSetDeleteModal,
-        handleDeleteConfirm: mockHandleDeleteConfirm,
-        fetchFlaggedContent: jest.fn(),
-      });
+      mockUseModeratorDashboard.mockReturnValue(
+        buildHookReturn({
+          flaggedContent: { questions: [], answers: [], comments: [] },
+        }),
+      );
 
       renderComponent();
 
@@ -315,26 +319,15 @@ describe('ModeratorDashboard', () => {
     });
 
     it('should show empty state when tab has no items', () => {
-      mockUseModeratorDashboard.mockReturnValue({
-        flaggedContent: {
-          questions: [],
-          answers: [],
-          comments: [],
-        },
-        loading: false,
-        error: '',
-        handleMarkAsReviewed: mockHandleMarkAsReviewed,
-        handleDismissFlag: mockHandleDismissFlag,
-        handleDeleteClick: mockHandleDeleteClick,
-        deleteModal: {
-          isOpen: false,
-          type: 'question',
-          contentId: '',
-        },
-        setDeleteModal: mockSetDeleteModal,
-        handleDeleteConfirm: mockHandleDeleteConfirm,
-        fetchFlaggedContent: jest.fn(),
-      });
+      mockUseModeratorDashboard.mockReturnValue(
+        buildHookReturn({
+          flaggedContent: {
+            questions: [],
+            answers: [],
+            comments: [],
+          },
+        }),
+      );
 
       renderComponent();
 
@@ -540,39 +533,28 @@ describe('ModeratorDashboard', () => {
     });
 
     it('should handle missing title gracefully', () => {
-      mockUseModeratorDashboard.mockReturnValue({
-        flaggedContent: {
-          questions: [
-            {
-              _id: 'q3',
-              contentType: 'question' as const,
-              content: {
+      mockUseModeratorDashboard.mockReturnValue(
+        buildHookReturn({
+          flaggedContent: {
+            questions: [
+              {
                 _id: 'q3',
-                text: 'Question without title',
-                askedBy: 'user1',
-                askDateTime: new Date(),
+                contentType: 'question',
+                content: {
+                  _id: 'q3',
+                  text: 'Question without title',
+                  askedBy: 'user1',
+                  askDateTime: new Date(),
+                },
+                flaggedBy: ['user2'],
+                flaggedAt: [new Date()],
               },
-              flaggedBy: ['user2'],
-              flaggedAt: [new Date()],
-            },
-          ],
-          answers: [],
-          comments: [],
-        },
-        loading: false,
-        error: '',
-        handleMarkAsReviewed: mockHandleMarkAsReviewed,
-        handleDismissFlag: mockHandleDismissFlag,
-        handleDeleteClick: mockHandleDeleteClick,
-        deleteModal: {
-          isOpen: false,
-          type: 'question',
-          contentId: '',
-        },
-        setDeleteModal: mockSetDeleteModal,
-        handleDeleteConfirm: mockHandleDeleteConfirm,
-        fetchFlaggedContent: jest.fn(),
-      });
+            ],
+            answers: [],
+            comments: [],
+          },
+        }),
+      );
 
       renderComponent();
 
@@ -580,38 +562,27 @@ describe('ModeratorDashboard', () => {
     });
 
     it('should handle missing text gracefully for answers', () => {
-      mockUseModeratorDashboard.mockReturnValue({
-        flaggedContent: {
-          questions: [],
-          answers: [
-            {
-              _id: 'a2',
-              contentType: 'answer' as const,
-              content: {
+      mockUseModeratorDashboard.mockReturnValue(
+        buildHookReturn({
+          flaggedContent: {
+            questions: [],
+            answers: [
+              {
                 _id: 'a2',
-                ansBy: 'user1',
-                ansDateTime: new Date(),
+                contentType: 'answer',
+                content: {
+                  _id: 'a2',
+                  ansBy: 'user1',
+                  ansDateTime: new Date(),
+                },
+                flaggedBy: ['user2'],
+                flaggedAt: [new Date()],
               },
-              flaggedBy: ['user2'],
-              flaggedAt: [new Date()],
-            },
-          ],
-          comments: [],
-        },
-        loading: false,
-        error: '',
-        handleMarkAsReviewed: mockHandleMarkAsReviewed,
-        handleDismissFlag: mockHandleDismissFlag,
-        handleDeleteClick: mockHandleDeleteClick,
-        deleteModal: {
-          isOpen: false,
-          type: 'question',
-          contentId: '',
-        },
-        setDeleteModal: mockSetDeleteModal,
-        handleDeleteConfirm: mockHandleDeleteConfirm,
-        fetchFlaggedContent: jest.fn(),
-      });
+            ],
+            comments: [],
+          },
+        }),
+      );
 
       renderComponent();
 
@@ -630,39 +601,28 @@ describe('ModeratorDashboard', () => {
     });
 
     it('should use title property when text is not available', () => {
-      mockUseModeratorDashboard.mockReturnValue({
-        flaggedContent: {
-          questions: [
-            {
-              _id: 'q4',
-              contentType: 'question' as const,
-              content: {
+      mockUseModeratorDashboard.mockReturnValue(
+        buildHookReturn({
+          flaggedContent: {
+            questions: [
+              {
                 _id: 'q4',
-                title: 'Question Title Only',
-                askedBy: 'user1',
-                askDateTime: new Date(),
+                contentType: 'question',
+                content: {
+                  _id: 'q4',
+                  title: 'Question Title Only',
+                  askedBy: 'user1',
+                  askDateTime: new Date(),
+                },
+                flaggedBy: ['user2'],
+                flaggedAt: [new Date()],
               },
-              flaggedBy: ['user2'],
-              flaggedAt: [new Date()],
-            },
-          ],
-          answers: [],
-          comments: [],
-        },
-        loading: false,
-        error: '',
-        handleMarkAsReviewed: mockHandleMarkAsReviewed,
-        handleDismissFlag: mockHandleDismissFlag,
-        handleDeleteClick: mockHandleDeleteClick,
-        deleteModal: {
-          isOpen: false,
-          type: 'question',
-          contentId: '',
-        },
-        setDeleteModal: mockSetDeleteModal,
-        handleDeleteConfirm: mockHandleDeleteConfirm,
-        fetchFlaggedContent: jest.fn(),
-      });
+            ],
+            answers: [],
+            comments: [],
+          },
+        }),
+      );
 
       renderComponent();
 
@@ -671,38 +631,27 @@ describe('ModeratorDashboard', () => {
     });
 
     it('should display "No content" when neither text nor title is available', () => {
-      mockUseModeratorDashboard.mockReturnValue({
-        flaggedContent: {
-          questions: [
-            {
-              _id: 'q5',
-              contentType: 'question' as const,
-              content: {
+      mockUseModeratorDashboard.mockReturnValue(
+        buildHookReturn({
+          flaggedContent: {
+            questions: [
+              {
                 _id: 'q5',
-                askedBy: 'user1',
-                askDateTime: new Date(),
+                contentType: 'question',
+                content: {
+                  _id: 'q5',
+                  askedBy: 'user1',
+                  askDateTime: new Date(),
+                },
+                flaggedBy: ['user2'],
+                flaggedAt: [new Date()],
               },
-              flaggedBy: ['user2'],
-              flaggedAt: [new Date()],
-            },
-          ],
-          answers: [],
-          comments: [],
-        },
-        loading: false,
-        error: '',
-        handleMarkAsReviewed: mockHandleMarkAsReviewed,
-        handleDismissFlag: mockHandleDismissFlag,
-        handleDeleteClick: mockHandleDeleteClick,
-        deleteModal: {
-          isOpen: false,
-          type: 'question',
-          contentId: '',
-        },
-        setDeleteModal: mockSetDeleteModal,
-        handleDeleteConfirm: mockHandleDeleteConfirm,
-        fetchFlaggedContent: jest.fn(),
-      });
+            ],
+            answers: [],
+            comments: [],
+          },
+        }),
+      );
 
       renderComponent();
 
@@ -736,38 +685,27 @@ describe('ModeratorDashboard', () => {
     });
 
     it('should display "Unknown" when author is not available', () => {
-      mockUseModeratorDashboard.mockReturnValue({
-        flaggedContent: {
-          questions: [
-            {
-              _id: 'q6',
-              contentType: 'question' as const,
-              content: {
+      mockUseModeratorDashboard.mockReturnValue(
+        buildHookReturn({
+          flaggedContent: {
+            questions: [
+              {
                 _id: 'q6',
-                title: 'Test',
-                askDateTime: new Date(),
+                contentType: 'question',
+                content: {
+                  _id: 'q6',
+                  title: 'Test',
+                  askDateTime: new Date(),
+                },
+                flaggedBy: ['user2'],
+                flaggedAt: [new Date()],
               },
-              flaggedBy: ['user2'],
-              flaggedAt: [new Date()],
-            },
-          ],
-          answers: [],
-          comments: [],
-        },
-        loading: false,
-        error: '',
-        handleMarkAsReviewed: mockHandleMarkAsReviewed,
-        handleDismissFlag: mockHandleDismissFlag,
-        handleDeleteClick: mockHandleDeleteClick,
-        deleteModal: {
-          isOpen: false,
-          type: 'question',
-          contentId: '',
-        },
-        setDeleteModal: mockSetDeleteModal,
-        handleDeleteConfirm: mockHandleDeleteConfirm,
-        fetchFlaggedContent: jest.fn(),
-      });
+            ],
+            answers: [],
+            comments: [],
+          },
+        }),
+      );
 
       renderComponent();
 
@@ -777,23 +715,16 @@ describe('ModeratorDashboard', () => {
 
   describe('delete modal', () => {
     it('should render delete modal when deleteModal.isOpen is true', () => {
-      mockUseModeratorDashboard.mockReturnValue({
-        flaggedContent: mockFlaggedContent,
-        loading: false,
-        error: '',
-        handleMarkAsReviewed: mockHandleMarkAsReviewed,
-        handleDismissFlag: mockHandleDismissFlag,
-        handleDeleteClick: mockHandleDeleteClick,
-        deleteModal: {
-          isOpen: true,
-          type: 'question',
-          contentId: 'q1',
-          contentTitle: 'Test Question',
-        },
-        setDeleteModal: mockSetDeleteModal,
-        handleDeleteConfirm: mockHandleDeleteConfirm,
-        fetchFlaggedContent: jest.fn(),
-      });
+      mockUseModeratorDashboard.mockReturnValue(
+        buildHookReturn({
+          deleteModal: {
+            isOpen: true,
+            type: 'question',
+            contentId: 'q1',
+            contentTitle: 'Test Question',
+          },
+        }),
+      );
 
       renderComponent();
 
@@ -807,23 +738,16 @@ describe('ModeratorDashboard', () => {
     });
 
     it('should call setDeleteModal to close modal', () => {
-      mockUseModeratorDashboard.mockReturnValue({
-        flaggedContent: mockFlaggedContent,
-        loading: false,
-        error: '',
-        handleMarkAsReviewed: mockHandleMarkAsReviewed,
-        handleDismissFlag: mockHandleDismissFlag,
-        handleDeleteClick: mockHandleDeleteClick,
-        deleteModal: {
-          isOpen: true,
-          type: 'question',
-          contentId: 'q1',
-          contentTitle: 'Test Question',
-        },
-        setDeleteModal: mockSetDeleteModal,
-        handleDeleteConfirm: mockHandleDeleteConfirm,
-        fetchFlaggedContent: jest.fn(),
-      });
+      mockUseModeratorDashboard.mockReturnValue(
+        buildHookReturn({
+          deleteModal: {
+            isOpen: true,
+            type: 'question',
+            contentId: 'q1',
+            contentTitle: 'Test Question',
+          },
+        }),
+      );
 
       renderComponent();
 
@@ -839,23 +763,16 @@ describe('ModeratorDashboard', () => {
     });
 
     it('should call handleDeleteConfirm when delete is confirmed', () => {
-      mockUseModeratorDashboard.mockReturnValue({
-        flaggedContent: mockFlaggedContent,
-        loading: false,
-        error: '',
-        handleMarkAsReviewed: mockHandleMarkAsReviewed,
-        handleDismissFlag: mockHandleDismissFlag,
-        handleDeleteClick: mockHandleDeleteClick,
-        deleteModal: {
-          isOpen: true,
-          type: 'question',
-          contentId: 'q1',
-          contentTitle: 'Test Question',
-        },
-        setDeleteModal: mockSetDeleteModal,
-        handleDeleteConfirm: mockHandleDeleteConfirm,
-        fetchFlaggedContent: jest.fn(),
-      });
+      mockUseModeratorDashboard.mockReturnValue(
+        buildHookReturn({
+          deleteModal: {
+            isOpen: true,
+            type: 'question',
+            contentId: 'q1',
+            contentTitle: 'Test Question',
+          },
+        }),
+      );
 
       renderComponent();
 

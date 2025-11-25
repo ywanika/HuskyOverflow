@@ -26,6 +26,9 @@ const AnswerPage = () => {
     handleFlagQuestion,
     handleFlagAnswer,
     handleFlagComment,
+    handleUnflagQuestion,
+    handleUnflagAnswer,
+    handleUnflagComment,
     user,
   } = useAnswerPage();
 
@@ -87,6 +90,7 @@ const AnswerPage = () => {
         isModerator={isModerator}
         onDeleteClick={() => handleDeleteClick('question', questionID, question.title)}
         onFlagClick={handleFlagQuestion}
+        onUnflagClick={handleUnflagQuestion}
         isFlagged={question.flagged?.flaggedBy?.includes(user.username) || false}
       />
       <CommentSection
@@ -95,6 +99,7 @@ const AnswerPage = () => {
         isModerator={isModerator}
         onDeleteComment={(commentId: string) => handleDeleteClick('comment', commentId)}
         onFlagComment={handleFlagComment}
+        onUnflagComment={handleUnflagComment}
         getIsFlagged={(commentId: string) => {
           const comment = question.comments.find(c => String(c._id) === commentId);
           return comment?.flagged?.flaggedBy?.includes(user.username) || false;
@@ -117,8 +122,10 @@ const AnswerPage = () => {
             onDeleteClick={() => handleDeleteClick('answer', String(a._id))}
             onDeleteComment={(commentId: string) => handleDeleteClick('comment', commentId)}
             onFlagClick={() => handleFlagAnswer(String(a._id))}
+            onUnflagClick={() => handleUnflagAnswer(String(a._id))}
             isFlagged={a.flagged?.flaggedBy?.includes(user.username) || false}
             onFlagComment={handleFlagComment}
+            onUnflagComment={handleUnflagComment}
             getIsCommentFlagged={(commentId: string) => {
               const comment = a.comments.find(c => String(c._id) === commentId);
               return comment?.flagged?.flaggedBy?.includes(user.username) || false;
