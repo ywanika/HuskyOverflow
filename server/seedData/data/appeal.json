@@ -1,0 +1,35 @@
+{
+  "appeal1": {
+    "contentId": "question1",
+    "contentType": "question",
+    "appealUser": "newbiereactdev",
+    "reason": "My question about React data fetching was deleted unfairly. I believe it was a legitimate technical question that follows community guidelines. The question had multiple upvotes and was helping other developers. I would like to request a review of this decision.",
+    "status": "pending",
+    "modResponse": "",
+    "processedBy": null,
+    "timestamp": "2025-04-20T14:30:00Z",
+    "processedAt": null
+  },
+  "appeal2": {
+    "contentId": "answer5",
+    "contentType": "answer",
+    "appealUser": "jsdeveloper",
+    "reason": "I provided a detailed answer about handling edge cases in JavaScript array processing. This answer was marked as deleted but I believe it was technically accurate and helpful. I included proper error handling examples and best practices. Please reconsider this deletion.",
+    "status": "approved",
+    "modResponse": "After review, your answer is technically sound and provides valuable information. The deletion was a mistake. Your content has been restored.",
+    "processedBy": "moderator1",
+    "timestamp": "2025-04-18T09:15:00Z",
+    "processedAt": "2025-04-19T10:30:00Z"
+  },
+  "appeal3": {
+    "contentId": "comment3",
+    "contentType": "comment",
+    "appealUser": "webpacknewbie",
+    "reason": "My comment was deleted but it was directly relevant to the webpack configuration question. I was providing additional context about babel presets that could help solve the issue. This wasn't spam or off-topic content.",
+    "status": "rejected",
+    "modResponse": "While your comment may have been well-intentioned, it contained inaccurate information about babel configuration that could mislead other users. The deletion stands.",
+    "processedBy": "moderator2",
+    "timestamp": "2025-04-16T11:45:00Z",
+    "processedAt": "2025-04-17T08:20:00Z"
+  }
+}
