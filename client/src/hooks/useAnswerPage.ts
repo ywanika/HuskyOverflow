@@ -17,6 +17,9 @@ import {
   flagQuestion,
   flagAnswer,
   flagComment,
+  unflagQuestion,
+  unflagAnswer,
+  unflagComment,
 } from '../services/moderationService';
 
 /**
@@ -268,6 +271,39 @@ const useAnswerPage = () => {
     setQuestion(res || null);
   };
 
+  /**
+   * Handles unflagging of a question by a user
+   */
+  const handleUnflagQuestion = async () => {
+    if (!questionID) {
+      throw new Error('Question ID not found');
+    }
+    await unflagQuestion(questionID, user.username);
+    // Refresh the question data
+    const res = await getQuestionById(questionID, user.username);
+    setQuestion(res || null);
+  };
+
+  /**
+   * Handles unflagging of an answer by a user
+   */
+  const handleUnflagAnswer = async (answerId: string) => {
+    await unflagAnswer(answerId, user.username);
+    // Refresh the question data
+    const res = await getQuestionById(questionID, user.username);
+    setQuestion(res || null);
+  };
+
+  /**
+   * Handles unflagging of a comment by a user
+   */
+  const handleUnflagComment = async (commentId: string) => {
+    await unflagComment(commentId, user.username);
+    // Refresh the question data
+    const res = await getQuestionById(questionID, user.username);
+    setQuestion(res || null);
+  };
+
   return {
     questionID,
     question,
@@ -279,6 +315,9 @@ const useAnswerPage = () => {
     handleFlagQuestion,
     handleFlagAnswer,
     handleFlagComment,
+    handleUnflagQuestion,
+    handleUnflagAnswer,
+    handleUnflagComment,
     user,
   };
 };

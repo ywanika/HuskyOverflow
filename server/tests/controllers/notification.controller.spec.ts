@@ -132,10 +132,10 @@ describe('Notification Controller', () => {
         .patch(`/api/notification/read/${notificationId}?username=${username}`)
         .send();
 
+      expect(markNotificationAsReadSpy).toHaveBeenCalledWith(notificationId, username);
       expect(response.status).toBe(200);
       expect(response.body.success).toBe(true);
       expect(response.body.notification.isRead).toBe(true);
-      expect(markNotificationAsReadSpy).toHaveBeenCalledWith(notificationId, username);
     });
 
     it('should return 400 when notificationId is missing', async () => {
@@ -154,7 +154,8 @@ describe('Notification Controller', () => {
         .send();
 
       expect(response.status).toBe(400);
-      expect(response.body.message).toContain('Validation Failed');
+      expect(response.body.message).toBe('Request Validation Failed');
+      expect(response.body.errors).toBeDefined();
     });
 
     it('should return 404 when notification is not found', async () => {
@@ -205,6 +206,8 @@ describe('Notification Controller', () => {
       const response = await supertest(app).patch(`/api/notification/read-all`).send({});
 
       expect(response.status).toBe(400);
+      expect(response.body.message).toBe('Request Validation Failed');
+      expect(response.body.errors).toBeDefined();
     });
 
     it('should return 500 when service returns error', async () => {
@@ -250,7 +253,8 @@ describe('Notification Controller', () => {
       const response = await supertest(app).delete(`/api/notification/${notificationId}`).send();
 
       expect(response.status).toBe(400);
-      expect(response.body.message).toContain('Validation Failed');
+      expect(response.body.message).toBe('Request Validation Failed');
+      expect(response.body.errors).toBeDefined();
     });
 
     it('should return 404 when notification is not found', async () => {
@@ -300,6 +304,8 @@ describe('Notification Controller', () => {
       const response = await supertest(app).post('/api/notification/system').send({});
 
       expect(response.status).toBe(400);
+      expect(response.body.message).toBe('Request Validation Failed');
+      expect(response.body.errors).toBeDefined();
     });
 
     it('should return 500 when service returns error', async () => {

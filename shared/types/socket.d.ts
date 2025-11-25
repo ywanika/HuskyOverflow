@@ -129,6 +129,9 @@ export interface ModerationUpdatePayload {
     | 'questionFlagged'
     | 'answerFlagged'
     | 'commentFlagged'
+    | 'questionUnflagged'
+    | 'answerUnflagged'
+    | 'commentUnflagged'
     | 'questionReviewed'
     | 'answerReviewed'
     | 'commentReviewed'
@@ -140,6 +143,7 @@ export interface ModerationUpdatePayload {
   commentId?: string;
   deletedBy?: string;
   flaggedBy?: string;
+  unflaggedBy?: string;
   reviewedBy?: string;
   dismissedBy?: string;
 }

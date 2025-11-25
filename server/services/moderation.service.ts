@@ -377,6 +377,165 @@ export const flagComment = async (
 };
 
 /**
+ * Unflags a question - Any user can unflag their own flag
+ * @param questionId - The ID of the question to unflag
+ * @param username - The username of the user unflagging the content
+ * @returns Promise resolving to ModerationResponse
+ */
+export const unflagQuestion = async (
+  questionId: string,
+  username: string,
+): Promise<ModerationResponse> => {
+  try {
+    // Find the question
+    const question: DatabaseQuestion | null = await QuestionModel.findById(questionId);
+
+    if (!question) {
+      return { success: false, error: 'Question not found' };
+    }
+
+    // Check if user has flagged this question
+    if (!question.flagged?.flaggedBy?.includes(username)) {
+      return { success: false, error: 'You have not flagged this question' };
+    }
+
+    // Remove the user from flaggedBy array
+    const updatedFlaggedBy = question.flagged.flaggedBy.filter(u => u !== username);
+    const flaggedByIndex = question.flagged.flaggedBy.indexOf(username);
+    const updatedFlaggedAt = question.flagged.flaggedAt.filter(
+      (_, index) => index !== flaggedByIndex,
+    );
+
+    // Update the question - if no one else has flagged, set isFlagged to false
+    const isStillFlagged = updatedFlaggedBy.length > 0;
+
+    const updatedQuestion = await QuestionModel.findByIdAndUpdate(
+      questionId,
+      {
+        'flagged.isFlagged': isStillFlagged,
+        'flagged.flaggedBy': updatedFlaggedBy,
+        'flagged.flaggedAt': updatedFlaggedAt,
+      },
+      { new: true },
+    );
+
+    if (!updatedQuestion) {
+      return { success: false, error: 'Failed to unflag question' };
+    }
+
+    return { success: true, message: 'Question unflagged successfully' };
+  } catch (error) {
+    return { success: false, error: `Error unflagging question: ${(error as Error).message}` };
+  }
+};
+
+/**
+ * Unflags an answer - Any user can unflag their own flag
+ * @param answerId - The ID of the answer to unflag
+ * @param username - The username of the user unflagging the content
+ * @returns Promise resolving to ModerationResponse
+ */
+export const unflagAnswer = async (
+  answerId: string,
+  username: string,
+): Promise<ModerationResponse> => {
+  try {
+    // Find the answer
+    const answer: DatabaseAnswer | null = await AnswerModel.findById(answerId);
+
+    if (!answer) {
+      return { success: false, error: 'Answer not found' };
+    }
+
+    // Check if user has flagged this answer
+    if (!answer.flagged?.flaggedBy?.includes(username)) {
+      return { success: false, error: 'You have not flagged this answer' };
+    }
+
+    // Remove the user from flaggedBy array
+    const updatedFlaggedBy = answer.flagged.flaggedBy.filter(u => u !== username);
+    const flaggedByIndex = answer.flagged.flaggedBy.indexOf(username);
+    const updatedFlaggedAt = answer.flagged.flaggedAt.filter(
+      (_, index) => index !== flaggedByIndex,
+    );
+
+    // Update the answer - if no one else has flagged, set isFlagged to false
+    const isStillFlagged = updatedFlaggedBy.length > 0;
+
+    const updatedAnswer = await AnswerModel.findByIdAndUpdate(
+      answerId,
+      {
+        'flagged.isFlagged': isStillFlagged,
+        'flagged.flaggedBy': updatedFlaggedBy,
+        'flagged.flaggedAt': updatedFlaggedAt,
+      },
+      { new: true },
+    );
+
+    if (!updatedAnswer) {
+      return { success: false, error: 'Failed to unflag answer' };
+    }
+
+    return { success: true, message: 'Answer unflagged successfully' };
+  } catch (error) {
+    return { success: false, error: `Error unflagging answer: ${(error as Error).message}` };
+  }
+};
+
+/**
+ * Unflags a comment - Any user can unflag their own flag
+ * @param commentId - The ID of the comment to unflag
+ * @param username - The username of the user unflagging the content
+ * @returns Promise resolving to ModerationResponse
+ */
+export const unflagComment = async (
+  commentId: string,
+  username: string,
+): Promise<ModerationResponse> => {
+  try {
+    // Find the comment
+    const comment: DatabaseComment | null = await CommentModel.findById(commentId);
+
+    if (!comment) {
+      return { success: false, error: 'Comment not found' };
+    }
+
+    // Check if user has flagged this comment
+    if (!comment.flagged?.flaggedBy?.includes(username)) {
+      return { success: false, error: 'You have not flagged this comment' };
+    }
+
+    // Remove the user from flaggedBy array
+    const updatedFlaggedBy = comment.flagged.flaggedBy.filter(u => u !== username);
+    const flaggedByIndex = comment.flagged.flaggedBy.indexOf(username);
+    const updatedFlaggedAt = comment.flagged.flaggedAt.filter(
+      (_, index) => index !== flaggedByIndex,
+    );
+
+    // Update the comment - if no one else has flagged, set isFlagged to false
+    const isStillFlagged = updatedFlaggedBy.length > 0;
+
+    const updatedComment = await CommentModel.findByIdAndUpdate(
+      commentId,
+      {
+        'flagged.isFlagged': isStillFlagged,
+        'flagged.flaggedBy': updatedFlaggedBy,
+        'flagged.flaggedAt': updatedFlaggedAt,
+      },
+      { new: true },
+    );
+
+    if (!updatedComment) {
+      return { success: false, error: 'Failed to unflag comment' };
+    }
+
+    return { success: true, message: 'Comment unflagged successfully' };
+  } catch (error) {
+    return { success: false, error: `Error unflagging comment: ${(error as Error).message}` };
+  }
+};
+
+/**
  * Interface for flagged content items
  */
 export interface FlaggedContentItem {

@@ -182,6 +182,72 @@ export const flagComment = async (
 };
 
 /**
+ * Unflags a question - Any user can unflag their own flag
+ * @param questionId - The ID of the question to unflag
+ * @param username - The username of the user unflagging the content
+ * @returns Promise resolving to the unflagging result
+ * @throws Error if the API response status is not 200
+ */
+export const unflagQuestion = async (
+  questionId: string,
+  username: string,
+): Promise<{ success: boolean; message?: string }> => {
+  const res = await api.post(`${MODERATION_API_URL}/unflag/question/${questionId}`, {
+    username,
+  });
+
+  if (res.status !== 200) {
+    throw new Error('Error while unflagging question');
+  }
+
+  return res.data;
+};
+
+/**
+ * Unflags an answer - Any user can unflag their own flag
+ * @param answerId - The ID of the answer to unflag
+ * @param username - The username of the user unflagging the content
+ * @returns Promise resolving to the unflagging result
+ * @throws Error if the API response status is not 200
+ */
+export const unflagAnswer = async (
+  answerId: string,
+  username: string,
+): Promise<{ success: boolean; message?: string }> => {
+  const res = await api.post(`${MODERATION_API_URL}/unflag/answer/${answerId}`, {
+    username,
+  });
+
+  if (res.status !== 200) {
+    throw new Error('Error while unflagging answer');
+  }
+
+  return res.data;
+};
+
+/**
+ * Unflags a comment - Any user can unflag their own flag
+ * @param commentId - The ID of the comment to unflag
+ * @param username - The username of the user unflagging the content
+ * @returns Promise resolving to the unflagging result
+ * @throws Error if the API response status is not 200
+ */
+export const unflagComment = async (
+  commentId: string,
+  username: string,
+): Promise<{ success: boolean; message?: string }> => {
+  const res = await api.post(`${MODERATION_API_URL}/unflag/comment/${commentId}`, {
+    username,
+  });
+
+  if (res.status !== 200) {
+    throw new Error('Error while unflagging comment');
+  }
+
+  return res.data;
+};
+
+/**
  * Gets all flagged content that hasn't been reviewed yet
  * @returns Promise resolving to FlaggedContentResponse
  */
