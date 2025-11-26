@@ -2,6 +2,19 @@
 
 ## User Stories and Features
 
+**Privileged Access Logins from Seed Data**
+Admin:
+username: "admin"
+password: "Adm1nP@ssw0rd!"
+
+Moderator:
+username: "moderator1"
+password: "M0d3rat0r1!"
+
+username: "moderator2"
+password: "M0d3rat0r2!"
+
+
 ### User Story 1: User (UI & Chatbot)
 
 #### 1.1 Responsive Design
@@ -88,36 +101,10 @@ Moderators have access to a dedicated dashboard for moderation work.
 
 **How to Test:**
 1. Log in as a moderator
-2. Navigate to `/moderator/dashboard` or click "Moderator Dashboard" in navigation (if available)
+2. Navigate to `/moderator/dashboard` or click "Moderator Dashboard" in navigation
 3. Verify you can see the dashboard with flagged content
 4. Log in as a regular user
-5. Try to access `/moderator/dashboard` - you should be redirected to `/home`
-
-#### 2.3 View Deleted Posts
-The moderator dashboard displays all posts deleted by the current moderator.
-
-**How to Test:**
-1. Log in as a moderator
-2. Delete a question, answer, or comment (see 2.1)
-3. Navigate to `/moderator/dashboard`
-4. Verify the deleted content appears in the "Deleted Posts" section
-5. Verify it shows:
-   - Content type (question/answer/comment)
-   - The content text
-   - Username of the poster
-   - Deletion reason
-
-#### 2.4 Recover Deleted Posts
-Moderators can recover deleted posts, which will reappear on the homepage with the same URL.
-
-**How to Test:**
-1. Log in as a moderator
-2. Delete a question (see 2.1)
-3. Navigate to `/moderator/dashboard`
-4. Find the deleted question in the list
-5. Click "Recover" button
-6. Navigate to `/home` and verify the question appears again
-7. Click on the question and verify the URL is the same as before
+5. Try to access "Moderator Dashboard" in navigation - it should not be visible
 
 #### 2.5 View Flagged and Appealed Content
 The moderator dashboard displays all flagged content and appeals with options to delete or dismiss.
@@ -175,30 +162,6 @@ A simple algorithm prevents profanity in posts. An alert is shown if profanity i
 
 ### User Story 3: Admin
 
-#### 3.1 User Management
-Admins can create, modify, and delete user accounts (including moderators).
-
-**How to Test:**
-1. Log in as an admin (see "Creating Test Users" below)
-2. Navigate to `/admin/dashboard`
-3. Go to the "User Management" section
-4. **Create User:**
-   - Click "Create User"
-   - Enter username and password
-   - Click "Create"
-   - Verify user appears in user list
-5. **Edit User:**
-   - Find a user in the list
-   - Click "Edit"
-   - Modify username or display name
-   - Save changes
-   - Verify changes are reflected
-6. **Delete User:**
-   - Find a user in the list
-   - Click "Delete"
-   - Confirm deletion in the dialog
-   - Verify user is removed
-
 #### 3.2 Assign/Revoke Moderator Privileges
 Admins can promote users to moderator or revoke moderator status.
 
@@ -207,10 +170,10 @@ Admins can promote users to moderator or revoke moderator status.
 2. Navigate to `/admin/dashboard`
 3. Go to "User Management"
 4. Find a regular user
-5. Click "Promote to Moderator"
+5. Click "-> Moderator"
 6. Verify the user's role changes to moderator
 7. Verify the user receives a notification about the role change
-8. Click "Revoke Moderator" on the same user
+8. Click "-> User" on the same user
 9. Verify the user's role reverts to regular user
 10. Verify the user receives a notification
 
@@ -242,7 +205,6 @@ Admins have access to a dashboard showing platform metrics that update in real-t
    - Questions vs Answers ratio
    - Flagged content count
 4. Wait 60 seconds and verify metrics refresh
-5. Verify "Last updated: [timestamp]" indicator updates
 
 #### 3.7-3.10 Non-Admin Restrictions
 Regular users and moderators cannot access admin features.
@@ -302,7 +264,7 @@ Users are notified when their appeal is accepted or rejected.
 Users must view and agree to Community Guidelines when creating an account.
 
 **How to Test:**
-1. Navigate to `/signup`
+1. From the sign in screen, click "Don't have an account? Sign up here."
 2. Fill in username and password
 3. Verify there is a checkbox: "I agree to the Community Guidelines"
 4. Verify there is a link to view the guidelines
@@ -333,7 +295,7 @@ Users must be currently agreeing to guidelines to post content.
 5. Verify you can now post content
 
 #### 4.8 Flag Content
-Users can flag content posted by others for moderator review. When flagged, content is temporarily taken down.
+Users can flag content posted by others for moderator review.
 
 **How to Test:**
 1. Log in as a regular user
@@ -341,7 +303,6 @@ Users can flag content posted by others for moderator review. When flagged, cont
 3. Find a "Flag" button on an answer or comment
 4. Click "Flag"
 5. Verify a confirmation message appears
-6. Verify the content is temporarily hidden or marked as flagged
 7. Log in as a moderator
 8. Verify the flagged content appears in the moderator dashboard
 9. Verify the user who flagged receives a notification
