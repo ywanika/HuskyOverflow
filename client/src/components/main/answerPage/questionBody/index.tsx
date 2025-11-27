@@ -67,32 +67,36 @@ const QuestionBody = ({
       <div className='question_author'>{askby}</div>
       <div className='answer_question_meta'>asked {meta}</div>
       <div style={{ display: 'flex', gap: '8px', marginTop: '8px' }}>
-        {isFlagged && onUnflagClick ? (
-          <Button
-            size='sm'
-            colorScheme='orange'
-            variant='solid'
-            onClick={e => {
-              e.stopPropagation();
-              onUnflagClick();
-            }}
-            aria-label='Unflag this question'>
-            Unflag
-          </Button>
-        ) : (
-          onFlagClick && (
-            <Button
-              size='sm'
-              colorScheme='orange'
-              variant='outline'
-              onClick={e => {
-                e.stopPropagation();
-                onFlagClick();
-              }}
-              aria-label='Flag this question'>
-              Flag
-            </Button>
-          )
+        {!isModerator && (
+          <>
+            {isFlagged && onUnflagClick ? (
+              <Button
+                size='sm'
+                colorScheme='orange'
+                variant='solid'
+                onClick={e => {
+                  e.stopPropagation();
+                  onUnflagClick();
+                }}
+                aria-label='Unflag this question'>
+                Unflag
+              </Button>
+            ) : (
+              onFlagClick && (
+                <Button
+                  size='sm'
+                  colorScheme='orange'
+                  variant='outline'
+                  onClick={e => {
+                    e.stopPropagation();
+                    onFlagClick();
+                  }}
+                  aria-label='Flag this question'>
+                  Flag
+                </Button>
+              )
+            )}
+          </>
         )}
         {isModerator && onDeleteClick && (
           <Button

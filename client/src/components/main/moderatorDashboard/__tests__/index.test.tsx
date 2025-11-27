@@ -96,7 +96,7 @@ const mockFlaggedContent = {
   ],
 };
 
-const mockAppeals: AppealItem[] = [
+const MOCK_APPEALS: AppealItem[] = [
   {
     _id: 'appeal1',
     contentId: 'q3',
@@ -139,11 +139,9 @@ describe('ModeratorDashboard', () => {
   const mockHandleApproveAppeal = jest.fn();
   const mockHandleRejectAppeal = jest.fn();
 
-  const buildHookReturn = (
-    overrides: Partial<ReturnType<typeof useModeratorDashboard>> = {},
-  ) => ({
+  const buildHookReturn = (overrides: Partial<ReturnType<typeof useModeratorDashboard>> = {}) => ({
     flaggedContent: mockFlaggedContent,
-    appeals: mockAppeals,
+    appeals: MOCK_APPEALS,
     loading: false,
     error: '',
     handleMarkAsReviewed: mockHandleMarkAsReviewed,
