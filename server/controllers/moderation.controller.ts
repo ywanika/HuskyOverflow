@@ -18,6 +18,8 @@ import {
   approveAppeal,
   rejectAppeal,
   checkExistingAppeal,
+  getDeletedContentByModerator,
+  restoreDeletedContent,
 } from '../services/moderation.service';
 
 /**
@@ -827,6 +829,106 @@ const moderationController = (socket: FakeSOSocket) => {
     }
   };
 
+  /**
+   * Gets all content deleted by the moderator
+   * @param req - Request containing moderatorUsername query parameter
+   * @param res - Response object
+   * @returns Promise resolving to void
+   */
+  const getDeletedContentRoute = async (req: Request, res: Response): Promise<void> => {
+    const { moderatorUsername } = req.query;
+
+    if (!moderatorUsername) {
+      res.status(400).json({ error: 'Missing required field: moderatorUsername' });
+      return;
+    }
+
+    try {
+      const result = await getDeletedContentByModerator(moderatorUsername as string);
+
+      if (result.error) {
+        if (result.error.includes('Unauthorized')) {
+          res.status(403).json({ error: result.error });
+        } else {
+          res.status(500).json({ error: result.error });
+        }
+        return;
+      }
+
+      res.status(200).json(result);
+    } catch (err: unknown) {
+      res.status(500).json({ error: `Error fetching deleted content: ${(err as Error).message}` });
+    }
+  };
+
+  /**
+   * Restores deleted content
+   * @param req - Request containing contentType, contentId, and moderatorUsername
+   * @param res - Response object
+   * @returns Promise resolving to void
+   */
+  const restoreContentRoute = async (req: Request, res: Response): Promise<void> => {
+    const { contentType, contentId, moderatorUsername } = req.body;
+
+    if (!contentType || !contentId || !moderatorUsername) {
+      res
+        .status(400)
+        .json({ error: 'Missing required fields: contentType, contentId, or moderatorUsername' });
+      return;
+    }
+
+    try {
+      const result = await restoreDeletedContent(contentType, contentId, moderatorUsername);
+
+      if (!result.success) {
+        if (result.error?.includes('Unauthorized')) {
+          res.status(403).json({ error: result.error });
+        } else if (result.error?.includes('not found')) {
+          res.status(404).json({ error: result.error });
+        } else {
+          res.status(500).json({ error: result.error });
+        }
+        return;
+      }
+
+      // Emit socket event for real-time updates
+      const restoreType =
+        contentType === 'question'
+          ? 'questionRestored'
+          : contentType === 'answer'
+            ? 'answerRestored'
+            : contentType === 'comment'
+              ? 'commentRestored'
+              : 'messageRestored';
+      const idField =
+        contentType === 'question'
+          ? 'questionId'
+          : contentType === 'answer'
+            ? 'answerId'
+            : contentType === 'comment'
+              ? 'commentId'
+              : 'messageId';
+
+      socket.emit('moderationUpdate', {
+        type: restoreType,
+        [idField]: contentId,
+        restoredBy: moderatorUsername,
+      });
+
+      // Emit notification update for the recipient
+      if (result.recipientUsername) {
+        socket.emit('notificationUpdate', {
+          type: 'newNotification',
+          username: result.recipientUsername,
+        });
+      }
+
+      res.status(200).json({ success: true, message: result.message });
+    } catch (err: unknown) {
+      res.status(500).json({ error: `Error restoring content: ${(err as Error).message}` });
+    }
+  };
+
   // Register routes
   router.delete('/delete/question/:questionId', deleteQuestionRoute);
   router.delete('/delete/answer/:answerId', deleteAnswerRoute);
@@ -845,6 +947,8 @@ const moderationController = (socket: FakeSOSocket) => {
   router.get('/appeals', getAppealsRoute);
   router.post('/appeal/approve', approveAppealRoute);
   router.post('/appeal/reject', rejectAppealRoute);
+  router.get('/deleted', getDeletedContentRoute);
+  router.post('/restore', restoreContentRoute);
 
   return router;
 };

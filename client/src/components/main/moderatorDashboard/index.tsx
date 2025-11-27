@@ -25,18 +25,27 @@ import { AppealItem } from '@fake-stack-overflow/shared';
 import { getMetaData } from '../../../tool';
 import './index.css';
 
+/**
+ * ModeratorDashboard component allows moderators to review and manage flagged content
+ * including questions, answers, comments, and user appeals.
+ */
+
+type FlaggableContentType = 'question' | 'answer' | 'comment';
+type FlaggedSubTabType = 'questions' | 'answers' | 'comments';
+type TabType = 'flagged' | 'appeals' | 'deleted';
+
 const ModeratorDashboard = () => {
   const navigate = useNavigate();
   const { user } = useUserContext();
-  const [activeTab, setActiveTab] = useState<'questions' | 'answers' | 'comments' | 'appeals'>(
-    'questions',
-  );
-  const [appealModResponse, setAppealModResponse] = useState<{ [key: string]: string }>({});
+  const [activeTab, setActiveTab] = useState<TabType>('flagged');
+  const [flaggedSubTab, setFlaggedSubTab] = useState<FlaggedSubTabType>('questions');
+  const [appealModResponse, setAppealModResponse] = useState<Record<string, string>>({});
   const [processingAppeal, setProcessingAppeal] = useState<string | null>(null);
 
   const {
     flaggedContent,
     appeals,
+    deletedContent,
     loading,
     error,
     handleMarkAsReviewed,
@@ -47,6 +56,7 @@ const ModeratorDashboard = () => {
     handleDeleteConfirm,
     handleApproveAppeal,
     handleRejectAppeal,
+    handleRestoreContent,
   } = useModeratorDashboard();
 
   // Check if user is moderator or admin
@@ -58,48 +68,54 @@ const ModeratorDashboard = () => {
 
   const getContentTitle = (
     item: Record<string, unknown>,
-    contentType: 'question' | 'answer' | 'comment',
+    contentType: FlaggableContentType,
   ): string => {
     if (contentType === 'question') {
-      return (
-        (typeof item.title === 'string' ? item.title : 'Untitled Question') || 'Untitled Question'
-      );
-    } else if (contentType === 'answer') {
-      const text = typeof item.text === 'string' ? item.text : '';
-      return text.substring(0, 50) || 'Answer';
-    } else {
-      const text = typeof item.text === 'string' ? item.text : '';
-      return text.substring(0, 50) || 'Comment';
+      return typeof item.title === 'string' ? item.title : 'Untitled Question';
     }
+    const text = typeof item.text === 'string' ? item.text : '';
+    return text || (contentType === 'answer' ? 'Answer' : 'Comment');
   };
 
   const getContentText = (item: Record<string, unknown>): string => {
-    if (typeof item.text === 'string') {
-      return item.text;
-    }
-    if (typeof item.title === 'string') {
-      return item.title;
-    }
+    if (typeof item.text === 'string') return item.text;
+    if (typeof item.title === 'string') return item.title;
     return 'No content';
   };
 
-  const renderFlaggedItem = (
-    item: FlaggedContentItem,
-    contentType: 'question' | 'answer' | 'comment',
-    _index: number,
-  ) => {
+  const getContentTypeColor = (type: string): string => {
+    const colorMap: Record<string, string> = {
+      question: 'blue',
+      answer: 'green',
+      comment: 'purple',
+      message: 'orange',
+    };
+    return colorMap[type] || 'gray';
+  };
+
+  const getAuthor = (item: Record<string, unknown>): string => {
+    return (
+      (typeof item.askedBy === 'string' ? item.askedBy : null) ||
+      (typeof item.ansBy === 'string' ? item.ansBy : null) ||
+      (typeof item.commentBy === 'string' ? item.commentBy : null) ||
+      'Unknown'
+    );
+  };
+
+  const getDate = (item: Record<string, unknown>): Date => {
+    return (
+      (item.askDateTime instanceof Date ? item.askDateTime : null) ||
+      (item.ansDateTime instanceof Date ? item.ansDateTime : null) ||
+      (item.commentDateTime instanceof Date ? item.commentDateTime : null) ||
+      new Date()
+    );
+  };
+
+  const renderFlaggedItem = (item: FlaggedContentItem, contentType: FlaggableContentType) => {
     const title = getContentTitle(item.content, contentType);
     const text = getContentText(item.content);
-    const author =
-      (typeof item.content.askedBy === 'string' ? item.content.askedBy : null) ||
-      (typeof item.content.ansBy === 'string' ? item.content.ansBy : null) ||
-      (typeof item.content.commentBy === 'string' ? item.content.commentBy : null) ||
-      'Unknown';
-    const date =
-      (item.content.askDateTime instanceof Date ? item.content.askDateTime : null) ||
-      (item.content.ansDateTime instanceof Date ? item.content.ansDateTime : null) ||
-      (item.content.commentDateTime instanceof Date ? item.content.commentDateTime : null) ||
-      new Date();
+    const author = getAuthor(item.content);
+    const date = getDate(item.content);
 
     return (
       <Card key={`${contentType}-${item._id}`} className='flagged-card'>
@@ -182,29 +198,28 @@ const ModeratorDashboard = () => {
     );
   }
 
-  const renderAppealItem = (appeal: AppealItem, _index: number) => {
-    const content = appeal.content;
-    const title = getContentTitle(content, appeal.contentType);
+  const renderAppealItem = (appeal: AppealItem) => {
+    const { content, contentType, appealUser, _id: appealId, timestamp } = appeal;
+    const title = getContentTitle(content, contentType);
     const text = getContentText(content);
-    const author = appeal.appealUser;
     const deletedInfo = content.deleted as
       | { deleteReason?: string; deletedBy?: string }
       | undefined;
 
     return (
-      <Card key={`appeal-${appeal._id}`} mb={4} borderLeft='4px' borderColor='blue.500'>
+      <Card key={`appeal-${appealId}`} className='appeal-card'>
         <CardHeader>
           <VStack align='start' gap={1} flex={1}>
             <HStack>
               <Badge colorScheme='blue'>APPEAL</Badge>
-              <Badge colorScheme='red'>{appeal.contentType.toUpperCase()}</Badge>
+              <Badge colorScheme='red'>{contentType.toUpperCase()}</Badge>
             </HStack>
             <Heading size='sm'>{title}</Heading>
-            <Text fontSize='sm' color='gray.600'>
-              Appealed by {author} • {getMetaData(new Date(appeal.timestamp))}
+            <Text className='appeal-meta'>
+              Appealed by {appealUser} • {getMetaData(new Date(timestamp))}
             </Text>
             {deletedInfo && (
-              <Text fontSize='sm' color='red.600'>
+              <Text className='appeal-deleted-info'>
                 Deleted by {deletedInfo.deletedBy || 'Unknown'} • Reason:{' '}
                 {deletedInfo.deleteReason || 'No reason provided'}
               </Text>
@@ -212,53 +227,41 @@ const ModeratorDashboard = () => {
           </VStack>
         </CardHeader>
         <CardBody>
-          <Box mb={4} p={3} bg='gray.50' borderRadius='md' maxH='200px' overflowY='auto'>
+          <Box className='appeal-content-box'>
             <Markdown remarkPlugins={[remarkGfm]}>{text}</Markdown>
           </Box>
-          <VStack align='start' gap={2} mb={4}>
-            <Text fontSize='sm' fontWeight='bold'>
-              Appeal Reason:
-            </Text>
-            <Box p={3} bg='blue.50' borderRadius='md' w='100%'>
-              <Text fontSize='sm'>{appeal.reason}</Text>
+          <VStack align='start' gap={2} className='appeal-reason-section'>
+            <Text className='appeal-reason-label'>Appeal Reason:</Text>
+            <Box className='appeal-reason-box'>
+              <Text className='appeal-reason-text'>{appeal.reason}</Text>
             </Box>
           </VStack>
-          <Box mb={4}>
-            <Text fontSize='sm' fontWeight='bold' mb={2}>
-              Moderator Response (optional):
-            </Text>
+          <Box className='appeal-response-section'>
+            <Text className='appeal-response-label'>Moderator Response (optional):</Text>
             <Textarea
-              value={appealModResponse[appeal._id] || ''}
+              className='appeal-response-textarea'
+              value={appealModResponse[appealId] || ''}
               onChange={e =>
-                setAppealModResponse({ ...appealModResponse, [appeal._id]: e.target.value })
+                setAppealModResponse({ ...appealModResponse, [appealId]: e.target.value })
               }
               placeholder='Optional response to the user...'
               rows={3}
-              disabled={processingAppeal === appeal._id}
+              disabled={processingAppeal === appealId}
             />
           </Box>
           <HStack gap={2} flexWrap='wrap'>
-            {appeal.contentType === 'question' && (
-              <Button
-                size='sm'
-                colorScheme='blue'
-                variant='outline'
-                onClick={() => navigate(`/question/${appeal.contentId}`)}>
-                View Question
-              </Button>
-            )}
             <Button
               size='sm'
               colorScheme='green'
               variant='solid'
               onClick={async () => {
-                setProcessingAppeal(appeal._id);
-                await handleApproveAppeal(appeal._id, appealModResponse[appeal._id] || undefined);
-                setAppealModResponse({ ...appealModResponse, [appeal._id]: '' });
+                setProcessingAppeal(appealId);
+                await handleApproveAppeal(appealId, appealModResponse[appealId] || undefined);
+                setAppealModResponse({ ...appealModResponse, [appealId]: '' });
                 setProcessingAppeal(null);
               }}
-              disabled={processingAppeal === appeal._id}
-              loading={processingAppeal === appeal._id}
+              disabled={processingAppeal === appealId}
+              loading={processingAppeal === appealId}
               loadingText='Approving...'>
               Approve Appeal
             </Button>
@@ -267,15 +270,64 @@ const ModeratorDashboard = () => {
               colorScheme='red'
               variant='solid'
               onClick={async () => {
-                setProcessingAppeal(appeal._id);
-                await handleRejectAppeal(appeal._id, appealModResponse[appeal._id] || undefined);
-                setAppealModResponse({ ...appealModResponse, [appeal._id]: '' });
+                setProcessingAppeal(appealId);
+                await handleRejectAppeal(appealId, appealModResponse[appealId] || undefined);
+                setAppealModResponse({ ...appealModResponse, [appealId]: '' });
                 setProcessingAppeal(null);
               }}
-              disabled={processingAppeal === appeal._id}
-              loading={processingAppeal === appeal._id}
+              disabled={processingAppeal === appealId}
+              loading={processingAppeal === appealId}
               loadingText='Rejecting...'>
               Reject Appeal
+            </Button>
+          </HStack>
+        </CardBody>
+      </Card>
+    );
+  };
+
+  const renderDeletedItem = (item: {
+    _id: string;
+    contentType: FlaggableContentType;
+    content: Record<string, unknown>;
+    contentPreview: string;
+    authorUsername: string;
+    deleteReason: string;
+    deletedAt: Date;
+  }) => {
+    const { _id: deletedId, contentType, content, authorUsername, deleteReason, deletedAt } = item;
+    const text = getContentText(content);
+    const title = getContentTitle(content, contentType);
+    return (
+      <Card key={`deleted-${deletedId}`} className='deleted-card'>
+        <CardHeader>
+          <HStack justify='space-between' align='start'>
+            <VStack align='start' gap={1} flex={1}>
+              <HStack>
+                <Badge colorScheme='red'>DELETED</Badge>
+                <Badge colorScheme={getContentTypeColor(contentType)}>
+                  {contentType.toUpperCase()}
+                </Badge>
+              </HStack>
+              <Heading size='sm'>{title}</Heading>
+              <Text className='deleted-meta'>
+                Posted by {authorUsername} • Deleted {getMetaData(new Date(deletedAt))}
+              </Text>
+              <Text className='deleted-reason'>Reason: {deleteReason}</Text>
+            </VStack>
+          </HStack>
+        </CardHeader>
+        <CardBody>
+          <Box className='deleted-content-box'>
+            <Markdown remarkPlugins={[remarkGfm]}>{text}</Markdown>
+          </Box>
+          <HStack gap={2} flexWrap='wrap'>
+            <Button
+              size='sm'
+              colorScheme='green'
+              variant='solid'
+              onClick={() => handleRestoreContent(contentType, deletedId)}>
+              Restore Content
             </Button>
           </HStack>
         </CardBody>
@@ -301,72 +353,95 @@ const ModeratorDashboard = () => {
         </Box>
 
         <Box>
-          <HStack gap={2} className='moderator-tabs'>
+          <HStack gap={2} className='main-tabs' mb={4}>
             <Button
-              className={`moderator-tab ${activeTab === 'questions' ? 'moderator-tab-active' : ''}`}
-              onClick={() => setActiveTab('questions')}>
-              Questions ({flaggedContent.questions.length})
+              className={activeTab === 'flagged' ? 'main-tab main-tab-active' : 'main-tab'}
+              onClick={() => setActiveTab('flagged')}>
+              Flagged ({totalFlagged})
             </Button>
             <Button
-              className={`moderator-tab ${activeTab === 'answers' ? 'moderator-tab-active' : ''}`}
-              onClick={() => setActiveTab('answers')}>
-              Answers ({flaggedContent.answers.length})
-            </Button>
-            <Button
-              className={`moderator-tab ${activeTab === 'comments' ? 'moderator-tab-active' : ''}`}
-              onClick={() => setActiveTab('comments')}>
-              Comments ({flaggedContent.comments.length})
-            </Button>
-            <Button
-              variant={activeTab === 'appeals' ? 'solid' : 'ghost'}
-              colorScheme={activeTab === 'appeals' ? 'blue' : 'gray'}
+              className={activeTab === 'appeals' ? 'main-tab main-tab-active' : 'main-tab'}
               onClick={() => setActiveTab('appeals')}>
               Appeals ({appeals.length})
             </Button>
+            <Button
+              className={activeTab === 'deleted' ? 'main-tab main-tab-active' : 'main-tab'}
+              onClick={() => setActiveTab('deleted')}>
+              Delete History ({deletedContent.length})
+            </Button>
           </HStack>
 
+          {activeTab === 'flagged' && (
+            <Box>
+              <HStack gap={2} mb={4}>
+                <Button
+                  size='sm'
+                  className={`sub-tab ${flaggedSubTab === 'questions' ? 'sub-tab-active' : ''}`}
+                  onClick={() => setFlaggedSubTab('questions')}>
+                  Questions ({flaggedContent.questions.length})
+                </Button>
+                <Button
+                  size='sm'
+                  className={`sub-tab ${flaggedSubTab === 'answers' ? 'sub-tab-active' : ''}`}
+                  onClick={() => setFlaggedSubTab('answers')}>
+                  Answers ({flaggedContent.answers.length})
+                </Button>
+                <Button
+                  size='sm'
+                  className={`sub-tab ${flaggedSubTab === 'comments' ? 'sub-tab-active' : ''}`}
+                  onClick={() => setFlaggedSubTab('comments')}>
+                  Comments ({flaggedContent.comments.length})
+                </Button>
+              </HStack>
+
+              <Box>
+                {flaggedSubTab === 'questions' && (
+                  <Box>
+                    {flaggedContent.questions.length === 0 ? (
+                      <Text className='empty-state'>No flagged questions</Text>
+                    ) : (
+                      flaggedContent.questions.map(item => renderFlaggedItem(item, 'question'))
+                    )}
+                  </Box>
+                )}
+                {flaggedSubTab === 'answers' && (
+                  <Box>
+                    {flaggedContent.answers.length === 0 ? (
+                      <Text className='empty-state'>No flagged answers</Text>
+                    ) : (
+                      flaggedContent.answers.map(item => renderFlaggedItem(item, 'answer'))
+                    )}
+                  </Box>
+                )}
+                {flaggedSubTab === 'comments' && (
+                  <Box>
+                    {flaggedContent.comments.length === 0 ? (
+                      <Text className='empty-state'>No flagged comments</Text>
+                    ) : (
+                      flaggedContent.comments.map(item => renderFlaggedItem(item, 'comment'))
+                    )}
+                  </Box>
+                )}
+              </Box>
+            </Box>
+          )}
+
           <Box>
-            {activeTab === 'questions' && (
-              <Box>
-                {flaggedContent.questions.length === 0 ? (
-                  <Text className='empty-state'>No flagged questions</Text>
-                ) : (
-                  flaggedContent.questions.map((item, index) =>
-                    renderFlaggedItem(item, 'question', index),
-                  )
-                )}
-              </Box>
-            )}
-            {activeTab === 'answers' && (
-              <Box>
-                {flaggedContent.answers.length === 0 ? (
-                  <Text className='empty-state'>No flagged answers</Text>
-                ) : (
-                  flaggedContent.answers.map((item, index) =>
-                    renderFlaggedItem(item, 'answer', index),
-                  )
-                )}
-              </Box>
-            )}
-            {activeTab === 'comments' && (
-              <Box>
-                {flaggedContent.comments.length === 0 ? (
-                  <Text className='empty-state'>No flagged comments</Text>
-                ) : (
-                  flaggedContent.comments.map((item, index) =>
-                    renderFlaggedItem(item, 'comment', index),
-                  )
-                )}
-              </Box>
-            )}
             {activeTab === 'appeals' && (
               <Box>
                 {appeals.length === 0 ? (
-                  <Text color='gray.500' textAlign='center' py={8}>
-                    No pending appeals
-                  </Text>
+                  <Text className='empty-state'>No pending appeals</Text>
                 ) : (
-                  appeals.map((appeal, index) => renderAppealItem(appeal, index))
+                  appeals.map(appeal => renderAppealItem(appeal))
+                )}
+              </Box>
+            )}
+            {activeTab === 'deleted' && (
+              <Box>
+                {deletedContent.length === 0 ? (
+                  <Text className='empty-state'>No deleted content</Text>
+                ) : (
+                  deletedContent.map(item => renderDeletedItem(item))
                 )}
               </Box>
             )}

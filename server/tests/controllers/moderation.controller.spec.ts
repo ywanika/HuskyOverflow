@@ -1,7 +1,11 @@
 import supertest from 'supertest';
 import { app } from '../../app';
 import * as moderationService from '../../services/moderation.service';
-import { ModerationResponse, FlaggedContentResponse } from '../../services/moderation.service';
+import {
+  ModerationResponse,
+  FlaggedContentResponse,
+  DeletedContentResponse,
+} from '../../services/moderation.service';
 
 const deleteQuestionSpy = jest.spyOn(moderationService, 'deleteQuestion');
 const deleteAnswerSpy = jest.spyOn(moderationService, 'deleteAnswer');
@@ -12,6 +16,11 @@ const flagCommentSpy = jest.spyOn(moderationService, 'flagComment');
 const getFlaggedContentSpy = jest.spyOn(moderationService, 'getFlaggedContent');
 const markAsReviewedSpy = jest.spyOn(moderationService, 'markAsReviewed');
 const dismissFlagSpy = jest.spyOn(moderationService, 'dismissFlag');
+const getDeletedContentByModeratorSpy = jest.spyOn(
+  moderationService,
+  'getDeletedContentByModerator',
+);
+const restoreDeletedContentSpy = jest.spyOn(moderationService, 'restoreDeletedContent');
 
 describe('Moderation Controller', () => {
   beforeEach(() => {
@@ -460,6 +469,199 @@ describe('Moderation Controller', () => {
 
       expect(response.status).toBe(403);
       expect(response.body.error).toContain('Unauthorized');
+    });
+  });
+
+  describe('GET /api/moderation/deleted', () => {
+    const moderatorUsername = 'moderator1';
+
+    it('should successfully get deleted content by moderator', async () => {
+      const mockResponse: DeletedContentResponse = {
+        items: [
+          {
+            _id: '507f191e810c19729de860ea',
+            contentType: 'question',
+            content: {} as any,
+            deletedBy: moderatorUsername,
+            deleteReason: 'Spam content',
+            deletedAt: new Date('2025-01-15T10:00:00Z'),
+            authorUsername: 'user1',
+            contentPreview: 'How to fix this bug in my code?',
+          },
+          {
+            _id: '507f191e810c19729de860eb',
+            contentType: 'answer',
+            content: {} as any,
+            deletedBy: moderatorUsername,
+            deleteReason: 'Inappropriate language',
+            deletedAt: new Date('2025-01-14T15:30:00Z'),
+            authorUsername: 'user2',
+            contentPreview: 'You can fix it by...',
+          },
+        ],
+      };
+
+      getDeletedContentByModeratorSpy.mockResolvedValueOnce(mockResponse);
+
+      const response = await supertest(app)
+        .get('/api/moderation/deleted')
+        .query({ moderatorUsername });
+
+      expect(response.status).toBe(200);
+      expect(response.body.items).toHaveLength(2);
+      expect(response.body.items[0].contentType).toBe('question');
+      expect(response.body.items[1].contentType).toBe('answer');
+      expect(getDeletedContentByModeratorSpy).toHaveBeenCalledWith(moderatorUsername);
+    });
+
+    it('should return 400 if moderatorUsername is missing', async () => {
+      const response = await supertest(app).get('/api/moderation/deleted');
+
+      expect(response.status).toBe(400);
+      // OpenAPI validator handles this - just check status
+    });
+
+    it('should return 403 if user is not authorized', async () => {
+      const mockResponse: DeletedContentResponse = {
+        items: [],
+        error: 'Unauthorized: Only moderators and admins can view deleted content',
+      };
+
+      getDeletedContentByModeratorSpy.mockResolvedValueOnce(mockResponse);
+
+      const response = await supertest(app)
+        .get('/api/moderation/deleted')
+        .query({ moderatorUsername: 'user1' });
+
+      expect(response.status).toBe(403);
+      expect(response.body.error).toContain('Unauthorized');
+    });
+
+    it('should return 500 on service error', async () => {
+      const mockResponse: DeletedContentResponse = {
+        items: [],
+        error: 'Database error',
+      };
+
+      getDeletedContentByModeratorSpy.mockResolvedValueOnce(mockResponse);
+
+      const response = await supertest(app)
+        .get('/api/moderation/deleted')
+        .query({ moderatorUsername });
+
+      expect(response.status).toBe(500);
+      expect(response.body.error).toBe('Database error');
+    });
+  });
+
+  describe('POST /api/moderation/restore', () => {
+    const contentType = 'question';
+    const contentId = '507f191e810c19729de860ea';
+    const moderatorUsername = 'moderator1';
+
+    it('should successfully restore deleted content', async () => {
+      const mockResponse: ModerationResponse = {
+        success: true,
+        message: 'Content restored successfully',
+        recipientUsername: 'user1',
+      };
+
+      restoreDeletedContentSpy.mockResolvedValueOnce(mockResponse);
+
+      const response = await supertest(app).post('/api/moderation/restore').send({
+        contentType,
+        contentId,
+        moderatorUsername,
+      });
+
+      expect(response.status).toBe(200);
+      expect(response.body).toEqual({ success: true, message: mockResponse.message });
+      expect(restoreDeletedContentSpy).toHaveBeenCalledWith(
+        contentType,
+        contentId,
+        moderatorUsername,
+      );
+    });
+
+    it('should return 400 if required fields are missing', async () => {
+      const response = await supertest(app).post('/api/moderation/restore').send({
+        contentType,
+      });
+
+      expect(response.status).toBe(400);
+      // OpenAPI validator handles this - just check status
+    });
+
+    it('should return 403 if user is not authorized', async () => {
+      const mockResponse: ModerationResponse = {
+        success: false,
+        error: 'Unauthorized: Only moderators and admins can restore content',
+      };
+
+      restoreDeletedContentSpy.mockResolvedValueOnce(mockResponse);
+
+      const response = await supertest(app).post('/api/moderation/restore').send({
+        contentType,
+        contentId,
+        moderatorUsername: 'user1',
+      });
+
+      expect(response.status).toBe(403);
+      expect(response.body.error).toContain('Unauthorized');
+    });
+
+    it('should return 404 if content not found', async () => {
+      const mockResponse: ModerationResponse = {
+        success: false,
+        error: 'Question not found',
+      };
+
+      restoreDeletedContentSpy.mockResolvedValueOnce(mockResponse);
+
+      const response = await supertest(app).post('/api/moderation/restore').send({
+        contentType,
+        contentId,
+        moderatorUsername,
+      });
+
+      expect(response.status).toBe(404);
+      expect(response.body.error).toBe('Question not found');
+    });
+
+    it('should successfully restore answer', async () => {
+      const mockResponse: ModerationResponse = {
+        success: true,
+        message: 'Content restored successfully',
+      };
+
+      restoreDeletedContentSpy.mockResolvedValueOnce(mockResponse);
+
+      const response = await supertest(app).post('/api/moderation/restore').send({
+        contentType: 'answer',
+        contentId,
+        moderatorUsername,
+      });
+
+      expect(response.status).toBe(200);
+      expect(response.body).toEqual({ success: true, message: mockResponse.message });
+    });
+
+    it('should successfully restore comment', async () => {
+      const mockResponse: ModerationResponse = {
+        success: true,
+        message: 'Content restored successfully',
+      };
+
+      restoreDeletedContentSpy.mockResolvedValueOnce(mockResponse);
+
+      const response = await supertest(app).post('/api/moderation/restore').send({
+        contentType: 'comment',
+        contentId,
+        moderatorUsername,
+      });
+
+      expect(response.status).toBe(200);
+      expect(response.body).toEqual({ success: true, message: mockResponse.message });
     });
   });
 });

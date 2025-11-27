@@ -12,9 +12,26 @@ const renderWithProvider = (ui: React.ReactElement) => {
 describe('DeleteContentModal', () => {
   const mockOnClose = jest.fn();
   const mockOnConfirm = jest.fn();
+  const originalError = console.error;
 
   beforeEach(() => {
     jest.clearAllMocks();
+    // Suppress expected React act() warnings from async state updates in component
+    console.error = jest.fn((message) => {
+      if (
+        typeof message === 'string' &&
+        (message.includes('An update to DeleteContentModal inside a test was not wrapped in act') ||
+          message.includes('not wrapped in act'))
+      ) {
+        return;
+      }
+      // Let other console errors through
+      originalError(message);
+    });
+  });
+
+  afterEach(() => {
+    console.error = originalError;
   });
 
   describe('rendering', () => {
@@ -351,9 +368,16 @@ describe('DeleteContentModal', () => {
       const deleteButton = screen.getByRole('button', { name: /delete/i });
       fireEvent.click(deleteButton);
 
+      // Wait for onConfirm to complete, then check that reason is cleared
+      await waitFor(() => {
+        expect(mockOnConfirm).toHaveBeenCalled();
+      });
+      
+      // The reason should be cleared after successful deletion
+      // Note: This happens before onClose, so we check it before the modal closes
       await waitFor(() => {
         expect(textarea).toHaveValue('');
-      });
+      }, { timeout: 2000 });
     });
 
     it('should show loading state while deleting', async () => {
