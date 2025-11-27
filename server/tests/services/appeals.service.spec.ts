@@ -116,7 +116,30 @@ describe('Appeals Service', () => {
     });
 
     it('should reject appeal with less than 3 words', async () => {
-      const twoWordReason = 'a '.repeat(25).trim(); // 50 characters but only 2 words
+      const twoWordReason = 'a'.repeat(25) + ' ' + 'b'.repeat(25); // 51 characters but only 2 words
+      const mockQuestion: DatabaseQuestion = {
+        _id: new ObjectId(contentId) as any,
+        title: 'Test Question',
+        text: 'Test content',
+        tags: [],
+        askedBy: appealUser,
+        askDateTime: new Date(),
+        answers: [],
+        views: [],
+        upVotes: [],
+        downVotes: [],
+        comments: [],
+        community: null,
+        deleted: {
+          isDeleted: true,
+          deletedBy: 'moderator',
+          deleteReason: 'Violation',
+          deletedAt: new Date(),
+        },
+      };
+
+      jest.spyOn(AppealModel, 'findOne').mockResolvedValue(null);
+      jest.spyOn(QuestionModel, 'findById').mockResolvedValue(mockQuestion as any);
 
       const result = await submitAppeal(contentId, contentType, appealUser, twoWordReason);
 
@@ -196,10 +219,11 @@ describe('Appeals Service', () => {
 
   describe('getAppeals', () => {
     it('should return all pending appeals', async () => {
+      const contentId = new ObjectId();
       const mockAppeals = [
         {
           _id: new ObjectId(),
-          contentId: new ObjectId(),
+          contentId: contentId,
           contentType: 'question',
           appealUser: 'user1',
           reason: 'Valid reason here',
@@ -209,7 +233,7 @@ describe('Appeals Service', () => {
       ];
 
       const mockQuestion: DatabaseQuestion = {
-        _id: new ObjectId() as any,
+        _id: contentId as any,
         title: 'Test Question',
         text: 'Test content',
         tags: [],
@@ -226,7 +250,9 @@ describe('Appeals Service', () => {
       jest.spyOn(AppealModel, 'find').mockReturnValue({
         lean: jest.fn().mockResolvedValue(mockAppeals),
       } as any);
-      jest.spyOn(QuestionModel, 'findById').mockResolvedValue(mockQuestion as any);
+      jest.spyOn(QuestionModel, 'findById').mockReturnValue({
+        lean: jest.fn().mockResolvedValue(mockQuestion),
+      } as any);
 
       const result = await getAppeals();
 
@@ -279,13 +305,11 @@ describe('Appeals Service', () => {
       const result = await approveAppeal(appealId, moderatorUsername);
 
       expect(result.success).toBe(true);
-      expect(QuestionModel.findByIdAndUpdate).toHaveBeenCalledWith(
-        contentId,
-        expect.objectContaining({
-          'deleted.isDeleted': false,
-        }),
-        { new: true },
-      );
+      expect(QuestionModel.findByIdAndUpdate).toHaveBeenCalled();
+      const updateCall = (QuestionModel.findByIdAndUpdate as jest.Mock).mock.calls[0];
+      expect(updateCall[0].toString()).toBe(contentId);
+      expect(updateCall[1]['deleted.isDeleted']).toBe(false);
+      expect(updateCall[1]['deleted.restoredAt']).toBeInstanceOf(Date);
     });
 
     it('should reject approval if user is not moderator', async () => {
@@ -370,8 +394,10 @@ describe('Appeals Service', () => {
         appealId,
         expect.objectContaining({
           status: 'rejected',
+          modResponse: expect.any(String),
+          processedBy: moderatorUsername,
+          processedAt: expect.any(Date),
         }),
-        { new: true },
       );
     });
 
