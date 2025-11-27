@@ -8,6 +8,7 @@ const useAdminDashboard = () => {
   const [metrics, setMetrics] = useState<DashboardMetrics | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string>('');
+  const [lastUpdated, setLastUpdated] = useState<Date | null>(null);
   const [notificationMessage, setNotificationMessage] = useState<string>('');
   const [notificationStatus, setNotificationStatus] = useState<{
     type: 'success' | 'error' | null;
@@ -20,6 +21,7 @@ const useAdminDashboard = () => {
       setError('');
       const data = await getDashboardMetrics(user.username);
       setMetrics(data);
+      setLastUpdated(new Date());
     } catch (err) {
       setError((err as Error).message || 'Failed to fetch dashboard metrics');
     } finally {
@@ -29,6 +31,15 @@ const useAdminDashboard = () => {
 
   useEffect(() => {
     fetchMetrics();
+  }, [fetchMetrics]);
+
+  // Auto-refresh metrics every 60 seconds
+  useEffect(() => {
+    const interval = setInterval(() => {
+      fetchMetrics();
+    }, 60000); // 60 seconds
+
+    return () => clearInterval(interval);
   }, [fetchMetrics]);
 
   const handleNotificationSubmit = async () => {
@@ -56,6 +67,7 @@ const useAdminDashboard = () => {
     metrics,
     loading,
     error,
+    lastUpdated,
     refetch: fetchMetrics,
     notificationMessage,
     setNotificationMessage,

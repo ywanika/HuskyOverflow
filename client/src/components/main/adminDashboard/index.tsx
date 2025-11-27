@@ -35,6 +35,7 @@ import useAdminDashboard from '../../../hooks/useAdminDashboard';
 import useUserContext from '../../../hooks/useUserContext';
 import { Navigate } from 'react-router-dom';
 import UserManagementTab from './UserManagementTab';
+import { getMetaData } from '../../../tool';
 import './index.css';
 
 const COLORS = ['#0088FE', '#00C49F', '#FFBB28', '#FF8042', '#8884d8', '#82ca9d'];
@@ -46,6 +47,7 @@ const AdminDashboard = () => {
     metrics,
     loading,
     error,
+    lastUpdated,
     notificationMessage,
     setNotificationMessage,
     notificationStatus,
@@ -111,6 +113,11 @@ const AdminDashboard = () => {
             Admin Dashboard
           </Heading>
           <Text color='gray.600'>Comprehensive metrics and analytics for the platform</Text>
+          {lastUpdated && (
+            <Text fontSize='sm' color='gray.500' mt={1}>
+              Last updated: {getMetaData(lastUpdated)}
+            </Text>
+          )}
         </Box>
 
         {/* Tab Navigation */}
