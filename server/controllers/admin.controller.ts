@@ -18,7 +18,7 @@ const adminController = (socket: FakeSOSocket) => {
    * @returns Promise resolving to void
    */
   const getDashboardMetricsRoute = async (req: Request, res: Response): Promise<void> => {
-    const username = (req.query.username as string) || (req.body.username as string);
+    const username = req.query.username as string;
 
     if (!username) {
       res.status(400).json({ error: 'Missing required field: username' });
@@ -56,7 +56,7 @@ const adminController = (socket: FakeSOSocket) => {
    * @returns Promise resolving to void
    */
   const createUserRoute = async (req: Request, res: Response): Promise<void> => {
-    const adminUsername = (req.query.username as string) || (req.body.username as string);
+    const adminUsername = req.query.username as string;
     const { username, password, role } = req.body;
 
     if (!adminUsername) {
@@ -114,7 +114,7 @@ const adminController = (socket: FakeSOSocket) => {
    * @returns Promise resolving to void
    */
   const getAuditLogsRoute = async (req: Request, res: Response): Promise<void> => {
-    const username = (req.query.username as string) || (req.body.username as string);
+    const username = req.query.username as string;
 
     if (!username) {
       res.status(400).json({ error: 'Missing required field: username' });

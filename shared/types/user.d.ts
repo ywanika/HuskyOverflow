@@ -136,3 +136,15 @@ export interface UpdateBiographyRequest extends Request {
     biography: string;
   };
 }
+
+/**
+ * Express request for updating user details (admin only).
+ * - `username`: The username of the user to update (body).
+ * - `updates`: Partial user object with fields to update (body).
+ */
+export interface UpdateUserRequest extends Request {
+  body: {
+    username: string;
+    updates: Partial<SafeDatabaseUser>;
+  };
+}

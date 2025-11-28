@@ -376,6 +376,40 @@ const createUserWithRole = async (
   }
 };
 
+/**
+ * Updates user details (admin only).
+ * @param username The unique username of the user to update
+ * @param updates Partial user object with fields to update
+ * @returns A promise resolving to the updated user
+ * @throws Error if the request fails
+ */
+const updateUser = async (
+  username: string,
+  updates: Partial<SafeDatabaseUser>,
+): Promise<SafeDatabaseUser> => {
+  try {
+    // Check profanity in username if it's being updated
+    if (updates.username) {
+      await profanityService(updates.username);
+    }
+
+    const res = await api.patch(`${USER_API_URL}/updateUser`, {
+      username,
+      updates,
+    });
+    return res.data;
+  } catch (error) {
+    if (axios.isAxiosError(error) && error.response) {
+      throw new Error(error.response.data || 'Error when updating user');
+    }
+    // Re-throw profanity and other non-axios errors as-is
+    if (error instanceof Error) {
+      throw error;
+    }
+    throw new Error('Error when updating user');
+  }
+};
+
 export {
   getUsers,
   getUserByUsername,
@@ -386,6 +420,7 @@ export {
   resetPassword,
   updateBiography,
   updateGuidelinesAgreement,
+  updateUser,
   checkGuidelinesAgreement,
   suspendUser,
   banUser,

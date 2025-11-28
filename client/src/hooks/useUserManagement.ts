@@ -8,6 +8,8 @@ import {
   promoteToAdmin,
   demoteToUser,
   createUserWithRole,
+  updateUser,
+  deleteUser,
 } from '../services/userService';
 import useUserContext from './useUserContext';
 
@@ -208,6 +210,43 @@ const useUserManagement = () => {
     }
   };
 
+  const handleUpdateUser = async (
+    username: string,
+    updates: Partial<SafeDatabaseUser>,
+  ): Promise<boolean> => {
+    if (!checkAdminRole()) return false;
+
+    try {
+      await updateUser(username, updates);
+      setActionMessage({ type: 'success', text: `Successfully updated ${username}` });
+      await fetchUsers();
+      return true;
+    } catch (err) {
+      setActionMessage({
+        type: 'error',
+        text: 'Failed to update user: ' + (err instanceof Error ? err.message : String(err)),
+      });
+      return false;
+    }
+  };
+
+  const handleDeleteUser = async (username: string): Promise<boolean> => {
+    if (!checkAdminRole()) return false;
+
+    try {
+      await deleteUser(username);
+      setActionMessage({ type: 'success', text: `Successfully deleted ${username}` });
+      await fetchUsers();
+      return true;
+    } catch (err) {
+      setActionMessage({
+        type: 'error',
+        text: 'Failed to delete user: ' + (err instanceof Error ? err.message : String(err)),
+      });
+      return false;
+    }
+  };
+
   const sortedUsers = [...users].sort((a, b) => {
     const roleOrder = { admin: 0, moderator: 1, user: 2 };
     const aRole = (a.role || 'user') as keyof typeof roleOrder;
@@ -226,6 +265,8 @@ const useUserManagement = () => {
     handlePromoteToAdmin,
     handleDemoteToUser,
     handleCreateUser,
+    handleUpdateUser,
+    handleDeleteUser,
   };
 };
 

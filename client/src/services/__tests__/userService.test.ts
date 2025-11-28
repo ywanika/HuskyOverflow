@@ -3,6 +3,9 @@ import {
   updateBiography,
   checkGuidelinesAgreement,
   updateGuidelinesAgreement,
+  createUserWithRole,
+  updateUser,
+  deleteUser,
 } from '../userService';
 import api from '../config';
 import profanityService from '../profanityService';
@@ -324,5 +327,277 @@ describe('updateGuidelinesAgreement', () => {
     await expect(updateGuidelinesAgreement(username, agreedToGuidelines)).rejects.toThrow(
       'Network error',
     );
+  });
+});
+
+describe('createUserWithRole', () => {
+  const mockApi = api as jest.Mocked<typeof api>;
+  const mockProfanityService = profanityService as jest.MockedFunction<typeof profanityService>;
+
+  beforeEach(() => {
+    jest.clearAllMocks();
+  });
+
+  it('calls profanity service when creating user and passes back error', async () => {
+    mockProfanityService.mockRejectedValueOnce(new Error('Profanity detected'));
+
+    const username = 'baduser';
+    const password = 'password123';
+    const role = 'user' as const;
+    const adminUsername = 'admin';
+
+    await expect(createUserWithRole(username, password, role, adminUsername)).rejects.toThrow(
+      'Profanity detected',
+    );
+    expect(mockProfanityService).toHaveBeenCalledWith(username);
+  });
+
+  it('calls API with correct parameters when username passes profanity check', async () => {
+    mockProfanityService.mockResolvedValueOnce(undefined);
+    mockApi.post.mockResolvedValueOnce({
+      status: 200,
+      data: { _id: 'user123', username: 'newuser', role: 'user' },
+    });
+
+    const username = 'newuser';
+    const password = 'password123';
+    const role = 'user' as const;
+    const adminUsername = 'admin';
+
+    await createUserWithRole(username, password, role, adminUsername);
+
+    expect(mockProfanityService).toHaveBeenCalledWith(username);
+    expect(mockApi.post).toHaveBeenCalledWith(`/api/admin/create-user?username=${adminUsername}`, {
+      username,
+      password,
+      role,
+    });
+  });
+
+  it('throws error when API call fails with axios error', async () => {
+    mockProfanityService.mockResolvedValueOnce(undefined);
+    mockApi.post.mockRejectedValueOnce({
+      response: { data: { error: 'User already exists' } },
+      isAxiosError: true,
+    });
+
+    const username = 'existinguser';
+    const password = 'password123';
+    const role = 'user' as const;
+    const adminUsername = 'admin';
+
+    await expect(createUserWithRole(username, password, role, adminUsername)).rejects.toThrow(
+      'Error while creating user: User already exists',
+    );
+  });
+
+  it('throws error when API call fails with generic error', async () => {
+    mockProfanityService.mockResolvedValueOnce(undefined);
+    mockApi.post.mockRejectedValueOnce(new Error('Network error'));
+
+    const username = 'newuser';
+    const password = 'password123';
+    const role = 'user' as const;
+    const adminUsername = 'admin';
+
+    await expect(createUserWithRole(username, password, role, adminUsername)).rejects.toThrow(
+      'Error while creating user: Network error',
+    );
+  });
+
+  it('returns the created user on success', async () => {
+    const mockUser = { _id: 'user123', username: 'newuser', role: 'moderator' };
+    mockProfanityService.mockResolvedValueOnce(undefined);
+    mockApi.post.mockResolvedValueOnce({ status: 200, data: mockUser });
+
+    const username = 'newuser';
+    const password = 'password123';
+    const role = 'moderator' as const;
+    const adminUsername = 'admin';
+
+    const result = await createUserWithRole(username, password, role, adminUsername);
+
+    expect(result).toEqual(mockUser);
+    expect(mockProfanityService).toHaveBeenCalledWith(username);
+    expect(mockApi.post).toHaveBeenCalledWith(`/api/admin/create-user?username=${adminUsername}`, {
+      username,
+      password,
+      role,
+    });
+  });
+
+  it('works with different roles', async () => {
+    const mockUser = { _id: 'user123', username: 'newadmin', role: 'admin' };
+    mockProfanityService.mockResolvedValueOnce(undefined);
+    mockApi.post.mockResolvedValueOnce({ status: 200, data: mockUser });
+
+    const username = 'newadmin';
+    const password = 'password123';
+    const role = 'admin' as const;
+    const adminUsername = 'superadmin';
+
+    const result = await createUserWithRole(username, password, role, adminUsername);
+
+    expect(result).toEqual(mockUser);
+    expect(mockApi.post).toHaveBeenCalledWith(`/api/admin/create-user?username=${adminUsername}`, {
+      username,
+      password,
+      role,
+    });
+  });
+});
+
+describe('updateUser', () => {
+  const mockApi = api as jest.Mocked<typeof api>;
+  const mockProfanityService = profanityService as jest.MockedFunction<typeof profanityService>;
+
+  beforeEach(() => {
+    jest.clearAllMocks();
+  });
+
+  it('calls profanity service when username is being updated and passes back error', async () => {
+    mockProfanityService.mockRejectedValueOnce(new Error('Profanity detected'));
+
+    const username = 'olduser';
+    const updates = { username: 'badusername' };
+
+    await expect(updateUser(username, updates)).rejects.toThrow('Profanity detected');
+    expect(mockProfanityService).toHaveBeenCalledWith('badusername');
+  });
+
+  it('does not call profanity service when username is not being updated', async () => {
+    mockApi.patch.mockResolvedValueOnce({
+      status: 200,
+      data: { _id: 'user123', username: 'user1', biography: 'Updated bio' },
+    });
+
+    const username = 'user1';
+    const updates = { biography: 'Updated biography' };
+
+    await updateUser(username, updates);
+
+    expect(mockProfanityService).not.toHaveBeenCalled();
+    expect(mockApi.patch).toHaveBeenCalledWith('/api/user/updateUser', {
+      username,
+      updates,
+    });
+  });
+
+  it('calls API with correct parameters when username passes profanity check', async () => {
+    mockProfanityService.mockResolvedValueOnce(undefined);
+    mockApi.patch.mockResolvedValueOnce({
+      status: 200,
+      data: { _id: 'user123', username: 'newusername' },
+    });
+
+    const username = 'olduser';
+    const updates = { username: 'newusername', biography: 'New bio' };
+
+    await updateUser(username, updates);
+
+    expect(mockProfanityService).toHaveBeenCalledWith('newusername');
+    expect(mockApi.patch).toHaveBeenCalledWith('/api/user/updateUser', {
+      username,
+      updates,
+    });
+  });
+
+  it('throws error when API call fails with axios error', async () => {
+    mockApi.patch.mockRejectedValueOnce({
+      response: { data: 'Username already exists' },
+      isAxiosError: true,
+    });
+
+    const username = 'user1';
+    const updates = { username: 'existinguser' };
+
+    await expect(updateUser(username, updates)).rejects.toThrow('Username already exists');
+  });
+
+  it('throws generic error when API call fails without response', async () => {
+    mockApi.patch.mockRejectedValueOnce(new Error('Network error'));
+
+    const username = 'user1';
+    const updates = { biography: 'New bio' };
+
+    await expect(updateUser(username, updates)).rejects.toThrow('Network error');
+  });
+
+  it('returns the updated user on success', async () => {
+    const mockUser = { _id: 'user123', username: 'updateduser', biography: 'Updated bio' };
+    mockApi.patch.mockResolvedValueOnce({ status: 200, data: mockUser });
+
+    const username = 'user1';
+    const updates = { username: 'updateduser', biography: 'Updated bio' };
+
+    const result = await updateUser(username, updates);
+
+    expect(result).toEqual(mockUser);
+    expect(mockApi.patch).toHaveBeenCalledWith('/api/user/updateUser', {
+      username,
+      updates,
+    });
+  });
+
+  it('handles partial updates correctly', async () => {
+    const mockUser = { _id: 'user123', username: 'user1', biography: 'Only bio updated' };
+    mockApi.patch.mockResolvedValueOnce({ status: 200, data: mockUser });
+
+    const username = 'user1';
+    const updates = { biography: 'Only bio updated' };
+
+    const result = await updateUser(username, updates);
+
+    expect(result).toEqual(mockUser);
+    expect(mockProfanityService).not.toHaveBeenCalled();
+  });
+});
+
+describe('deleteUser', () => {
+  const mockApi = api as jest.Mocked<typeof api>;
+
+  beforeEach(() => {
+    jest.clearAllMocks();
+  });
+
+  it('calls API with correct username parameter', async () => {
+    mockApi.delete.mockResolvedValueOnce({
+      status: 200,
+      data: { _id: 'user123', username: 'deleteduser' },
+    });
+
+    const username = 'userToDelete';
+
+    await deleteUser(username);
+
+    expect(mockApi.delete).toHaveBeenCalledWith('/api/user/deleteUser/userToDelete');
+  });
+
+  it('throws error when API response status is not 200', async () => {
+    mockApi.delete.mockResolvedValueOnce({ status: 404, data: {} });
+
+    const username = 'nonexistentuser';
+
+    await expect(deleteUser(username)).rejects.toThrow('Error when deleting user');
+  });
+
+  it('throws error when API call fails', async () => {
+    mockApi.delete.mockRejectedValueOnce(new Error('Network error'));
+
+    const username = 'user1';
+
+    await expect(deleteUser(username)).rejects.toThrow('Network error');
+  });
+
+  it('returns the deleted user on success', async () => {
+    const mockUser = { _id: 'user123', username: 'deleteduser', role: 'user' };
+    mockApi.delete.mockResolvedValueOnce({ status: 200, data: mockUser });
+
+    const username = 'deleteduser';
+
+    const result = await deleteUser(username);
+
+    expect(result).toEqual(mockUser);
+    expect(mockApi.delete).toHaveBeenCalledWith('/api/user/deleteUser/deleteduser');
   });
 });

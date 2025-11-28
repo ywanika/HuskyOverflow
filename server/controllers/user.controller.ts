@@ -6,6 +6,7 @@ import {
   UserByUsernameRequest,
   FakeSOSocket,
   UpdateBiographyRequest,
+  UpdateUserRequest,
   SignUpUserRequest,
 } from '../types/types';
 import {
@@ -538,7 +539,57 @@ const userController = (socket: FakeSOSocket) => {
 
       res.status(200).json(result);
     } catch (error) {
-      res.status(500).send(`Error when checking suspension status: ${error}`);
+      res.status(500).send(`Error when checking guidelines agreement: ${error}`);
+    }
+  };
+
+  /**
+   * Updates user details (admin only).
+   * @param req The request containing the username and updates in the body.
+   * @param res The response, either returning the updated user or an error.
+   * @returns A promise resolving to void.
+   */
+  const updateUserDetails = async (req: UpdateUserRequest, res: Response): Promise<void> => {
+    try {
+      const { username, updates } = req.body;
+
+      // Validate that request has username and updates
+      if (!username || !updates) {
+        throw new Error('Username and updates are required');
+      }
+
+      // Validate username if it's being updated
+      if (updates.username !== undefined) {
+        if (typeof updates.username !== 'string' || updates.username.trim().length === 0) {
+          throw new Error('Username must be a non-empty string');
+        }
+        updates.username = updates.username.trim();
+
+        // Check if the new username is different from the current one
+        if (updates.username !== username) {
+          // Check if the new username already exists
+          const existingUser = await getUserByUsername(updates.username);
+          if (!('error' in existingUser)) {
+            throw new Error('Username already exists');
+          }
+        }
+      }
+
+      const updatedUser = await updateUser(username, updates);
+
+      if ('error' in updatedUser) {
+        throw new Error(updatedUser.error);
+      }
+
+      // Emit socket event for real-time updates
+      socket.emit('userUpdate', {
+        user: updatedUser,
+        type: 'updated',
+      });
+
+      res.status(200).json(updatedUser);
+    } catch (error) {
+      res.status(500).send(`Error when updating user: ${error}`);
     }
   };
 
@@ -551,6 +602,7 @@ const userController = (socket: FakeSOSocket) => {
   router.delete('/deleteUser/:username', deleteUser);
   router.patch('/updateBiography', updateBiography);
   router.patch('/updateGuidelinesAgreement', updateGuidelinesAgreement);
+  router.patch('/updateUser', updateUserDetails);
   router.get('/checkGuidelines/:username', checkGuidelinesAgreement);
   router.post('/suspend', suspendUserRoute);
   router.post('/ban', banUserRoute);
