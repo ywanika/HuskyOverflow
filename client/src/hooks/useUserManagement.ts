@@ -7,6 +7,7 @@ import {
   promoteToModerator,
   promoteToAdmin,
   demoteToUser,
+  createUserWithRole,
 } from '../services/userService';
 import useUserContext from './useUserContext';
 
@@ -154,6 +155,59 @@ const useUserManagement = () => {
     }
   };
 
+  const handleCreateUser = async (
+    username: string,
+    password: string,
+    confirmPassword: string,
+    role: 'user' | 'moderator' | 'admin',
+  ): Promise<{ success: boolean; message?: string }> => {
+    if (!checkAdminRole()) {
+      const message = 'Only administrators can perform this action';
+      setActionMessage({
+        type: 'error',
+        text: message,
+      });
+      return { success: false, message };
+    }
+
+    if (!username.trim() || !password) {
+      const message = 'Username and password are required';
+      setActionMessage({
+        type: 'error',
+        text: message,
+      });
+      return { success: false, message };
+    }
+
+    if (password !== confirmPassword) {
+      const message = 'Passwords do not match';
+      setActionMessage({
+        type: 'error',
+        text: message,
+      });
+      return { success: false, message };
+    }
+
+    try {
+      await createUserWithRole(username, password, role, currentUser.username);
+      const message = `Successfully created user ${username} with role ${role}`;
+      setActionMessage({
+        type: 'success',
+        text: message,
+      });
+      await fetchUsers();
+      return { success: true, message };
+    } catch (err) {
+      const message =
+        'Failed to create user: ' + (err instanceof Error ? err.message : String(err));
+      setActionMessage({
+        type: 'error',
+        text: message,
+      });
+      return { success: false, message };
+    }
+  };
+
   const sortedUsers = [...users].sort((a, b) => {
     const roleOrder = { admin: 0, moderator: 1, user: 2 };
     const aRole = (a.role || 'user') as keyof typeof roleOrder;
@@ -171,6 +225,7 @@ const useUserManagement = () => {
     handlePromoteToModerator,
     handlePromoteToAdmin,
     handleDemoteToUser,
+    handleCreateUser,
   };
 };
 

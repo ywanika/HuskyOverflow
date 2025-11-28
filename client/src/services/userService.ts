@@ -340,11 +340,48 @@ const checkSuspensionStatus = async (
   return res.data;
 };
 
+/**
+ * Creates a new user account with a specific role (Admin only).
+ * @param username The unique username for the new user
+ * @param password The password for the new user
+ * @param role The role to assign to the user ('user', 'moderator', or 'admin')
+ * @param adminUsername The username of the admin creating the user
+ * @returns A promise resolving to the created user data
+ * @throws {Error} If the request to the server is unsuccessful
+ */
+const createUserWithRole = async (
+  username: string,
+  password: string,
+  role: 'user' | 'moderator' | 'admin',
+  adminUsername: string,
+): Promise<SafeDatabaseUser> => {
+  try {
+    // Check profanity in username
+    await profanityService(username);
+
+    const res = await api.post(`/api/admin/create-user?username=${adminUsername}`, {
+      username,
+      password,
+      role,
+    });
+    return res.data;
+  } catch (error) {
+    if (axios.isAxiosError(error) && error.response) {
+      throw new Error(
+        `Error while creating user: ${error.response.data.error || error.response.data}`,
+      );
+    } else {
+      throw new Error(`Error while creating user: ${(error as Error).message}`);
+    }
+  }
+};
+
 export {
   getUsers,
   getUserByUsername,
   loginUser,
   createUser,
+  createUserWithRole,
   deleteUser,
   resetPassword,
   updateBiography,
