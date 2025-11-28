@@ -7,6 +7,9 @@ import QuestionModel from '../models/questions.model';
 import TagModel from '../models/tags.model';
 import UserModel from '../models/users.model';
 import MessageModel from '../models/messages.model';
+import AppealModel from '../models/appeals.model';
+import AuditLogModel from '../models/auditLog.model';
+import NotificationModel from '../models/notifications.model';
 
 import answersResolver from './resolvers/answer';
 import questionsResolver from './resolvers/question';
@@ -19,6 +22,8 @@ import { computeImportOrder, loadJSON, processCollection } from './utils';
 import CommunityModel from '../models/community.model';
 import CollectionModel from '../models/collection.model';
 import collectionsResolver from './resolvers/collection';
+import appealResolver from './resolvers/appeal';
+import notificationResolver from './resolvers/notification';
 
 // Compute the import order based on dependencies
 const IMPORT_ORDER = computeImportOrder(collectionDependencies);
@@ -55,6 +60,18 @@ const collectionMapping = {
   collection: {
     model: CollectionModel,
     resolver: collectionsResolver,
+  },
+  appeal: {
+    model: AppealModel,
+    resolver: appealResolver,
+  },
+  auditLog: {
+    model: AuditLogModel,
+    resolver: identityResolver,
+  },
+  notification: {
+    model: NotificationModel,
+    resolver: notificationResolver,
   },
 };
 
