@@ -158,13 +158,12 @@ const UserManagementTab = () => {
     }
 
     if (Object.keys(updates).length > 0) {
-      const success = await handleUpdateUser(selectedUser.username, updates);
-      if (success) {
-        setEditUserModalOpen(false);
-      }
-    } else {
-      setEditUserModalOpen(false);
+      await handleUpdateUser(selectedUser.username, updates);
     }
+    setEditUserModalOpen(false);
+    setTimeout(() => {
+      window.scrollTo({ top: 0, left: 0, behavior: 'auto' });
+    }, 0);
   };
 
   const handleDeleteUserClick = (user: SafeDatabaseUser) => {

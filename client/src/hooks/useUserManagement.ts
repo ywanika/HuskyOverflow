@@ -12,6 +12,7 @@ import {
   deleteUser,
 } from '../services/userService';
 import useUserContext from './useUserContext';
+import profanityService from '../services/profanityService';
 
 interface ActionMessage {
   type: 'success' | 'error';
@@ -217,6 +218,8 @@ const useUserManagement = () => {
     if (!checkAdminRole()) return false;
 
     try {
+      await profanityService(username);
+      await profanityService(updates.biography || '');
       await updateUser(username, updates);
       setActionMessage({ type: 'success', text: `Successfully updated ${username}` });
       await fetchUsers();

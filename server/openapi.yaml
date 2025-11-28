@@ -1432,6 +1432,106 @@ paths:
         '500':
           $ref: '#/components/responses/ErrorResponse'
 
+  /admin/audit-logs:
+    get:
+      tags:
+        - Admin
+      summary: Retrieve audit logs (Admin only).
+      parameters:
+        - in: query
+          name: username
+          schema:
+            type: string
+          required: true
+          description: The username of the admin requesting audit logs (for authorization).
+        - in: query
+          name: adminUsername
+          schema:
+            type: string
+          required: false
+          description: Filter audit logs by admin username.
+        - in: query
+          name: actionType
+          schema:
+            type: string
+          required: false
+          description: Filter audit logs by action type.
+        - in: query
+          name: targetUser
+          schema:
+            type: string
+          required: false
+          description: Filter audit logs by target user.
+        - in: query
+          name: startDate
+          schema:
+            type: string
+            format: date-time
+          required: false
+          description: Filter audit logs from this date onwards.
+        - in: query
+          name: endDate
+          schema:
+            type: string
+            format: date-time
+          required: false
+          description: Filter audit logs up to this date.
+      responses:
+        '200':
+          description: Successfully retrieved audit logs.
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/AuditLog'
+        '400':
+          $ref: '#/components/responses/ValidationError'
+        '403':
+          description: Forbidden - User is not an admin.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SimpleErrorBody'
+        '500':
+          $ref: '#/components/responses/ErrorResponse'
+
+  /admin/create-user:
+    post:
+      tags:
+        - Admin
+      summary: Create a new user account with a specific role (Admin only).
+      parameters:
+        - in: query
+          name: username
+          schema:
+            type: string
+          required: true
+          description: The username of the admin creating the user (for authorization).
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateUserWithRoleBody'
+      responses:
+        '200':
+          description: User successfully created.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/User'
+        '400':
+          $ref: '#/components/responses/ValidationError'
+        '403':
+          description: Forbidden - User is not an admin.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SimpleErrorBody'
+        '500':
+          $ref: '#/components/responses/ErrorResponse'
+
   # --------------------
   # MODERATION CONTROLLER
   # --------------------
@@ -2476,6 +2576,60 @@ components:
     # --------------------
     # ADMIN SCHEMAS
     # --------------------
+    CreateUserWithRoleBody:
+      type: object
+      required:
+        - username
+        - password
+        - role
+      properties:
+        username:
+          type: string
+          minLength: 1
+          description: The username for the new user account.
+        password:
+          type: string
+          minLength: 1
+          description: The password for the new user account.
+        role:
+          type: string
+          enum:
+            - user
+            - moderator
+            - admin
+          description: The role to assign to the new user.
+
+    AuditLog:
+      type: object
+      description: An audit log entry tracking admin actions.
+      properties:
+        _id:
+          type: string
+          format: object-id
+          description: Unique identifier for the audit log entry.
+        adminUsername:
+          type: string
+          description: The username of the admin who performed the action.
+        actionType:
+          type: string
+          description: The type of action performed (e.g., 'create_user', 'view_dashboard_metrics').
+        targetUser:
+          type: string
+          nullable: true
+          description: The username of the user targeted by the action (if applicable).
+        targetContent:
+          type: string
+          nullable: true
+          description: The ID of content targeted by the action (if applicable).
+        reason:
+          type: string
+          nullable: true
+          description: The reason for the action (if applicable).
+        timestamp:
+          type: string
+          format: date-time
+          description: The timestamp when the action was performed.
+
     DashboardMetrics:
       type: object
       description: Comprehensive dashboard metrics for admin users.
