@@ -26,6 +26,11 @@ const SUSPENSION_DURATIONS = [
   { label: '30 days', value: 30 },
 ];
 
+/**
+ * UserManagementTab provides an interface for administrators to manage users.
+ * Administrators can suspend or ban users, promote or demote user roles.
+ */
+
 const UserManagementTab = () => {
   const {
     users,

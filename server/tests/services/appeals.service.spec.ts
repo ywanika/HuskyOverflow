@@ -116,7 +116,8 @@ describe('Appeals Service', () => {
     });
 
     it('should reject appeal with less than 3 words', async () => {
-      const twoWordReason = 'a'.repeat(25) + ' ' + 'b'.repeat(25); // 51 characters but only 2 words
+      // Create a string with 50+ characters but only 2 words
+      const twoWordReason = 'a'.repeat(25) + ' ' + 'b'.repeat(25); // 51 characters, 2 words
       const mockQuestion: DatabaseQuestion = {
         _id: new ObjectId(contentId) as any,
         title: 'Test Question',
@@ -308,7 +309,9 @@ describe('Appeals Service', () => {
       expect(QuestionModel.findByIdAndUpdate).toHaveBeenCalled();
       const updateCall = (QuestionModel.findByIdAndUpdate as jest.Mock).mock.calls[0];
       expect(updateCall[0].toString()).toBe(contentId);
-      expect(updateCall[1]['deleted.isDeleted']).toBe(false);
+      expect(updateCall[1]).toMatchObject({
+        'deleted.isDeleted': false,
+      });
       expect(updateCall[1]['deleted.restoredAt']).toBeInstanceOf(Date);
     });
 

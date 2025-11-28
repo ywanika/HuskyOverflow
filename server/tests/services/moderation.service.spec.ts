@@ -15,6 +15,8 @@ import {
   getFlaggedContent,
   markAsReviewed,
   dismissFlag,
+  getDeletedContentByModerator,
+  restoreDeletedContent,
 } from '../../services/moderation.service';
 import { DatabaseUser, DatabaseQuestion, DatabaseAnswer, DatabaseComment } from '../../types/types';
 import { QUESTIONS, ans1, com1 } from '../mockData.models';
@@ -794,6 +796,359 @@ describe('Moderation Service', () => {
 
       expect(result.success).toBe(false);
       expect(result.error).toBe('Content not found');
+    });
+  });
+
+  describe('getDeletedContentByModerator', () => {
+    const moderatorUsername = 'moderator1';
+
+    it('should successfully get deleted content by moderator', async () => {
+      const moderatorUser: DatabaseUser = {
+        _id: new ObjectId(),
+        username: moderatorUsername,
+        password: 'password',
+        dateJoined: new Date(),
+        role: 'moderator',
+        agreedToGuidelines: true,
+      };
+
+      const mockQuestion: DatabaseQuestion = {
+        ...QUESTIONS[0],
+        deleted: {
+          isDeleted: true,
+          deletedBy: moderatorUsername,
+          deleteReason: 'Spam',
+          deletedAt: new Date('2025-01-15T10:00:00Z'),
+        },
+      };
+
+      const mockAnswer: DatabaseAnswer = {
+        ...ans1,
+        deleted: {
+          isDeleted: true,
+          deletedBy: moderatorUsername,
+          deleteReason: 'Off-topic',
+          deletedAt: new Date('2025-01-15T11:00:00Z'),
+        },
+      };
+
+      const mockComment: DatabaseComment = {
+        ...com1,
+        deleted: {
+          isDeleted: true,
+          deletedBy: moderatorUsername,
+          deleteReason: 'Inappropriate',
+          deletedAt: new Date('2025-01-15T12:00:00Z'),
+        },
+      };
+
+      jest.spyOn(UserModel, 'findOne').mockResolvedValueOnce(moderatorUser);
+      jest.spyOn(QuestionModel, 'find').mockReturnValueOnce({
+        lean: jest.fn().mockResolvedValueOnce([mockQuestion]),
+      } as any);
+
+      jest.spyOn(AnswerModel, 'find').mockReturnValueOnce({
+        lean: jest.fn().mockResolvedValueOnce([mockAnswer]),
+      } as any);
+
+      jest.spyOn(CommentModel, 'find').mockReturnValueOnce({
+        lean: jest.fn().mockResolvedValueOnce([mockComment]),
+      } as any);
+
+      const result = await getDeletedContentByModerator(moderatorUsername);
+
+      expect(result.items).toHaveLength(3);
+      expect(result.items[0].contentType).toBe('comment'); // Most recent
+      expect(result.items[1].contentType).toBe('answer');
+      expect(result.items[2].contentType).toBe('question'); // Oldest
+      expect(result.items[0].deletedBy).toBe(moderatorUsername);
+    });
+
+    it('should return empty array when no deleted content found', async () => {
+      const moderatorUser: DatabaseUser = {
+        _id: new ObjectId(),
+        username: moderatorUsername,
+        password: 'password',
+        dateJoined: new Date(),
+        role: 'moderator',
+        agreedToGuidelines: true,
+      };
+
+      jest.spyOn(UserModel, 'findOne').mockResolvedValueOnce(moderatorUser);
+      jest.spyOn(QuestionModel, 'find').mockReturnValueOnce({
+        lean: jest.fn().mockResolvedValueOnce([]),
+      } as any);
+
+      jest.spyOn(AnswerModel, 'find').mockReturnValueOnce({
+        lean: jest.fn().mockResolvedValueOnce([]),
+      } as any);
+
+      jest.spyOn(CommentModel, 'find').mockReturnValueOnce({
+        lean: jest.fn().mockResolvedValueOnce([]),
+      } as any);
+
+      const result = await getDeletedContentByModerator(moderatorUsername);
+
+      expect(result.items).toHaveLength(0);
+    });
+
+    it('should return unauthorized error if user is not moderator', async () => {
+      const regularUser: DatabaseUser = {
+        _id: new ObjectId(),
+        username: 'user1',
+        password: 'password',
+        dateJoined: new Date(),
+        role: 'user',
+        agreedToGuidelines: true,
+      };
+
+      jest.spyOn(UserModel, 'findOne').mockResolvedValueOnce(regularUser);
+
+      const result = await getDeletedContentByModerator('user1');
+
+      expect(result.items).toHaveLength(0);
+      expect(result.error).toContain('Unauthorized');
+    });
+
+    it('should handle database errors gracefully', async () => {
+      const moderatorUser: DatabaseUser = {
+        _id: new ObjectId(),
+        username: moderatorUsername,
+        password: 'password',
+        dateJoined: new Date(),
+        role: 'moderator',
+        agreedToGuidelines: true,
+      };
+
+      jest.spyOn(UserModel, 'findOne').mockResolvedValueOnce(moderatorUser);
+      jest.spyOn(QuestionModel, 'find').mockReturnValueOnce({
+        lean: jest.fn().mockRejectedValueOnce(new Error('Database error')),
+      } as any);
+
+      const result = await getDeletedContentByModerator(moderatorUsername);
+
+      expect(result.items).toHaveLength(0);
+      expect(result.error).toContain('Database error');
+    });
+  });
+
+  describe('restoreDeletedContent', () => {
+    const moderatorUsername = 'moderator1';
+    const questionId = QUESTIONS[0]._id.toString();
+    const answerId = ans1._id.toString();
+    const commentId = com1._id.toString();
+
+    it('should successfully restore a deleted question', async () => {
+      const moderatorUser: DatabaseUser = {
+        _id: new ObjectId(),
+        username: moderatorUsername,
+        password: 'password',
+        dateJoined: new Date(),
+        role: 'moderator',
+        agreedToGuidelines: true,
+      };
+
+      const question: DatabaseQuestion = {
+        ...QUESTIONS[0],
+        deleted: {
+          isDeleted: true,
+          deletedBy: moderatorUsername,
+          deleteReason: 'Spam',
+          deletedAt: new Date('2025-01-15T10:00:00Z'),
+        },
+      };
+
+      const restoredQuestion: DatabaseQuestion = {
+        ...question,
+        deleted: {
+          isDeleted: false,
+          deletedBy: moderatorUsername,
+          deleteReason: 'Spam',
+          deletedAt: new Date('2025-01-15T10:00:00Z'),
+          restoredAt: new Date(),
+        },
+      };
+
+      jest.spyOn(UserModel, 'findOne').mockResolvedValueOnce(moderatorUser);
+      jest.spyOn(QuestionModel, 'findById').mockResolvedValueOnce(question);
+      jest.spyOn(QuestionModel, 'findByIdAndUpdate').mockResolvedValueOnce(restoredQuestion);
+      jest.spyOn(NotificationModel, 'create').mockResolvedValueOnce({} as any);
+
+      const result = await restoreDeletedContent('question', questionId, moderatorUsername);
+
+      expect(result.success).toBe(true);
+      expect(result.message).toBe('Content restored successfully');
+      expect(QuestionModel.findByIdAndUpdate).toHaveBeenCalledWith(
+        questionId,
+        {
+          'deleted.isDeleted': false,
+          'deleted.restoredAt': expect.any(Date),
+        },
+        { new: true },
+      );
+    });
+
+    it('should successfully restore a deleted answer', async () => {
+      const moderatorUser: DatabaseUser = {
+        _id: new ObjectId(),
+        username: moderatorUsername,
+        password: 'password',
+        dateJoined: new Date(),
+        role: 'moderator',
+        agreedToGuidelines: true,
+      };
+
+      const answer: DatabaseAnswer = {
+        ...ans1,
+        deleted: {
+          isDeleted: true,
+          deletedBy: moderatorUsername,
+          deleteReason: 'Off-topic',
+          deletedAt: new Date('2025-01-15T11:00:00Z'),
+        },
+      };
+
+      const restoredAnswer: DatabaseAnswer = {
+        ...answer,
+        deleted: {
+          isDeleted: false,
+          deletedBy: moderatorUsername,
+          deleteReason: 'Off-topic',
+          deletedAt: new Date('2025-01-15T11:00:00Z'),
+          restoredAt: new Date(),
+        },
+      };
+
+      jest.spyOn(UserModel, 'findOne').mockResolvedValueOnce(moderatorUser);
+      jest.spyOn(AnswerModel, 'findById').mockResolvedValueOnce(answer);
+      jest.spyOn(AnswerModel, 'findByIdAndUpdate').mockResolvedValueOnce(restoredAnswer);
+      jest.spyOn(NotificationModel, 'create').mockResolvedValueOnce({} as any);
+
+      const result = await restoreDeletedContent('answer', answerId, moderatorUsername);
+
+      expect(result.success).toBe(true);
+      expect(result.message).toBe('Content restored successfully');
+    });
+
+    it('should successfully restore a deleted comment', async () => {
+      const moderatorUser: DatabaseUser = {
+        _id: new ObjectId(),
+        username: moderatorUsername,
+        password: 'password',
+        dateJoined: new Date(),
+        role: 'moderator',
+        agreedToGuidelines: true,
+      };
+
+      const comment: DatabaseComment = {
+        ...com1,
+        deleted: {
+          isDeleted: true,
+          deletedBy: moderatorUsername,
+          deleteReason: 'Inappropriate',
+          deletedAt: new Date('2025-01-15T12:00:00Z'),
+        },
+      };
+
+      const restoredComment: DatabaseComment = {
+        ...comment,
+        deleted: {
+          isDeleted: false,
+          deletedBy: moderatorUsername,
+          deleteReason: 'Inappropriate',
+          deletedAt: new Date('2025-01-15T12:00:00Z'),
+          restoredAt: new Date(),
+        },
+      };
+
+      jest.spyOn(UserModel, 'findOne').mockResolvedValueOnce(moderatorUser);
+      jest.spyOn(CommentModel, 'findById').mockResolvedValueOnce(comment);
+      jest.spyOn(CommentModel, 'findByIdAndUpdate').mockResolvedValueOnce(restoredComment);
+      jest.spyOn(NotificationModel, 'create').mockResolvedValueOnce({} as any);
+
+      const result = await restoreDeletedContent('comment', commentId, moderatorUsername);
+
+      expect(result.success).toBe(true);
+      expect(result.message).toBe('Content restored successfully');
+    });
+
+    it('should return error if user is not moderator', async () => {
+      const regularUser: DatabaseUser = {
+        _id: new ObjectId(),
+        username: 'user1',
+        password: 'password',
+        dateJoined: new Date(),
+        role: 'user',
+        agreedToGuidelines: true,
+      };
+
+      jest.spyOn(UserModel, 'findOne').mockResolvedValueOnce(regularUser);
+
+      const result = await restoreDeletedContent('question', questionId, 'user1');
+
+      expect(result.success).toBe(false);
+      expect(result.error).toContain('Unauthorized');
+    });
+
+    it('should return error if content not found', async () => {
+      const moderatorUser: DatabaseUser = {
+        _id: new ObjectId(),
+        username: moderatorUsername,
+        password: 'password',
+        dateJoined: new Date(),
+        role: 'moderator',
+        agreedToGuidelines: true,
+      };
+
+      jest.spyOn(UserModel, 'findOne').mockResolvedValueOnce(moderatorUser);
+      jest.spyOn(QuestionModel, 'findById').mockResolvedValueOnce(null);
+
+      const result = await restoreDeletedContent('question', questionId, moderatorUsername);
+
+      expect(result.success).toBe(false);
+      expect(result.error).toBe('Question not found');
+    });
+
+    it('should create notification when content is restored', async () => {
+      const moderatorUser: DatabaseUser = {
+        _id: new ObjectId(),
+        username: moderatorUsername,
+        password: 'password',
+        dateJoined: new Date(),
+        role: 'moderator',
+        agreedToGuidelines: true,
+      };
+
+      const question: DatabaseQuestion = {
+        ...QUESTIONS[0],
+        deleted: {
+          isDeleted: true,
+          deletedBy: moderatorUsername,
+          deleteReason: 'Spam',
+          deletedAt: new Date('2025-01-15T10:00:00Z'),
+        },
+      };
+
+      const restoredQuestion: DatabaseQuestion = {
+        ...question,
+        deleted: {
+          isDeleted: false,
+          deletedBy: moderatorUsername,
+          deleteReason: 'Spam',
+          deletedAt: new Date('2025-01-15T10:00:00Z'),
+          restoredAt: new Date(),
+        },
+      };
+
+      const createSpy = jest.spyOn(NotificationModel, 'create').mockResolvedValueOnce({} as any);
+
+      jest.spyOn(UserModel, 'findOne').mockResolvedValueOnce(moderatorUser);
+      jest.spyOn(QuestionModel, 'findById').mockResolvedValueOnce(question);
+      jest.spyOn(QuestionModel, 'findByIdAndUpdate').mockResolvedValueOnce(restoredQuestion);
+
+      await restoreDeletedContent('question', questionId, moderatorUsername);
+
+      expect(createSpy).toHaveBeenCalled();
     });
   });
 });

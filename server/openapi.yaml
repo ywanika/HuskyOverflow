@@ -1812,6 +1812,76 @@ paths:
         '500':
           $ref: '#/components/responses/ErrorResponse'
 
+  /moderation/deleted:
+    get:
+      tags:
+        - Moderation
+      summary: Get all deleted content by a specific moderator - Moderator only.
+      parameters:
+        - in: query
+          name: moderatorUsername
+          schema:
+            type: string
+          required: true
+          description: Username of the moderator to filter deleted content.
+      responses:
+        '200':
+          description: Successfully retrieved deleted content.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DeletedContentResponse'
+        '400':
+          $ref: '#/components/responses/ValidationError'
+        '403':
+          description: Forbidden - User is not a moderator or admin.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SimpleErrorBody'
+        '500':
+          $ref: '#/components/responses/ErrorResponse'
+
+  /moderation/restore:
+    post:
+      tags:
+        - Moderation
+      summary: Restore deleted content - Moderator only.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/RestoreContentBody'
+      responses:
+        '200':
+          description: Content successfully restored.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                  message:
+                    type: string
+        '400':
+          $ref: '#/components/responses/ValidationError'
+        '403':
+          description: Forbidden - User is not a moderator or admin.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SimpleErrorBody'
+        '404':
+          description: Content not found.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SimpleErrorBody'
+        '500':
+          $ref: '#/components/responses/ErrorResponse'
+
   
 
 components:
@@ -2596,6 +2666,82 @@ components:
           type: string
           minLength: 1
           description: The username of the moderator performing the action.
+
+    RestoreContentBody:
+      type: object
+      required:
+        - contentType
+        - contentId
+        - moderatorUsername
+      properties:
+        contentType:
+          type: string
+          enum:
+            - question
+            - answer
+            - comment
+          description: The type of content being restored.
+        contentId:
+          type: string
+          format: object-id
+          description: The unique ID of the content to restore.
+        moderatorUsername:
+          type: string
+          minLength: 1
+          description: The username of the moderator performing the restoration.
+
+    DeletedContentItem:
+      type: object
+      description: A deleted content item with metadata.
+      properties:
+        _id:
+          type: string
+          description: The unique ID of the deleted content.
+        contentType:
+          type: string
+          enum:
+            - question
+            - answer
+            - comment
+          description: The type of content.
+        content:
+          type: object
+          description: The actual content object (question, answer, or comment).
+        deletedBy:
+          type: string
+          description: Username of the moderator who deleted this content.
+        deleteReason:
+          type: string
+          description: The reason provided for deletion.
+        deletedAt:
+          type: string
+          format: date-time
+          description: Timestamp when the content was deleted.
+        authorUsername:
+          type: string
+          description: Username of the original author.
+        contentPreview:
+          type: string
+          description: First 100 characters of the content (title for questions, text for answers/comments).
+        restoredAt:
+          type: string
+          format: date-time
+          nullable: true
+          description: Timestamp when the content was restored (if applicable).
+
+    DeletedContentResponse:
+      type: object
+      description: Response containing all deleted content by a specific moderator.
+      properties:
+        items:
+          type: array
+          items:
+            $ref: '#/components/schemas/DeletedContentItem'
+          description: Array of deleted content items sorted by deletion time (most recent first).
+        error:
+          type: string
+          nullable: true
+          description: Error message if an error occurred.
 
     FlaggedContentItem:
       type: object
