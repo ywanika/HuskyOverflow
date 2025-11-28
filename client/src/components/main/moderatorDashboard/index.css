@@ -12,19 +12,19 @@
   color: var(--color-text-muted);
 }
 
-/* Tab Navigation */
-.moderator-tabs {
+/* Tab Navigation - Main Tabs */
+.main-tabs {
   margin-bottom: var(--spacing-lg);
   border-bottom: 2px solid var(--color-bg-tertiary);
   padding-bottom: var(--spacing-xs);
 }
 
-.moderator-tab {
+.main-tab {
   background-color: transparent;
   color: var(--color-text-secondary);
-  border: none;
+  border: 2px solid transparent;
   padding: var(--spacing-sm) var(--spacing-lg);
-  border-radius: var(--radius-md) var(--radius-md) 0 0;
+  border-radius: var(--radius-md);
   cursor: pointer;
   font-weight: 500;
   font-size: var(--font-size-base);
@@ -32,15 +32,44 @@
   min-height: 44px;
 }
 
-.moderator-tab:hover {
+.main-tab:hover {
   background-color: var(--color-hover);
   color: var(--color-text-primary);
+  border-color: var(--color-bg-tertiary);
 }
 
-.moderator-tab-active {
+.main-tab-active {
   background-color: var(--color-primary-button);
-  color: var(--color-bg-primary);
+  color: #1a202c;
   font-weight: 600;
+  border-color: var(--color-primary-button);
+}
+
+/* Sub-Tabs (for flagged content types) */
+.sub-tab {
+  background-color: var(--color-bg-secondary);
+  color: var(--color-text-secondary);
+  border: 2px solid var(--color-bg-tertiary);
+  padding: var(--spacing-xs) var(--spacing-md);
+  border-radius: var(--radius-md);
+  cursor: pointer;
+  font-weight: 500;
+  font-size: var(--font-size-sm);
+  transition: all var(--transition-fast);
+  min-height: 36px;
+}
+
+.sub-tab:hover {
+  background-color: var(--color-hover);
+  color: var(--color-text-primary);
+  border-color: var(--color-primary-button);
+}
+
+.sub-tab-active {
+  background-color: var(--color-primary-button);
+  color: #1a202c;
+  font-weight: 600;
+  border-color: var(--color-primary-button);
 }
 
 /* Flagged Content Cards */
@@ -242,4 +271,121 @@
 /* Error State */
 .moderator-error {
   padding: var(--spacing-2xl);
+}
+
+/* Appeal Cards */
+.appeal-card {
+  background-color: var(--color-bg-primary);
+  border: 1px solid var(--color-bg-tertiary);
+  border-left: 4px solid var(--color-info);
+  border-radius: var(--radius-lg);
+  padding: var(--spacing-lg);
+  margin-bottom: var(--spacing-lg);
+  box-shadow: var(--shadow-sm);
+}
+
+.appeal-meta {
+  font-size: var(--font-size-sm);
+  color: var(--color-text-muted);
+}
+
+.appeal-deleted-info {
+  font-size: var(--font-size-sm);
+  color: var(--color-error);
+}
+
+.appeal-content-box {
+  background-color: var(--color-bg-secondary);
+  border-radius: var(--radius-md);
+  padding: var(--spacing-md);
+  margin-bottom: var(--spacing-lg);
+  max-height: 200px;
+  overflow-y: auto;
+  color: var(--color-text-primary);
+}
+
+.appeal-reason-section {
+  margin-bottom: var(--spacing-lg);
+}
+
+.appeal-reason-label {
+  font-size: var(--font-size-sm);
+  font-weight: 600;
+  color: var(--color-text-primary);
+}
+
+.appeal-reason-box {
+  background-color: var(--color-bg-secondary);
+  border: 2px solid var(--color-info);
+  border-radius: var(--radius-md);
+  padding: var(--spacing-md);
+  width: 100%;
+}
+
+.appeal-reason-text {
+  font-size: var(--font-size-sm);
+  color: var(--color-text-primary);
+}
+
+.appeal-response-section {
+  margin-bottom: var(--spacing-lg);
+}
+
+.appeal-response-label {
+  font-size: var(--font-size-sm);
+  font-weight: 600;
+  color: var(--color-text-primary);
+  margin-bottom: var(--spacing-sm);
+}
+
+.appeal-response-textarea {
+  background-color: var(--color-bg-secondary);
+  border: 2px solid var(--color-bg-tertiary);
+  border-radius: var(--radius-md);
+  padding: var(--spacing-sm);
+  width: 100%;
+  color: var(--color-text-primary);
+  transition: all var(--transition-fast);
+}
+
+.appeal-response-textarea:focus {
+  border-color: var(--color-focus);
+  box-shadow: 0 0 0 3px var(--color-focus-ring);
+  outline: none;
+}
+
+.appeal-response-textarea:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+/* Deleted Content Cards */
+.deleted-card {
+  background-color: var(--color-bg-primary);
+  border: 1px solid var(--color-bg-tertiary);
+  border-left: 4px solid var(--color-error);
+  border-radius: var(--radius-lg);
+  padding: var(--spacing-lg);
+  margin-bottom: var(--spacing-lg);
+  box-shadow: var(--shadow-sm);
+}
+
+.deleted-meta {
+  font-size: var(--font-size-sm);
+  color: var(--color-text-muted);
+}
+
+.deleted-reason {
+  font-size: var(--font-size-sm);
+  color: var(--color-error);
+}
+
+.deleted-content-box {
+  background-color: var(--color-bg-secondary);
+  border-radius: var(--radius-md);
+  padding: var(--spacing-md);
+  margin-bottom: var(--spacing-lg);
+  max-height: 200px;
+  overflow-y: auto;
+  color: var(--color-text-primary);
 }

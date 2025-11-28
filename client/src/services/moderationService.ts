@@ -435,3 +435,74 @@ export const rejectAppeal = async (
 
   return res.data;
 };
+
+/**
+ * Deleted content item interface
+ */
+export interface DeletedContentItem {
+  _id: string;
+  contentType: 'question' | 'answer' | 'comment';
+  content: Record<string, unknown>;
+  deletedBy: string;
+  deleteReason: string;
+  deletedAt: Date;
+  authorUsername: string;
+  contentPreview: string;
+  restoredAt?: Date;
+}
+
+/**
+ * Response type for deleted content
+ */
+export interface DeletedContentResponse {
+  items: DeletedContentItem[];
+  error?: string;
+}
+
+/**
+ * Gets all deleted content by a specific moderator
+ * @param moderatorUsername - Username of the moderator
+ * @returns Promise resolving to DeletedContentResponse
+ * @throws Error if the API response status is not 200
+ */
+export const getDeletedContentByModerator = async (
+  moderatorUsername: string,
+): Promise<DeletedContentResponse> => {
+  const res = await api.get(`${MODERATION_API_URL}/deleted`, {
+    params: {
+      moderatorUsername,
+    },
+  });
+
+  if (res.status !== 200) {
+    throw new Error('Error while fetching deleted content');
+  }
+
+  return res.data;
+};
+
+/**
+ * Restores deleted content
+ * @param contentType - Type of content to restore
+ * @param contentId - ID of the content to restore
+ * @param moderatorUsername - Username of the moderator
+ * @returns Promise resolving to ModerationResponse
+ * @throws Error if the API response status is not 200
+ */
+export const restoreDeletedContent = async (
+  contentType: 'question' | 'answer' | 'comment' | 'message',
+  contentId: string,
+  moderatorUsername: string,
+): Promise<ModerationResponse> => {
+  const res = await api.post(`${MODERATION_API_URL}/restore`, {
+    contentType,
+    contentId,
+    moderatorUsername,
+  });
+
+  if (res.status !== 200) {
+    throw new Error('Error while restoring content');
+  }
+
+  return res.data;
+};

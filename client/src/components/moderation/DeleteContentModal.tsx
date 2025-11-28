@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Button, Box, Text, VStack, HStack, Textarea } from '@chakra-ui/react';
 
 interface DeleteContentModalProps {
@@ -22,6 +22,24 @@ const DeleteContentModal = ({
   const [deleteReason, setDeleteReason] = useState('');
   const [isDeleting, setIsDeleting] = useState(false);
   const [error, setError] = useState('');
+  const [deleteResult, setDeleteResult] = useState<{ success: boolean; error?: Error } | null>(
+    null,
+  );
+
+  // Handle state updates after async operation completes
+  useEffect(() => {
+    if (deleteResult) {
+      if (deleteResult.success) {
+        setDeleteReason('');
+        setIsDeleting(false);
+        onClose();
+      } else {
+        setError(deleteResult.error?.message || 'Failed to delete content');
+        setIsDeleting(false);
+      }
+      setDeleteResult(null);
+    }
+  }, [deleteResult, onClose]);
 
   if (!isOpen) return null;
 
@@ -36,12 +54,15 @@ const DeleteContentModal = ({
 
     try {
       await onConfirm(deleteReason.trim());
-      setDeleteReason('');
-      onClose();
+      // Use setTimeout to defer state update, allowing React to batch it properly
+      setTimeout(() => {
+        setDeleteResult({ success: true });
+      }, 0);
     } catch (err) {
-      setError((err as Error).message || 'Failed to delete content');
-    } finally {
-      setIsDeleting(false);
+      // Use setTimeout to defer state update, allowing React to batch it properly
+      setTimeout(() => {
+        setDeleteResult({ success: false, error: err as Error });
+      }, 0);
     }
   };
 

@@ -323,13 +323,47 @@
 
 /* Moderator Dashboard Dark Mode */
 [data-theme='dark'] .flagged-card,
-[data-theme='dark'] .moderator-tab {
+[data-theme='dark'] .appeal-card,
+[data-theme='dark'] .deleted-card {
   background-color: var(--color-bg-secondary) !important;
+  color: var(--color-text-primary) !important;
+  border-color: var(--color-bg-tertiary) !important;
+}
+
+[data-theme='dark'] .flagged-content-box,
+[data-theme='dark'] .appeal-content-box,
+[data-theme='dark'] .deleted-content-box {
+  background-color: var(--color-bg-primary) !important;
+}
+
+[data-theme='dark'] .appeal-reason-box {
+  background-color: var(--color-bg-primary) !important;
+  border-color: var(--color-info) !important;
+}
+
+[data-theme='dark'] .appeal-response-textarea {
+  background-color: var(--color-bg-primary) !important;
+  border-color: var(--color-bg-tertiary) !important;
   color: var(--color-text-primary) !important;
 }
 
-[data-theme='dark'] .flagged-content-box {
-  background-color: var(--color-bg-primary) !important;
+[data-theme='dark'] .appeal-response-textarea:focus {
+  border-color: var(--color-focus) !important;
+}
+
+/* Main tabs active state */
+[data-theme='dark'] .main-tab-active,
+[data-theme='dark'] .sub-tab-active {
+  background-color: var(--color-accent-button) !important;
+  color: #1a202c !important;
+  border-color: var(--color-accent-button) !important;
+}
+
+[data-theme='dark'] .main-tab:hover,
+[data-theme='dark'] .sub-tab:hover {
+  background-color: var(--color-hover) !important;
+  color: var(--color-text-primary) !important;
+  border-color: var(--color-primary-button) !important;
 }
 
 [data-theme='dark'] h1,
