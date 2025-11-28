@@ -38,6 +38,12 @@ import UserManagementTab from './UserManagementTab';
 import { getMetaData } from '../../../tool';
 import './index.css';
 
+/**
+ * AdminDashboard component provides administrators with a comprehensive overview
+ * of platform metrics and user management capabilities.
+ * There are two main tabs: Metrics and User Management.
+ */
+
 const COLORS = ['#0088FE', '#00C49F', '#FFBB28', '#FF8042', '#8884d8', '#82ca9d'];
 
 const AdminDashboard = () => {

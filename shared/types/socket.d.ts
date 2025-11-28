@@ -131,6 +131,11 @@ export interface ModerationUpdatePayload {
     | 'questionDeleted'
     | 'answerDeleted'
     | 'commentDeleted'
+    | 'messageDeleted'
+    | 'questionRestored'
+    | 'answerRestored'
+    | 'commentRestored'
+    | 'messageRestored'
     | 'questionFlagged'
     | 'answerFlagged'
     | 'commentFlagged'
@@ -150,6 +155,7 @@ export interface ModerationUpdatePayload {
   answerId?: string;
   commentId?: string;
   deletedBy?: string;
+  restoredBy?: string;
   flaggedBy?: string;
   unflaggedBy?: string;
   reviewedBy?: string;

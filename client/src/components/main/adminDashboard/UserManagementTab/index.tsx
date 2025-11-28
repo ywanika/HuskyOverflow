@@ -12,6 +12,8 @@ import {
   Field,
   Textarea,
   HStack,
+  Input,
+  RadioGroup,
 } from '@chakra-ui/react';
 import { SafeDatabaseUser } from '@fake-stack-overflow/shared';
 import useUserManagement from '../../../../hooks/useUserManagement';
@@ -26,6 +28,11 @@ const SUSPENSION_DURATIONS = [
   { label: '30 days', value: 30 },
 ];
 
+/**
+ * UserManagementTab provides an interface for administrators to manage users.
+ * Administrators can suspend or ban users, promote or demote user roles.
+ */
+
 const UserManagementTab = () => {
   const {
     users,
@@ -37,6 +44,9 @@ const UserManagementTab = () => {
     handlePromoteToModerator,
     handlePromoteToAdmin,
     handleDemoteToUser,
+    handleCreateUser,
+    handleUpdateUser,
+    handleDeleteUser,
   } = useUserManagement();
 
   const [selectedUser, setSelectedUser] = useState<SafeDatabaseUser | null>(null);
@@ -50,6 +60,31 @@ const UserManagementTab = () => {
   const [banModalOpen, setBanModalOpen] = useState(false);
   const [banReason, setBanReason] = useState<string>('');
   const [banViolationType, setBanViolationType] = useState<string>('Spam');
+
+  // Create user form state
+  const [newUsername, setNewUsername] = useState<string>('');
+  const [newPassword, setNewPassword] = useState<string>('');
+  const [confirmPassword, setConfirmPassword] = useState<string>('');
+  const [selectedRole, setSelectedRole] = useState<'user' | 'moderator' | 'admin'>('user');
+  const [createUserConfirmOpen, setCreateUserConfirmOpen] = useState(false);
+  const [createUserResultOpen, setCreateUserResultOpen] = useState(false);
+  const [createUserResult, setCreateUserResult] = useState<{
+    success: boolean;
+    message: string;
+    username?: string;
+    password?: string;
+  }>({
+    success: false,
+    message: '',
+  });
+
+  // Edit user modal state
+  const [editUserModalOpen, setEditUserModalOpen] = useState(false);
+  const [editUsername, setEditUsername] = useState<string>('');
+  const [editBiography, setEditBiography] = useState<string>('');
+
+  // Delete user confirmation modal state
+  const [deleteUserModalOpen, setDeleteUserModalOpen] = useState(false);
 
   const handleSuspendUser = async () => {
     if (!selectedUser) return;
@@ -67,6 +102,82 @@ const UserManagementTab = () => {
     if (success) {
       setBanModalOpen(false);
       setBanReason('');
+    }
+  };
+
+  const handleCreateUserClick = () => {
+    setCreateUserConfirmOpen(true);
+  };
+
+  const handleCreateUserConfirm = async () => {
+    setCreateUserConfirmOpen(false);
+    const validationResult = await handleCreateUser(
+      newUsername.trim(),
+      newPassword,
+      confirmPassword,
+      selectedRole,
+    );
+
+    if (validationResult.success) {
+      setCreateUserResult({
+        success: true,
+        message: `User ${newUsername.trim()} created successfully`,
+        username: newUsername.trim(),
+        password: newPassword,
+      });
+      // Reset form
+      setNewUsername('');
+      setNewPassword('');
+      setConfirmPassword('');
+      setSelectedRole('user');
+    } else {
+      setCreateUserResult({
+        success: false,
+        message: validationResult.message || 'Failed to create user',
+      });
+    }
+    setCreateUserResultOpen(true);
+  };
+
+  const handleEditUserClick = (user: SafeDatabaseUser) => {
+    setSelectedUser(user);
+    setEditUsername(user.username);
+    setEditBiography(user.biography || '');
+    setEditUserModalOpen(true);
+  };
+
+  const handleEditUserSave = async () => {
+    if (!selectedUser) return;
+
+    const updates: Partial<SafeDatabaseUser> = {};
+    if (editUsername !== selectedUser.username) {
+      updates.username = editUsername.trim();
+    }
+    if (editBiography !== (selectedUser.biography || '')) {
+      updates.biography = editBiography.trim();
+    }
+
+    if (Object.keys(updates).length > 0) {
+      await handleUpdateUser(selectedUser.username, updates);
+    }
+    setEditUserModalOpen(false);
+    setTimeout(() => {
+      window.scrollTo({ top: 0, left: 0, behavior: 'auto' });
+    }, 0);
+  };
+
+  const handleDeleteUserClick = (user: SafeDatabaseUser) => {
+    setSelectedUser(user);
+    setDeleteUserModalOpen(true);
+  };
+
+  const handleDeleteUserConfirm = async () => {
+    if (!selectedUser) return;
+
+    const success = await handleDeleteUser(selectedUser.username);
+    if (success) {
+      setDeleteUserModalOpen(false);
+      setSelectedUser(null);
     }
   };
 
@@ -103,6 +214,74 @@ const UserManagementTab = () => {
           </Alert>
         )}
 
+        {/* Create New User Section */}
+        <Box className='create-user-section'>
+          <Heading size='sm' mb={3} className='create-user-header'>
+            Create a New User
+          </Heading>
+          <VStack align='stretch' gap={3}>
+            <Field.Root>
+              <Field.Label>New Username</Field.Label>
+              <Input
+                value={newUsername}
+                onChange={e => setNewUsername(e.target.value)}
+                placeholder='Enter username'
+              />
+            </Field.Root>
+
+            <Field.Root>
+              <Field.Label>New Password</Field.Label>
+              <Input
+                type='password'
+                value={newPassword}
+                onChange={e => setNewPassword(e.target.value)}
+                placeholder='Enter password'
+              />
+            </Field.Root>
+
+            <Field.Root>
+              <Field.Label>Confirm Password</Field.Label>
+              <Input
+                type='password'
+                value={confirmPassword}
+                onChange={e => setConfirmPassword(e.target.value)}
+                placeholder='Confirm password'
+              />
+            </Field.Root>
+
+            <Field.Root>
+              <Field.Label>Role</Field.Label>
+              <RadioGroup.Root
+                value={selectedRole}
+                onValueChange={details =>
+                  setSelectedRole(details.value as 'user' | 'moderator' | 'admin')
+                }>
+                <HStack gap={4}>
+                  <RadioGroup.Item value='user'>
+                    <RadioGroup.ItemHiddenInput />
+                    <RadioGroup.ItemIndicator />
+                    <RadioGroup.ItemText>User</RadioGroup.ItemText>
+                  </RadioGroup.Item>
+                  <RadioGroup.Item value='moderator'>
+                    <RadioGroup.ItemHiddenInput />
+                    <RadioGroup.ItemIndicator />
+                    <RadioGroup.ItemText>Moderator</RadioGroup.ItemText>
+                  </RadioGroup.Item>
+                  <RadioGroup.Item value='admin'>
+                    <RadioGroup.ItemHiddenInput />
+                    <RadioGroup.ItemIndicator />
+                    <RadioGroup.ItemText>Admin</RadioGroup.ItemText>
+                  </RadioGroup.Item>
+                </HStack>
+              </RadioGroup.Root>
+            </Field.Root>
+
+            <Button colorPalette='blue' onClick={handleCreateUserClick}>
+              Create a new user
+            </Button>
+          </VStack>
+        </Box>
+
         <Box overflowX='auto'>
           <table className='user-management-table'>
             <thead>
@@ -111,6 +290,7 @@ const UserManagementTab = () => {
                 <th>Role</th>
                 <th>Status</th>
                 <th>Actions</th>
+                <th></th>
               </tr>
             </thead>
             <tbody>
@@ -202,6 +382,14 @@ const UserManagementTab = () => {
                         )}
                       </div>
                     </td>
+                    <td>
+                      <Button
+                        className='edit-user-button'
+                        onClick={() => handleEditUserClick(user)}
+                        title='Edit user details'>
+                        ›
+                      </Button>
+                    </td>
                   </tr>
                 );
               })}
@@ -212,24 +400,9 @@ const UserManagementTab = () => {
 
       {/* Suspend Modal */}
       {suspendModalOpen && (
-        <Box
-          position='fixed'
-          top='0'
-          left='0'
-          right='0'
-          bottom='0'
-          bg='rgba(0, 0, 0, 0.5)'
-          display='flex'
-          alignItems='center'
-          justifyContent='center'
-          zIndex={1000}
-          onClick={() => setSuspendModalOpen(false)}>
+        <Box className='modal-overlay' onClick={() => setSuspendModalOpen(false)}>
           <Box
-            bg='white'
-            p={6}
-            borderRadius='md'
-            maxW='500px'
-            w='90%'
+            className='modal-content'
             onClick={e => e.stopPropagation()}
             role='dialog'
             aria-labelledby='suspend-modal-title'>
@@ -281,24 +454,9 @@ const UserManagementTab = () => {
 
       {/* Ban Modal */}
       {banModalOpen && (
-        <Box
-          position='fixed'
-          top='0'
-          left='0'
-          right='0'
-          bottom='0'
-          bg='rgba(0, 0, 0, 0.5)'
-          display='flex'
-          alignItems='center'
-          justifyContent='center'
-          zIndex={1000}
-          onClick={() => setBanModalOpen(false)}>
+        <Box className='modal-overlay' onClick={() => setBanModalOpen(false)}>
           <Box
-            bg='white'
-            p={6}
-            borderRadius='md'
-            maxW='500px'
-            w='90%'
+            className='modal-content'
             onClick={e => e.stopPropagation()}
             role='dialog'
             aria-labelledby='ban-modal-title'>
@@ -347,6 +505,162 @@ const UserManagementTab = () => {
                   }}
                   disabled={banReason.length < 20}>
                   Ban User Permanently
+                </Button>
+              </HStack>
+            </VStack>
+          </Box>
+        </Box>
+      )}
+
+      {/* Create User Confirmation Modal */}
+      {createUserConfirmOpen && (
+        <Box className='modal-overlay' onClick={() => setCreateUserConfirmOpen(false)}>
+          <Box
+            className='modal-content'
+            onClick={e => e.stopPropagation()}
+            role='dialog'
+            aria-labelledby='create-user-confirm-title'>
+            <VStack align='stretch' gap={4}>
+              <Text id='create-user-confirm-title' fontSize='xl' fontWeight='bold'>
+                Confirm User Creation
+              </Text>
+              <Text>
+                Are you sure you want to create a new user with username "{newUsername}" and role "
+                {selectedRole}"?
+              </Text>
+              <HStack gap={4} justify='flex-end'>
+                <Button onClick={() => setCreateUserConfirmOpen(false)} variant='outline'>
+                  Cancel
+                </Button>
+                <Button colorPalette='blue' onClick={handleCreateUserConfirm}>
+                  Yes, Create User
+                </Button>
+              </HStack>
+            </VStack>
+          </Box>
+        </Box>
+      )}
+
+      {/* Create User Result Modal */}
+      {createUserResultOpen && (
+        <Box className='modal-overlay' onClick={() => setCreateUserResultOpen(false)}>
+          <Box
+            className='modal-content'
+            onClick={e => e.stopPropagation()}
+            role='dialog'
+            aria-labelledby='create-user-result-title'>
+            <VStack align='stretch' gap={4}>
+              <Text
+                id='create-user-result-title'
+                fontSize='xl'
+                fontWeight='bold'
+                color={createUserResult.success ? 'green' : 'red'}>
+                {createUserResult.success ? 'User Created Successfully' : 'User Creation Failed'}
+              </Text>
+              {createUserResult.success ? (
+                <>
+                  <Text>{createUserResult.message}</Text>
+                  <Text>Username: {createUserResult.username}</Text>
+                  <Text>Password: {createUserResult.password}</Text>
+                  <Text fontWeight='bold'>
+                    Take note of this login, it will not be shown again.
+                  </Text>
+                </>
+              ) : (
+                <Text>{createUserResult.message}</Text>
+              )}
+              <HStack gap={4} justify='flex-end'>
+                <Button onClick={() => setCreateUserResultOpen(false)} colorPalette='blue'>
+                  OK
+                </Button>
+              </HStack>
+            </VStack>
+          </Box>
+        </Box>
+      )}
+
+      {/* Edit User Modal */}
+      {editUserModalOpen && (
+        <Box className='modal-overlay' onClick={() => setEditUserModalOpen(false)}>
+          <Box
+            className='modal-content'
+            onClick={e => e.stopPropagation()}
+            role='dialog'
+            aria-labelledby='edit-user-modal-title'>
+            <VStack align='stretch' gap={4}>
+              <Text id='edit-user-modal-title' fontSize='xl' fontWeight='bold'>
+                Edit User: {selectedUser?.username}
+              </Text>
+
+              <Field.Root>
+                <Field.Label>Username</Field.Label>
+                <Input
+                  value={editUsername}
+                  onChange={e => setEditUsername(e.target.value)}
+                  placeholder='Enter username'
+                />
+              </Field.Root>
+
+              <Field.Root>
+                <Field.Label>Display Name (Biography)</Field.Label>
+                <Textarea
+                  value={editBiography}
+                  onChange={e => setEditBiography(e.target.value)}
+                  placeholder='Enter display name/bio'
+                  rows={3}
+                />
+              </Field.Root>
+
+              <HStack gap={4} justify='flex-end'>
+                <Button
+                  colorPalette='red'
+                  variant='outline'
+                  onClick={() => {
+                    setEditUserModalOpen(false);
+                    handleDeleteUserClick(selectedUser!);
+                  }}>
+                  Delete User
+                </Button>
+                <Button onClick={() => setEditUserModalOpen(false)} variant='outline'>
+                  Cancel
+                </Button>
+                <Button colorPalette='blue' onClick={handleEditUserSave}>
+                  Save Changes
+                </Button>
+              </HStack>
+            </VStack>
+          </Box>
+        </Box>
+      )}
+
+      {/* Delete User Confirmation Modal */}
+      {deleteUserModalOpen && (
+        <Box className='modal-overlay' onClick={() => setDeleteUserModalOpen(false)}>
+          <Box
+            className='modal-content'
+            onClick={e => e.stopPropagation()}
+            role='dialog'
+            aria-labelledby='delete-user-modal-title'>
+            <VStack align='stretch' gap={4}>
+              <Text id='delete-user-modal-title' fontSize='xl' fontWeight='bold' color='red'>
+                Delete User Account
+              </Text>
+
+              <Text>
+                Are you sure you want to permanently delete the user account for{' '}
+                <strong>{selectedUser?.username}</strong>?
+              </Text>
+
+              <Text color='red' fontSize='sm'>
+                This action cannot be undone. The user will not be notified.
+              </Text>
+
+              <HStack gap={4} justify='flex-end'>
+                <Button onClick={() => setDeleteUserModalOpen(false)} variant='outline'>
+                  Cancel
+                </Button>
+                <Button colorPalette='red' onClick={handleDeleteUserConfirm}>
+                  Delete User
                 </Button>
               </HStack>
             </VStack>

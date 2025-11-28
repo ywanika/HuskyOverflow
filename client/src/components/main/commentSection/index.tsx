@@ -105,32 +105,36 @@ const CommentSection = ({
                       {comment.commentBy}, {getMetaData(new Date(comment.commentDateTime))}
                     </small>
                     <div style={{ display: 'flex', gap: '4px' }}>
-                      {getIsFlagged && getIsFlagged(String(comment._id)) && onUnflagComment ? (
-                        <Button
-                          size='xs'
-                          colorScheme='orange'
-                          variant='solid'
-                          onClick={e => {
-                            e.stopPropagation();
-                            onUnflagComment(String(comment._id));
-                          }}
-                          aria-label={`Unflag comment by ${comment.commentBy}`}>
-                          Unflag
-                        </Button>
-                      ) : (
-                        onFlagComment && (
-                          <Button
-                            size='xs'
-                            colorScheme='orange'
-                            variant='outline'
-                            onClick={e => {
-                              e.stopPropagation();
-                              onFlagComment(String(comment._id));
-                            }}
-                            aria-label={`Flag comment by ${comment.commentBy}`}>
-                            Flag
-                          </Button>
-                        )
+                      {!isModerator && (
+                        <>
+                          {getIsFlagged && getIsFlagged(String(comment._id)) && onUnflagComment ? (
+                            <Button
+                              size='xs'
+                              colorScheme='orange'
+                              variant='solid'
+                              onClick={e => {
+                                e.stopPropagation();
+                                onUnflagComment(String(comment._id));
+                              }}
+                              aria-label={`Unflag comment by ${comment.commentBy}`}>
+                              Unflag
+                            </Button>
+                          ) : (
+                            onFlagComment && (
+                              <Button
+                                size='xs'
+                                colorScheme='orange'
+                                variant='outline'
+                                onClick={e => {
+                                  e.stopPropagation();
+                                  onFlagComment(String(comment._id));
+                                }}
+                                aria-label={`Flag comment by ${comment.commentBy}`}>
+                                Flag
+                              </Button>
+                            )
+                          )}
+                        </>
                       )}
                       {isModerator && onDeleteComment && (
                         <Button

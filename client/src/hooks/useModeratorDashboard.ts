@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import useUserContext from './useUserContext';
 import {
   getFlaggedContent,
@@ -10,6 +10,9 @@ import {
   getAppeals,
   approveAppeal,
   rejectAppeal,
+  getDeletedContentByModerator,
+  restoreDeletedContent,
+  DeletedContentItem,
 } from '../services/moderationService';
 import { AppealItem } from '@fake-stack-overflow/shared';
 
@@ -33,6 +36,7 @@ const useModeratorDashboard = () => {
     comments: [],
   });
   const [appeals, setAppeals] = useState<AppealItem[]>([]);
+  const [deletedContent, setDeletedContent] = useState<DeletedContentItem[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string>('');
   const [deleteModal, setDeleteModal] = useState<{
@@ -46,7 +50,7 @@ const useModeratorDashboard = () => {
     contentId: '',
   });
 
-  const fetchFlaggedContent = async () => {
+  const fetchFlaggedContent = useCallback(async () => {
     try {
       setLoading(true);
       setError('');
@@ -57,9 +61,9 @@ const useModeratorDashboard = () => {
     } finally {
       setLoading(false);
     }
-  };
+  }, []);
 
-  const fetchAppeals = async () => {
+  const fetchAppeals = useCallback(async () => {
     try {
       setError('');
       const data = await getAppeals();
@@ -67,17 +71,29 @@ const useModeratorDashboard = () => {
     } catch (err) {
       setError((err as Error).message || 'Failed to fetch appeals');
     }
-  };
+  }, []);
+
+  const fetchDeletedContent = useCallback(async () => {
+    try {
+      setError('');
+      const data = await getDeletedContentByModerator(user.username);
+      setDeletedContent(data.items || []);
+    } catch (err) {
+      setError((err as Error).message || 'Failed to fetch deleted content');
+    }
+  }, [user.username]);
 
   useEffect(() => {
     fetchFlaggedContent();
     fetchAppeals();
-  }, []);
+    fetchDeletedContent();
+  }, [fetchFlaggedContent, fetchAppeals, fetchDeletedContent]);
 
   useEffect(() => {
     const handleModerationUpdate = () => {
       fetchFlaggedContent();
       fetchAppeals();
+      fetchDeletedContent();
     };
 
     socket.on('moderationUpdate', handleModerationUpdate);
@@ -85,17 +101,18 @@ const useModeratorDashboard = () => {
     return () => {
       socket.off('moderationUpdate', handleModerationUpdate);
     };
-  }, [socket]);
+  }, [socket, fetchFlaggedContent, fetchAppeals, fetchDeletedContent]);
 
   // Poll every 60 seconds to ensure updates within 1 minute
   useEffect(() => {
     const interval = setInterval(() => {
       fetchFlaggedContent();
       fetchAppeals();
+      fetchDeletedContent();
     }, 60000); // 60 seconds
 
     return () => clearInterval(interval);
-  }, []);
+  }, [fetchFlaggedContent, fetchAppeals, fetchDeletedContent]);
 
   const handleMarkAsReviewed = async (
     contentType: 'question' | 'answer' | 'comment',
@@ -140,8 +157,22 @@ const useModeratorDashboard = () => {
       }
       setDeleteModal({ ...deleteModal, isOpen: false });
       await fetchFlaggedContent();
+      await fetchDeletedContent();
     } catch (err) {
       setError((err as Error).message || 'Failed to delete content');
+    }
+  };
+
+  const handleRestoreContent = async (
+    contentType: 'question' | 'answer' | 'comment' | 'message',
+    contentId: string,
+  ) => {
+    try {
+      await restoreDeletedContent(contentType, contentId, user.username);
+      await fetchDeletedContent();
+      await fetchFlaggedContent();
+    } catch (err) {
+      setError((err as Error).message || 'Failed to restore content');
     }
   };
 
@@ -150,6 +181,7 @@ const useModeratorDashboard = () => {
       await approveAppeal(appealId, user.username, modResponse);
       await fetchAppeals();
       await fetchFlaggedContent();
+      await fetchDeletedContent();
     } catch (err) {
       setError((err as Error).message || 'Failed to approve appeal');
     }
@@ -167,6 +199,7 @@ const useModeratorDashboard = () => {
   return {
     flaggedContent,
     appeals,
+    deletedContent,
     loading,
     error,
     handleMarkAsReviewed,
@@ -178,6 +211,7 @@ const useModeratorDashboard = () => {
     fetchFlaggedContent,
     handleApproveAppeal,
     handleRejectAppeal,
+    handleRestoreContent,
   };
 };
 

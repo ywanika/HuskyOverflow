@@ -142,6 +142,7 @@ describe('ModeratorDashboard', () => {
   const buildHookReturn = (overrides: Partial<ReturnType<typeof useModeratorDashboard>> = {}) => ({
     flaggedContent: mockFlaggedContent,
     appeals: MOCK_APPEALS,
+    deletedContent: [],
     loading: false,
     error: '',
     handleMarkAsReviewed: mockHandleMarkAsReviewed,
@@ -157,6 +158,7 @@ describe('ModeratorDashboard', () => {
     fetchFlaggedContent: jest.fn(),
     handleApproveAppeal: mockHandleApproveAppeal,
     handleRejectAppeal: mockHandleRejectAppeal,
+    handleRestoreContent: jest.fn(),
     ...overrides,
   });
 
@@ -280,22 +282,23 @@ describe('ModeratorDashboard', () => {
   });
 
   describe('tab navigation', () => {
-    it('should display all three tabs with correct counts', () => {
+    it('should display all three main tabs with correct counts', () => {
       renderComponent();
 
+      expect(screen.getByText(/Flagged \(4\)/)).toBeInTheDocument();
+      expect(screen.getByText(/Appeals \(1\)/)).toBeInTheDocument();
+      expect(screen.getByText(/Delete History \(0\)/)).toBeInTheDocument();
+    });
+
+    it('should default to flagged tab with questions subtab', () => {
+      renderComponent();
+
+      const flaggedTab = screen.getByText(/Flagged \(4\)/).closest('button');
+      expect(flaggedTab).toHaveClass('chakra-button');
       expect(screen.getByText(/Questions \(2\)/)).toBeInTheDocument();
-      expect(screen.getByText(/Answers \(1\)/)).toBeInTheDocument();
-      expect(screen.getByText(/Comments \(1\)/)).toBeInTheDocument();
     });
 
-    it('should default to questions tab', () => {
-      renderComponent();
-
-      const questionsTab = screen.getByText(/Questions \(2\)/).closest('button');
-      expect(questionsTab).toHaveClass('chakra-button');
-    });
-
-    it('should switch to answers tab when clicked', () => {
+    it('should switch to answers subtab when clicked', () => {
       renderComponent();
 
       const answersTab = screen.getByText(/Answers \(1\)/).closest('button');
@@ -306,7 +309,7 @@ describe('ModeratorDashboard', () => {
       expect(answerTexts.length).toBeGreaterThan(0);
     });
 
-    it('should switch to comments tab when clicked', () => {
+    it('should switch to comments subtab when clicked', () => {
       renderComponent();
 
       const commentsTab = screen.getByText(/Comments \(1\)/).closest('button');
@@ -390,7 +393,8 @@ describe('ModeratorDashboard', () => {
       fireEvent.click(answersTab!);
 
       expect(screen.getByText(/By user6/)).toBeInTheDocument();
-      expect(screen.getByText(/ANSWER/)).toBeInTheDocument();
+      const answerBadges = screen.getAllByText(/^answer$/i);
+      expect(answerBadges.length).toBeGreaterThan(0);
     });
 
     it('should display answer text truncated in title when long', () => {
@@ -423,7 +427,8 @@ describe('ModeratorDashboard', () => {
       fireEvent.click(commentsTab!);
 
       expect(screen.getByText(/By user10/)).toBeInTheDocument();
-      expect(screen.getByText(/COMMENT/)).toBeInTheDocument();
+      const commentBadges = screen.getAllByText(/^comment$/i);
+      expect(commentBadges.length).toBeGreaterThan(0);
     });
   });
 
@@ -778,6 +783,104 @@ describe('ModeratorDashboard', () => {
       fireEvent.click(confirmButton);
 
       expect(mockHandleDeleteConfirm).toHaveBeenCalledWith('Delete reason');
+    });
+  });
+
+  describe('Deleted Content Tab', () => {
+    it('should display delete history tab', () => {
+      renderComponent();
+
+      const deletedTab = screen.getByText(/Delete History \(0\)/i);
+      expect(deletedTab).toBeInTheDocument();
+    });
+
+    it('should show deleted items when tab is clicked', () => {
+      const mockDeletedItems = [
+        {
+          _id: '507f1f77bcf86cd799439011',
+          contentType: 'question' as const,
+          contentPreview: 'This is a deleted question preview',
+          authorUsername: 'user1',
+          deleteReason: 'Spam',
+          deletedAt: new Date('2024-01-01'),
+          content: {},
+          deletedBy: 'moderator1',
+        },
+        {
+          _id: '507f1f77bcf86cd799439012',
+          contentType: 'answer' as const,
+          contentPreview: 'This is a deleted answer preview',
+          authorUsername: 'user2',
+          deleteReason: 'Off-topic',
+          deletedAt: new Date('2024-01-02'),
+          content: {},
+          deletedBy: 'moderator1',
+        },
+      ];
+
+      mockUseModeratorDashboard.mockReturnValue(
+        buildHookReturn({
+          deletedContent: mockDeletedItems,
+        }),
+      );
+
+      renderComponent();
+
+      const deletedTab = screen.getByText(/Delete History \(2\)/i);
+      fireEvent.click(deletedTab);
+
+      expect(screen.getByText(/by user1/)).toBeInTheDocument();
+      expect(screen.getByText(/by user2/)).toBeInTheDocument();
+    });
+
+    it('should show restore button for deleted items', () => {
+      const mockDeletedItems = [
+        {
+          _id: '507f1f77bcf86cd799439011',
+          contentType: 'question' as const,
+          contentPreview: 'This is a deleted question',
+          authorUsername: 'user1',
+          deleteReason: 'Spam',
+          deletedAt: new Date('2024-01-01'),
+          content: {},
+          deletedBy: 'moderator1',
+        },
+      ];
+
+      const mockHandleRestoreContent = jest.fn();
+
+      mockUseModeratorDashboard.mockReturnValue(
+        buildHookReturn({
+          deletedContent: mockDeletedItems,
+          handleRestoreContent: mockHandleRestoreContent,
+        }),
+      );
+
+      renderComponent();
+
+      const deletedTab = screen.getByText(/Delete History \(1\)/i);
+      fireEvent.click(deletedTab);
+
+      const restoreButtons = screen.getAllByText('Restore Content');
+      expect(restoreButtons.length).toBeGreaterThan(0);
+
+      fireEvent.click(restoreButtons[0]);
+      expect(mockHandleRestoreContent).toHaveBeenCalledWith('question', '507f1f77bcf86cd799439011');
+    });
+
+    it('should show empty state when no deleted content', () => {
+      mockUseModeratorDashboard.mockReturnValue(
+        buildHookReturn({
+          deletedContent: [],
+        }),
+      );
+
+      renderComponent();
+
+      const deletedTab = screen.getByText(/Delete History \(0\)/i);
+      fireEvent.click(deletedTab);
+
+      expect(screen.getByText('No deleted content')).toBeInTheDocument();
     });
   });
 });

@@ -55,7 +55,10 @@ const createDeletionNotification = async (
     // Extract first 100 characters of the content
     let contentPreview = '';
     if (contentType === 'question') {
-      contentPreview = (content as DatabaseQuestion).title.substring(0, 100);
+      contentPreview =
+        (content as DatabaseQuestion).title.substring(0, 100) +
+        ': ' +
+        (content as DatabaseQuestion).text.substring(0, 100);
     } else {
       contentPreview = (content as DatabaseAnswer | DatabaseComment).text.substring(0, 100);
     }
@@ -1195,5 +1198,215 @@ export const rejectAppeal = async (
     };
   } catch (error) {
     return { success: false, error: `Error rejecting appeal: ${(error as Error).message}` };
+  }
+};
+
+/**
+ * Interface for deleted content items
+ */
+export interface DeletedContentItem {
+  _id: string;
+  contentType: 'question' | 'answer' | 'comment' | 'message';
+  content: DatabaseQuestion | DatabaseAnswer | DatabaseComment | Record<string, unknown>;
+  deletedBy: string;
+  deleteReason: string;
+  deletedAt: Date;
+  authorUsername: string;
+  contentPreview: string;
+}
+
+/**
+ * Response type for getting deleted content
+ */
+export interface DeletedContentResponse {
+  items: DeletedContentItem[];
+  error?: string;
+}
+
+/**
+ * Gets all content deleted by a specific moderator
+ * @param moderatorUsername - The username of the moderator
+ * @returns Promise resolving to DeletedContentResponse
+ */
+export const getDeletedContentByModerator = async (
+  moderatorUsername: string,
+): Promise<DeletedContentResponse> => {
+  try {
+    // Check if user is moderator/admin
+    const hasPermission = await isModerator(moderatorUsername);
+    if (!hasPermission) {
+      return {
+        items: [],
+        error: 'Unauthorized: Only moderators and admins can view deleted content',
+      };
+    }
+
+    const items: DeletedContentItem[] = [];
+
+    // Get all deleted questions by this moderator
+    const deletedQuestions = await QuestionModel.find({
+      'deleted.isDeleted': true,
+      'deleted.deletedBy': moderatorUsername,
+    }).lean();
+
+    deletedQuestions.forEach(q => {
+      items.push({
+        _id: q._id.toString(),
+        contentType: 'question',
+        content: q as DatabaseQuestion,
+        deletedBy: q.deleted?.deletedBy || '',
+        deleteReason: q.deleted?.deleteReason || '',
+        deletedAt: q.deleted?.deletedAt || new Date(),
+        authorUsername: q.askedBy,
+        contentPreview: q.title.substring(0, 100),
+      });
+    });
+
+    // Get all deleted answers by this moderator
+    const deletedAnswers = await AnswerModel.find({
+      'deleted.isDeleted': true,
+      'deleted.deletedBy': moderatorUsername,
+    }).lean();
+
+    deletedAnswers.forEach(a => {
+      items.push({
+        _id: a._id.toString(),
+        contentType: 'answer',
+        content: a as DatabaseAnswer,
+        deletedBy: a.deleted?.deletedBy || '',
+        deleteReason: a.deleted?.deleteReason || '',
+        deletedAt: a.deleted?.deletedAt || new Date(),
+        authorUsername: a.ansBy,
+        contentPreview: a.text.substring(0, 100),
+      });
+    });
+
+    // Get all deleted comments by this moderator
+    const deletedComments = await CommentModel.find({
+      'deleted.isDeleted': true,
+      'deleted.deletedBy': moderatorUsername,
+    }).lean();
+
+    deletedComments.forEach(c => {
+      items.push({
+        _id: c._id.toString(),
+        contentType: 'comment',
+        content: c as DatabaseComment,
+        deletedBy: c.deleted?.deletedBy || '',
+        deleteReason: c.deleted?.deleteReason || '',
+        deletedAt: c.deleted?.deletedAt || new Date(),
+        authorUsername: c.commentBy,
+        contentPreview: c.text.substring(0, 100),
+      });
+    });
+
+    // Sort by deletion date (most recent first)
+    items.sort((a, b) => b.deletedAt.getTime() - a.deletedAt.getTime());
+
+    return { items };
+  } catch (error) {
+    return {
+      items: [],
+      error: `Error fetching deleted content: ${(error as Error).message}`,
+    };
+  }
+};
+
+/**
+ * Restores deleted content (sets isDeleted to false)
+ * @param contentType - Type of content to restore
+ * @param contentId - ID of the content
+ * @param moderatorUsername - Username of the moderator performing the restoration
+ * @returns Promise resolving to ModerationResponse
+ */
+export const restoreDeletedContent = async (
+  contentType: 'question' | 'answer' | 'comment' | 'message',
+  contentId: string,
+  moderatorUsername: string,
+): Promise<ModerationResponse> => {
+  try {
+    // Check if user is moderator/admin
+    const hasPermission = await isModerator(moderatorUsername);
+    if (!hasPermission) {
+      return {
+        success: false,
+        error: 'Unauthorized: Only moderators and admins can restore content',
+      };
+    }
+
+    let updatedContent: DatabaseQuestion | DatabaseAnswer | DatabaseComment | null = null;
+    let authorUsername = '';
+
+    if (contentType === 'question') {
+      const question = await QuestionModel.findById(contentId);
+      if (!question) {
+        return { success: false, error: 'Question not found' };
+      }
+      authorUsername = question.askedBy;
+
+      updatedContent = await QuestionModel.findByIdAndUpdate(
+        contentId,
+        {
+          'deleted.isDeleted': false,
+          'deleted.restoredAt': new Date(),
+        },
+        { new: true },
+      );
+    } else if (contentType === 'answer') {
+      const answer = await AnswerModel.findById(contentId);
+      if (!answer) {
+        return { success: false, error: 'Answer not found' };
+      }
+      authorUsername = answer.ansBy;
+
+      updatedContent = await AnswerModel.findByIdAndUpdate(
+        contentId,
+        {
+          'deleted.isDeleted': false,
+          'deleted.restoredAt': new Date(),
+        },
+        { new: true },
+      );
+    } else if (contentType === 'comment') {
+      const comment = await CommentModel.findById(contentId);
+      if (!comment) {
+        return { success: false, error: 'Comment not found' };
+      }
+      authorUsername = comment.commentBy;
+
+      updatedContent = await CommentModel.findByIdAndUpdate(
+        contentId,
+        {
+          'deleted.isDeleted': false,
+          'deleted.restoredAt': new Date(),
+        },
+        { new: true },
+      );
+    }
+
+    if (!updatedContent) {
+      return { success: false, error: 'Content not found' };
+    }
+
+    // Create notification for the content author
+    await NotificationModel.create({
+      recipientUsername: authorUsername,
+      type: 'system_announcement',
+      message: `Your ${contentType} has been restored by a moderator.`,
+      contentId: new ObjectId(contentId),
+      isRead: false,
+      timestamp: new Date(),
+    });
+
+    return {
+      success: true,
+      message: 'Content restored successfully',
+      recipientUsername: authorUsername,
+    };
+  } catch (error) {
+    return {
+      success: false,
+      error: `Error restoring content: ${(error as Error).message}`,
+    };
   }
 };
