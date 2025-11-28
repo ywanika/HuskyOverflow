@@ -7,8 +7,12 @@ import {
   promoteToModerator,
   promoteToAdmin,
   demoteToUser,
+  createUserWithRole,
+  updateUser,
+  deleteUser,
 } from '../services/userService';
 import useUserContext from './useUserContext';
+import profanityService from '../services/profanityService';
 
 interface ActionMessage {
   type: 'success' | 'error';
@@ -154,6 +158,98 @@ const useUserManagement = () => {
     }
   };
 
+  const handleCreateUser = async (
+    username: string,
+    password: string,
+    confirmPassword: string,
+    role: 'user' | 'moderator' | 'admin',
+  ): Promise<{ success: boolean; message?: string }> => {
+    if (!checkAdminRole()) {
+      const message = 'Only administrators can perform this action';
+      setActionMessage({
+        type: 'error',
+        text: message,
+      });
+      return { success: false, message };
+    }
+
+    if (!username.trim() || !password) {
+      const message = 'Username and password are required';
+      setActionMessage({
+        type: 'error',
+        text: message,
+      });
+      return { success: false, message };
+    }
+
+    if (password !== confirmPassword) {
+      const message = 'Passwords do not match';
+      setActionMessage({
+        type: 'error',
+        text: message,
+      });
+      return { success: false, message };
+    }
+
+    try {
+      await createUserWithRole(username, password, role, currentUser.username);
+      const message = `Successfully created user ${username} with role ${role}`;
+      setActionMessage({
+        type: 'success',
+        text: message,
+      });
+      await fetchUsers();
+      return { success: true, message };
+    } catch (err) {
+      const message =
+        'Failed to create user: ' + (err instanceof Error ? err.message : String(err));
+      setActionMessage({
+        type: 'error',
+        text: message,
+      });
+      return { success: false, message };
+    }
+  };
+
+  const handleUpdateUser = async (
+    username: string,
+    updates: Partial<SafeDatabaseUser>,
+  ): Promise<boolean> => {
+    if (!checkAdminRole()) return false;
+
+    try {
+      await profanityService(username);
+      await profanityService(updates.biography || '');
+      await updateUser(username, updates);
+      setActionMessage({ type: 'success', text: `Successfully updated ${username}` });
+      await fetchUsers();
+      return true;
+    } catch (err) {
+      setActionMessage({
+        type: 'error',
+        text: 'Failed to update user: ' + (err instanceof Error ? err.message : String(err)),
+      });
+      return false;
+    }
+  };
+
+  const handleDeleteUser = async (username: string): Promise<boolean> => {
+    if (!checkAdminRole()) return false;
+
+    try {
+      await deleteUser(username);
+      setActionMessage({ type: 'success', text: `Successfully deleted ${username}` });
+      await fetchUsers();
+      return true;
+    } catch (err) {
+      setActionMessage({
+        type: 'error',
+        text: 'Failed to delete user: ' + (err instanceof Error ? err.message : String(err)),
+      });
+      return false;
+    }
+  };
+
   const sortedUsers = [...users].sort((a, b) => {
     const roleOrder = { admin: 0, moderator: 1, user: 2 };
     const aRole = (a.role || 'user') as keyof typeof roleOrder;
@@ -171,6 +267,9 @@ const useUserManagement = () => {
     handlePromoteToModerator,
     handlePromoteToAdmin,
     handleDemoteToUser,
+    handleCreateUser,
+    handleUpdateUser,
+    handleDeleteUser,
   };
 };
 
