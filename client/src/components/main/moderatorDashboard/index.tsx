@@ -123,7 +123,7 @@ const ModeratorDashboard = () => {
           <div className='flagged-card-header'>
             <VStack align='start' gap={1} flex={1}>
               <div className='flagged-card-badges'>
-                <span className='badge-content-type'>{contentType}</span>
+                <span className='badge-content-type'>{contentType.toUpperCase()}</span>
                 <span className='badge-flag-count'>
                   {item.flaggedBy.length} flag{item.flaggedBy.length !== 1 ? 's' : ''}
                 </span>
