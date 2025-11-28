@@ -118,6 +118,29 @@ describe('Appeals Service', () => {
     it('should reject appeal with less than 3 words', async () => {
       // Create a string with 50+ characters but only 2 words
       const twoWordReason = 'a'.repeat(25) + ' ' + 'b'.repeat(25); // 51 characters, 2 words
+      const mockQuestion: DatabaseQuestion = {
+        _id: new ObjectId(contentId) as any,
+        title: 'Test Question',
+        text: 'Test content',
+        tags: [],
+        askedBy: appealUser,
+        askDateTime: new Date(),
+        answers: [],
+        views: [],
+        upVotes: [],
+        downVotes: [],
+        comments: [],
+        community: null,
+        deleted: {
+          isDeleted: true,
+          deletedBy: 'moderator',
+          deleteReason: 'Violation',
+          deletedAt: new Date(),
+        },
+      };
+
+      jest.spyOn(AppealModel, 'findOne').mockResolvedValue(null);
+      jest.spyOn(QuestionModel, 'findById').mockResolvedValue(mockQuestion as any);
 
       const result = await submitAppeal(contentId, contentType, appealUser, twoWordReason);
 
@@ -283,6 +306,7 @@ describe('Appeals Service', () => {
       const result = await approveAppeal(appealId, moderatorUsername);
 
       expect(result.success).toBe(true);
+      expect(QuestionModel.findByIdAndUpdate).toHaveBeenCalled();
       const updateCall = (QuestionModel.findByIdAndUpdate as jest.Mock).mock.calls[0];
       expect(updateCall[0].toString()).toBe(contentId);
       expect(updateCall[1]).toMatchObject({

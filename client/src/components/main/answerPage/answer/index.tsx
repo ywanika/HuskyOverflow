@@ -85,32 +85,36 @@ const AnswerView = ({
       <div className='answer_author'>{ansBy}</div>
       <div className='answer_question_meta'>{meta}</div>
       <div style={{ display: 'flex', gap: '8px', marginTop: '8px' }}>
-        {isFlagged && onUnflagClick ? (
-          <Button
-            size='sm'
-            colorScheme='orange'
-            variant='solid'
-            onClick={e => {
-              e.stopPropagation();
-              onUnflagClick();
-            }}
-            aria-label='Unflag this answer'>
-            Unflag
-          </Button>
-        ) : (
-          onFlagClick && (
-            <Button
-              size='sm'
-              colorScheme='orange'
-              variant='outline'
-              onClick={e => {
-                e.stopPropagation();
-                onFlagClick();
-              }}
-              aria-label='Flag this answer'>
-              Flag
-            </Button>
-          )
+        {!isModerator && (
+          <>
+            {isFlagged && onUnflagClick ? (
+              <Button
+                size='sm'
+                colorScheme='orange'
+                variant='solid'
+                onClick={e => {
+                  e.stopPropagation();
+                  onUnflagClick();
+                }}
+                aria-label='Unflag this answer'>
+                Unflag
+              </Button>
+            ) : (
+              onFlagClick && (
+                <Button
+                  size='sm'
+                  colorScheme='orange'
+                  variant='outline'
+                  onClick={e => {
+                    e.stopPropagation();
+                    onFlagClick();
+                  }}
+                  aria-label='Flag this answer'>
+                  Flag
+                </Button>
+              )
+            )}
+          </>
         )}
         {isModerator && onDeleteClick && (
           <Button

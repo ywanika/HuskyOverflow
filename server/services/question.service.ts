@@ -49,7 +49,9 @@ export const getQuestionsByOrder = async (
   order: OrderType,
 ): Promise<PopulatedDatabaseQuestion[]> => {
   try {
-    const qlist: PopulatedDatabaseQuestion[] = await QuestionModel.find().populate<{
+    const qlist: PopulatedDatabaseQuestion[] = await QuestionModel.find({
+      'deleted.isDeleted': { $ne: true },
+    }).populate<{
       tags: DatabaseTag[];
       answers: PopulatedDatabaseAnswer[];
       comments: DatabaseComment[];
@@ -274,7 +276,10 @@ export const addVoteToQuestion = async (
  */
 export const getCommunityQuestions = async (communityId: string): Promise<DatabaseQuestion[]> => {
   try {
-    const questions = await QuestionModel.find({ community: communityId });
+    const questions = await QuestionModel.find({
+      'community': communityId,
+      'deleted.isDeleted': { $ne: true },
+    });
 
     return questions;
   } catch (error) {
