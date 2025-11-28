@@ -35,6 +35,7 @@ import useAdminDashboard from '../../../hooks/useAdminDashboard';
 import useUserContext from '../../../hooks/useUserContext';
 import { Navigate } from 'react-router-dom';
 import UserManagementTab from './UserManagementTab';
+import AuditLogsTab from './AuditLogsTab';
 import './index.css';
 
 /**
@@ -47,7 +48,7 @@ const COLORS = ['#0088FE', '#00C49F', '#FFBB28', '#FF8042', '#8884d8', '#82ca9d'
 
 const AdminDashboard = () => {
   const { user } = useUserContext();
-  const [activeTab, setActiveTab] = useState<'metrics' | 'users'>('metrics');
+  const [activeTab, setActiveTab] = useState<'metrics' | 'users' | 'auditLogs'>('metrics');
   const {
     metrics,
     loading,
@@ -121,7 +122,7 @@ const AdminDashboard = () => {
 
         {/* Tab Navigation */}
         <Box borderBottom='2px' borderColor='gray.200'>
-          <SimpleGrid columns={2} gap={0} maxW='400px'>
+          <SimpleGrid columns={3} gap={0} maxW='600px'>
             <Button
               variant={activeTab === 'metrics' ? 'solid' : 'ghost'}
               colorScheme={activeTab === 'metrics' ? 'blue' : 'gray'}
@@ -140,12 +141,23 @@ const AdminDashboard = () => {
               onClick={() => setActiveTab('users')}>
               User Management
             </Button>
+            <Button
+              variant={activeTab === 'auditLogs' ? 'solid' : 'ghost'}
+              colorScheme={activeTab === 'auditLogs' ? 'blue' : 'gray'}
+              borderRadius='0'
+              borderBottom={activeTab === 'auditLogs' ? '3px solid' : 'none'}
+              borderColor='blue.500'
+              onClick={() => setActiveTab('auditLogs')}>
+              Audit Logs
+            </Button>
           </SimpleGrid>
         </Box>
 
         {/* Tab Content */}
         {activeTab === 'users' ? (
           <UserManagementTab />
+        ) : activeTab === 'auditLogs' ? (
+          <AuditLogsTab />
         ) : (
           <>
             {/* Summary Cards */}
