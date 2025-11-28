@@ -145,7 +145,7 @@ const adminController = (socket: FakeSOSocket) => {
         actionType: 'view_audit_logs',
       });
 
-      res.json(logs);
+      res.status(200).json(logs);
     } catch (err: unknown) {
       res.status(500).json({ error: `Error fetching audit logs: ${(err as Error).message}` });
     }

@@ -1466,16 +1466,16 @@ paths:
           name: startDate
           schema:
             type: string
-            format: date-time
+            format: date
           required: false
-          description: Filter audit logs from this date onwards.
+          description: Filter audit logs from this date onwards (YYYY-MM-DD format).
         - in: query
           name: endDate
           schema:
             type: string
-            format: date-time
+            format: date
           required: false
-          description: Filter audit logs up to this date.
+          description: Filter audit logs up to this date (YYYY-MM-DD format).
       responses:
         '200':
           description: Successfully retrieved audit logs.
