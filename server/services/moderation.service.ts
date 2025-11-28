@@ -55,7 +55,10 @@ const createDeletionNotification = async (
     // Extract first 100 characters of the content
     let contentPreview = '';
     if (contentType === 'question') {
-      contentPreview = (content as DatabaseQuestion).title.substring(0, 100);
+      contentPreview =
+        (content as DatabaseQuestion).title.substring(0, 100) +
+        ': ' +
+        (content as DatabaseQuestion).text.substring(0, 100);
     } else {
       contentPreview = (content as DatabaseAnswer | DatabaseComment).text.substring(0, 100);
     }
