@@ -348,7 +348,7 @@ describe('ModeratorDashboard', () => {
       renderComponent();
 
       expect(screen.getByText(/By user1/)).toBeInTheDocument();
-      const questionBadges = screen.getAllByText(/question/);
+      const questionBadges = screen.getAllByText(/QUESTION/);
       expect(questionBadges.length).toBeGreaterThan(0);
     });
 
