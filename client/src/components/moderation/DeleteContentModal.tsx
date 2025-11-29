@@ -5,7 +5,7 @@ interface DeleteContentModalProps {
   isOpen: boolean;
   onClose: () => void;
   onConfirm: (deleteReason: string) => Promise<void>;
-  contentType: 'question' | 'answer' | 'comment';
+  contentType: 'question' | 'answer' | 'comment' | 'message';
   contentTitle?: string;
 }
 

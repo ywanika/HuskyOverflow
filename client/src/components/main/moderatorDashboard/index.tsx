@@ -30,8 +30,8 @@ import './index.css';
  * including questions, answers, comments, and user appeals.
  */
 
-type FlaggableContentType = 'question' | 'answer' | 'comment';
-type FlaggedSubTabType = 'questions' | 'answers' | 'comments';
+type FlaggableContentType = 'question' | 'answer' | 'comment' | 'message';
+type FlaggedSubTabType = 'questions' | 'answers' | 'comments' | 'messages';
 type TabType = 'flagged' | 'appeals' | 'deleted';
 
 const ModeratorDashboard = () => {
@@ -73,11 +73,15 @@ const ModeratorDashboard = () => {
     if (contentType === 'question') {
       return typeof item.title === 'string' ? item.title : 'Untitled Question';
     }
+    if (contentType === 'message') {
+      return 'Global Message';
+    }
     const text = typeof item.text === 'string' ? item.text : '';
     return text || (contentType === 'answer' ? 'Answer' : 'Comment');
   };
 
   const getContentText = (item: Record<string, unknown>): string => {
+    if (typeof item.msg === 'string') return item.msg; // For messages
     if (typeof item.text === 'string') return item.text;
     if (typeof item.title === 'string') return item.title;
     return 'No content';
@@ -98,6 +102,7 @@ const ModeratorDashboard = () => {
       (typeof item.askedBy === 'string' ? item.askedBy : null) ||
       (typeof item.ansBy === 'string' ? item.ansBy : null) ||
       (typeof item.commentBy === 'string' ? item.commentBy : null) ||
+      (typeof item.msgFrom === 'string' ? item.msgFrom : null) ||
       'Unknown'
     );
   };
@@ -107,6 +112,7 @@ const ModeratorDashboard = () => {
       (item.askDateTime instanceof Date ? item.askDateTime : null) ||
       (item.ansDateTime instanceof Date ? item.ansDateTime : null) ||
       (item.commentDateTime instanceof Date ? item.commentDateTime : null) ||
+      (item.msgDateTime instanceof Date ? item.msgDateTime : null) ||
       new Date()
     );
   };
@@ -158,6 +164,11 @@ const ModeratorDashboard = () => {
                 className='btn-view-question'
                 onClick={() => navigate(`/question/${item._id}`)}>
                 View Question
+              </Button>
+            )}
+            {contentType === 'message' && (
+              <Button className='btn-view-message' onClick={() => navigate('/messages')}>
+                View Messages
               </Button>
             )}
             <Button
@@ -338,7 +349,8 @@ const ModeratorDashboard = () => {
   const totalFlagged =
     flaggedContent.questions.length +
     flaggedContent.answers.length +
-    flaggedContent.comments.length;
+    flaggedContent.comments.length +
+    flaggedContent.messages.length;
 
   return (
     <Box className='moderator-dashboard'>
@@ -392,6 +404,12 @@ const ModeratorDashboard = () => {
                   onClick={() => setFlaggedSubTab('comments')}>
                   Comments ({flaggedContent.comments.length})
                 </Button>
+                <Button
+                  size='sm'
+                  className={`sub-tab ${flaggedSubTab === 'messages' ? 'sub-tab-active' : ''}`}
+                  onClick={() => setFlaggedSubTab('messages')}>
+                  Messages ({flaggedContent.messages.length})
+                </Button>
               </HStack>
 
               <Box>
@@ -419,6 +437,15 @@ const ModeratorDashboard = () => {
                       <Text className='empty-state'>No flagged comments</Text>
                     ) : (
                       flaggedContent.comments.map(item => renderFlaggedItem(item, 'comment'))
+                    )}
+                  </Box>
+                )}
+                {flaggedSubTab === 'messages' && (
+                  <Box>
+                    {flaggedContent.messages.length === 0 ? (
+                      <Text className='empty-state'>No flagged messages</Text>
+                    ) : (
+                      flaggedContent.messages.map(item => renderFlaggedItem(item, 'message'))
                     )}
                   </Box>
                 )}

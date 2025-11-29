@@ -94,6 +94,7 @@ const mockFlaggedContent = {
       flaggedAt: [new Date('2024-01-07')],
     },
   ],
+  messages: [],
 };
 
 const MOCK_APPEALS: AppealItem[] = [
@@ -223,7 +224,7 @@ describe('ModeratorDashboard', () => {
     it('should display loading spinner when loading', () => {
       mockUseModeratorDashboard.mockReturnValue(
         buildHookReturn({
-          flaggedContent: { questions: [], answers: [], comments: [] },
+          flaggedContent: { questions: [], answers: [], comments: [], messages: [] },
           loading: true,
         }),
       );
@@ -238,7 +239,7 @@ describe('ModeratorDashboard', () => {
     it('should display error message when error occurs', () => {
       mockUseModeratorDashboard.mockReturnValue(
         buildHookReturn({
-          flaggedContent: { questions: [], answers: [], comments: [] },
+          flaggedContent: { questions: [], answers: [], comments: [], messages: [] },
           error: 'Failed to fetch flagged content',
         }),
       );
@@ -268,7 +269,7 @@ describe('ModeratorDashboard', () => {
     it('should calculate total correctly with empty arrays', () => {
       mockUseModeratorDashboard.mockReturnValue(
         buildHookReturn({
-          flaggedContent: { questions: [], answers: [], comments: [] },
+          flaggedContent: { questions: [], answers: [], comments: [], messages: [] },
         }),
       );
 
@@ -326,6 +327,7 @@ describe('ModeratorDashboard', () => {
             questions: [],
             answers: [],
             comments: [],
+            messages: [],
           },
         }),
       );
@@ -555,6 +557,7 @@ describe('ModeratorDashboard', () => {
             ],
             answers: [],
             comments: [],
+            messages: [],
           },
         }),
       );
@@ -583,6 +586,7 @@ describe('ModeratorDashboard', () => {
               },
             ],
             comments: [],
+            messages: [],
           },
         }),
       );
@@ -623,6 +627,7 @@ describe('ModeratorDashboard', () => {
             ],
             answers: [],
             comments: [],
+            messages: [],
           },
         }),
       );
@@ -652,6 +657,7 @@ describe('ModeratorDashboard', () => {
             ],
             answers: [],
             comments: [],
+            messages: [],
           },
         }),
       );
@@ -706,6 +712,7 @@ describe('ModeratorDashboard', () => {
             ],
             answers: [],
             comments: [],
+            messages: [],
           },
         }),
       );
