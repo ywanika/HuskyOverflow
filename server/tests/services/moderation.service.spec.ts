@@ -2,6 +2,7 @@ import { ObjectId } from 'mongodb';
 import QuestionModel from '../../models/questions.model';
 import AnswerModel from '../../models/answers.model';
 import CommentModel from '../../models/comments.model';
+import MessageModel from '../../models/messages.model';
 import UserModel from '../../models/users.model';
 import NotificationModel from '../../models/notifications.model';
 import {
@@ -600,11 +601,16 @@ describe('Moderation Service', () => {
         lean: jest.fn().mockResolvedValueOnce([]),
       } as any);
 
+      jest.spyOn(MessageModel, 'find').mockReturnValueOnce({
+        lean: jest.fn().mockResolvedValueOnce([]),
+      } as any);
+
       const result = await getFlaggedContent();
 
       expect(result.questions).toHaveLength(1);
       expect(result.answers).toHaveLength(1);
       expect(result.comments).toHaveLength(0);
+      expect(result.messages).toHaveLength(0);
     });
 
     it('should return empty arrays if no flagged content', async () => {
@@ -620,11 +626,16 @@ describe('Moderation Service', () => {
         lean: jest.fn().mockResolvedValueOnce([]),
       } as any);
 
+      jest.spyOn(MessageModel, 'find').mockReturnValueOnce({
+        lean: jest.fn().mockResolvedValueOnce([]),
+      } as any);
+
       const result = await getFlaggedContent();
 
       expect(result.questions).toHaveLength(0);
       expect(result.answers).toHaveLength(0);
       expect(result.comments).toHaveLength(0);
+      expect(result.messages).toHaveLength(0);
     });
 
     it('should handle errors gracefully', async () => {

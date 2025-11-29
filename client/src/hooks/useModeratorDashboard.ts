@@ -18,7 +18,7 @@ import { AppealItem } from '@fake-stack-overflow/shared';
 
 interface FlaggedItem {
   _id: string;
-  contentType: 'question' | 'answer' | 'comment';
+  contentType: 'question' | 'answer' | 'comment' | 'message';
   content: Record<string, unknown>;
   flaggedBy: string[];
   flaggedAt: Date[];
@@ -30,10 +30,12 @@ const useModeratorDashboard = () => {
     questions: FlaggedItem[];
     answers: FlaggedItem[];
     comments: FlaggedItem[];
+    messages: FlaggedItem[];
   }>({
     questions: [],
     answers: [],
     comments: [],
+    messages: [],
   });
   const [appeals, setAppeals] = useState<AppealItem[]>([]);
   const [deletedContent, setDeletedContent] = useState<DeletedContentItem[]>([]);
@@ -41,7 +43,7 @@ const useModeratorDashboard = () => {
   const [error, setError] = useState<string>('');
   const [deleteModal, setDeleteModal] = useState<{
     isOpen: boolean;
-    type: 'question' | 'answer' | 'comment';
+    type: 'question' | 'answer' | 'comment' | 'message';
     contentId: string;
     contentTitle?: string;
   }>({
@@ -115,7 +117,7 @@ const useModeratorDashboard = () => {
   }, [fetchFlaggedContent, fetchAppeals, fetchDeletedContent]);
 
   const handleMarkAsReviewed = async (
-    contentType: 'question' | 'answer' | 'comment',
+    contentType: 'question' | 'answer' | 'comment' | 'message',
     contentId: string,
   ) => {
     try {
@@ -127,7 +129,7 @@ const useModeratorDashboard = () => {
   };
 
   const handleDismissFlag = async (
-    contentType: 'question' | 'answer' | 'comment',
+    contentType: 'question' | 'answer' | 'comment' | 'message',
     contentId: string,
   ) => {
     try {
@@ -139,7 +141,7 @@ const useModeratorDashboard = () => {
   };
 
   const handleDeleteClick = (
-    type: 'question' | 'answer' | 'comment',
+    type: 'question' | 'answer' | 'comment' | 'message',
     contentId: string,
     contentTitle?: string,
   ) => {

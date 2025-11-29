@@ -338,6 +338,7 @@ describe('Moderation Controller', () => {
         questions: [],
         answers: [],
         comments: [],
+        messages: [],
       };
 
       getFlaggedContentSpy.mockResolvedValueOnce(mockResponse);
@@ -354,6 +355,7 @@ describe('Moderation Controller', () => {
         questions: [],
         answers: [],
         comments: [],
+        messages: [],
         error: 'Error fetching flagged content: Database error',
       };
 

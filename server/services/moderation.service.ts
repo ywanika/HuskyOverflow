@@ -2,11 +2,17 @@ import { ObjectId } from 'mongodb';
 import QuestionModel from '../models/questions.model';
 import AnswerModel from '../models/answers.model';
 import CommentModel from '../models/comments.model';
+import MessageModel from '../models/messages.model';
 import UserModel from '../models/users.model';
 import NotificationModel from '../models/notifications.model';
 import AppealModel from '../models/appeals.model';
 import { DatabaseUser, DatabaseQuestion, DatabaseAnswer, DatabaseComment } from '../types/types';
-import { DatabaseAppeal, AppealItem, AppealsResponse } from '@fake-stack-overflow/shared';
+import {
+  DatabaseAppeal,
+  AppealItem,
+  AppealsResponse,
+  DatabaseMessage,
+} from '@fake-stack-overflow/shared';
 
 /**
  * Response type for moderation operations
@@ -595,8 +601,8 @@ export const unflagComment = async (
  */
 export interface FlaggedContentItem {
   _id: string;
-  contentType: 'question' | 'answer' | 'comment';
-  content: DatabaseQuestion | DatabaseAnswer | DatabaseComment;
+  contentType: 'question' | 'answer' | 'comment' | 'message';
+  content: DatabaseQuestion | DatabaseAnswer | DatabaseComment | DatabaseMessage;
   flaggedBy: string[];
   flaggedAt: Date[];
   reviewedBy?: string;
@@ -610,6 +616,7 @@ export interface FlaggedContentResponse {
   questions: FlaggedContentItem[];
   answers: FlaggedContentItem[];
   comments: FlaggedContentItem[];
+  messages: FlaggedContentItem[];
   error?: string;
 }
 
@@ -650,6 +657,17 @@ export const getFlaggedContent = async (): Promise<FlaggedContentResponse> => {
       ],
     }).lean();
 
+    // Get all flagged global messages that haven't been reviewed
+    const flaggedMessages = await MessageModel.find({
+      'flagged.isFlagged': true,
+      'type': 'global', // Only include global messages, not direct messages
+      '$or': [
+        { 'flagged.reviewedBy': { $exists: false } },
+        { 'flagged.reviewedBy': null },
+        { 'flagged.reviewedBy': '' },
+      ],
+    }).lean();
+
     const questions: FlaggedContentItem[] = flaggedQuestions.map(q => ({
       _id: q._id.toString(),
       contentType: 'question' as const,
@@ -680,12 +698,23 @@ export const getFlaggedContent = async (): Promise<FlaggedContentResponse> => {
       reviewedAt: c.flagged?.reviewedAt,
     }));
 
-    return { questions, answers, comments };
+    const messages: FlaggedContentItem[] = flaggedMessages.map(m => ({
+      _id: m._id.toString(),
+      contentType: 'message' as const,
+      content: m as DatabaseMessage,
+      flaggedBy: m.flagged?.flaggedBy || [],
+      flaggedAt: m.flagged?.flaggedAt || [],
+      reviewedBy: m.flagged?.reviewedBy,
+      reviewedAt: m.flagged?.reviewedAt,
+    }));
+
+    return { questions, answers, comments, messages };
   } catch (error) {
     return {
       questions: [],
       answers: [],
       comments: [],
+      messages: [],
       error: `Error fetching flagged content: ${(error as Error).message}`,
     };
   }
@@ -699,7 +728,7 @@ export const getFlaggedContent = async (): Promise<FlaggedContentResponse> => {
  * @returns Promise resolving to ModerationResponse
  */
 export const markAsReviewed = async (
-  contentType: 'question' | 'answer' | 'comment',
+  contentType: 'question' | 'answer' | 'comment' | 'message',
   contentId: string,
   moderatorUsername: string,
 ): Promise<ModerationResponse> => {
@@ -713,7 +742,12 @@ export const markAsReviewed = async (
       };
     }
 
-    let updatedContent: DatabaseQuestion | DatabaseAnswer | DatabaseComment | null = null;
+    let updatedContent:
+      | DatabaseQuestion
+      | DatabaseAnswer
+      | DatabaseComment
+      | DatabaseMessage
+      | null = null;
 
     if (contentType === 'question') {
       updatedContent = await QuestionModel.findByIdAndUpdate(
@@ -735,6 +769,15 @@ export const markAsReviewed = async (
       );
     } else if (contentType === 'comment') {
       updatedContent = await CommentModel.findByIdAndUpdate(
+        contentId,
+        {
+          'flagged.reviewedBy': moderatorUsername,
+          'flagged.reviewedAt': new Date(),
+        },
+        { new: true },
+      );
+    } else if (contentType === 'message') {
+      updatedContent = await MessageModel.findByIdAndUpdate(
         contentId,
         {
           'flagged.reviewedBy': moderatorUsername,
@@ -765,7 +808,7 @@ export const markAsReviewed = async (
  * @returns Promise resolving to ModerationResponse
  */
 export const dismissFlag = async (
-  contentType: 'question' | 'answer' | 'comment',
+  contentType: 'question' | 'answer' | 'comment' | 'message',
   contentId: string,
   moderatorUsername: string,
 ): Promise<ModerationResponse> => {
@@ -779,7 +822,12 @@ export const dismissFlag = async (
       };
     }
 
-    let updatedContent: DatabaseQuestion | DatabaseAnswer | DatabaseComment | null = null;
+    let updatedContent:
+      | DatabaseQuestion
+      | DatabaseAnswer
+      | DatabaseComment
+      | DatabaseMessage
+      | null = null;
 
     if (contentType === 'question') {
       updatedContent = await QuestionModel.findByIdAndUpdate(
@@ -803,6 +851,16 @@ export const dismissFlag = async (
       );
     } else if (contentType === 'comment') {
       updatedContent = await CommentModel.findByIdAndUpdate(
+        contentId,
+        {
+          'flagged.isFlagged': false,
+          'flagged.reviewedBy': moderatorUsername,
+          'flagged.reviewedAt': new Date(),
+        },
+        { new: true },
+      );
+    } else if (contentType === 'message') {
+      updatedContent = await MessageModel.findByIdAndUpdate(
         contentId,
         {
           'flagged.isFlagged': false,

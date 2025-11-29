@@ -17,7 +17,7 @@ export interface ModerationResponse {
  */
 export interface FlaggedContentItem {
   _id: string;
-  contentType: 'question' | 'answer' | 'comment';
+  contentType: 'question' | 'answer' | 'comment' | 'message';
   content: Record<string, unknown>;
   flaggedBy: string[];
   flaggedAt: Date[];
@@ -32,6 +32,7 @@ export interface FlaggedContentResponse {
   questions: FlaggedContentItem[];
   answers: FlaggedContentItem[];
   comments: FlaggedContentItem[];
+  messages: FlaggedContentItem[];
   error?: string;
 }
 
@@ -270,7 +271,7 @@ export const getFlaggedContent = async (): Promise<FlaggedContentResponse> => {
  * @returns Promise resolving to ModerationResponse
  */
 export const markAsReviewed = async (
-  contentType: 'question' | 'answer' | 'comment',
+  contentType: 'question' | 'answer' | 'comment' | 'message',
   contentId: string,
   moderatorUsername: string,
 ): Promise<ModerationResponse> => {
@@ -295,7 +296,7 @@ export const markAsReviewed = async (
  * @returns Promise resolving to ModerationResponse
  */
 export const dismissFlag = async (
-  contentType: 'question' | 'answer' | 'comment',
+  contentType: 'question' | 'answer' | 'comment' | 'message',
   contentId: string,
   moderatorUsername: string,
 ): Promise<ModerationResponse> => {
