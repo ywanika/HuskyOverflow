@@ -88,7 +88,6 @@ describe('Test adminController', () => {
 
       isAdminSpy.mockResolvedValueOnce(true);
       getDashboardMetricsSpy.mockResolvedValueOnce(mockMetrics as any);
-      createAuditLogSpy.mockResolvedValueOnce(undefined);
 
       const response = await supertest(app).get('/api/admin/metrics?username=admin1');
 
@@ -96,10 +95,8 @@ describe('Test adminController', () => {
       expect(response.body).toEqual(mockMetrics);
       expect(isAdminSpy).toHaveBeenCalledWith('admin1');
       expect(getDashboardMetricsSpy).toHaveBeenCalled();
-      expect(createAuditLogSpy).toHaveBeenCalledWith({
-        adminUsername: 'admin1',
-        actionType: 'view_dashboard_metrics',
-      });
+      // view_dashboard_metrics is no longer logged to prevent database crowding
+      expect(createAuditLogSpy).not.toHaveBeenCalled();
     });
 
     it('should return 403 for non-admin user', async () => {
@@ -316,10 +313,8 @@ describe('Test adminController', () => {
         startDate: undefined,
         endDate: undefined,
       });
-      expect(createAuditLogSpy).toHaveBeenCalledWith({
-        adminUsername: 'admin1',
-        actionType: 'view_audit_logs',
-      });
+      // view_audit_logs is no longer logged to prevent recursive log entries
+      expect(createAuditLogSpy).not.toHaveBeenCalled();
     });
 
     it('should apply filters when provided', async () => {
