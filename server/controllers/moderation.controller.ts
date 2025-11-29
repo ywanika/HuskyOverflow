@@ -21,6 +21,9 @@ import {
   getDeletedContentByModerator,
   restoreDeletedContent,
 } from '../services/moderation.service';
+import QuestionModel from '../models/questions.model';
+import AnswerModel from '../models/answers.model';
+import CommentModel from '../models/comments.model';
 
 /**
  * Request interface for moderation delete operations
@@ -261,6 +264,15 @@ const moderationController = (socket: FakeSOSocket) => {
         });
       }
 
+      // Emit notification update for content owner
+      const question = await QuestionModel.findById(questionId);
+      if (question && question.askedBy) {
+        socket.emit('notificationUpdate', {
+          type: 'newNotification',
+          username: question.askedBy,
+        });
+      }
+
       res.json({ success: true, message: result.message });
     } catch (err: unknown) {
       res.status(500).json({ error: `Error flagging question: ${(err as Error).message}` });
@@ -313,6 +325,15 @@ const moderationController = (socket: FakeSOSocket) => {
         });
       }
 
+      // Emit notification update for content owner
+      const answer = await AnswerModel.findById(answerId);
+      if (answer && answer.ansBy) {
+        socket.emit('notificationUpdate', {
+          type: 'newNotification',
+          username: answer.ansBy,
+        });
+      }
+
       res.json({ success: true, message: result.message });
     } catch (err: unknown) {
       res.status(500).json({ error: `Error flagging answer: ${(err as Error).message}` });
@@ -362,6 +383,15 @@ const moderationController = (socket: FakeSOSocket) => {
             type: 'newNotification',
             username: recipientUsername,
           });
+        });
+      }
+
+      // Emit notification update for content owner
+      const comment = await CommentModel.findById(commentId);
+      if (comment && comment.commentBy) {
+        socket.emit('notificationUpdate', {
+          type: 'newNotification',
+          username: comment.commentBy,
         });
       }
 

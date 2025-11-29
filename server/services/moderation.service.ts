@@ -279,6 +279,31 @@ const createFlagNotification = async (
 };
 
 /**
+ * Creates a notification for the content owner when their content is flagged
+ * @param recipientUsername - Username of the content owner
+ * @param contentType - Type of content that was flagged
+ * @param contentId - ID of the flagged content
+ */
+const createContentOwnerFlagNotification = async (
+  recipientUsername: string,
+  contentType: 'question' | 'answer' | 'comment',
+  contentId: string,
+): Promise<void> => {
+  try {
+    await NotificationModel.create({
+      recipientUsername,
+      type: 'flag',
+      message: `Your ${contentType} has been flagged.`,
+      contentId: new ObjectId(contentId),
+      isRead: false,
+      timestamp: new Date(),
+    });
+  } catch (error) {
+    // Error handled silently - don't fail the flag if notification fails
+  }
+};
+
+/**
  * Flags a question - Any user can flag
  * @param questionId - The ID of the question to flag
  * @param username - The username of the user flagging the content
@@ -318,6 +343,9 @@ export const flagQuestion = async (
 
     // Create notification for moderators
     const recipientUsernames = await createFlagNotification('question', questionId, username);
+
+    // Create notification for content owner (only says their post was flagged, no other info)
+    await createContentOwnerFlagNotification(question.askedBy, 'question', questionId);
 
     return {
       success: true,
@@ -370,6 +398,9 @@ export const flagAnswer = async (
     // Create notification for moderators
     const recipientUsernames = await createFlagNotification('answer', answerId, username);
 
+    // Create notification for content owner (only says their post was flagged, no other info)
+    await createContentOwnerFlagNotification(answer.ansBy, 'answer', answerId);
+
     return {
       success: true,
       message: 'Answer flagged successfully',
@@ -420,6 +451,9 @@ export const flagComment = async (
 
     // Create notification for moderators
     const recipientUsernames = await createFlagNotification('comment', commentId, username);
+
+    // Create notification for content owner (only says their post was flagged, no other info)
+    await createContentOwnerFlagNotification(comment.commentBy, 'comment', commentId);
 
     return {
       success: true,
