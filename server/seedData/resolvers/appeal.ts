@@ -1,7 +1,8 @@
 import { DatabaseAppeal } from '@fake-stack-overflow/shared';
-import { ReferenceResolver, InsertedDocs } from '../../types/populate';
+import { ReferenceResolver } from '../../types/populate';
 import { resolveSingleRef } from './helpers';
 import { AppealImport } from '../collectionDependencies';
+import { ObjectId } from 'mongodb';
 
 /**
  * Resolver for appeal documents that transforms imported appeal data into database format.
@@ -14,7 +15,7 @@ const appealResolver: ReferenceResolver<AppealImport, Omit<DatabaseAppeal, '_id'
   doc,
   insertedDocs,
 ) => {
-  let contentId: any;
+  let contentId: ObjectId | null = null;
 
   // Resolve contentId from the appropriate collection based on contentType
   switch (doc.contentType) {
@@ -34,6 +35,10 @@ const appealResolver: ReferenceResolver<AppealImport, Omit<DatabaseAppeal, '_id'
       throw new Error(`Unknown contentType: ${doc.contentType}`);
   }
 
+  if (contentId === null) {
+    throw new Error(`Failed to resolve contentId for ${doc.contentType} with id ${doc.contentId}`);
+  }
+
   return {
     ...doc,
     contentId,
@@ -41,4 +46,3 @@ const appealResolver: ReferenceResolver<AppealImport, Omit<DatabaseAppeal, '_id'
 };
 
 export default appealResolver;
-
