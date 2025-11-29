@@ -205,6 +205,34 @@ Admins have access to a dashboard showing platform metrics that update in real-t
    - Questions vs Answers ratio
    - Flagged content count
 4. Wait 60 seconds and verify metrics refresh
+5. Verify "Last updated: [timestamp]" indicator appears below the dashboard title
+
+#### 3.5 Audit Logging
+Admins can view a comprehensive audit log of all administrative actions performed on the platform. The audit log tracks actions such as user creation, role changes, and other admin operations.
+
+**How to Test:**
+1. Log in as an admin
+2. Navigate to `/admin/dashboard`
+3. Click on the "Audit Logs" tab
+4. Verify the audit logs table displays with the following columns:
+   - Timestamp
+   - Admin (username of admin who performed the action)
+   - Action (type of action performed)
+   - Target User (if applicable)
+   - Target Content (if applicable)
+   - Reason (if applicable)
+5. Test filtering functionality:
+   - Filter by Admin Username: Enter an admin username and click "Apply Filters"
+   - Filter by Action Type: Select an action type from the dropdown (e.g., "Create User")
+   - Filter by Target User: Enter a target username
+   - Filter by Date Range: Select start and end dates
+6. Click "Clear" to reset all filters
+7. Verify that audit logs are sorted by most recent first
+8. Perform an admin action (e.g., create a new user via User Management tab)
+9. Return to Audit Logs tab and verify the new action appears in the log
+10. Verify that routine actions like viewing dashboard metrics are NOT logged (to prevent database crowding)
+
+**Note:** Only significant admin actions are logged. Routine actions like viewing metrics or viewing audit logs themselves are not logged to prevent excessive database entries.
 
 #### 3.7-3.10 Non-Admin Restrictions
 Regular users and moderators cannot access admin features.
