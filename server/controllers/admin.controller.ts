@@ -35,11 +35,9 @@ const adminController = (socket: FakeSOSocket) => {
 
       const metrics = await getDashboardMetrics();
 
-      // Log admin action
-      await createAuditLog({
-        adminUsername: username,
-        actionType: 'view_dashboard_metrics',
-      });
+      // Don't log view_dashboard_metrics - it's called too frequently (every 60s auto-refresh)
+      // This would crowd the database with unnecessary entries
+      // Only log significant admin actions, not routine metric views
 
       res.json(metrics);
     } catch (err: unknown) {
@@ -139,11 +137,8 @@ const adminController = (socket: FakeSOSocket) => {
 
       const logs = await getAuditLogs(filters);
 
-      // Log admin action
-      await createAuditLog({
-        adminUsername: username,
-        actionType: 'view_audit_logs',
-      });
+      // Don't log view_audit_logs - it would create recursive log entries
+      // (viewing audit logs creates an audit log, which would appear in the list)
 
       res.status(200).json(logs);
     } catch (err: unknown) {

@@ -1,66 +1,26 @@
 {
   "auditLog1": {
     "adminUsername": "admin",
-    "actionType": "DELETE_QUESTION",
-    "targetUser": "newbiereactdev",
-    "targetContent": "question1",
-    "reason": "Duplicate question - already answered multiple times in the community.",
+    "actionType": "create_user",
+    "targetUser": "newuser1",
+    "targetContent": null,
+    "reason": "Created new user account for testing purposes",
     "timestamp": "2025-04-20T10:00:00Z"
   },
   "auditLog2": {
-    "adminUsername": "moderator1",
-    "actionType": "APPROVE_APPEAL",
-    "targetUser": "jsdeveloper",
-    "targetContent": "answer5",
-    "reason": "Appeal approved - content was incorrectly deleted",
+    "adminUsername": "admin",
+    "actionType": "create_user",
+    "targetUser": "newuser2",
+    "targetContent": null,
+    "reason": "Created new moderator account",
     "timestamp": "2025-04-19T10:30:00Z"
   },
   "auditLog3": {
-    "adminUsername": "moderator2",
-    "actionType": "REJECT_APPEAL",
-    "targetUser": "webpacknewbie",
-    "targetContent": "comment3",
-    "reason": "Appeal rejected - content contains inaccurate information",
+    "adminUsername": "admin",
+    "actionType": "create_user",
+    "targetUser": "testuser",
+    "targetContent": null,
+    "reason": "Created test user for development",
     "timestamp": "2025-04-17T08:20:00Z"
-  },
-  "auditLog4": {
-    "adminUsername": "moderator1",
-    "actionType": "DELETE_ANSWER",
-    "targetUser": "serverdev",
-    "targetContent": "answer2",
-    "reason": "Code contains security vulnerabilities that could harm users.",
-    "timestamp": "2025-04-22T11:00:00Z"
-  },
-  "auditLog5": {
-    "adminUsername": "admin",
-    "actionType": "SUSPEND_USER",
-    "targetUser": "user123",
-    "targetContent": null,
-    "reason": "Posting spam content and harassing other users - 7 day suspension",
-    "timestamp": "2025-04-23T09:00:00Z"
-  },
-  "auditLog6": {
-    "adminUsername": "admin",
-    "actionType": "ROLE_CHANGE",
-    "targetUser": "moderator1",
-    "targetContent": null,
-    "reason": "Promoted to moderator role for excellent community contributions",
-    "timestamp": "2025-03-01T10:00:00Z"
-  },
-  "auditLog7": {
-    "adminUsername": "moderator2",
-    "actionType": "DISMISS_FLAG",
-    "targetUser": null,
-    "targetContent": "question3",
-    "reason": "Flag reviewed - content does not violate community guidelines",
-    "timestamp": "2025-04-21T16:00:00Z"
-  },
-  "auditLog8": {
-    "adminUsername": "moderator1",
-    "actionType": "DELETE_COMMENT",
-    "targetUser": "webpacknewbie",
-    "targetContent": "comment3",
-    "reason": "Comment contains misleading technical information",
-    "timestamp": "2025-04-16T11:00:00Z"
   }
 }

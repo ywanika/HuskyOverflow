@@ -68,7 +68,15 @@ export const getAuditLogs = async (filters?: {
 
     const logs = await AuditLogModel.find(query).sort({ timestamp: -1 }).limit(1000);
 
-    return logs;
+    // Convert MongoDB ObjectIds to strings for OpenAPI validation
+    return logs.map(log => {
+      const logObj = log.toObject();
+      return {
+        ...logObj,
+        _id: String(logObj._id),
+        timestamp: logObj.timestamp,
+      };
+    });
   } catch (error) {
     throw new Error(`Error fetching audit logs: ${(error as Error).message}`);
   }
