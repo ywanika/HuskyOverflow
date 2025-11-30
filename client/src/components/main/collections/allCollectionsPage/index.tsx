@@ -8,7 +8,7 @@ import PageHeader from '../../baseComponents/pageHeader';
  */
 const AllCollectionsPage = () => {
   const {
-    usernameBeingViewed,
+    usernameBeingViewed: _usernameBeingViewed,
     collections,
     handleCreateCollection,
     handleViewCollection,

@@ -26,7 +26,7 @@ import ModeratorDashboard from './main/moderatorDashboard';
 import AdminDashboard from './main/adminDashboard';
 import MainMessagePage from './main/mainMessagePage';
 import CommunityGuidelines from './communityGuidelines';
-import SuspendedPage from './suspendedPage';
+import ChatbotPage from './chatbot/ChatbotPage';
 
 const ProtectedRoute = ({
   user,
@@ -90,33 +90,33 @@ const FakeStackOverflow = ({ socket }: { socket: FakeSOSocket | null }) => {
           />
 
           {/* Protected Routes */}
-          <Route
-            element={
-              <ProtectedRoute user={user} socket={socket}>
-                <Layout />
-              </ProtectedRoute>
-            }>
-            <Route path='/home' element={<QuestionPage />} />
-            <Route path='/tags' element={<TagPage />} />
-            <Route path='/messaging' element={<MainMessagePage />} />
-            <Route path='/question/:qid' element={<AnswerPage />} />
-            <Route path='/new/question' element={<NewQuestionPage />} />
-            <Route path='/new/answer/:qid' element={<NewAnswerPage />} />
-            <Route path='/users' element={<UsersListPage />} />
-            <Route path='/user/:username' element={<ProfileSettings />} />
-            <Route path='/new/collection' element={<NewCollectionPage />} />
-            <Route path='/collections/:username' element={<AllCollectionsPage />} />
-            <Route path='/collections/:username/:collectionId' element={<CollectionPage />} />
-            <Route path='/games' element={<AllGamesPage />} />
-            <Route path='/games/:gameID' element={<GamePage />} />
-            <Route path='/communities' element={<AllCommunitiesPage />} />
-            <Route path='/new/community' element={<NewCommunityPage />} />
-            <Route path='/communities/:communityID' element={<CommunityPage />} />
-            <Route path='/moderator/dashboard' element={<ModeratorDashboard />} />
-            <Route path='/admin/dashboard' element={<AdminDashboard />} />
-            {/* Catch-all route - redirect unknown routes to home */}
-            <Route path='*' element={<Navigate to='/home' replace />} />
-          </Route>
+          {
+            <Route
+              element={
+                <ProtectedRoute user={user} socket={socket}>
+                  <Layout />
+                </ProtectedRoute>
+              }>
+              <Route path='/home' element={<QuestionPage />} />
+              <Route path='tags' element={<TagPage />} />
+              <Route path='/messaging' element={<MainMessagePage />} />
+              <Route path='/question/:qid' element={<AnswerPage />} />
+              <Route path='/new/question' element={<NewQuestionPage />} />
+              <Route path='/new/answer/:qid' element={<NewAnswerPage />} />
+              <Route path='/users' element={<UsersListPage />} />
+              <Route path='/user/:username' element={<ProfileSettings />} />
+              <Route path='/new/collection' element={<NewCollectionPage />} />
+              <Route path='/collections/:username' element={<AllCollectionsPage />} />
+              <Route path='/collections/:username/:collectionId' element={<CollectionPage />} />
+              <Route path='/games' element={<AllGamesPage />} />
+              <Route path='/games/:gameID' element={<GamePage />} />
+              <Route path='/communities' element={<AllCommunitiesPage />} />
+              <Route path='/new/community' element={<NewCommunityPage />} />
+              <Route path='/communities/:communityID' element={<CommunityPage />} />
+              <Route path='/moderator/dashboard' element={<ModeratorDashboard />} />
+              <Route path='/chatbot' element={<ChatbotPage />} />
+            </Route>
+          }
         </Routes>
       </LoginContext.Provider>
     </ThemeProvider>
