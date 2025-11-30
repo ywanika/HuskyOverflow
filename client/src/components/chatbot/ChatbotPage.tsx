@@ -1,27 +1,75 @@
-import { useState } from 'react';
-import Chatbot from 'react-chatbot-kit';
-import 'react-chatbot-kit/build/main.css';
-import config from './config';
-import ActionProvider from './ActionProvider';
-import MessageParser from './MessageParser';
+import { useState, useEffect, useRef } from 'react';
+import ChatbotWrapper from './ChatbotWrapper';
 import { Box, Button } from '@chakra-ui/react';
 import { useTheme } from '../../contexts/ThemeContext';
-import './ChatbotPage.css';
+import useUserContext from '../../hooks/useUserContext';
+import config from './config';
 
 const ChatbotPage = () => {
-  const [showBot, setShowBot] = useState(false);
+  const [showBot, setShowBot] = useState(true); // Show by default on chatbot page
   const { theme } = useTheme();
+  const { user } = useUserContext();
   const isDark = theme === 'dark';
+  const previousUsernameRef = useRef<string | null>(null);
+  const [chatbotKey, setChatbotKey] = useState(0); // Force re-render on user change
+
+  // Get user-specific localStorage key
+  const getStorageKey = (username: string) => `chatbot_messages_${username}`;
+
+  // Reset chatbot when user changes (new login)
+  useEffect(() => {
+    if (user && user.username !== previousUsernameRef.current) {
+      // Clear old messages for new user session
+      if (previousUsernameRef.current) {
+        // Clear previous user's messages if switching users
+        const oldKey = getStorageKey(previousUsernameRef.current);
+        localStorage.removeItem(oldKey);
+      }
+      
+      // Clear current user's messages to start fresh session on login
+      const currentKey = getStorageKey(user.username);
+      localStorage.removeItem(currentKey);
+      
+      // Also clear session flag to indicate new login
+      localStorage.removeItem(`chatbot_session_${user.username}`);
+      
+      // Update ref and force chatbot re-render
+      previousUsernameRef.current = user.username;
+      setChatbotKey((prev) => prev + 1);
+    }
+  }, [user?.username]);
 
   const saveMessages = (messages: any[], _HTMLString?: string) => {
-    localStorage.setItem('chatbot_messages', JSON.stringify(messages));
+    if (!user) return;
+    const storageKey = getStorageKey(user.username);
+    localStorage.setItem(storageKey, JSON.stringify(messages));
+    // Mark that user has started a session
+    localStorage.setItem(`chatbot_session_${user.username}`, 'true');
   };
 
   const loadMessages = () => {
-    const messages = localStorage.getItem('chatbot_messages');
+    if (!user) return [];
+    
+    // Check if this is a new session (no session flag)
+    const sessionKey = `chatbot_session_${user.username}`;
+    const hasSession = localStorage.getItem(sessionKey);
+    
+    // If no session exists, return empty to trigger initial messages
+    if (!hasSession) {
+      return [];
+    }
+    
+    // Otherwise, load saved messages for this user
+    const storageKey = getStorageKey(user.username);
+    const messages = localStorage.getItem(storageKey);
     if (messages) {
       try {
-        return JSON.parse(messages);
+        const parsed = JSON.parse(messages);
+        // Only return if we have messages (not just initial ones)
+        // If empty or only initial messages, return empty to show fresh greeting
+        if (parsed.length > config.initialMessages.length) {
+          return parsed;
+        }
       } catch (e) {
         return [];
       }
@@ -60,13 +108,11 @@ const ChatbotPage = () => {
           borderRadius='md'
           overflow='hidden'
           bg={isDark ? 'gray.800' : 'white'}>
-          <Chatbot
-            config={config}
-            messageParser={MessageParser}
-            actionProvider={ActionProvider}
+          <ChatbotWrapper
+            key={chatbotKey}
             messageHistory={loadMessages()}
             saveMessages={saveMessages}
-            headerText='FakeStackOverflow Assistant'
+            headerText='Assistant'
             placeholderText='Type your message here...'
           />
         </Box>

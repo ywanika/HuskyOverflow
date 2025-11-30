@@ -90,10 +90,9 @@ const QuestionSearchWidget: React.FC<QuestionSearchWidgetProps> = ({ payload, sc
             p={3}
             bg='white'
             borderRadius='md'
-            _dark={{ bg: 'gray.600' }}
             border='1px'
             borderColor='gray.200'
-            _dark={{ borderColor: 'gray.500' }}
+            _dark={{ bg: 'gray.600', borderColor: 'gray.500' }}
             cursor='pointer'
             _hover={{ bg: 'blue.50', _dark: { bg: 'blue.900' } }}
             onClick={() => handleQuestionClick(question._id.toString())}>

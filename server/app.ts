@@ -5,6 +5,7 @@
 // startServer() is a function that starts the server
 import 'dotenv/config';
 import express, { Request, Response, NextFunction } from 'express';
+import cors from 'cors';
 import mongoose from 'mongoose';
 import { Server } from 'socket.io';
 import * as http from 'http';
@@ -34,11 +35,32 @@ const PORT = parseInt(process.env.PORT || '8000');
 const app = express();
 const server = http.createServer(app);
 // allow requests from the local dev client or the production client only
+const allowedOrigin = process.env.CLIENT_URL || 'http://localhost:4530';
+
+// Configure CORS for Express routes FIRST (before Socket.IO)
+app.use(
+  cors({
+    origin: allowedOrigin,
+    credentials: true,
+    methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+    allowedHeaders: ['Content-Type', 'Authorization'],
+  }),
+);
+
 const socket: FakeSOSocket = new Server(server, {
   path: '/socket.io',
   cors: {
-    origin: `${process.env.CLIENT_URL}` || 'http://localhost:4530',
+    origin: (origin, callback) => {
+      // Allow requests with no origin (like mobile apps or curl requests)
+      if (!origin) return callback(null, true);
+      if (origin === allowedOrigin) {
+        callback(null, true);
+      } else {
+        callback(new Error('Not allowed by CORS'));
+      }
+    },
     credentials: true,
+    methods: ['GET', 'POST'],
   },
 });
 

@@ -12,6 +12,7 @@ import {
   Tabs,
   Spinner,
   Alert,
+  Textarea,
 } from '@chakra-ui/react';
 import Markdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
@@ -85,6 +86,41 @@ const ModeratorDashboard = () => {
     return 'No content';
   };
 
+  const getAuthor = (item: Record<string, unknown>): string => {
+    if (typeof item.askedBy === 'string') return item.askedBy; // For questions
+    if (typeof item.ansBy === 'string') return item.ansBy; // For answers
+    if (typeof item.comBy === 'string') return item.comBy; // For comments
+    if (typeof item.from === 'string') return item.from; // For messages
+    return 'Unknown';
+  };
+
+  const getDate = (item: Record<string, unknown>): Date => {
+    if (item.askDateTime instanceof Date) return item.askDateTime; // For questions
+    if (item.ansDateTime instanceof Date) return item.ansDateTime; // For answers
+    if (item.comDateTime instanceof Date) return item.comDateTime; // For comments
+    if (item.timestamp instanceof Date) return item.timestamp; // For messages
+    if (typeof item.askDateTime === 'string') return new Date(item.askDateTime);
+    if (typeof item.ansDateTime === 'string') return new Date(item.ansDateTime);
+    if (typeof item.comDateTime === 'string') return new Date(item.comDateTime);
+    if (typeof item.timestamp === 'string') return new Date(item.timestamp);
+    return new Date();
+  };
+
+  const getContentTypeColor = (contentType: FlaggableContentType): string => {
+    switch (contentType) {
+      case 'question':
+        return 'blue';
+      case 'answer':
+        return 'green';
+      case 'comment':
+        return 'purple';
+      case 'message':
+        return 'orange';
+      default:
+        return 'gray';
+    }
+  };
+
   const renderFlaggedItem = (
     item: any,
     contentType: 'question' | 'answer' | 'comment',
@@ -125,7 +161,7 @@ const ModeratorDashboard = () => {
                   {username}
                 </span>
               ))}
-            </div>
+            </HStack>
             <Text className='flagged-date'>
               First flagged: {getMetaData(new Date(item.flaggedAt[0]))}
             </Text>
@@ -193,8 +229,8 @@ const ModeratorDashboard = () => {
       | undefined;
 
     return (
-      <Card key={`appeal-${appealId}`} className='appeal-card'>
-        <CardHeader>
+      <Card.Root key={`appeal-${appealId}`} className='appeal-card'>
+        <Card.Header>
           <VStack align='start' gap={1} flex={1}>
             <HStack>
               <Badge colorScheme='blue'>APPEAL</Badge>
@@ -211,8 +247,8 @@ const ModeratorDashboard = () => {
               </Text>
             )}
           </VStack>
-        </CardHeader>
-        <CardBody>
+        </Card.Header>
+        <Card.Body>
           <Box className='appeal-content-box'>
             <Markdown remarkPlugins={[remarkGfm]}>{text}</Markdown>
           </Box>
@@ -267,8 +303,8 @@ const ModeratorDashboard = () => {
               Reject Appeal
             </Button>
           </HStack>
-        </CardBody>
-      </Card>
+        </Card.Body>
+      </Card.Root>
     );
   };
 
@@ -285,8 +321,8 @@ const ModeratorDashboard = () => {
     const text = getContentText(content);
     const title = getContentTitle(content, contentType);
     return (
-      <Card key={`deleted-${deletedId}`} className='deleted-card'>
-        <CardHeader>
+      <Card.Root key={`deleted-${deletedId}`} className='deleted-card'>
+        <Card.Header>
           <HStack justify='space-between' align='start'>
             <VStack align='start' gap={1} flex={1}>
               <HStack>
@@ -302,8 +338,8 @@ const ModeratorDashboard = () => {
               <Text className='deleted-reason'>Reason: {deleteReason}</Text>
             </VStack>
           </HStack>
-        </CardHeader>
-        <CardBody>
+        </Card.Header>
+        <Card.Body>
           <Box className='deleted-content-box'>
             <Markdown remarkPlugins={[remarkGfm]}>{text}</Markdown>
           </Box>
@@ -316,8 +352,8 @@ const ModeratorDashboard = () => {
               Restore Content
             </Button>
           </HStack>
-        </CardBody>
-      </Card>
+        </Card.Body>
+      </Card.Root>
     );
   };
 

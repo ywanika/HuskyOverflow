@@ -1,5 +1,7 @@
 import React from 'react';
 import { createChatBotMessage } from 'react-chatbot-kit';
+import { useNavigate } from 'react-router-dom';
+import useUserContext from '../../hooks/useUserContext';
 
 interface ActionProviderProps {
   createChatBotMessage: typeof createChatBotMessage;
@@ -8,7 +10,13 @@ interface ActionProviderProps {
 }
 
 const ActionProvider = ({ createChatBotMessage, setState, children }: ActionProviderProps) => {
-  // Widgets handle navigation directly using useNavigate hook
+  const navigate = useNavigate();
+  let user: { username: string } | null = null;
+  try {
+    user = useUserContext().user;
+  } catch {
+    // User context not available, continue without user
+  }
 
   // Welcome and Main Menu
   const handleWelcome = () => {
@@ -65,6 +73,8 @@ const ActionProvider = ({ createChatBotMessage, setState, children }: ActionProv
       ...prev,
       messages: [...prev.messages, botMessage],
     }));
+    
+    setTimeout(() => navigate('/home'), 600);
   };
 
   const handleSearchByTags = () => {
@@ -74,6 +84,8 @@ const ActionProvider = ({ createChatBotMessage, setState, children }: ActionProv
       ...prev,
       messages: [...prev.messages, botMessage],
     }));
+    
+    setTimeout(() => navigate('/tags'), 600);
   };
 
   const handleUnansweredQuestions = () => {
@@ -83,6 +95,8 @@ const ActionProvider = ({ createChatBotMessage, setState, children }: ActionProv
       ...prev,
       messages: [...prev.messages, botMessage],
     }));
+    
+    setTimeout(() => navigate('/home?filter=unanswered'), 600);
   };
 
   const handleAskQuestion = () => {
@@ -92,6 +106,8 @@ const ActionProvider = ({ createChatBotMessage, setState, children }: ActionProv
       ...prev,
       messages: [...prev.messages, botMessage],
     }));
+    
+    setTimeout(() => navigate('/new/question'), 600);
   };
 
   const handleMyQuestions = () => {
@@ -101,6 +117,9 @@ const ActionProvider = ({ createChatBotMessage, setState, children }: ActionProv
       ...prev,
       messages: [...prev.messages, botMessage],
     }));
+    
+    // Navigate to home page - user can filter their questions there
+    setTimeout(() => navigate('/home'), 600);
   };
 
   // Communities Flow
@@ -124,6 +143,8 @@ const ActionProvider = ({ createChatBotMessage, setState, children }: ActionProv
       ...prev,
       messages: [...prev.messages, botMessage],
     }));
+    
+    setTimeout(() => navigate('/communities'), 600);
   };
 
   const handleCreateCommunity = () => {
@@ -133,6 +154,8 @@ const ActionProvider = ({ createChatBotMessage, setState, children }: ActionProv
       ...prev,
       messages: [...prev.messages, botMessage],
     }));
+    
+    setTimeout(() => navigate('/new/community'), 600);
   };
 
   const handleFindCommunitiesByTopic = () => {
@@ -142,6 +165,8 @@ const ActionProvider = ({ createChatBotMessage, setState, children }: ActionProv
       ...prev,
       messages: [...prev.messages, botMessage],
     }));
+    
+    setTimeout(() => navigate('/communities'), 600);
   };
 
   const handleMyCommunities = () => {
@@ -151,6 +176,9 @@ const ActionProvider = ({ createChatBotMessage, setState, children }: ActionProv
       ...prev,
       messages: [...prev.messages, botMessage],
     }));
+    
+    // Navigate to communities page - user can see their communities there
+    setTimeout(() => navigate('/communities'), 600);
   };
 
   // Games Flow
@@ -174,6 +202,8 @@ const ActionProvider = ({ createChatBotMessage, setState, children }: ActionProv
       ...prev,
       messages: [...prev.messages, botMessage],
     }));
+    
+    setTimeout(() => navigate('/games'), 600);
   };
 
   const handleCreateGame = () => {
@@ -183,6 +213,8 @@ const ActionProvider = ({ createChatBotMessage, setState, children }: ActionProv
       ...prev,
       messages: [...prev.messages, botMessage],
     }));
+    
+    setTimeout(() => navigate('/games'), 600);
   };
 
   const handleJoinGame = () => {
@@ -192,6 +224,8 @@ const ActionProvider = ({ createChatBotMessage, setState, children }: ActionProv
       ...prev,
       messages: [...prev.messages, botMessage],
     }));
+    
+    setTimeout(() => navigate('/games'), 600);
   };
 
   const handleLearnNim = () => {
@@ -227,6 +261,8 @@ const ActionProvider = ({ createChatBotMessage, setState, children }: ActionProv
       ...prev,
       messages: [...prev.messages, botMessage],
     }));
+    
+    setTimeout(() => navigate('/messaging'), 600);
   };
 
   const handleDirectMessages = () => {
@@ -236,6 +272,8 @@ const ActionProvider = ({ createChatBotMessage, setState, children }: ActionProv
       ...prev,
       messages: [...prev.messages, botMessage],
     }));
+    
+    setTimeout(() => navigate('/messaging/direct-message'), 600);
   };
 
   const handleStartNewChat = () => {
@@ -245,6 +283,8 @@ const ActionProvider = ({ createChatBotMessage, setState, children }: ActionProv
       ...prev,
       messages: [...prev.messages, botMessage],
     }));
+    
+    setTimeout(() => navigate('/messaging'), 600);
   };
 
   const handleChatHistory = () => {
@@ -254,6 +294,8 @@ const ActionProvider = ({ createChatBotMessage, setState, children }: ActionProv
       ...prev,
       messages: [...prev.messages, botMessage],
     }));
+    
+    setTimeout(() => navigate('/messaging'), 600);
   };
 
   // Collections Flow
@@ -277,6 +319,10 @@ const ActionProvider = ({ createChatBotMessage, setState, children }: ActionProv
       ...prev,
       messages: [...prev.messages, botMessage],
     }));
+    
+    if (user) {
+      setTimeout(() => navigate(`/collections/${user.username}`), 600);
+    }
   };
 
   const handleCreateCollection = () => {
@@ -286,6 +332,8 @@ const ActionProvider = ({ createChatBotMessage, setState, children }: ActionProv
       ...prev,
       messages: [...prev.messages, botMessage],
     }));
+    
+    setTimeout(() => navigate('/new/collection'), 600);
   };
 
   const handleBrowsePublicCollections = () => {
@@ -329,6 +377,10 @@ const ActionProvider = ({ createChatBotMessage, setState, children }: ActionProv
       ...prev,
       messages: [...prev.messages, botMessage],
     }));
+    
+    if (user) {
+      setTimeout(() => navigate(`/user/${user.username}`), 600);
+    }
   };
 
   const handleEditBiography = () => {
@@ -338,6 +390,10 @@ const ActionProvider = ({ createChatBotMessage, setState, children }: ActionProv
       ...prev,
       messages: [...prev.messages, botMessage],
     }));
+    
+    if (user) {
+      setTimeout(() => navigate(`/user/${user.username}`), 600);
+    }
   };
 
   const handleChangePassword = () => {
@@ -347,6 +403,10 @@ const ActionProvider = ({ createChatBotMessage, setState, children }: ActionProv
       ...prev,
       messages: [...prev.messages, botMessage],
     }));
+    
+    if (user) {
+      setTimeout(() => navigate(`/user/${user.username}`), 600);
+    }
   };
 
   const handleViewActivity = () => {
@@ -356,6 +416,10 @@ const ActionProvider = ({ createChatBotMessage, setState, children }: ActionProv
       ...prev,
       messages: [...prev.messages, botMessage],
     }));
+    
+    if (user) {
+      setTimeout(() => navigate(`/user/${user.username}`), 600);
+    }
   };
 
   // Help & Support

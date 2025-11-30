@@ -28,6 +28,14 @@ export interface KnowledgeBase {
       greeting: string;
       suggestions: string[];
     };
+    feature_specific: {
+      questions: string;
+      communities: string;
+      games: string;
+      messaging: string;
+      collections: string;
+      profile: string;
+    };
   };
 }
 
@@ -78,6 +86,14 @@ export const knowledgeBase: KnowledgeBase = {
     returning_user: {
       greeting: 'Welcome back! What can I help you with today?',
       suggestions: ['Check new questions', 'View your communities', 'Play a game'],
+    },
+    feature_specific: {
+      questions: "I can help you find questions, ask new ones, or search by tags.",
+      communities: "Let's explore communities or create your own!",
+      games: "Ready to play? We have Nim games available!",
+      messaging: "I can help you with global messages or direct chats.",
+      collections: "Let's work with your collections!",
+      profile: "Let's manage your profile!",
     },
   },
 };

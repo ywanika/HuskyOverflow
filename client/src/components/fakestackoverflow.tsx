@@ -27,6 +27,7 @@ import AdminDashboard from './main/adminDashboard';
 import MainMessagePage from './main/mainMessagePage';
 import CommunityGuidelines from './communityGuidelines';
 import ChatbotPage from './chatbot/ChatbotPage';
+import SuspendedPage from './suspendedPage';
 
 const ProtectedRoute = ({
   user,
