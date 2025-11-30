@@ -1,5 +1,6 @@
 import { useState, useEffect, useRef } from 'react';
 import ChatbotWrapper from './ChatbotWrapper';
+import type { ChatbotMessage } from './types';
 import { Box, Button } from '@chakra-ui/react';
 import { useTheme } from '../../contexts/ThemeContext';
 import useUserContext from '../../hooks/useUserContext';
@@ -25,21 +26,21 @@ const ChatbotPage = () => {
         const oldKey = getStorageKey(previousUsernameRef.current);
         localStorage.removeItem(oldKey);
       }
-      
+
       // Clear current user's messages to start fresh session on login
       const currentKey = getStorageKey(user.username);
       localStorage.removeItem(currentKey);
-      
+
       // Also clear session flag to indicate new login
       localStorage.removeItem(`chatbot_session_${user.username}`);
-      
+
       // Update ref and force chatbot re-render
       previousUsernameRef.current = user.username;
-      setChatbotKey((prev) => prev + 1);
+      setChatbotKey(prev => prev + 1);
     }
-  }, [user?.username]);
+  }, [user]);
 
-  const saveMessages = (messages: any[], _HTMLString?: string) => {
+  const saveMessages = (messages: ChatbotMessage[], _HTMLString?: string) => {
     if (!user) return;
     const storageKey = getStorageKey(user.username);
     localStorage.setItem(storageKey, JSON.stringify(messages));
@@ -49,16 +50,16 @@ const ChatbotPage = () => {
 
   const loadMessages = () => {
     if (!user) return [];
-    
+
     // Check if this is a new session (no session flag)
     const sessionKey = `chatbot_session_${user.username}`;
     const hasSession = localStorage.getItem(sessionKey);
-    
+
     // If no session exists, return empty to trigger initial messages
     if (!hasSession) {
       return [];
     }
-    
+
     // Otherwise, load saved messages for this user
     const storageKey = getStorageKey(user.username);
     const messages = localStorage.getItem(storageKey);
@@ -78,11 +79,7 @@ const ChatbotPage = () => {
   };
 
   return (
-    <Box
-      p={8}
-      minH='100vh'
-      bg={isDark ? 'gray.900' : 'white'}
-      color={isDark ? 'white' : 'black'}>
+    <Box p={8} minH='100vh' bg={isDark ? 'gray.900' : 'white'} color={isDark ? 'white' : 'black'}>
       <Box mb={4}>
         <h1 style={{ fontSize: '2rem', fontWeight: 'bold', marginBottom: '1rem' }}>
           Chatbot Assistant
@@ -90,11 +87,7 @@ const ChatbotPage = () => {
         <p style={{ marginBottom: '1rem', color: isDark ? 'gray.300' : 'gray.600' }}>
           Get help with FakeStackOverflow features and navigation.
         </p>
-        <Button
-          onClick={() => setShowBot((prev) => !prev)}
-          colorScheme='blue'
-          size='lg'
-          mb={4}>
+        <Button onClick={() => setShowBot(prev => !prev)} colorScheme='blue' size='lg' mb={4}>
           {showBot ? 'Hide Chatbot' : 'Show Chatbot'}
         </Button>
       </Box>
@@ -122,4 +115,3 @@ const ChatbotPage = () => {
 };
 
 export default ChatbotPage;
-

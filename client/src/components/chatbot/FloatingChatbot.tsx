@@ -1,5 +1,6 @@
 import { useState, useEffect, useRef } from 'react';
 import ChatbotWrapper from './ChatbotWrapper';
+import type { ChatbotMessage } from './types';
 import { Box, IconButton } from '@chakra-ui/react';
 import { useTheme } from '../../contexts/ThemeContext';
 import useUserContext from '../../hooks/useUserContext';
@@ -26,19 +27,19 @@ const FloatingChatbot = () => {
         const oldKey = getStorageKey(previousUsernameRef.current);
         localStorage.removeItem(oldKey);
       }
-      
+
       // Clear current user's messages to start fresh session on login
       const currentKey = getStorageKey(user.username);
       localStorage.removeItem(currentKey);
-      
+
       // Also clear session flag to indicate new login
       localStorage.removeItem(`chatbot_session_${user.username}`);
-      
+
       // Update ref and force chatbot re-render
       previousUsernameRef.current = user.username;
-      setChatbotKey((prev) => prev + 1);
+      setChatbotKey(prev => prev + 1);
     }
-  }, [user?.username]);
+  }, [user]);
 
   // Measure header height for positioning
   useEffect(() => {
@@ -66,7 +67,7 @@ const FloatingChatbot = () => {
     };
   }, [showBot]);
 
-  const saveMessages = (messages: any[], _HTMLString?: string) => {
+  const saveMessages = (messages: ChatbotMessage[], _HTMLString?: string) => {
     if (!user) return;
     const storageKey = getStorageKey(user.username);
     localStorage.setItem(storageKey, JSON.stringify(messages));
@@ -76,16 +77,16 @@ const FloatingChatbot = () => {
 
   const loadMessages = () => {
     if (!user) return [];
-    
+
     // Check if this is a new session (no session flag)
     const sessionKey = `chatbot_session_${user.username}`;
     const hasSession = localStorage.getItem(sessionKey);
-    
+
     // If no session exists, return empty to trigger initial messages
     if (!hasSession) {
       return [];
     }
-    
+
     // Otherwise, load saved messages for this user
     const storageKey = getStorageKey(user.username);
     const messages = localStorage.getItem(storageKey);
@@ -115,7 +116,7 @@ const FloatingChatbot = () => {
         className='floating-chatbot-button-container'>
         <IconButton
           aria-label={showBot ? 'Close chatbot assistant' : 'Open chatbot assistant'}
-          onClick={() => setShowBot((prev) => !prev)}
+          onClick={() => setShowBot(prev => !prev)}
           size='lg'
           borderRadius='full'
           bg={isDark ? 'blue.500' : 'blue.600'}
@@ -197,4 +198,3 @@ const FloatingChatbot = () => {
 };
 
 export default FloatingChatbot;
-

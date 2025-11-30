@@ -53,7 +53,7 @@ describe('MessageParser', () => {
     const { container } = render(
       <MessageParser actions={mockActions}>
         <TestChild />
-      </MessageParser>
+      </MessageParser>,
     );
     expect(container.textContent).toContain('Test Child');
   });
@@ -70,7 +70,7 @@ describe('MessageParser', () => {
       render(
         <MessageParser actions={mockActions}>
           <TestComponent />
-        </MessageParser>
+        </MessageParser>,
       );
 
       expect(mockActions.handleHello).toHaveBeenCalled();
@@ -87,7 +87,7 @@ describe('MessageParser', () => {
       render(
         <MessageParser actions={mockActions}>
           <TestComponent />
-        </MessageParser>
+        </MessageParser>,
       );
 
       expect(mockActions.handleHello).toHaveBeenCalled();
@@ -104,7 +104,7 @@ describe('MessageParser', () => {
       render(
         <MessageParser actions={mockActions}>
           <TestComponent />
-        </MessageParser>
+        </MessageParser>,
       );
 
       expect(mockActions.handleHello).toHaveBeenCalled();
@@ -123,7 +123,7 @@ describe('MessageParser', () => {
       render(
         <MessageParser actions={mockActions}>
           <TestComponent />
-        </MessageParser>
+        </MessageParser>,
       );
 
       expect(mockActions.handleHelp).toHaveBeenCalled();
@@ -140,7 +140,7 @@ describe('MessageParser', () => {
       render(
         <MessageParser actions={mockActions}>
           <TestComponent />
-        </MessageParser>
+        </MessageParser>,
       );
 
       expect(mockActions.handleHelp).toHaveBeenCalled();
@@ -157,7 +157,7 @@ describe('MessageParser', () => {
       render(
         <MessageParser actions={mockActions}>
           <TestComponent />
-        </MessageParser>
+        </MessageParser>,
       );
 
       expect(mockActions.handleHelp).toHaveBeenCalled();
@@ -176,7 +176,7 @@ describe('MessageParser', () => {
       render(
         <MessageParser actions={mockActions}>
           <TestComponent />
-        </MessageParser>
+        </MessageParser>,
       );
 
       // This should trigger browse questions, not questions flow
@@ -194,7 +194,7 @@ describe('MessageParser', () => {
       render(
         <MessageParser actions={mockActions}>
           <TestComponent />
-        </MessageParser>
+        </MessageParser>,
       );
 
       expect(mockActions.handleQuestionsFlow).toHaveBeenCalled();
@@ -211,7 +211,7 @@ describe('MessageParser', () => {
       render(
         <MessageParser actions={mockActions}>
           <TestComponent />
-        </MessageParser>
+        </MessageParser>,
       );
 
       // Just "questions" triggers questions flow
@@ -229,7 +229,7 @@ describe('MessageParser', () => {
       render(
         <MessageParser actions={mockActions}>
           <TestComponent />
-        </MessageParser>
+        </MessageParser>,
       );
 
       expect(mockActions.handleBrowseQuestions).toHaveBeenCalled();
@@ -246,7 +246,7 @@ describe('MessageParser', () => {
       render(
         <MessageParser actions={mockActions}>
           <TestComponent />
-        </MessageParser>
+        </MessageParser>,
       );
 
       // "tag" keyword with questions entity triggers search by tags
@@ -264,7 +264,7 @@ describe('MessageParser', () => {
       render(
         <MessageParser actions={mockActions}>
           <TestComponent />
-        </MessageParser>
+        </MessageParser>,
       );
 
       // "unanswered" keyword with questions entity triggers unanswered questions
@@ -282,7 +282,7 @@ describe('MessageParser', () => {
       render(
         <MessageParser actions={mockActions}>
           <TestComponent />
-        </MessageParser>
+        </MessageParser>,
       );
 
       expect(mockActions.handleAskQuestion).toHaveBeenCalled();
@@ -299,12 +299,14 @@ describe('MessageParser', () => {
       render(
         <MessageParser actions={mockActions}>
           <TestComponent />
-        </MessageParser>
+        </MessageParser>,
       );
 
       // The parser extracts the query after "search" or "find"
       expect(mockActions.handleSearchQuestions).toHaveBeenCalled();
-      expect(mockActions.handleSearchQuestions).toHaveBeenCalledWith(expect.stringContaining('react'));
+      expect(mockActions.handleSearchQuestions).toHaveBeenCalledWith(
+        expect.stringContaining('react'),
+      );
     });
   });
 
@@ -320,7 +322,7 @@ describe('MessageParser', () => {
       render(
         <MessageParser actions={mockActions}>
           <TestComponent />
-        </MessageParser>
+        </MessageParser>,
       );
 
       expect(mockActions.handleCommunitiesFlow).toHaveBeenCalled();
@@ -337,7 +339,7 @@ describe('MessageParser', () => {
       render(
         <MessageParser actions={mockActions}>
           <TestComponent />
-        </MessageParser>
+        </MessageParser>,
       );
 
       expect(mockActions.handleCommunitiesFlow).toHaveBeenCalled();
@@ -354,7 +356,7 @@ describe('MessageParser', () => {
       render(
         <MessageParser actions={mockActions}>
           <TestComponent />
-        </MessageParser>
+        </MessageParser>,
       );
 
       // "communities" keyword triggers communities flow
@@ -372,7 +374,7 @@ describe('MessageParser', () => {
       render(
         <MessageParser actions={mockActions}>
           <TestComponent />
-        </MessageParser>
+        </MessageParser>,
       );
 
       expect(mockActions.handleCreateCommunity).toHaveBeenCalled();
@@ -389,7 +391,7 @@ describe('MessageParser', () => {
       render(
         <MessageParser actions={mockActions}>
           <TestComponent />
-        </MessageParser>
+        </MessageParser>,
       );
 
       expect(mockActions.handleBrowseCommunities).toHaveBeenCalled();
@@ -408,7 +410,7 @@ describe('MessageParser', () => {
       render(
         <MessageParser actions={mockActions}>
           <TestComponent />
-        </MessageParser>
+        </MessageParser>,
       );
 
       expect(mockActions.handleGamesFlow).toHaveBeenCalled();
@@ -425,7 +427,7 @@ describe('MessageParser', () => {
       render(
         <MessageParser actions={mockActions}>
           <TestComponent />
-        </MessageParser>
+        </MessageParser>,
       );
 
       // "play" triggers join game action, not games flow
@@ -443,7 +445,7 @@ describe('MessageParser', () => {
       render(
         <MessageParser actions={mockActions}>
           <TestComponent />
-        </MessageParser>
+        </MessageParser>,
       );
 
       expect(mockActions.handleGamesFlow).toHaveBeenCalled();
@@ -460,7 +462,7 @@ describe('MessageParser', () => {
       render(
         <MessageParser actions={mockActions}>
           <TestComponent />
-        </MessageParser>
+        </MessageParser>,
       );
 
       expect(mockActions.handleLearnNim).toHaveBeenCalled();
@@ -479,7 +481,7 @@ describe('MessageParser', () => {
       render(
         <MessageParser actions={mockActions}>
           <TestComponent />
-        </MessageParser>
+        </MessageParser>,
       );
 
       expect(mockActions.handleMessagingFlow).toHaveBeenCalled();
@@ -496,7 +498,7 @@ describe('MessageParser', () => {
       render(
         <MessageParser actions={mockActions}>
           <TestComponent />
-        </MessageParser>
+        </MessageParser>,
       );
 
       expect(mockActions.handleMessagingFlow).toHaveBeenCalled();
@@ -513,7 +515,7 @@ describe('MessageParser', () => {
       render(
         <MessageParser actions={mockActions}>
           <TestComponent />
-        </MessageParser>
+        </MessageParser>,
       );
 
       // "direct" keyword triggers direct messages action
@@ -531,7 +533,7 @@ describe('MessageParser', () => {
       render(
         <MessageParser actions={mockActions}>
           <TestComponent />
-        </MessageParser>
+        </MessageParser>,
       );
 
       expect(mockActions.handleGlobalMessages).toHaveBeenCalled();
@@ -550,7 +552,7 @@ describe('MessageParser', () => {
       render(
         <MessageParser actions={mockActions}>
           <TestComponent />
-        </MessageParser>
+        </MessageParser>,
       );
 
       expect(mockActions.handleCollectionsFlow).toHaveBeenCalled();
@@ -567,7 +569,7 @@ describe('MessageParser', () => {
       render(
         <MessageParser actions={mockActions}>
           <TestComponent />
-        </MessageParser>
+        </MessageParser>,
       );
 
       // "save" with collections entity triggers add to collection action
@@ -585,7 +587,7 @@ describe('MessageParser', () => {
       render(
         <MessageParser actions={mockActions}>
           <TestComponent />
-        </MessageParser>
+        </MessageParser>,
       );
 
       // "my collection" triggers view my collections action
@@ -605,7 +607,7 @@ describe('MessageParser', () => {
       render(
         <MessageParser actions={mockActions}>
           <TestComponent />
-        </MessageParser>
+        </MessageParser>,
       );
 
       expect(mockActions.handleProfileFlow).toHaveBeenCalled();
@@ -622,7 +624,7 @@ describe('MessageParser', () => {
       render(
         <MessageParser actions={mockActions}>
           <TestComponent />
-        </MessageParser>
+        </MessageParser>,
       );
 
       expect(mockActions.handleProfileFlow).toHaveBeenCalled();
@@ -639,7 +641,7 @@ describe('MessageParser', () => {
       render(
         <MessageParser actions={mockActions}>
           <TestComponent />
-        </MessageParser>
+        </MessageParser>,
       );
 
       expect(mockActions.handleProfileFlow).toHaveBeenCalled();
@@ -658,7 +660,7 @@ describe('MessageParser', () => {
       render(
         <MessageParser actions={mockActions}>
           <TestComponent />
-        </MessageParser>
+        </MessageParser>,
       );
 
       expect(mockActions.handleMainMenu).toHaveBeenCalled();
@@ -675,7 +677,7 @@ describe('MessageParser', () => {
       render(
         <MessageParser actions={mockActions}>
           <TestComponent />
-        </MessageParser>
+        </MessageParser>,
       );
 
       expect(mockActions.handleMainMenu).toHaveBeenCalled();
@@ -692,7 +694,7 @@ describe('MessageParser', () => {
       render(
         <MessageParser actions={mockActions}>
           <TestComponent />
-        </MessageParser>
+        </MessageParser>,
       );
 
       expect(mockActions.handleMainMenu).toHaveBeenCalled();
@@ -709,7 +711,7 @@ describe('MessageParser', () => {
       render(
         <MessageParser actions={mockActions}>
           <TestComponent />
-        </MessageParser>
+        </MessageParser>,
       );
 
       expect(mockActions.handleMainMenu).toHaveBeenCalled();
@@ -728,7 +730,7 @@ describe('MessageParser', () => {
       render(
         <MessageParser actions={mockActions}>
           <TestComponent />
-        </MessageParser>
+        </MessageParser>,
       );
 
       expect(mockActions.handleBrowseQuestions).toHaveBeenCalled();
@@ -745,7 +747,7 @@ describe('MessageParser', () => {
       render(
         <MessageParser actions={mockActions}>
           <TestComponent />
-        </MessageParser>
+        </MessageParser>,
       );
 
       expect(mockActions.handleBrowseQuestions).toHaveBeenCalled();
@@ -762,7 +764,7 @@ describe('MessageParser', () => {
       render(
         <MessageParser actions={mockActions}>
           <TestComponent />
-        </MessageParser>
+        </MessageParser>,
       );
 
       expect(mockActions.handleSearchByTags).toHaveBeenCalled();
@@ -779,7 +781,7 @@ describe('MessageParser', () => {
       render(
         <MessageParser actions={mockActions}>
           <TestComponent />
-        </MessageParser>
+        </MessageParser>,
       );
 
       expect(mockActions.handleUnansweredQuestions).toHaveBeenCalled();
@@ -796,7 +798,7 @@ describe('MessageParser', () => {
       render(
         <MessageParser actions={mockActions}>
           <TestComponent />
-        </MessageParser>
+        </MessageParser>,
       );
 
       expect(mockActions.handleAskQuestion).toHaveBeenCalled();
@@ -813,7 +815,7 @@ describe('MessageParser', () => {
       render(
         <MessageParser actions={mockActions}>
           <TestComponent />
-        </MessageParser>
+        </MessageParser>,
       );
 
       expect(mockActions.handleMyQuestions).toHaveBeenCalled();
@@ -830,11 +832,13 @@ describe('MessageParser', () => {
       render(
         <MessageParser actions={mockActions}>
           <TestComponent />
-        </MessageParser>
+        </MessageParser>,
       );
 
       expect(mockActions.handleSearchQuestions).toHaveBeenCalled();
-      expect(mockActions.handleSearchQuestions).toHaveBeenCalledWith(expect.stringContaining('react'));
+      expect(mockActions.handleSearchQuestions).toHaveBeenCalledWith(
+        expect.stringContaining('react'),
+      );
     });
 
     it('should handle "look for Python questions"', () => {
@@ -848,7 +852,7 @@ describe('MessageParser', () => {
       render(
         <MessageParser actions={mockActions}>
           <TestComponent />
-        </MessageParser>
+        </MessageParser>,
       );
 
       expect(mockActions.handleSearchQuestions).toHaveBeenCalled();
@@ -865,7 +869,7 @@ describe('MessageParser', () => {
       render(
         <MessageParser actions={mockActions}>
           <TestComponent />
-        </MessageParser>
+        </MessageParser>,
       );
 
       // "help" keyword triggers help intent first
@@ -885,7 +889,7 @@ describe('MessageParser', () => {
       render(
         <MessageParser actions={mockActions}>
           <TestComponent />
-        </MessageParser>
+        </MessageParser>,
       );
 
       expect(mockActions.handleBrowseCommunities).toHaveBeenCalled();
@@ -902,7 +906,7 @@ describe('MessageParser', () => {
       render(
         <MessageParser actions={mockActions}>
           <TestComponent />
-        </MessageParser>
+        </MessageParser>,
       );
 
       expect(mockActions.handleCreateCommunity).toHaveBeenCalled();
@@ -919,7 +923,7 @@ describe('MessageParser', () => {
       render(
         <MessageParser actions={mockActions}>
           <TestComponent />
-        </MessageParser>
+        </MessageParser>,
       );
 
       expect(mockActions.handleFindCommunitiesByTopic).toHaveBeenCalled();
@@ -936,7 +940,7 @@ describe('MessageParser', () => {
       render(
         <MessageParser actions={mockActions}>
           <TestComponent />
-        </MessageParser>
+        </MessageParser>,
       );
 
       expect(mockActions.handleMyCommunities).toHaveBeenCalled();
@@ -953,7 +957,7 @@ describe('MessageParser', () => {
       render(
         <MessageParser actions={mockActions}>
           <TestComponent />
-        </MessageParser>
+        </MessageParser>,
       );
 
       expect(mockActions.handleCommunitiesFlow).toHaveBeenCalled();
@@ -972,7 +976,7 @@ describe('MessageParser', () => {
       render(
         <MessageParser actions={mockActions}>
           <TestComponent />
-        </MessageParser>
+        </MessageParser>,
       );
 
       expect(mockActions.handleViewGames).toHaveBeenCalled();
@@ -989,7 +993,7 @@ describe('MessageParser', () => {
       render(
         <MessageParser actions={mockActions}>
           <TestComponent />
-        </MessageParser>
+        </MessageParser>,
       );
 
       expect(mockActions.handleCreateGame).toHaveBeenCalled();
@@ -1006,7 +1010,7 @@ describe('MessageParser', () => {
       render(
         <MessageParser actions={mockActions}>
           <TestComponent />
-        </MessageParser>
+        </MessageParser>,
       );
 
       // "what is" triggers help intent first
@@ -1024,7 +1028,7 @@ describe('MessageParser', () => {
       render(
         <MessageParser actions={mockActions}>
           <TestComponent />
-        </MessageParser>
+        </MessageParser>,
       );
 
       // "tell me" triggers help intent first
@@ -1042,7 +1046,7 @@ describe('MessageParser', () => {
       render(
         <MessageParser actions={mockActions}>
           <TestComponent />
-        </MessageParser>
+        </MessageParser>,
       );
 
       expect(mockActions.handleLearnNim).toHaveBeenCalled();
@@ -1059,7 +1063,7 @@ describe('MessageParser', () => {
       render(
         <MessageParser actions={mockActions}>
           <TestComponent />
-        </MessageParser>
+        </MessageParser>,
       );
 
       expect(mockActions.handleJoinGame).toHaveBeenCalled();
@@ -1078,7 +1082,7 @@ describe('MessageParser', () => {
       render(
         <MessageParser actions={mockActions}>
           <TestComponent />
-        </MessageParser>
+        </MessageParser>,
       );
 
       expect(mockActions.handleDirectMessages).toHaveBeenCalled();
@@ -1095,7 +1099,7 @@ describe('MessageParser', () => {
       render(
         <MessageParser actions={mockActions}>
           <TestComponent />
-        </MessageParser>
+        </MessageParser>,
       );
 
       expect(mockActions.handleStartNewChat).toHaveBeenCalled();
@@ -1112,7 +1116,7 @@ describe('MessageParser', () => {
       render(
         <MessageParser actions={mockActions}>
           <TestComponent />
-        </MessageParser>
+        </MessageParser>,
       );
 
       expect(mockActions.handleChatHistory).toHaveBeenCalled();
@@ -1129,7 +1133,7 @@ describe('MessageParser', () => {
       render(
         <MessageParser actions={mockActions}>
           <TestComponent />
-        </MessageParser>
+        </MessageParser>,
       );
 
       expect(mockActions.handleMessagingFlow).toHaveBeenCalled();
@@ -1148,7 +1152,7 @@ describe('MessageParser', () => {
       render(
         <MessageParser actions={mockActions}>
           <TestComponent />
-        </MessageParser>
+        </MessageParser>,
       );
 
       expect(mockActions.handleViewMyCollections).toHaveBeenCalled();
@@ -1165,7 +1169,7 @@ describe('MessageParser', () => {
       render(
         <MessageParser actions={mockActions}>
           <TestComponent />
-        </MessageParser>
+        </MessageParser>,
       );
 
       expect(mockActions.handleBrowsePublicCollections).toHaveBeenCalled();
@@ -1182,7 +1186,7 @@ describe('MessageParser', () => {
       render(
         <MessageParser actions={mockActions}>
           <TestComponent />
-        </MessageParser>
+        </MessageParser>,
       );
 
       expect(mockActions.handleAddToCollection).toHaveBeenCalled();
@@ -1199,7 +1203,7 @@ describe('MessageParser', () => {
       render(
         <MessageParser actions={mockActions}>
           <TestComponent />
-        </MessageParser>
+        </MessageParser>,
       );
 
       expect(mockActions.handleCollectionsFlow).toHaveBeenCalled();
@@ -1218,7 +1222,7 @@ describe('MessageParser', () => {
       render(
         <MessageParser actions={mockActions}>
           <TestComponent />
-        </MessageParser>
+        </MessageParser>,
       );
 
       expect(mockActions.handleProfileFlow).toHaveBeenCalled();
@@ -1235,7 +1239,7 @@ describe('MessageParser', () => {
       render(
         <MessageParser actions={mockActions}>
           <TestComponent />
-        </MessageParser>
+        </MessageParser>,
       );
 
       expect(mockActions.handleEditBiography).toHaveBeenCalled();
@@ -1252,7 +1256,7 @@ describe('MessageParser', () => {
       render(
         <MessageParser actions={mockActions}>
           <TestComponent />
-        </MessageParser>
+        </MessageParser>,
       );
 
       expect(mockActions.handleChangePassword).toHaveBeenCalled();
@@ -1269,7 +1273,7 @@ describe('MessageParser', () => {
       render(
         <MessageParser actions={mockActions}>
           <TestComponent />
-        </MessageParser>
+        </MessageParser>,
       );
 
       expect(mockActions.handleViewActivity).toHaveBeenCalled();
@@ -1286,7 +1290,7 @@ describe('MessageParser', () => {
       render(
         <MessageParser actions={mockActions}>
           <TestComponent />
-        </MessageParser>
+        </MessageParser>,
       );
 
       expect(mockActions.handleProfileFlow).toHaveBeenCalled();
@@ -1305,7 +1309,7 @@ describe('MessageParser', () => {
       render(
         <MessageParser actions={mockActions}>
           <TestComponent />
-        </MessageParser>
+        </MessageParser>,
       );
 
       expect(mockActions.handleQuestionsFlow).toHaveBeenCalled();
@@ -1322,7 +1326,7 @@ describe('MessageParser', () => {
       render(
         <MessageParser actions={mockActions}>
           <TestComponent />
-        </MessageParser>
+        </MessageParser>,
       );
 
       expect(mockActions.handleCommunitiesFlow).toHaveBeenCalled();
@@ -1339,7 +1343,7 @@ describe('MessageParser', () => {
       render(
         <MessageParser actions={mockActions}>
           <TestComponent />
-        </MessageParser>
+        </MessageParser>,
       );
 
       expect(mockActions.handleJoinGame).toHaveBeenCalled();
@@ -1356,7 +1360,7 @@ describe('MessageParser', () => {
       render(
         <MessageParser actions={mockActions}>
           <TestComponent />
-        </MessageParser>
+        </MessageParser>,
       );
 
       expect(mockActions.handleProfileFlow).toHaveBeenCalled();
@@ -1375,7 +1379,7 @@ describe('MessageParser', () => {
       render(
         <MessageParser actions={mockActions}>
           <TestComponent />
-        </MessageParser>
+        </MessageParser>,
       );
 
       expect(mockActions.handleHelp).toHaveBeenCalled();
@@ -1392,7 +1396,7 @@ describe('MessageParser', () => {
       render(
         <MessageParser actions={mockActions}>
           <TestComponent />
-        </MessageParser>
+        </MessageParser>,
       );
 
       expect(mockActions.handleHelp).toHaveBeenCalled();
@@ -1409,7 +1413,7 @@ describe('MessageParser', () => {
       render(
         <MessageParser actions={mockActions}>
           <TestComponent />
-        </MessageParser>
+        </MessageParser>,
       );
 
       expect(mockActions.handleHelp).toHaveBeenCalled();
@@ -1426,7 +1430,7 @@ describe('MessageParser', () => {
       render(
         <MessageParser actions={mockActions}>
           <TestComponent />
-        </MessageParser>
+        </MessageParser>,
       );
 
       expect(mockActions.handleHelp).toHaveBeenCalled();
@@ -1445,7 +1449,7 @@ describe('MessageParser', () => {
       render(
         <MessageParser actions={mockActions}>
           <TestComponent />
-        </MessageParser>
+        </MessageParser>,
       );
 
       expect(mockActions.handleQuestionsFlow).toHaveBeenCalled();
@@ -1462,7 +1466,7 @@ describe('MessageParser', () => {
       render(
         <MessageParser actions={mockActions}>
           <TestComponent />
-        </MessageParser>
+        </MessageParser>,
       );
 
       expect(mockActions.handleCommunitiesFlow).toHaveBeenCalled();
@@ -1479,7 +1483,7 @@ describe('MessageParser', () => {
       render(
         <MessageParser actions={mockActions}>
           <TestComponent />
-        </MessageParser>
+        </MessageParser>,
       );
 
       expect(mockActions.handleGamesFlow).toHaveBeenCalled();
@@ -1498,11 +1502,13 @@ describe('MessageParser', () => {
       render(
         <MessageParser actions={mockActions}>
           <TestComponent />
-        </MessageParser>
+        </MessageParser>,
       );
 
       expect(mockActions.handleSearchQuestions).toHaveBeenCalled();
-      expect(mockActions.handleSearchQuestions).toHaveBeenCalledWith(expect.stringContaining('async await'));
+      expect(mockActions.handleSearchQuestions).toHaveBeenCalledWith(
+        expect.stringContaining('async await'),
+      );
     });
 
     it('should extract query from "find React questions"', () => {
@@ -1516,11 +1522,13 @@ describe('MessageParser', () => {
       render(
         <MessageParser actions={mockActions}>
           <TestComponent />
-        </MessageParser>
+        </MessageParser>,
       );
 
       expect(mockActions.handleSearchQuestions).toHaveBeenCalled();
-      expect(mockActions.handleSearchQuestions).toHaveBeenCalledWith(expect.stringContaining('React'));
+      expect(mockActions.handleSearchQuestions).toHaveBeenCalledWith(
+        expect.stringContaining('React'),
+      );
     });
   });
 
@@ -1536,7 +1544,7 @@ describe('MessageParser', () => {
       render(
         <MessageParser actions={mockActions}>
           <TestComponent />
-        </MessageParser>
+        </MessageParser>,
       );
 
       expect(mockActions.handleSearchQuestions).toHaveBeenCalled();
@@ -1553,7 +1561,7 @@ describe('MessageParser', () => {
       render(
         <MessageParser actions={mockActions}>
           <TestComponent />
-        </MessageParser>
+        </MessageParser>,
       );
 
       expect(mockActions.handleSearchQuestions).toHaveBeenCalled();
@@ -1572,7 +1580,7 @@ describe('MessageParser', () => {
       render(
         <MessageParser actions={mockActions}>
           <TestComponent />
-        </MessageParser>
+        </MessageParser>,
       );
 
       expect(mockActions.handleDefault).toHaveBeenCalled();
@@ -1589,7 +1597,7 @@ describe('MessageParser', () => {
       render(
         <MessageParser actions={mockActions}>
           <TestComponent />
-        </MessageParser>
+        </MessageParser>,
       );
 
       expect(mockActions.handleDefault).toHaveBeenCalled();
@@ -1606,7 +1614,7 @@ describe('MessageParser', () => {
       render(
         <MessageParser actions={mockActions}>
           <TestComponent />
-        </MessageParser>
+        </MessageParser>,
       );
 
       expect(mockActions.handleDefault).toHaveBeenCalled();
@@ -1623,7 +1631,7 @@ describe('MessageParser', () => {
       render(
         <MessageParser actions={mockActions}>
           <TestComponent />
-        </MessageParser>
+        </MessageParser>,
       );
 
       expect(mockActions.handleDefault).toHaveBeenCalled();
@@ -1640,7 +1648,7 @@ describe('MessageParser', () => {
       render(
         <MessageParser actions={mockActions}>
           <TestComponent />
-        </MessageParser>
+        </MessageParser>,
       );
 
       expect(mockActions.handleDefault).toHaveBeenCalled();
@@ -1659,11 +1667,10 @@ describe('MessageParser', () => {
       render(
         <MessageParser actions={mockActions}>
           <TestComponent />
-        </MessageParser>
+        </MessageParser>,
       );
 
       expect(mockActions.handleHello).toHaveBeenCalled();
     });
   });
 });
-

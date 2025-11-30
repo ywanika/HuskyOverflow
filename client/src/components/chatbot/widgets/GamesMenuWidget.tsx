@@ -1,15 +1,15 @@
 import React from 'react';
 import { Button, VStack, Box, Text } from '@chakra-ui/react';
 import { useNavigate } from 'react-router-dom';
+import type { BaseWidgetProps } from '../types';
 
-interface GamesMenuWidgetProps {
-  actionProvider?: any;
-  setState?: (updater: (prev: any) => any) => void;
-  scrollIntoView?: () => void;
-  state?: any;
-}
+type GamesMenuWidgetProps = BaseWidgetProps;
 
-const GamesMenuWidget: React.FC<GamesMenuWidgetProps> = ({ actionProvider, setState, scrollIntoView }) => {
+const GamesMenuWidget: React.FC<GamesMenuWidgetProps> = ({
+  actionProvider,
+  setState,
+  scrollIntoView,
+}) => {
   const navigate = useNavigate();
 
   const options = [
@@ -19,7 +19,7 @@ const GamesMenuWidget: React.FC<GamesMenuWidgetProps> = ({ actionProvider, setSt
     { label: 'Learn about Nim', action: 'learnNim', route: null },
   ];
 
-  const handleOptionClick = (option: typeof options[0]) => {
+  const handleOptionClick = (option: (typeof options)[0]) => {
     if (option.route) {
       navigate(option.route);
     } else if (actionProvider?.actions) {
@@ -58,4 +58,3 @@ const GamesMenuWidget: React.FC<GamesMenuWidgetProps> = ({ actionProvider, setSt
 };
 
 export default GamesMenuWidget;
-

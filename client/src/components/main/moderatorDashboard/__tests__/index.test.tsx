@@ -463,7 +463,7 @@ describe('ModeratorDashboard', () => {
         const answerCard = answerText.closest('[class*="card"]') || answerText.closest('div');
         if (answerCard) {
           const hasViewQuestion = Array.from(answerCard.querySelectorAll('button')).some(
-            btn => btn.textContent === 'View Question'
+            btn => btn.textContent === 'View Question',
           );
           expect(hasViewQuestion).toBe(false);
         }

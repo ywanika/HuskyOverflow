@@ -1,4 +1,9 @@
-import { knowledgeBase, navigationPatterns, actionPatterns, helpPatterns } from '../knowledgeBase';
+import {
+  knowledgeBase,
+  NAVIGATION_PATTERNS,
+  actionPatterns,
+  HELP_PATTERNS,
+} from '../knowledgeBase';
 
 describe('Knowledge Base', () => {
   describe('Structure', () => {
@@ -200,7 +205,9 @@ describe('Knowledge Base', () => {
 
   describe('Context-Aware Responses', () => {
     it('should have new_user greeting matching Sprint 0 requirements', () => {
-      expect(knowledgeBase.contexts.new_user.greeting).toBe('Welcome to HuskyFlow! Let me show you around.');
+      expect(knowledgeBase.contexts.new_user.greeting).toBe(
+        'Welcome to HuskyFlow! Let me show you around.',
+      );
     });
 
     it('should have new_user suggestions', () => {
@@ -210,7 +217,9 @@ describe('Knowledge Base', () => {
     });
 
     it('should have returning_user greeting matching Sprint 0 requirements', () => {
-      expect(knowledgeBase.contexts.returning_user.greeting).toBe('Welcome back! What can I help you with today?');
+      expect(knowledgeBase.contexts.returning_user.greeting).toBe(
+        'Welcome back! What can I help you with today?',
+      );
     });
 
     it('should have returning_user suggestions', () => {
@@ -221,35 +230,33 @@ describe('Knowledge Base', () => {
 
     it('should have feature-specific responses matching Sprint 0 requirements', () => {
       expect(knowledgeBase.contexts.feature_specific.questions).toBe(
-        "I can help you find questions, ask new ones, or search by tags."
+        'I can help you find questions, ask new ones, or search by tags.',
       );
       expect(knowledgeBase.contexts.feature_specific.communities).toBe(
-        "Let's explore communities or create your own!"
+        "Let's explore communities or create your own!",
       );
       expect(knowledgeBase.contexts.feature_specific.games).toBe(
-        "Ready to play? We have Nim games available!"
+        'Ready to play? We have Nim games available!',
       );
       expect(knowledgeBase.contexts.feature_specific.messaging).toBe(
-        "I can help you with global messages or direct chats."
+        'I can help you with global messages or direct chats.',
       );
       expect(knowledgeBase.contexts.feature_specific.collections).toBe(
-        "Let's work with your collections!"
+        "Let's work with your collections!",
       );
-      expect(knowledgeBase.contexts.feature_specific.profile).toBe(
-        "Let's manage your profile!"
-      );
+      expect(knowledgeBase.contexts.feature_specific.profile).toBe("Let's manage your profile!");
     });
   });
 
   describe('Intent Recognition Patterns', () => {
     it('should have navigation patterns matching Sprint 0 requirements', () => {
-      expect(navigationPatterns).toContain('go to');
-      expect(navigationPatterns).toContain('navigate to');
-      expect(navigationPatterns).toContain('show me');
-      expect(navigationPatterns).toContain('take me to');
-      expect(navigationPatterns).toContain('i want to');
-      expect(navigationPatterns).toContain('i need to');
-      expect(navigationPatterns).toContain('help me with');
+      expect(NAVIGATION_PATTERNS).toContain('go to');
+      expect(NAVIGATION_PATTERNS).toContain('navigate to');
+      expect(NAVIGATION_PATTERNS).toContain('show me');
+      expect(NAVIGATION_PATTERNS).toContain('take me to');
+      expect(NAVIGATION_PATTERNS).toContain('i want to');
+      expect(NAVIGATION_PATTERNS).toContain('i need to');
+      expect(NAVIGATION_PATTERNS).toContain('help me with');
     });
 
     it('should have create action patterns', () => {
@@ -280,14 +287,13 @@ describe('Knowledge Base', () => {
     });
 
     it('should have help patterns matching Sprint 0 requirements', () => {
-      expect(helpPatterns).toContain('help');
-      expect(helpPatterns).toContain('how to');
-      expect(helpPatterns).toContain('what is');
-      expect(helpPatterns).toContain('explain');
-      expect(helpPatterns).toContain('tutorial');
-      expect(helpPatterns).toContain('guide');
-      expect(helpPatterns).toContain('instructions');
+      expect(HELP_PATTERNS).toContain('help');
+      expect(HELP_PATTERNS).toContain('how to');
+      expect(HELP_PATTERNS).toContain('what is');
+      expect(HELP_PATTERNS).toContain('explain');
+      expect(HELP_PATTERNS).toContain('tutorial');
+      expect(HELP_PATTERNS).toContain('guide');
+      expect(HELP_PATTERNS).toContain('instructions');
     });
   });
 });
-

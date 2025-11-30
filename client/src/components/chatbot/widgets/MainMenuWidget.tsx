@@ -3,31 +3,53 @@ import { Button, VStack, Box, Text } from '@chakra-ui/react';
 import { useNavigate } from 'react-router-dom';
 import useUserContext from '../../../hooks/useUserContext';
 import { useTheme } from '../../../contexts/ThemeContext';
+import type { ChatbotState, SetStateFunction, ChatbotActions } from '../types';
 
 interface MainMenuWidgetProps {
-  actionProvider?: any;
-  setState?: (updater: (prev: any) => any) => void;
+  actionProvider?: { actions: ChatbotActions };
+  setState?: SetStateFunction;
   scrollIntoView?: () => void;
-  state?: any;
+  state?: ChatbotState;
 }
 
-const MainMenuWidget: React.FC<MainMenuWidgetProps> = ({ actionProvider, setState, scrollIntoView }) => {
+const MainMenuWidget: React.FC<MainMenuWidgetProps> = ({
+  actionProvider,
+  setState,
+  scrollIntoView,
+}) => {
   const navigate = useNavigate();
   const { theme } = useTheme();
   const isDark = theme === 'dark';
-  let user: { username: string } | null = null;
-  try {
-    user = useUserContext().user;
-  } catch {
-    // User context not available, continue without user
-  }
+  // Hook must be called unconditionally
+  const UserContext = useUserContext();
+  const user = UserContext?.user || null;
 
   const menuOptions = [
-    { label: 'Browse Questions', action: 'browseQuestions', route: '/home', actionName: 'handleQuestionsFlow' },
-    { label: 'Ask a Question', action: 'askQuestion', route: '/new/question', actionName: 'handleAskQuestion' },
-    { label: 'Join Communities', action: 'communities', route: '/communities', actionName: 'handleCommunitiesFlow' },
+    {
+      label: 'Browse Questions',
+      action: 'browseQuestions',
+      route: '/home',
+      actionName: 'handleQuestionsFlow',
+    },
+    {
+      label: 'Ask a Question',
+      action: 'askQuestion',
+      route: '/new/question',
+      actionName: 'handleAskQuestion',
+    },
+    {
+      label: 'Join Communities',
+      action: 'communities',
+      route: '/communities',
+      actionName: 'handleCommunitiesFlow',
+    },
     { label: 'Play Games', action: 'games', route: '/games', actionName: 'handleGamesFlow' },
-    { label: 'Send Messages', action: 'messaging', route: '/messaging', actionName: 'handleMessagingFlow' },
+    {
+      label: 'Send Messages',
+      action: 'messaging',
+      route: '/messaging',
+      actionName: 'handleMessagingFlow',
+    },
     {
       label: 'View Collections',
       action: 'collections',
@@ -43,7 +65,7 @@ const MainMenuWidget: React.FC<MainMenuWidgetProps> = ({ actionProvider, setStat
     { label: 'Help & Support', action: 'help', route: null, actionName: 'handleHelp' },
   ];
 
-  const handleMenuClick = (option: typeof menuOptions[0]) => {
+  const handleMenuClick = (option: (typeof menuOptions)[0]) => {
     if (option.route) {
       navigate(option.route);
     } else if (actionProvider?.actions && option.actionName) {
@@ -59,7 +81,12 @@ const MainMenuWidget: React.FC<MainMenuWidgetProps> = ({ actionProvider, setStat
   };
 
   return (
-    <Box p={4} bg={isDark ? 'gray.900' : 'gray.50'} borderRadius='md' border={isDark ? '1px solid' : 'none'} borderColor={isDark ? 'gray.700' : 'transparent'}>
+    <Box
+      p={4}
+      bg={isDark ? 'gray.900' : 'gray.50'}
+      borderRadius='md'
+      border={isDark ? '1px solid' : 'none'}
+      borderColor={isDark ? 'gray.700' : 'transparent'}>
       <Text mb={3} fontWeight='semibold' fontSize='sm' color={isDark ? 'white' : 'gray.800'}>
         What would you like to do?
       </Text>
@@ -74,9 +101,9 @@ const MainMenuWidget: React.FC<MainMenuWidgetProps> = ({ actionProvider, setStat
             bg={isDark ? 'gray.700' : 'white'}
             borderColor={isDark ? 'gray.600' : 'gray.200'}
             color={isDark ? 'white' : 'gray.800'}
-            _hover={{ 
+            _hover={{
               bg: isDark ? 'gray.600' : 'blue.50',
-              borderColor: isDark ? 'gray.500' : 'blue.300'
+              borderColor: isDark ? 'gray.500' : 'blue.300',
             }}
             justifyContent='flex-start'
             textAlign='left'>
@@ -89,4 +116,3 @@ const MainMenuWidget: React.FC<MainMenuWidgetProps> = ({ actionProvider, setStat
 };
 
 export default MainMenuWidget;
-

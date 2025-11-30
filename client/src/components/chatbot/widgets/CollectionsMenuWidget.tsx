@@ -2,26 +2,30 @@ import React from 'react';
 import { Button, VStack, Box, Text } from '@chakra-ui/react';
 import { useNavigate } from 'react-router-dom';
 import useUserContext from '../../../hooks/useUserContext';
+import type { BaseWidgetProps } from '../types';
 
-interface CollectionsMenuWidgetProps {
-  actionProvider?: any;
-  setState?: (updater: (prev: any) => any) => void;
-  scrollIntoView?: () => void;
-  state?: any;
-}
+type CollectionsMenuWidgetProps = BaseWidgetProps;
 
-const CollectionsMenuWidget: React.FC<CollectionsMenuWidgetProps> = ({ actionProvider, setState, scrollIntoView }) => {
+const CollectionsMenuWidget: React.FC<CollectionsMenuWidgetProps> = ({
+  actionProvider,
+  setState,
+  scrollIntoView,
+}) => {
   const navigate = useNavigate();
   const { user } = useUserContext();
 
   const options = [
-    { label: 'View my collections', action: 'viewMyCollections', route: user ? `/collections/${user.username}` : null },
+    {
+      label: 'View my collections',
+      action: 'viewMyCollections',
+      route: user ? `/collections/${user.username}` : null,
+    },
     { label: 'Create new collection', action: 'createNew', route: '/new/collection' },
     { label: 'Browse public collections', action: 'browsePublic', route: null },
     { label: 'Add questions to collection', action: 'addToCollection', route: null },
   ];
 
-  const handleOptionClick = (option: typeof options[0]) => {
+  const handleOptionClick = (option: (typeof options)[0]) => {
     if (option.route) {
       navigate(option.route);
     } else if (actionProvider?.actions) {
@@ -60,4 +64,3 @@ const CollectionsMenuWidget: React.FC<CollectionsMenuWidgetProps> = ({ actionPro
 };
 
 export default CollectionsMenuWidget;
-

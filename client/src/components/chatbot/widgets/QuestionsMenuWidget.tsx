@@ -1,15 +1,15 @@
 import React from 'react';
 import { Button, VStack, Box, Text } from '@chakra-ui/react';
 import { useNavigate } from 'react-router-dom';
+import type { BaseWidgetProps } from '../types';
 
-interface QuestionsMenuWidgetProps {
-  actionProvider?: any;
-  setState?: (updater: (prev: any) => any) => void;
-  scrollIntoView?: () => void;
-  state?: any;
-}
+type QuestionsMenuWidgetProps = BaseWidgetProps;
 
-const QuestionsMenuWidget: React.FC<QuestionsMenuWidgetProps> = ({ actionProvider, setState, scrollIntoView }) => {
+const QuestionsMenuWidget: React.FC<QuestionsMenuWidgetProps> = ({
+  actionProvider,
+  setState,
+  scrollIntoView,
+}) => {
   const navigate = useNavigate();
 
   const options = [
@@ -20,7 +20,7 @@ const QuestionsMenuWidget: React.FC<QuestionsMenuWidgetProps> = ({ actionProvide
     { label: 'View my questions', action: 'myQuestions', route: null }, // Will need username
   ];
 
-  const handleOptionClick = (option: typeof options[0]) => {
+  const handleOptionClick = (option: (typeof options)[0]) => {
     if (option.route) {
       navigate(option.route);
     } else if (actionProvider?.actions) {
@@ -59,4 +59,3 @@ const QuestionsMenuWidget: React.FC<QuestionsMenuWidgetProps> = ({ actionProvide
 };
 
 export default QuestionsMenuWidget;
-

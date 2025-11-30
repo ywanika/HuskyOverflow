@@ -23,7 +23,6 @@ import AllCollectionsPage from './main/collections/allCollectionsPage';
 import CollectionPage from './main/collections/collectionPage';
 import NewCollectionPage from './main/collections/newCollectionPage';
 import ModeratorDashboard from './main/moderatorDashboard';
-import AdminDashboard from './main/adminDashboard';
 import MainMessagePage from './main/mainMessagePage';
 import CommunityGuidelines from './communityGuidelines';
 import ChatbotPage from './chatbot/ChatbotPage';

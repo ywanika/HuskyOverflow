@@ -1,15 +1,15 @@
 import React from 'react';
 import { Button, VStack, Box, Text } from '@chakra-ui/react';
 import { useNavigate } from 'react-router-dom';
+import type { BaseWidgetProps } from '../types';
 
-interface MessagingMenuWidgetProps {
-  actionProvider?: any;
-  setState?: (updater: (prev: any) => any) => void;
-  scrollIntoView?: () => void;
-  state?: any;
-}
+type MessagingMenuWidgetProps = BaseWidgetProps;
 
-const MessagingMenuWidget: React.FC<MessagingMenuWidgetProps> = ({ actionProvider, setState, scrollIntoView }) => {
+const MessagingMenuWidget: React.FC<MessagingMenuWidgetProps> = ({
+  actionProvider,
+  setState,
+  scrollIntoView,
+}) => {
   const navigate = useNavigate();
 
   const options = [
@@ -19,7 +19,7 @@ const MessagingMenuWidget: React.FC<MessagingMenuWidgetProps> = ({ actionProvide
     { label: 'View chat history', action: 'chatHistory', route: '/messaging' },
   ];
 
-  const handleOptionClick = (option: typeof options[0]) => {
+  const handleOptionClick = (option: (typeof options)[0]) => {
     if (option.route) {
       navigate(option.route);
     } else if (actionProvider?.actions) {
@@ -58,4 +58,3 @@ const MessagingMenuWidget: React.FC<MessagingMenuWidgetProps> = ({ actionProvide
 };
 
 export default MessagingMenuWidget;
-

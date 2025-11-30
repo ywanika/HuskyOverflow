@@ -4,11 +4,9 @@ import { useNavigate } from 'react-router-dom';
 import { getQuestionsByFilter } from '../../../services/questionService';
 import { PopulatedDatabaseQuestion } from '../../../types/types';
 
-interface QuestionSearchWidgetProps {
-  actionProvider?: any;
-  setState?: (updater: (prev: any) => any) => void;
-  scrollIntoView?: () => void;
-  state?: any;
+import type { BaseWidgetProps } from '../types';
+
+interface QuestionSearchWidgetProps extends BaseWidgetProps {
   payload?: {
     searchQuery?: string;
     maxResults?: number;
@@ -33,7 +31,7 @@ const QuestionSearchWidget: React.FC<QuestionSearchWidgetProps> = ({ payload, sc
         setError(null);
       } catch (err) {
         setError('Failed to fetch questions');
-        console.error(err);
+        // Error handled by setError
       } finally {
         setLoading(false);
         if (scrollIntoView) {
@@ -65,7 +63,9 @@ const QuestionSearchWidget: React.FC<QuestionSearchWidgetProps> = ({ payload, sc
   if (error) {
     return (
       <Box p={4} bg='red.50' borderRadius='md' _dark={{ bg: 'red.900' }}>
-        <Text color='red.600' _dark={{ color: 'red.300' }}>{error}</Text>
+        <Text color='red.600' _dark={{ color: 'red.300' }}>
+          {error}
+        </Text>
       </Box>
     );
   }
@@ -84,7 +84,7 @@ const QuestionSearchWidget: React.FC<QuestionSearchWidgetProps> = ({ payload, sc
         Found {questions.length} question{questions.length !== 1 ? 's' : ''}:
       </Text>
       <VStack spacing={2} align='stretch'>
-        {questions.map((question) => (
+        {questions.map(question => (
           <Box
             key={question._id.toString()}
             p={3}
@@ -105,7 +105,7 @@ const QuestionSearchWidget: React.FC<QuestionSearchWidgetProps> = ({ payload, sc
             </Link>
             {question.tags && question.tags.length > 0 && (
               <Text fontSize='xs' color='gray.600' _dark={{ color: 'gray.300' }} mt={1}>
-                Tags: {question.tags.map((tag) => tag.name).join(', ')}
+                Tags: {question.tags.map(tag => tag.name).join(', ')}
               </Text>
             )}
           </Box>
@@ -116,4 +116,3 @@ const QuestionSearchWidget: React.FC<QuestionSearchWidgetProps> = ({ payload, sc
 };
 
 export default QuestionSearchWidget;
-

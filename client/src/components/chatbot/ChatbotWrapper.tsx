@@ -1,60 +1,20 @@
-import { useState, useEffect, useRef } from 'react';
-import React from 'react';
-import {
-  Box,
-  VStack,
-  HStack,
-  Input,
-  Button,
-  Text,
-  IconButton,
-} from '@chakra-ui/react';
+import React, { useState, useEffect, useRef } from 'react';
+import { Box, VStack, HStack, Input, Button, Text, IconButton } from '@chakra-ui/react';
 import { createChatBotMessage } from 'react-chatbot-kit';
 import config from './config';
 import ActionProvider from './ActionProvider';
 import MessageParser from './MessageParser';
 import { useTheme } from '../../contexts/ThemeContext';
 
-interface Message {
-  message: string;
-  type: 'user' | 'bot';
-  widget?: string;
-  payload?: any;
-}
+import type { ChatbotMessage, ChatbotActions, ChatbotState } from './types';
 
 interface ChatbotWrapperProps {
-  messageHistory?: any[];
-  saveMessages?: (messages: any[]) => void;
+  messageHistory?: ChatbotMessage[];
+  saveMessages?: (messages: ChatbotMessage[]) => void;
   headerText?: string;
   placeholderText?: string;
   onClose?: () => void;
 }
-
-// Component to receive and store actions
-const ActionsReceiver: React.FC<{ actions: any; onActionsReady: (actions: any) => void }> = ({
-  actions,
-  onActionsReady,
-}) => {
-  useEffect(() => {
-    if (actions) {
-      onActionsReady(actions);
-    }
-  }, [actions, onActionsReady]);
-  return null;
-};
-
-// Component to receive and store parse function
-const ParseReceiver: React.FC<{ parse: (message: string) => void; onParseReady: (parse: (message: string) => void) => void }> = ({
-  parse,
-  onParseReady,
-}) => {
-  useEffect(() => {
-    if (parse) {
-      onParseReady(parse);
-    }
-  }, [parse, onParseReady]);
-  return null;
-};
 
 const ChatbotWrapper: React.FC<ChatbotWrapperProps> = ({
   messageHistory = [],
@@ -63,10 +23,10 @@ const ChatbotWrapper: React.FC<ChatbotWrapperProps> = ({
   placeholderText = 'Type your message here...',
   onClose,
 }) => {
-  const [messages, setMessages] = useState<Message[]>([]);
+  const [messages, setMessages] = useState<ChatbotMessage[]>([]);
   const [inputValue, setInputValue] = useState('');
   const messagesEndRef = useRef<HTMLDivElement>(null);
-  const actionsRef = useRef<any>(null);
+  const actionsRef = useRef<ChatbotActions | null>(null);
   const parseRef = useRef<((message: string) => void) | null>(null);
   const { theme } = useTheme();
   const isDark = theme === 'dark';
@@ -81,16 +41,16 @@ const ChatbotWrapper: React.FC<ChatbotWrapperProps> = ({
   const botTextColor = 'white';
   const scrollbarBg = isDark ? 'gray.600' : 'gray.200';
 
-  const createChatBotMessageWrapper = (message: string, options?: any) => {
+  const createChatBotMessageWrapper = (message: string, options?: Record<string, unknown>) => {
     return createChatBotMessage(message, options);
   };
 
-  const setStateWrapper = (updater: (prev: any) => any) => {
-    setMessages((prevMessages) => {
+  const setStateWrapper = (updater: (prev: ChatbotState) => ChatbotState) => {
+    setMessages(prevMessages => {
       const prevState = { messages: prevMessages };
       const newState = updater(prevState);
       const newMessages = newState.messages || prevMessages;
-      return newMessages.map((msg: any) => ({
+      return newMessages.map((msg: ChatbotMessage) => ({
         message: msg.message || '',
         type: msg.type === 'user' ? 'user' : 'bot',
         widget: msg.widget,
@@ -99,7 +59,7 @@ const ChatbotWrapper: React.FC<ChatbotWrapperProps> = ({
     });
   };
 
-  const handleActionsReady = (actions: any) => {
+  const handleActionsReady = (actions: ChatbotActions) => {
     actionsRef.current = actions;
   };
 
@@ -110,7 +70,7 @@ const ChatbotWrapper: React.FC<ChatbotWrapperProps> = ({
   // Initialize messages
   useEffect(() => {
     if (messageHistory && messageHistory.length > 0) {
-      const convertedMessages = messageHistory.map((msg: any) => ({
+      const convertedMessages = messageHistory.map((msg: ChatbotMessage) => ({
         message: msg.message || '',
         type: msg.type === 'user' ? 'user' : 'bot',
         widget: msg.widget,
@@ -118,12 +78,14 @@ const ChatbotWrapper: React.FC<ChatbotWrapperProps> = ({
       }));
       setMessages(convertedMessages);
     } else {
-      const initialMessages = config.initialMessages.map((msg: any) => ({
-        message: msg.message || '',
-        type: 'bot' as const,
-        widget: msg.widget,
-        payload: msg.payload,
-      }));
+      const initialMessages = config.initialMessages.map(
+        (msg: { message: string; widget?: string; payload?: unknown }) => ({
+          message: msg.message || '',
+          type: 'bot' as const,
+          widget: msg.widget,
+          payload: msg.payload,
+        }),
+      );
       setMessages(initialMessages);
     }
   }, [messageHistory]);
@@ -146,7 +108,7 @@ const ChatbotWrapper: React.FC<ChatbotWrapperProps> = ({
       type: 'user',
     };
 
-    setMessages((prev) => [...prev, userMessage]);
+    setMessages(prev => [...prev, userMessage]);
     const messageToSend = inputValue.trim();
     setInputValue('');
 
@@ -162,15 +124,17 @@ const ChatbotWrapper: React.FC<ChatbotWrapperProps> = ({
 
   const renderMessage = (msg: Message, index: number) => {
     if (msg.widget) {
-      const widget = config.widgets.find((w: any) => w.widgetName === msg.widget);
+      const widget = config.widgets.find(
+        (w: { widgetName: string }) => w.widgetName === msg.widget,
+      );
       if (widget && widget.widgetFunc) {
         const WidgetComponent = widget.widgetFunc;
         return (
           <Box key={`widget-${index}`} my={2}>
             <WidgetComponent
               actionProvider={{ actions: actionsRef.current }}
-              setState={(updater: any) => {
-                setMessages((prev) => {
+              setState={(updater: (prev: ChatbotState) => ChatbotState) => {
+                setMessages(prev => {
                   const prevState = { messages: prev };
                   const newState = updater(prevState);
                   return newState.messages || prev;
@@ -222,7 +186,13 @@ const ChatbotWrapper: React.FC<ChatbotWrapperProps> = ({
   };
 
   // Component that receives actions from ActionProvider and parse from MessageParser
-  const IntegrationComponent = ({ actions, parse }: { actions?: any; parse?: (message: string) => void }) => {
+  const IntegrationComponent = ({
+    actions,
+    parse,
+  }: {
+    actions?: ChatbotActions;
+    parse?: (message: string) => void;
+  }) => {
     useEffect(() => {
       if (actions) {
         actionsRef.current = actions;
@@ -241,10 +211,24 @@ const ChatbotWrapper: React.FC<ChatbotWrapperProps> = ({
   };
 
   return (
-    <Box height='100%' display='flex' flexDirection='column' bg={bgColor} borderRadius='lg' overflow='hidden'>
+    <Box
+      height='100%'
+      display='flex'
+      flexDirection='column'
+      bg={bgColor}
+      borderRadius='lg'
+      overflow='hidden'>
       {/* Initialize ActionProvider and MessageParser */}
-      <Box position='absolute' left='-9999px' width={1} height={1} overflow='hidden' pointerEvents='none'>
-        <ActionProvider createChatBotMessage={createChatBotMessageWrapper} setState={setStateWrapper}>
+      <Box
+        position='absolute'
+        left='-9999px'
+        width={1}
+        height={1}
+        overflow='hidden'
+        pointerEvents='none'>
+        <ActionProvider
+          createChatBotMessage={createChatBotMessageWrapper}
+          setState={setStateWrapper}>
           <MessageParser actions={actionsRef.current || {}}>
             <IntegrationComponent />
           </MessageParser>
@@ -328,7 +312,7 @@ const ChatbotWrapper: React.FC<ChatbotWrapperProps> = ({
         <HStack spacing={2}>
           <Input
             value={inputValue}
-            onChange={(e) => setInputValue(e.target.value)}
+            onChange={e => setInputValue(e.target.value)}
             onKeyPress={handleKeyPress}
             placeholder={placeholderText}
             bg={inputBg}

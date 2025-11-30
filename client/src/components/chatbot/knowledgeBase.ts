@@ -88,10 +88,10 @@ export const knowledgeBase: KnowledgeBase = {
       suggestions: ['Check new questions', 'View your communities', 'Play a game'],
     },
     feature_specific: {
-      questions: "I can help you find questions, ask new ones, or search by tags.",
+      questions: 'I can help you find questions, ask new ones, or search by tags.',
       communities: "Let's explore communities or create your own!",
-      games: "Ready to play? We have Nim games available!",
-      messaging: "I can help you with global messages or direct chats.",
+      games: 'Ready to play? We have Nim games available!',
+      messaging: 'I can help you with global messages or direct chats.',
       collections: "Let's work with your collections!",
       profile: "Let's manage your profile!",
     },
@@ -99,7 +99,7 @@ export const knowledgeBase: KnowledgeBase = {
 };
 
 // Intent recognition patterns
-export const navigationPatterns = [
+export const NAVIGATION_PATTERNS = [
   'go to',
   'navigate to',
   'show me',
@@ -119,7 +119,7 @@ export const actionPatterns = {
   search: ['search', 'find', 'look for', 'seek'],
 };
 
-export const helpPatterns = [
+export const HELP_PATTERNS = [
   'help',
   'how to',
   'what is',
@@ -130,4 +130,3 @@ export const helpPatterns = [
   'can you',
   'tell me',
 ];
-

@@ -1,10 +1,5 @@
 import React from 'react';
-import {
-  navigationPatterns,
-  actionPatterns,
-  helpPatterns,
-  knowledgeBase,
-} from './knowledgeBase';
+import { NAVIGATION_PATTERNS, actionPatterns, HELP_PATTERNS, knowledgeBase } from './knowledgeBase';
 
 interface MessageParserProps {
   children: React.ReactNode;
@@ -61,22 +56,26 @@ const MessageParser = ({ children, actions }: MessageParserProps) => {
   /**
    * Detects intent from user message
    */
-  const detectIntent = (message: string): { intent: string; entity: string | null; query: string | null } => {
+  const detectIntent = (
+    message: string,
+  ): { intent: string; entity: string | null; query: string | null } => {
     const lowerMessage = message.toLowerCase().trim();
 
     // Check for help intent
-    if (helpPatterns.some((pattern) => lowerMessage.includes(pattern))) {
+    if (HELP_PATTERNS.some(pattern => lowerMessage.includes(pattern))) {
       return { intent: 'help', entity: null, query: null };
     }
 
     // Check for navigation intent
-    const hasNavigationPattern = navigationPatterns.some((pattern) => lowerMessage.includes(pattern));
+    const hasNavigationPattern = NAVIGATION_PATTERNS.some(pattern =>
+      lowerMessage.includes(pattern),
+    );
 
     // Check for action patterns
-    const hasCreateAction = actionPatterns.create.some((pattern) => lowerMessage.includes(pattern));
-    const hasJoinAction = actionPatterns.join.some((pattern) => lowerMessage.includes(pattern));
-    const hasViewAction = actionPatterns.view.some((pattern) => lowerMessage.includes(pattern));
-    const hasSearchAction = actionPatterns.search.some((pattern) => lowerMessage.includes(pattern));
+    const hasCreateAction = actionPatterns.create.some(pattern => lowerMessage.includes(pattern));
+    const hasJoinAction = actionPatterns.join.some(pattern => lowerMessage.includes(pattern));
+    const hasViewAction = actionPatterns.view.some(pattern => lowerMessage.includes(pattern));
+    const hasSearchAction = actionPatterns.search.some(pattern => lowerMessage.includes(pattern));
 
     // Extract entity (feature) from keywords
     let detectedEntity: string | null = null;
@@ -84,7 +83,7 @@ const MessageParser = ({ children, actions }: MessageParserProps) => {
 
     // Check for feature keywords
     for (const [feature, data] of Object.entries(knowledgeBase.features)) {
-      if (data.keywords.some((keyword) => lowerMessage.includes(keyword))) {
+      if (data.keywords.some(keyword => lowerMessage.includes(keyword))) {
         detectedEntity = feature;
         break;
       }
@@ -172,7 +171,11 @@ const MessageParser = ({ children, actions }: MessageParserProps) => {
         actions.handleSearchQuestions(query);
         return;
       }
-      if (lowerMessage.includes('browse') || lowerMessage.includes('view all') || lowerMessage.includes('show all')) {
+      if (
+        lowerMessage.includes('browse') ||
+        lowerMessage.includes('view all') ||
+        lowerMessage.includes('show all')
+      ) {
         actions.handleBrowseQuestions();
         return;
       }
@@ -203,11 +206,19 @@ const MessageParser = ({ children, actions }: MessageParserProps) => {
 
     // Handle communities flow
     if (entity === 'communities') {
-      if (lowerMessage.includes('create') || lowerMessage.includes('new community') || lowerMessage.includes('make')) {
+      if (
+        lowerMessage.includes('create') ||
+        lowerMessage.includes('new community') ||
+        lowerMessage.includes('make')
+      ) {
         actions.handleCreateCommunity();
         return;
       }
-      if (lowerMessage.includes('browse') || lowerMessage.includes('view all') || lowerMessage.includes('show all')) {
+      if (
+        lowerMessage.includes('browse') ||
+        lowerMessage.includes('view all') ||
+        lowerMessage.includes('show all')
+      ) {
         actions.handleBrowseCommunities();
         return;
       }
@@ -226,11 +237,18 @@ const MessageParser = ({ children, actions }: MessageParserProps) => {
 
     // Handle games flow
     if (entity === 'games') {
-      if (lowerMessage.includes('nim') && (lowerMessage.includes('learn') || lowerMessage.includes('what'))) {
+      if (
+        lowerMessage.includes('nim') &&
+        (lowerMessage.includes('learn') || lowerMessage.includes('what'))
+      ) {
         actions.handleLearnNim();
         return;
       }
-      if (lowerMessage.includes('create') || lowerMessage.includes('new game') || lowerMessage.includes('make')) {
+      if (
+        lowerMessage.includes('create') ||
+        lowerMessage.includes('new game') ||
+        lowerMessage.includes('make')
+      ) {
         actions.handleCreateGame();
         return;
       }
@@ -238,7 +256,11 @@ const MessageParser = ({ children, actions }: MessageParserProps) => {
         actions.handleJoinGame();
         return;
       }
-      if (lowerMessage.includes('view') || lowerMessage.includes('browse') || lowerMessage.includes('show')) {
+      if (
+        lowerMessage.includes('view') ||
+        lowerMessage.includes('browse') ||
+        lowerMessage.includes('show')
+      ) {
         actions.handleViewGames();
         return;
       }
@@ -272,7 +294,11 @@ const MessageParser = ({ children, actions }: MessageParserProps) => {
 
     // Handle collections flow
     if (entity === 'collections') {
-      if (lowerMessage.includes('create') || lowerMessage.includes('new collection') || lowerMessage.includes('make')) {
+      if (
+        lowerMessage.includes('create') ||
+        lowerMessage.includes('new collection') ||
+        lowerMessage.includes('make')
+      ) {
         actions.handleCreateCollection();
         return;
       }
@@ -318,8 +344,8 @@ const MessageParser = ({ children, actions }: MessageParserProps) => {
 
   return (
     <div>
-      {React.Children.map(children, (child) => {
-        return React.cloneElement(child as React.ReactElement<any>, {
+      {React.Children.map(children, child => {
+        return React.cloneElement(child as React.ReactElement, {
           parse: parse,
           actions: actions,
         });
@@ -329,4 +355,3 @@ const MessageParser = ({ children, actions }: MessageParserProps) => {
 };
 
 export default MessageParser;
-

@@ -19,8 +19,8 @@ import remarkGfm from 'remark-gfm';
 import useModeratorDashboard from '../../../hooks/useModeratorDashboard';
 import useUserContext from '../../../hooks/useUserContext';
 import DeleteContentModal from '../../moderation/DeleteContentModal';
-import { FlaggedContentItem } from '../../../services/moderationService';
 import { AppealItem } from '@fake-stack-overflow/shared';
+import type { FlaggedContentItem } from '../../../services/moderationService';
 import { getMetaData } from '../../../tool';
 import './index.css';
 
@@ -125,7 +125,7 @@ const ModeratorDashboard = () => {
   };
 
   const renderFlaggedItem = (
-    item: any,
+    item: FlaggedContentItem,
     contentType: 'question' | 'answer' | 'comment',
     _index: number,
   ) => {
@@ -135,30 +135,36 @@ const ModeratorDashboard = () => {
     const date = getDate(item.content);
 
     return (
-      <Card.Root key={`${contentType}-${item._id}`} mb={4} borderLeft="4px" borderColor="orange.500">
+      <Card.Root
+        key={`${contentType}-${item._id}`}
+        mb={4}
+        borderLeft='4px'
+        borderColor='orange.500'>
         <Card.Header>
-          <HStack justify="space-between" align="start">
-            <VStack align="start" gap={1} flex={1}>
+          <HStack justify='space-between' align='start'>
+            <VStack align='start' gap={1} flex={1}>
               <HStack>
-                <Badge colorScheme="orange">{contentType.toUpperCase()}</Badge>
-                <Badge colorScheme="red">{item.flaggedBy.length} flag{item.flaggedBy.length !== 1 ? 's' : ''}</Badge>
+                <Badge colorScheme='orange'>{contentType.toUpperCase()}</Badge>
+                <Badge colorScheme='red'>
+                  {item.flaggedBy.length} flag{item.flaggedBy.length !== 1 ? 's' : ''}
+                </Badge>
               </HStack>
-              <Heading size="sm">{title}</Heading>
-              <Text fontSize="sm" color="gray.600">
+              <Heading size='sm'>{title}</Heading>
+              <Text fontSize='sm' color='gray.600'>
                 By {author} • {getMetaData(new Date(date))}
               </Text>
             </VStack>
           </HStack>
         </Card.Header>
         <Card.Body>
-          <Box mb={4} p={3} bg="gray.50" borderRadius="md" maxH="200px" overflowY="auto">
+          <Box mb={4} p={3} bg='gray.50' borderRadius='md' maxH='200px' overflowY='auto'>
             <Markdown remarkPlugins={[remarkGfm]}>{text}</Markdown>
           </Box>
-          <VStack align="start" gap={2} mb={4}>
-            <Text fontSize="sm" fontWeight="bold">
+          <VStack align='start' gap={2} mb={4}>
+            <Text fontSize='sm' fontWeight='bold'>
               Flagged by:
             </Text>
-            <HStack wrap="wrap" gap={2}>
+            <HStack wrap='wrap' gap={2}>
               {item.flaggedBy.map((username: string, idx: number) => (
                 <span key={idx} className='badge-user-outline'>
                   {username}
@@ -169,7 +175,7 @@ const ModeratorDashboard = () => {
               First flagged: {getMetaData(new Date(item.flaggedAt[0]))}
             </Text>
           </VStack>
-          <HStack gap={2} flexWrap="wrap">
+          <HStack gap={2} flexWrap='wrap'>
             {contentType === 'question' && (
               <Button
                 className='btn-view-question'
@@ -215,7 +221,7 @@ const ModeratorDashboard = () => {
   if (error) {
     return (
       <Box p={8}>
-        <Alert.Root status="error">
+        <Alert.Root status='error'>
           <Alert.Indicator />
           <Alert.Title>{error}</Alert.Title>
         </Alert.Root>
@@ -368,9 +374,9 @@ const ModeratorDashboard = () => {
 
   return (
     <Box p={8}>
-      <VStack align="stretch" gap={6}>
+      <VStack align='stretch' gap={6}>
         <Box>
-          <Heading size="lg" mb={2}>
+          <Heading size='lg' mb={2}>
             Moderator Dashboard
           </Heading>
           <Text className='moderator-dashboard-subtitle'>
@@ -378,45 +384,40 @@ const ModeratorDashboard = () => {
           </Text>
         </Box>
 
-        <Tabs.Root 
-          value={activeTab} 
-          onValueChange={(e) => {
+        <Tabs.Root
+          value={activeTab}
+          onValueChange={e => {
             setActiveTab(e.value as TabType);
             // Reset flagged subtab when switching away from flagged tab
             if (e.value !== 'flagged') {
               setFlaggedSubTab('questions');
             }
-          }}
-        >
+          }}>
           <Tabs.List>
-            <Tabs.Trigger value="flagged">
-              Flagged ({totalFlagged})
-            </Tabs.Trigger>
-            <Tabs.Trigger value="appeals">
-              Appeals ({appeals.length})
-            </Tabs.Trigger>
-            <Tabs.Trigger value="deleted">
-              Delete History ({deletedContent.length})
-            </Tabs.Trigger>
+            <Tabs.Trigger value='flagged'>Flagged ({totalFlagged})</Tabs.Trigger>
+            <Tabs.Trigger value='appeals'>Appeals ({appeals.length})</Tabs.Trigger>
+            <Tabs.Trigger value='deleted'>Delete History ({deletedContent.length})</Tabs.Trigger>
           </Tabs.List>
 
-          <Tabs.Content value="flagged">
-            <Tabs.Root value={flaggedSubTab} onValueChange={(e) => setFlaggedSubTab(e.value as FlaggedSubTabType)}>
+          <Tabs.Content value='flagged'>
+            <Tabs.Root
+              value={flaggedSubTab}
+              onValueChange={e => setFlaggedSubTab(e.value as FlaggedSubTabType)}>
               <Tabs.List>
-                <Tabs.Trigger value="questions">
+                <Tabs.Trigger value='questions'>
                   Questions ({flaggedContent.questions.length})
                 </Tabs.Trigger>
-                <Tabs.Trigger value="answers">
+                <Tabs.Trigger value='answers'>
                   Answers ({flaggedContent.answers.length})
                 </Tabs.Trigger>
-                <Tabs.Trigger value="comments">
+                <Tabs.Trigger value='comments'>
                   Comments ({flaggedContent.comments.length})
                 </Tabs.Trigger>
               </Tabs.List>
 
-              <Tabs.Content value="questions">
+              <Tabs.Content value='questions'>
                 {flaggedContent.questions.length === 0 ? (
-                  <Text color="gray.500" textAlign="center" py={8}>
+                  <Text color='gray.500' textAlign='center' py={8}>
                     No flagged questions
                   </Text>
                 ) : (
@@ -425,18 +426,20 @@ const ModeratorDashboard = () => {
                   )
                 )}
               </Tabs.Content>
-              <Tabs.Content value="answers">
+              <Tabs.Content value='answers'>
                 {flaggedContent.answers.length === 0 ? (
-                  <Text color="gray.500" textAlign="center" py={8}>
+                  <Text color='gray.500' textAlign='center' py={8}>
                     No flagged answers
                   </Text>
                 ) : (
-                  flaggedContent.answers.map((item, index) => renderFlaggedItem(item, 'answer', index))
+                  flaggedContent.answers.map((item, index) =>
+                    renderFlaggedItem(item, 'answer', index),
+                  )
                 )}
               </Tabs.Content>
-              <Tabs.Content value="comments">
+              <Tabs.Content value='comments'>
                 {flaggedContent.comments.length === 0 ? (
-                  <Text color="gray.500" textAlign="center" py={8}>
+                  <Text color='gray.500' textAlign='center' py={8}>
                     No flagged comments
                   </Text>
                 ) : (
@@ -448,9 +451,9 @@ const ModeratorDashboard = () => {
             </Tabs.Root>
           </Tabs.Content>
 
-          <Tabs.Content value="appeals">
+          <Tabs.Content value='appeals'>
             {appeals.length === 0 ? (
-              <Text color="gray.500" textAlign="center" py={8}>
+              <Text color='gray.500' textAlign='center' py={8}>
                 No pending appeals
               </Text>
             ) : (
@@ -458,9 +461,9 @@ const ModeratorDashboard = () => {
             )}
           </Tabs.Content>
 
-          <Tabs.Content value="deleted">
+          <Tabs.Content value='deleted'>
             {deletedContent.length === 0 ? (
-              <Text color="gray.500" textAlign="center" py={8}>
+              <Text color='gray.500' textAlign='center' py={8}>
                 No deleted content
               </Text>
             ) : (

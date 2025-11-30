@@ -1,9 +1,8 @@
 import config from '../config';
-import { createChatBotMessage } from 'react-chatbot-kit';
 
 // Mock react-chatbot-kit
 jest.mock('react-chatbot-kit', () => ({
-  createChatBotMessage: jest.fn((message: string, options?: any) => ({
+  createChatBotMessage: jest.fn((message: string, options?: Record<string, unknown>) => ({
     message,
     type: 'bot',
     ...options,
@@ -23,13 +22,13 @@ describe('Chatbot Config', () => {
       // Check welcome message matches Sprint 0 requirements
       const welcomeMessage = config.initialMessages[0];
       expect(welcomeMessage.message).toBe(
-        "Hi! I'm your HuskyFlow assistant. I can help you navigate to different parts of the app. What would you like to do?"
+        "Hi! I'm your HuskyFlow assistant. I can help you navigate to different parts of the app. What would you like to do?",
       );
     });
 
     it('should include main menu in initial messages', () => {
       const menuMessage = config.initialMessages.find(
-        (msg: any) => msg.widget === 'mainMenu'
+        (msg: { widget?: string }) => msg.widget === 'mainMenu',
       );
       expect(menuMessage).toBeDefined();
       expect(menuMessage?.message).toContain('Browse Questions');
@@ -45,8 +44,8 @@ describe('Chatbot Config', () => {
 
   describe('Widgets Configuration', () => {
     it('should have all required widgets', () => {
-      const widgetNames = config.widgets.map((w: any) => w.widgetName);
-      
+      const widgetNames = config.widgets.map((w: { widgetName: string }) => w.widgetName);
+
       expect(widgetNames).toContain('mainMenu');
       expect(widgetNames).toContain('questionsMenu');
       expect(widgetNames).toContain('communitiesMenu');
@@ -58,7 +57,9 @@ describe('Chatbot Config', () => {
     });
 
     it('should have mainMenu widget configured', () => {
-      const mainMenuWidget = config.widgets.find((w: any) => w.widgetName === 'mainMenu');
+      const mainMenuWidget = config.widgets.find(
+        (w: { widgetName: string }) => w.widgetName === 'mainMenu',
+      );
       expect(mainMenuWidget).toBeDefined();
       expect(mainMenuWidget?.widgetFunc).toBeDefined();
       expect(mainMenuWidget?.mapStateToProps).toContain('currentFlow');
@@ -66,44 +67,58 @@ describe('Chatbot Config', () => {
     });
 
     it('should have questionsMenu widget configured', () => {
-      const questionsMenuWidget = config.widgets.find((w: any) => w.widgetName === 'questionsMenu');
+      const questionsMenuWidget = config.widgets.find(
+        (w: { widgetName: string }) => w.widgetName === 'questionsMenu',
+      );
       expect(questionsMenuWidget).toBeDefined();
       expect(questionsMenuWidget?.widgetFunc).toBeDefined();
       expect(questionsMenuWidget?.mapStateToProps).toContain('currentFlow');
     });
 
     it('should have communitiesMenu widget configured', () => {
-      const communitiesMenuWidget = config.widgets.find((w: any) => w.widgetName === 'communitiesMenu');
+      const communitiesMenuWidget = config.widgets.find(
+        (w: { widgetName: string }) => w.widgetName === 'communitiesMenu',
+      );
       expect(communitiesMenuWidget).toBeDefined();
       expect(communitiesMenuWidget?.widgetFunc).toBeDefined();
     });
 
     it('should have gamesMenu widget configured', () => {
-      const gamesMenuWidget = config.widgets.find((w: any) => w.widgetName === 'gamesMenu');
+      const gamesMenuWidget = config.widgets.find(
+        (w: { widgetName: string }) => w.widgetName === 'gamesMenu',
+      );
       expect(gamesMenuWidget).toBeDefined();
       expect(gamesMenuWidget?.widgetFunc).toBeDefined();
     });
 
     it('should have messagingMenu widget configured', () => {
-      const messagingMenuWidget = config.widgets.find((w: any) => w.widgetName === 'messagingMenu');
+      const messagingMenuWidget = config.widgets.find(
+        (w: { widgetName: string }) => w.widgetName === 'messagingMenu',
+      );
       expect(messagingMenuWidget).toBeDefined();
       expect(messagingMenuWidget?.widgetFunc).toBeDefined();
     });
 
     it('should have collectionsMenu widget configured', () => {
-      const collectionsMenuWidget = config.widgets.find((w: any) => w.widgetName === 'collectionsMenu');
+      const collectionsMenuWidget = config.widgets.find(
+        (w: { widgetName: string }) => w.widgetName === 'collectionsMenu',
+      );
       expect(collectionsMenuWidget).toBeDefined();
       expect(collectionsMenuWidget?.widgetFunc).toBeDefined();
     });
 
     it('should have profileMenu widget configured', () => {
-      const profileMenuWidget = config.widgets.find((w: any) => w.widgetName === 'profileMenu');
+      const profileMenuWidget = config.widgets.find(
+        (w: { widgetName: string }) => w.widgetName === 'profileMenu',
+      );
       expect(profileMenuWidget).toBeDefined();
       expect(profileMenuWidget?.widgetFunc).toBeDefined();
     });
 
     it('should have questionSearch widget configured', () => {
-      const questionSearchWidget = config.widgets.find((w: any) => w.widgetName === 'questionSearch');
+      const questionSearchWidget = config.widgets.find(
+        (w: { widgetName: string }) => w.widgetName === 'questionSearch',
+      );
       expect(questionSearchWidget).toBeDefined();
       expect(questionSearchWidget?.widgetFunc).toBeDefined();
       expect(questionSearchWidget?.mapStateToProps).toContain('searchQuery');
@@ -129,4 +144,3 @@ describe('Chatbot Config', () => {
     });
   });
 });
-

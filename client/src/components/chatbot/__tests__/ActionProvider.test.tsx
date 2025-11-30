@@ -3,10 +3,11 @@ import { render } from '@testing-library/react';
 import { MemoryRouter } from 'react-router-dom';
 import ActionProvider from '../ActionProvider';
 import { createChatBotMessage } from 'react-chatbot-kit';
+import type { ChatbotActions, ChatbotState } from '../types';
 
 // Mock react-chatbot-kit
 jest.mock('react-chatbot-kit', () => ({
-  createChatBotMessage: jest.fn((message: string, options?: any) => ({
+  createChatBotMessage: jest.fn((message: string, options?: Record<string, unknown>) => ({
     message,
     type: 'bot',
     ...options,
@@ -36,7 +37,7 @@ describe('ActionProvider', () => {
   beforeEach(() => {
     jest.clearAllMocks();
     mockNavigate.mockClear();
-    mockSetState = jest.fn((updater) => {
+    mockSetState = jest.fn(updater => {
       const prevState = {
         messages: [],
         currentFlow: null,
@@ -47,7 +48,9 @@ describe('ActionProvider', () => {
       };
       return updater(prevState);
     });
-    mockCreateChatBotMessage = createChatBotMessage as jest.MockedFunction<typeof createChatBotMessage>;
+    mockCreateChatBotMessage = createChatBotMessage as jest.MockedFunction<
+      typeof createChatBotMessage
+    >;
   });
 
   it('should render children', () => {
@@ -56,14 +59,14 @@ describe('ActionProvider', () => {
         <ActionProvider createChatBotMessage={mockCreateChatBotMessage} setState={mockSetState}>
           <div>Test Child</div>
         </ActionProvider>
-      </MemoryRouter>
+      </MemoryRouter>,
     );
     expect(container.textContent).toContain('Test Child');
   });
 
   describe('Welcome Message', () => {
     it('should have correct welcome message matching Sprint 0 requirements', () => {
-      const TestComponent = ({ actions }: { actions: any }) => {
+      const TestComponent = ({ actions }: { actions: ChatbotActions }) => {
         React.useEffect(() => {
           actions.handleWelcome();
         }, [actions]);
@@ -75,19 +78,19 @@ describe('ActionProvider', () => {
           <ActionProvider createChatBotMessage={mockCreateChatBotMessage} setState={mockSetState}>
             <TestComponent />
           </ActionProvider>
-        </MemoryRouter>
+        </MemoryRouter>,
       );
 
       expect(mockCreateChatBotMessage).toHaveBeenCalledWith(
         "Hi! I'm your HuskyFlow assistant. I can help you navigate to different parts of the app. What would you like to do?",
-        { delay: 500 }
+        { delay: 500 },
       );
     });
   });
 
   describe('Questions Flow', () => {
     it('should have correct questions flow message matching Sprint 0 requirements', () => {
-      const TestComponent = ({ actions }: { actions: any }) => {
+      const TestComponent = ({ actions }: { actions: ChatbotActions }) => {
         React.useEffect(() => {
           actions.handleQuestionsFlow();
         }, [actions]);
@@ -99,20 +102,20 @@ describe('ActionProvider', () => {
           <ActionProvider createChatBotMessage={mockCreateChatBotMessage} setState={mockSetState}>
             <TestComponent />
           </ActionProvider>
-        </MemoryRouter>
+        </MemoryRouter>,
       );
 
       expect(mockCreateChatBotMessage).toHaveBeenCalledWith(
-        "I can help you with questions! What would you like to do?",
+        'I can help you with questions! What would you like to do?',
         expect.objectContaining({
           delay: 500,
           widget: 'questionsMenu',
-        })
+        }),
       );
     });
 
     it('should handle browse questions action', () => {
-      const TestComponent = ({ actions }: { actions: any }) => {
+      const TestComponent = ({ actions }: { actions: ChatbotActions }) => {
         React.useEffect(() => {
           actions.handleBrowseQuestions();
         }, [actions]);
@@ -124,17 +127,17 @@ describe('ActionProvider', () => {
           <ActionProvider createChatBotMessage={mockCreateChatBotMessage} setState={mockSetState}>
             <TestComponent />
           </ActionProvider>
-        </MemoryRouter>
+        </MemoryRouter>,
       );
 
       expect(mockCreateChatBotMessage).toHaveBeenCalledWith(
         'Taking you to browse all questions...',
-        { delay: 500 }
+        { delay: 500 },
       );
     });
 
     it('should handle ask question action', () => {
-      const TestComponent = ({ actions }: { actions: any }) => {
+      const TestComponent = ({ actions }: { actions: ChatbotActions }) => {
         React.useEffect(() => {
           actions.handleAskQuestion();
         }, [actions]);
@@ -146,19 +149,18 @@ describe('ActionProvider', () => {
           <ActionProvider createChatBotMessage={mockCreateChatBotMessage} setState={mockSetState}>
             <TestComponent />
           </ActionProvider>
-        </MemoryRouter>
+        </MemoryRouter>,
       );
 
-      expect(mockCreateChatBotMessage).toHaveBeenCalledWith(
-        'Taking you to ask a new question...',
-        { delay: 500 }
-      );
+      expect(mockCreateChatBotMessage).toHaveBeenCalledWith('Taking you to ask a new question...', {
+        delay: 500,
+      });
     });
   });
 
   describe('Communities Flow', () => {
     it('should have correct communities flow message matching Sprint 0 requirements', () => {
-      const TestComponent = ({ actions }: { actions: any }) => {
+      const TestComponent = ({ actions }: { actions: ChatbotActions }) => {
         React.useEffect(() => {
           actions.handleCommunitiesFlow();
         }, [actions]);
@@ -170,7 +172,7 @@ describe('ActionProvider', () => {
           <ActionProvider createChatBotMessage={mockCreateChatBotMessage} setState={mockSetState}>
             <TestComponent />
           </ActionProvider>
-        </MemoryRouter>
+        </MemoryRouter>,
       );
 
       expect(mockCreateChatBotMessage).toHaveBeenCalledWith(
@@ -178,12 +180,12 @@ describe('ActionProvider', () => {
         expect.objectContaining({
           delay: 500,
           widget: 'communitiesMenu',
-        })
+        }),
       );
     });
 
     it('should handle browse communities action', () => {
-      const TestComponent = ({ actions }: { actions: any }) => {
+      const TestComponent = ({ actions }: { actions: ChatbotActions }) => {
         React.useEffect(() => {
           actions.handleBrowseCommunities();
         }, [actions]);
@@ -195,17 +197,17 @@ describe('ActionProvider', () => {
           <ActionProvider createChatBotMessage={mockCreateChatBotMessage} setState={mockSetState}>
             <TestComponent />
           </ActionProvider>
-        </MemoryRouter>
+        </MemoryRouter>,
       );
 
       expect(mockCreateChatBotMessage).toHaveBeenCalledWith(
         'Taking you to browse all communities...',
-        { delay: 500 }
+        { delay: 500 },
       );
     });
 
     it('should handle create community action', () => {
-      const TestComponent = ({ actions }: { actions: any }) => {
+      const TestComponent = ({ actions }: { actions: ChatbotActions }) => {
         React.useEffect(() => {
           actions.handleCreateCommunity();
         }, [actions]);
@@ -217,19 +219,19 @@ describe('ActionProvider', () => {
           <ActionProvider createChatBotMessage={mockCreateChatBotMessage} setState={mockSetState}>
             <TestComponent />
           </ActionProvider>
-        </MemoryRouter>
+        </MemoryRouter>,
       );
 
       expect(mockCreateChatBotMessage).toHaveBeenCalledWith(
         'Taking you to create a new community...',
-        { delay: 500 }
+        { delay: 500 },
       );
     });
   });
 
   describe('Games Flow', () => {
     it('should have correct games flow message matching Sprint 0 requirements', () => {
-      const TestComponent = ({ actions }: { actions: any }) => {
+      const TestComponent = ({ actions }: { actions: ChatbotActions }) => {
         React.useEffect(() => {
           actions.handleGamesFlow();
         }, [actions]);
@@ -241,7 +243,7 @@ describe('ActionProvider', () => {
           <ActionProvider createChatBotMessage={mockCreateChatBotMessage} setState={mockSetState}>
             <TestComponent />
           </ActionProvider>
-        </MemoryRouter>
+        </MemoryRouter>,
       );
 
       expect(mockCreateChatBotMessage).toHaveBeenCalledWith(
@@ -249,12 +251,12 @@ describe('ActionProvider', () => {
         expect.objectContaining({
           delay: 500,
           widget: 'gamesMenu',
-        })
+        }),
       );
     });
 
     it('should handle learn about Nim action', () => {
-      const TestComponent = ({ actions }: { actions: any }) => {
+      const TestComponent = ({ actions }: { actions: ChatbotActions }) => {
         React.useEffect(() => {
           actions.handleLearnNim();
         }, [actions]);
@@ -266,19 +268,19 @@ describe('ActionProvider', () => {
           <ActionProvider createChatBotMessage={mockCreateChatBotMessage} setState={mockSetState}>
             <TestComponent />
           </ActionProvider>
-        </MemoryRouter>
+        </MemoryRouter>,
       );
 
       expect(mockCreateChatBotMessage).toHaveBeenCalledWith(
         expect.stringContaining('Nim is a mathematical game'),
-        { delay: 500 }
+        { delay: 500 },
       );
     });
   });
 
   describe('Messaging Flow', () => {
     it('should have correct messaging flow message matching Sprint 0 requirements', () => {
-      const TestComponent = ({ actions }: { actions: any }) => {
+      const TestComponent = ({ actions }: { actions: ChatbotActions }) => {
         React.useEffect(() => {
           actions.handleMessagingFlow();
         }, [actions]);
@@ -290,20 +292,20 @@ describe('ActionProvider', () => {
           <ActionProvider createChatBotMessage={mockCreateChatBotMessage} setState={mockSetState}>
             <TestComponent />
           </ActionProvider>
-        </MemoryRouter>
+        </MemoryRouter>,
       );
 
       expect(mockCreateChatBotMessage).toHaveBeenCalledWith(
-        "I can help you with messaging!",
+        'I can help you with messaging!',
         expect.objectContaining({
           delay: 500,
           widget: 'messagingMenu',
-        })
+        }),
       );
     });
 
     it('should handle global messages action', () => {
-      const TestComponent = ({ actions }: { actions: any }) => {
+      const TestComponent = ({ actions }: { actions: ChatbotActions }) => {
         React.useEffect(() => {
           actions.handleGlobalMessages();
         }, [actions]);
@@ -315,19 +317,18 @@ describe('ActionProvider', () => {
           <ActionProvider createChatBotMessage={mockCreateChatBotMessage} setState={mockSetState}>
             <TestComponent />
           </ActionProvider>
-        </MemoryRouter>
+        </MemoryRouter>,
       );
 
-      expect(mockCreateChatBotMessage).toHaveBeenCalledWith(
-        'Taking you to global messages...',
-        { delay: 500 }
-      );
+      expect(mockCreateChatBotMessage).toHaveBeenCalledWith('Taking you to global messages...', {
+        delay: 500,
+      });
     });
   });
 
   describe('Collections Flow', () => {
     it('should have correct collections flow message matching Sprint 0 requirements', () => {
-      const TestComponent = ({ actions }: { actions: any }) => {
+      const TestComponent = ({ actions }: { actions: ChatbotActions }) => {
         React.useEffect(() => {
           actions.handleCollectionsFlow();
         }, [actions]);
@@ -339,7 +340,7 @@ describe('ActionProvider', () => {
           <ActionProvider createChatBotMessage={mockCreateChatBotMessage} setState={mockSetState}>
             <TestComponent />
           </ActionProvider>
-        </MemoryRouter>
+        </MemoryRouter>,
       );
 
       expect(mockCreateChatBotMessage).toHaveBeenCalledWith(
@@ -347,12 +348,12 @@ describe('ActionProvider', () => {
         expect.objectContaining({
           delay: 500,
           widget: 'collectionsMenu',
-        })
+        }),
       );
     });
 
     it('should handle create collection action', () => {
-      const TestComponent = ({ actions }: { actions: any }) => {
+      const TestComponent = ({ actions }: { actions: ChatbotActions }) => {
         React.useEffect(() => {
           actions.handleCreateCollection();
         }, [actions]);
@@ -364,19 +365,19 @@ describe('ActionProvider', () => {
           <ActionProvider createChatBotMessage={mockCreateChatBotMessage} setState={mockSetState}>
             <TestComponent />
           </ActionProvider>
-        </MemoryRouter>
+        </MemoryRouter>,
       );
 
       expect(mockCreateChatBotMessage).toHaveBeenCalledWith(
         'Taking you to create a new collection...',
-        { delay: 500 }
+        { delay: 500 },
       );
     });
   });
 
   describe('Profile Flow', () => {
     it('should have correct profile flow message matching Sprint 0 requirements', () => {
-      const TestComponent = ({ actions }: { actions: any }) => {
+      const TestComponent = ({ actions }: { actions: ChatbotActions }) => {
         React.useEffect(() => {
           actions.handleProfileFlow();
         }, [actions]);
@@ -388,7 +389,7 @@ describe('ActionProvider', () => {
           <ActionProvider createChatBotMessage={mockCreateChatBotMessage} setState={mockSetState}>
             <TestComponent />
           </ActionProvider>
-        </MemoryRouter>
+        </MemoryRouter>,
       );
 
       expect(mockCreateChatBotMessage).toHaveBeenCalledWith(
@@ -396,12 +397,12 @@ describe('ActionProvider', () => {
         expect.objectContaining({
           delay: 500,
           widget: 'profileMenu',
-        })
+        }),
       );
     });
 
     it('should handle view profile action', () => {
-      const TestComponent = ({ actions }: { actions: any }) => {
+      const TestComponent = ({ actions }: { actions: ChatbotActions }) => {
         React.useEffect(() => {
           actions.handleViewProfile();
         }, [actions]);
@@ -413,19 +414,18 @@ describe('ActionProvider', () => {
           <ActionProvider createChatBotMessage={mockCreateChatBotMessage} setState={mockSetState}>
             <TestComponent />
           </ActionProvider>
-        </MemoryRouter>
+        </MemoryRouter>,
       );
 
-      expect(mockCreateChatBotMessage).toHaveBeenCalledWith(
-        'Taking you to view your profile...',
-        { delay: 500 }
-      );
+      expect(mockCreateChatBotMessage).toHaveBeenCalledWith('Taking you to view your profile...', {
+        delay: 500,
+      });
     });
   });
 
   describe('Help & Support', () => {
     it('should handle help action', () => {
-      const TestComponent = ({ actions }: { actions: any }) => {
+      const TestComponent = ({ actions }: { actions: ChatbotActions }) => {
         React.useEffect(() => {
           actions.handleHelp();
         }, [actions]);
@@ -437,19 +437,19 @@ describe('ActionProvider', () => {
           <ActionProvider createChatBotMessage={mockCreateChatBotMessage} setState={mockSetState}>
             <TestComponent />
           </ActionProvider>
-        </MemoryRouter>
+        </MemoryRouter>,
       );
 
       expect(mockCreateChatBotMessage).toHaveBeenCalledWith(
         expect.stringContaining('I can help you with:'),
-        { delay: 500 }
+        { delay: 500 },
       );
     });
   });
 
   describe('Default Handling', () => {
     it('should handle default/unknown messages', () => {
-      const TestComponent = ({ actions }: { actions: any }) => {
+      const TestComponent = ({ actions }: { actions: ChatbotActions }) => {
         React.useEffect(() => {
           actions.handleDefault();
         }, [actions]);
@@ -461,19 +461,19 @@ describe('ActionProvider', () => {
           <ActionProvider createChatBotMessage={mockCreateChatBotMessage} setState={mockSetState}>
             <TestComponent />
           </ActionProvider>
-        </MemoryRouter>
+        </MemoryRouter>,
       );
 
       expect(mockCreateChatBotMessage).toHaveBeenCalledWith(
         expect.stringContaining("I'm not sure how to help with that"),
-        { delay: 500 }
+        { delay: 500 },
       );
     });
   });
 
   describe('Search Questions', () => {
     it('should handle search questions with query', () => {
-      const TestComponent = ({ actions }: { actions: any }) => {
+      const TestComponent = ({ actions }: { actions: ChatbotActions }) => {
         React.useEffect(() => {
           actions.handleSearchQuestions('react hooks');
         }, [actions]);
@@ -485,7 +485,7 @@ describe('ActionProvider', () => {
           <ActionProvider createChatBotMessage={mockCreateChatBotMessage} setState={mockSetState}>
             <TestComponent />
           </ActionProvider>
-        </MemoryRouter>
+        </MemoryRouter>,
       );
 
       expect(mockCreateChatBotMessage).toHaveBeenCalledWith(
@@ -493,14 +493,14 @@ describe('ActionProvider', () => {
         expect.objectContaining({
           delay: 500,
           widget: 'questionSearch',
-        })
+        }),
       );
     });
   });
 
   describe('All Questions Actions', () => {
     it('should handle search by tags action', () => {
-      const TestComponent = ({ actions }: { actions: any }) => {
+      const TestComponent = ({ actions }: { actions: ChatbotActions }) => {
         React.useEffect(() => {
           actions.handleSearchByTags();
         }, [actions]);
@@ -512,17 +512,17 @@ describe('ActionProvider', () => {
           <ActionProvider createChatBotMessage={mockCreateChatBotMessage} setState={mockSetState}>
             <TestComponent />
           </ActionProvider>
-        </MemoryRouter>
+        </MemoryRouter>,
       );
 
       expect(mockCreateChatBotMessage).toHaveBeenCalledWith(
         'Taking you to search questions by tags...',
-        { delay: 500 }
+        { delay: 500 },
       );
     });
 
     it('should handle unanswered questions action', () => {
-      const TestComponent = ({ actions }: { actions: any }) => {
+      const TestComponent = ({ actions }: { actions: ChatbotActions }) => {
         React.useEffect(() => {
           actions.handleUnansweredQuestions();
         }, [actions]);
@@ -534,17 +534,17 @@ describe('ActionProvider', () => {
           <ActionProvider createChatBotMessage={mockCreateChatBotMessage} setState={mockSetState}>
             <TestComponent />
           </ActionProvider>
-        </MemoryRouter>
+        </MemoryRouter>,
       );
 
       expect(mockCreateChatBotMessage).toHaveBeenCalledWith(
         'Finding unanswered questions for you...',
-        { delay: 500 }
+        { delay: 500 },
       );
     });
 
     it('should handle my questions action', () => {
-      const TestComponent = ({ actions }: { actions: any }) => {
+      const TestComponent = ({ actions }: { actions: ChatbotActions }) => {
         React.useEffect(() => {
           actions.handleMyQuestions();
         }, [actions]);
@@ -556,19 +556,18 @@ describe('ActionProvider', () => {
           <ActionProvider createChatBotMessage={mockCreateChatBotMessage} setState={mockSetState}>
             <TestComponent />
           </ActionProvider>
-        </MemoryRouter>
+        </MemoryRouter>,
       );
 
-      expect(mockCreateChatBotMessage).toHaveBeenCalledWith(
-        'Finding your questions...',
-        { delay: 500 }
-      );
+      expect(mockCreateChatBotMessage).toHaveBeenCalledWith('Finding your questions...', {
+        delay: 500,
+      });
     });
   });
 
   describe('All Communities Actions', () => {
     it('should handle find communities by topic action', () => {
-      const TestComponent = ({ actions }: { actions: any }) => {
+      const TestComponent = ({ actions }: { actions: ChatbotActions }) => {
         React.useEffect(() => {
           actions.handleFindCommunitiesByTopic();
         }, [actions]);
@@ -580,17 +579,17 @@ describe('ActionProvider', () => {
           <ActionProvider createChatBotMessage={mockCreateChatBotMessage} setState={mockSetState}>
             <TestComponent />
           </ActionProvider>
-        </MemoryRouter>
+        </MemoryRouter>,
       );
 
       expect(mockCreateChatBotMessage).toHaveBeenCalledWith(
         'Let me help you find communities by topic...',
-        { delay: 500 }
+        { delay: 500 },
       );
     });
 
     it('should handle my communities action', () => {
-      const TestComponent = ({ actions }: { actions: any }) => {
+      const TestComponent = ({ actions }: { actions: ChatbotActions }) => {
         React.useEffect(() => {
           actions.handleMyCommunities();
         }, [actions]);
@@ -602,19 +601,18 @@ describe('ActionProvider', () => {
           <ActionProvider createChatBotMessage={mockCreateChatBotMessage} setState={mockSetState}>
             <TestComponent />
           </ActionProvider>
-        </MemoryRouter>
+        </MemoryRouter>,
       );
 
-      expect(mockCreateChatBotMessage).toHaveBeenCalledWith(
-        'Finding your communities...',
-        { delay: 500 }
-      );
+      expect(mockCreateChatBotMessage).toHaveBeenCalledWith('Finding your communities...', {
+        delay: 500,
+      });
     });
   });
 
   describe('All Games Actions', () => {
     it('should handle view games action', () => {
-      const TestComponent = ({ actions }: { actions: any }) => {
+      const TestComponent = ({ actions }: { actions: ChatbotActions }) => {
         React.useEffect(() => {
           actions.handleViewGames();
         }, [actions]);
@@ -626,17 +624,17 @@ describe('ActionProvider', () => {
           <ActionProvider createChatBotMessage={mockCreateChatBotMessage} setState={mockSetState}>
             <TestComponent />
           </ActionProvider>
-        </MemoryRouter>
+        </MemoryRouter>,
       );
 
       expect(mockCreateChatBotMessage).toHaveBeenCalledWith(
         'Taking you to view available games...',
-        { delay: 500 }
+        { delay: 500 },
       );
     });
 
     it('should handle create game action', () => {
-      const TestComponent = ({ actions }: { actions: any }) => {
+      const TestComponent = ({ actions }: { actions: ChatbotActions }) => {
         React.useEffect(() => {
           actions.handleCreateGame();
         }, [actions]);
@@ -648,17 +646,16 @@ describe('ActionProvider', () => {
           <ActionProvider createChatBotMessage={mockCreateChatBotMessage} setState={mockSetState}>
             <TestComponent />
           </ActionProvider>
-        </MemoryRouter>
+        </MemoryRouter>,
       );
 
-      expect(mockCreateChatBotMessage).toHaveBeenCalledWith(
-        'Taking you to create a new game...',
-        { delay: 500 }
-      );
+      expect(mockCreateChatBotMessage).toHaveBeenCalledWith('Taking you to create a new game...', {
+        delay: 500,
+      });
     });
 
     it('should handle join game action', () => {
-      const TestComponent = ({ actions }: { actions: any }) => {
+      const TestComponent = ({ actions }: { actions: ChatbotActions }) => {
         React.useEffect(() => {
           actions.handleJoinGame();
         }, [actions]);
@@ -670,19 +667,18 @@ describe('ActionProvider', () => {
           <ActionProvider createChatBotMessage={mockCreateChatBotMessage} setState={mockSetState}>
             <TestComponent />
           </ActionProvider>
-        </MemoryRouter>
+        </MemoryRouter>,
       );
 
-      expect(mockCreateChatBotMessage).toHaveBeenCalledWith(
-        'Taking you to join a game...',
-        { delay: 500 }
-      );
+      expect(mockCreateChatBotMessage).toHaveBeenCalledWith('Taking you to join a game...', {
+        delay: 500,
+      });
     });
   });
 
   describe('All Messaging Actions', () => {
     it('should handle direct messages action', () => {
-      const TestComponent = ({ actions }: { actions: any }) => {
+      const TestComponent = ({ actions }: { actions: ChatbotActions }) => {
         React.useEffect(() => {
           actions.handleDirectMessages();
         }, [actions]);
@@ -694,17 +690,16 @@ describe('ActionProvider', () => {
           <ActionProvider createChatBotMessage={mockCreateChatBotMessage} setState={mockSetState}>
             <TestComponent />
           </ActionProvider>
-        </MemoryRouter>
+        </MemoryRouter>,
       );
 
-      expect(mockCreateChatBotMessage).toHaveBeenCalledWith(
-        'Taking you to direct messages...',
-        { delay: 500 }
-      );
+      expect(mockCreateChatBotMessage).toHaveBeenCalledWith('Taking you to direct messages...', {
+        delay: 500,
+      });
     });
 
     it('should handle start new chat action', () => {
-      const TestComponent = ({ actions }: { actions: any }) => {
+      const TestComponent = ({ actions }: { actions: ChatbotActions }) => {
         React.useEffect(() => {
           actions.handleStartNewChat();
         }, [actions]);
@@ -716,17 +711,16 @@ describe('ActionProvider', () => {
           <ActionProvider createChatBotMessage={mockCreateChatBotMessage} setState={mockSetState}>
             <TestComponent />
           </ActionProvider>
-        </MemoryRouter>
+        </MemoryRouter>,
       );
 
-      expect(mockCreateChatBotMessage).toHaveBeenCalledWith(
-        'Taking you to start a new chat...',
-        { delay: 500 }
-      );
+      expect(mockCreateChatBotMessage).toHaveBeenCalledWith('Taking you to start a new chat...', {
+        delay: 500,
+      });
     });
 
     it('should handle chat history action', () => {
-      const TestComponent = ({ actions }: { actions: any }) => {
+      const TestComponent = ({ actions }: { actions: ChatbotActions }) => {
         React.useEffect(() => {
           actions.handleChatHistory();
         }, [actions]);
@@ -738,19 +732,18 @@ describe('ActionProvider', () => {
           <ActionProvider createChatBotMessage={mockCreateChatBotMessage} setState={mockSetState}>
             <TestComponent />
           </ActionProvider>
-        </MemoryRouter>
+        </MemoryRouter>,
       );
 
-      expect(mockCreateChatBotMessage).toHaveBeenCalledWith(
-        'Taking you to view chat history...',
-        { delay: 500 }
-      );
+      expect(mockCreateChatBotMessage).toHaveBeenCalledWith('Taking you to view chat history...', {
+        delay: 500,
+      });
     });
   });
 
   describe('All Collections Actions', () => {
     it('should handle view my collections action', () => {
-      const TestComponent = ({ actions }: { actions: any }) => {
+      const TestComponent = ({ actions }: { actions: ChatbotActions }) => {
         React.useEffect(() => {
           actions.handleViewMyCollections();
         }, [actions]);
@@ -762,17 +755,17 @@ describe('ActionProvider', () => {
           <ActionProvider createChatBotMessage={mockCreateChatBotMessage} setState={mockSetState}>
             <TestComponent />
           </ActionProvider>
-        </MemoryRouter>
+        </MemoryRouter>,
       );
 
       expect(mockCreateChatBotMessage).toHaveBeenCalledWith(
         'Taking you to view your collections...',
-        { delay: 500 }
+        { delay: 500 },
       );
     });
 
     it('should handle browse public collections action', () => {
-      const TestComponent = ({ actions }: { actions: any }) => {
+      const TestComponent = ({ actions }: { actions: ChatbotActions }) => {
         React.useEffect(() => {
           actions.handleBrowsePublicCollections();
         }, [actions]);
@@ -784,17 +777,16 @@ describe('ActionProvider', () => {
           <ActionProvider createChatBotMessage={mockCreateChatBotMessage} setState={mockSetState}>
             <TestComponent />
           </ActionProvider>
-        </MemoryRouter>
+        </MemoryRouter>,
       );
 
-      expect(mockCreateChatBotMessage).toHaveBeenCalledWith(
-        'Finding public collections...',
-        { delay: 500 }
-      );
+      expect(mockCreateChatBotMessage).toHaveBeenCalledWith('Finding public collections...', {
+        delay: 500,
+      });
     });
 
     it('should handle add to collection action', () => {
-      const TestComponent = ({ actions }: { actions: any }) => {
+      const TestComponent = ({ actions }: { actions: ChatbotActions }) => {
         React.useEffect(() => {
           actions.handleAddToCollection();
         }, [actions]);
@@ -806,19 +798,19 @@ describe('ActionProvider', () => {
           <ActionProvider createChatBotMessage={mockCreateChatBotMessage} setState={mockSetState}>
             <TestComponent />
           </ActionProvider>
-        </MemoryRouter>
+        </MemoryRouter>,
       );
 
       expect(mockCreateChatBotMessage).toHaveBeenCalledWith(
         expect.stringContaining('To add questions to a collection'),
-        { delay: 500 }
+        { delay: 500 },
       );
     });
   });
 
   describe('All Profile Actions', () => {
     it('should handle edit biography action', () => {
-      const TestComponent = ({ actions }: { actions: any }) => {
+      const TestComponent = ({ actions }: { actions: ChatbotActions }) => {
         React.useEffect(() => {
           actions.handleEditBiography();
         }, [actions]);
@@ -830,17 +822,17 @@ describe('ActionProvider', () => {
           <ActionProvider createChatBotMessage={mockCreateChatBotMessage} setState={mockSetState}>
             <TestComponent />
           </ActionProvider>
-        </MemoryRouter>
+        </MemoryRouter>,
       );
 
       expect(mockCreateChatBotMessage).toHaveBeenCalledWith(
         'Taking you to edit your biography...',
-        { delay: 500 }
+        { delay: 500 },
       );
     });
 
     it('should handle change password action', () => {
-      const TestComponent = ({ actions }: { actions: any }) => {
+      const TestComponent = ({ actions }: { actions: ChatbotActions }) => {
         React.useEffect(() => {
           actions.handleChangePassword();
         }, [actions]);
@@ -852,17 +844,17 @@ describe('ActionProvider', () => {
           <ActionProvider createChatBotMessage={mockCreateChatBotMessage} setState={mockSetState}>
             <TestComponent />
           </ActionProvider>
-        </MemoryRouter>
+        </MemoryRouter>,
       );
 
       expect(mockCreateChatBotMessage).toHaveBeenCalledWith(
         'Taking you to change your password...',
-        { delay: 500 }
+        { delay: 500 },
       );
     });
 
     it('should handle view activity action', () => {
-      const TestComponent = ({ actions }: { actions: any }) => {
+      const TestComponent = ({ actions }: { actions: ChatbotActions }) => {
         React.useEffect(() => {
           actions.handleViewActivity();
         }, [actions]);
@@ -874,19 +866,18 @@ describe('ActionProvider', () => {
           <ActionProvider createChatBotMessage={mockCreateChatBotMessage} setState={mockSetState}>
             <TestComponent />
           </ActionProvider>
-        </MemoryRouter>
+        </MemoryRouter>,
       );
 
-      expect(mockCreateChatBotMessage).toHaveBeenCalledWith(
-        'Taking you to view your activity...',
-        { delay: 500 }
-      );
+      expect(mockCreateChatBotMessage).toHaveBeenCalledWith('Taking you to view your activity...', {
+        delay: 500,
+      });
     });
   });
 
   describe('Main Menu', () => {
     it('should handle main menu action', () => {
-      const TestComponent = ({ actions }: { actions: any }) => {
+      const TestComponent = ({ actions }: { actions: ChatbotActions }) => {
         React.useEffect(() => {
           actions.handleMainMenu();
         }, [actions]);
@@ -898,7 +889,7 @@ describe('ActionProvider', () => {
           <ActionProvider createChatBotMessage={mockCreateChatBotMessage} setState={mockSetState}>
             <TestComponent />
           </ActionProvider>
-        </MemoryRouter>
+        </MemoryRouter>,
       );
 
       expect(mockCreateChatBotMessage).toHaveBeenCalledWith(
@@ -906,22 +897,22 @@ describe('ActionProvider', () => {
         expect.objectContaining({
           delay: 500,
           widget: 'mainMenu',
-        })
+        }),
       );
     });
   });
 
   describe('State Management', () => {
     it('should update currentFlow state for questions flow', () => {
-      let capturedState: any = null;
-      const TestComponent = ({ actions }: { actions: any }) => {
+      let capturedState: ChatbotState | null = null;
+      const TestComponent = ({ actions }: { actions: ChatbotActions }) => {
         React.useEffect(() => {
           actions.handleQuestionsFlow();
         }, [actions]);
         return null;
       };
 
-      const customSetState = jest.fn((updater) => {
+      const customSetState = jest.fn(updater => {
         const prevState = {
           messages: [],
           currentFlow: null,
@@ -937,22 +928,22 @@ describe('ActionProvider', () => {
       render(
         <ActionProvider createChatBotMessage={mockCreateChatBotMessage} setState={customSetState}>
           <TestComponent />
-        </ActionProvider>
+        </ActionProvider>,
       );
 
       expect(capturedState.currentFlow).toBe('questions');
     });
 
     it('should update currentFlow state for communities flow', () => {
-      let capturedState: any = null;
-      const TestComponent = ({ actions }: { actions: any }) => {
+      let capturedState: ChatbotState | null = null;
+      const TestComponent = ({ actions }: { actions: ChatbotActions }) => {
         React.useEffect(() => {
           actions.handleCommunitiesFlow();
         }, [actions]);
         return null;
       };
 
-      const customSetState = jest.fn((updater) => {
+      const customSetState = jest.fn(updater => {
         const prevState = {
           messages: [],
           currentFlow: null,
@@ -968,22 +959,22 @@ describe('ActionProvider', () => {
       render(
         <ActionProvider createChatBotMessage={mockCreateChatBotMessage} setState={customSetState}>
           <TestComponent />
-        </ActionProvider>
+        </ActionProvider>,
       );
 
       expect(capturedState.currentFlow).toBe('communities');
     });
 
     it('should update searchQuery state for search questions', () => {
-      let capturedState: any = null;
-      const TestComponent = ({ actions }: { actions: any }) => {
+      let capturedState: ChatbotState | null = null;
+      const TestComponent = ({ actions }: { actions: ChatbotActions }) => {
         React.useEffect(() => {
           actions.handleSearchQuestions('javascript async');
         }, [actions]);
         return null;
       };
 
-      const customSetState = jest.fn((updater) => {
+      const customSetState = jest.fn(updater => {
         const prevState = {
           messages: [],
           currentFlow: null,
@@ -999,11 +990,10 @@ describe('ActionProvider', () => {
       render(
         <ActionProvider createChatBotMessage={mockCreateChatBotMessage} setState={customSetState}>
           <TestComponent />
-        </ActionProvider>
+        </ActionProvider>,
       );
 
       expect(capturedState.searchQuery).toBe('javascript async');
     });
   });
 });
-

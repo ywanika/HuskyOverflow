@@ -1,29 +1,12 @@
-import { useState, useEffect, useRef } from 'react';
-import React from 'react';
-import {
-  Box,
-  VStack,
-  HStack,
-  Input,
-  Button,
-  Text,
-} from '@chakra-ui/react';
-import { createChatBotMessage } from 'react-chatbot-kit';
+import React, { useState, useEffect, useRef } from 'react';
+import { Box, VStack, HStack, Input, Button, Text } from '@chakra-ui/react';
 import config from './config';
-import ActionProvider from './ActionProvider';
-import MessageParser from './MessageParser';
 import { useTheme } from '../../contexts/ThemeContext';
-
-interface Message {
-  message: string;
-  type: 'user' | 'bot';
-  widget?: string;
-  payload?: any;
-}
+import type { ChatbotMessage, ChatbotActions, ChatbotState } from './types';
 
 interface CustomChatbotProps {
-  messageHistory?: any[];
-  saveMessages?: (messages: any[]) => void;
+  messageHistory?: ChatbotMessage[];
+  saveMessages?: (messages: ChatbotMessage[]) => void;
   headerText?: string;
   placeholderText?: string;
 }
@@ -34,10 +17,10 @@ const CustomChatbot: React.FC<CustomChatbotProps> = ({
   headerText = 'Assistant',
   placeholderText = 'Type your message here...',
 }) => {
-  const [messages, setMessages] = useState<Message[]>([]);
+  const [messages, setMessages] = useState<ChatbotMessage[]>([]);
   const [inputValue, setInputValue] = useState('');
   const messagesEndRef = useRef<HTMLDivElement>(null);
-  const actionsRef = useRef<any>(null);
+  const actionsRef = useRef<ChatbotActions | null>(null);
   const parseRef = useRef<((message: string) => void) | null>(null);
   const { theme } = useTheme();
   const isDark = theme === 'dark';
@@ -52,30 +35,10 @@ const CustomChatbot: React.FC<CustomChatbotProps> = ({
   const botTextColor = 'white';
   const scrollbarBg = isDark ? 'gray.600' : 'gray.200';
 
-  // Create message wrapper
-  const createChatBotMessageWrapper = (message: string, options?: any) => {
-    return createChatBotMessage(message, options);
-  };
-
-  // State wrapper that updates messages
-  const setStateWrapper = (updater: (prev: any) => any) => {
-    setMessages((prevMessages) => {
-      const prevState = { messages: prevMessages };
-      const newState = updater(prevState);
-      const newMessages = newState.messages || prevMessages;
-      return newMessages.map((msg: any) => ({
-        message: msg.message || '',
-        type: msg.type === 'user' ? 'user' : 'bot',
-        widget: msg.widget,
-        payload: msg.payload,
-      }));
-    });
-  };
-
   // Initialize messages
   useEffect(() => {
     if (messageHistory && messageHistory.length > 0) {
-      const convertedMessages = messageHistory.map((msg: any) => ({
+      const convertedMessages = messageHistory.map((msg: ChatbotMessage) => ({
         message: msg.message || '',
         type: msg.type === 'user' ? 'user' : 'bot',
         widget: msg.widget,
@@ -84,48 +47,20 @@ const CustomChatbot: React.FC<CustomChatbotProps> = ({
       setMessages(convertedMessages);
     } else {
       // Use initial messages from config
-      const initialMessages = config.initialMessages.map((msg: any) => ({
-        message: msg.message || '',
-        type: 'bot' as const,
-        widget: msg.widget,
-        payload: msg.payload,
-      }));
+      const initialMessages = config.initialMessages.map(
+        (msg: { message: string; widget?: string; payload?: unknown }) => ({
+          message: msg.message || '',
+          type: 'bot' as const,
+          widget: msg.widget,
+          payload: msg.payload,
+        }),
+      );
       setMessages(initialMessages);
     }
   }, [messageHistory]);
 
-  // Initialize actions and parser
-  useEffect(() => {
-    // Create a component to capture actions and parse function
-    let capturedActions: any = null;
-    let capturedParse: ((message: string) => void) | null = null;
-
-    const ActionsCapture = ({ actions }: { actions: any }) => {
-      useEffect(() => {
-        capturedActions = actions;
-        actionsRef.current = actions;
-      }, [actions]);
-      return null;
-    };
-
-    const ParseCapture = ({ parse }: { parse: (message: string) => void }) => {
-      useEffect(() => {
-        capturedParse = parse;
-        parseRef.current = parse;
-      }, [parse]);
-      return null;
-    };
-
-    // Render ActionProvider and MessageParser to capture their functions
-    const provider = (
-      <ActionProvider createChatBotMessage={createChatBotMessageWrapper} setState={setStateWrapper}>
-        <MessageParser actions={capturedActions || {}}>
-          <ActionsCapture actions={capturedActions || {}} />
-          <ParseCapture parse={capturedParse || (() => {})} />
-        </MessageParser>
-      </ActionProvider>
-    );
-  }, []);
+  // Note: Actions and parser are captured via ActionProvider and MessageParser components
+  // which are rendered in ChatbotWrapper, not directly in this component
 
   // Scroll to bottom
   useEffect(() => {
@@ -142,36 +77,21 @@ const CustomChatbot: React.FC<CustomChatbotProps> = ({
   const handleSend = () => {
     if (!inputValue.trim()) return;
 
-    const userMessage: Message = {
+    const userMessage: ChatbotMessage = {
       message: inputValue.trim(),
       type: 'user',
     };
 
-    setMessages((prev) => [...prev, userMessage]);
+    setMessages(prev => [...prev, userMessage]);
     const messageToSend = inputValue.trim();
     setInputValue('');
 
     // Use the parse function if available
     if (parseRef.current) {
       parseRef.current(messageToSend);
-    } else {
-      // Fallback: create actions on the fly
-      const tempActions: any = {};
-      const TestChild = ({ parse }: { parse: (msg: string) => void }) => {
-        useEffect(() => {
-          parse(messageToSend);
-        }, []);
-        return null;
-      };
-
-      const parser = (
-        <ActionProvider createChatBotMessage={createChatBotMessageWrapper} setState={setStateWrapper}>
-          <MessageParser actions={tempActions}>
-            <TestChild parse={() => {}} />
-          </MessageParser>
-        </ActionProvider>
-      );
     }
+    // Note: If parseRef is not available, the message will be sent but not parsed
+    // This is expected behavior when the chatbot is still initializing
   };
 
   const handleKeyPress = (e: React.KeyboardEvent<HTMLInputElement>) => {
@@ -181,17 +101,19 @@ const CustomChatbot: React.FC<CustomChatbotProps> = ({
     }
   };
 
-  const renderMessage = (msg: Message, index: number) => {
+  const renderMessage = (msg: ChatbotMessage, index: number) => {
     if (msg.widget) {
-      const widget = config.widgets.find((w: any) => w.widgetName === msg.widget);
+      const widget = config.widgets.find(
+        (w: { widgetName: string }) => w.widgetName === msg.widget,
+      );
       if (widget && widget.widgetFunc) {
         const WidgetComponent = widget.widgetFunc;
         return (
           <Box key={`widget-${index}`} my={2}>
             <WidgetComponent
               actionProvider={{ actions: actionsRef.current }}
-              setState={(updater: any) => {
-                setMessages((prev) => {
+              setState={(updater: (prev: ChatbotState) => ChatbotState) => {
+                setMessages(prev => {
                   const prevState = { messages: prev };
                   const newState = updater(prevState);
                   return newState.messages || prev;
@@ -296,7 +218,7 @@ const CustomChatbot: React.FC<CustomChatbotProps> = ({
         <HStack spacing={2}>
           <Input
             value={inputValue}
-            onChange={(e) => setInputValue(e.target.value)}
+            onChange={e => setInputValue(e.target.value)}
             onKeyPress={handleKeyPress}
             placeholder={placeholderText}
             bg={inputBg}
