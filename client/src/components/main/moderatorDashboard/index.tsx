@@ -90,6 +90,7 @@ const ModeratorDashboard = () => {
     if (typeof item.askedBy === 'string') return item.askedBy; // For questions
     if (typeof item.ansBy === 'string') return item.ansBy; // For answers
     if (typeof item.comBy === 'string') return item.comBy; // For comments
+    if (typeof item.commentBy === 'string') return item.commentBy; // For comments (alternative)
     if (typeof item.from === 'string') return item.from; // For messages
     return 'Unknown';
   };
@@ -98,10 +99,12 @@ const ModeratorDashboard = () => {
     if (item.askDateTime instanceof Date) return item.askDateTime; // For questions
     if (item.ansDateTime instanceof Date) return item.ansDateTime; // For answers
     if (item.comDateTime instanceof Date) return item.comDateTime; // For comments
+    if (item.commentDateTime instanceof Date) return item.commentDateTime; // For comments (alternative)
     if (item.timestamp instanceof Date) return item.timestamp; // For messages
     if (typeof item.askDateTime === 'string') return new Date(item.askDateTime);
     if (typeof item.ansDateTime === 'string') return new Date(item.ansDateTime);
     if (typeof item.comDateTime === 'string') return new Date(item.comDateTime);
+    if (typeof item.commentDateTime === 'string') return new Date(item.commentDateTime);
     if (typeof item.timestamp === 'string') return new Date(item.timestamp);
     return new Date();
   };
@@ -375,49 +378,94 @@ const ModeratorDashboard = () => {
           </Text>
         </Box>
 
-        <Tabs.Root defaultValue="questions">
+        <Tabs.Root 
+          value={activeTab} 
+          onValueChange={(e) => {
+            setActiveTab(e.value as TabType);
+            // Reset flagged subtab when switching away from flagged tab
+            if (e.value !== 'flagged') {
+              setFlaggedSubTab('questions');
+            }
+          }}
+        >
           <Tabs.List>
-            <Tabs.Trigger value="questions">
-              Questions ({flaggedContent.questions.length})
+            <Tabs.Trigger value="flagged">
+              Flagged ({totalFlagged})
             </Tabs.Trigger>
-            <Tabs.Trigger value="answers">
-              Answers ({flaggedContent.answers.length})
+            <Tabs.Trigger value="appeals">
+              Appeals ({appeals.length})
             </Tabs.Trigger>
-            <Tabs.Trigger value="comments">
-              Comments ({flaggedContent.comments.length})
+            <Tabs.Trigger value="deleted">
+              Delete History ({deletedContent.length})
             </Tabs.Trigger>
           </Tabs.List>
 
-          <Tabs.Content value="questions">
-            {flaggedContent.questions.length === 0 ? (
-              <Text color="gray.500" textAlign="center" py={8}>
-                No flagged questions
-              </Text>
-            ) : (
-              flaggedContent.questions.map((item, index) =>
-                renderFlaggedItem(item, 'question', index),
-              )
-              )}
+          <Tabs.Content value="flagged">
+            <Tabs.Root value={flaggedSubTab} onValueChange={(e) => setFlaggedSubTab(e.value as FlaggedSubTabType)}>
+              <Tabs.List>
+                <Tabs.Trigger value="questions">
+                  Questions ({flaggedContent.questions.length})
+                </Tabs.Trigger>
+                <Tabs.Trigger value="answers">
+                  Answers ({flaggedContent.answers.length})
+                </Tabs.Trigger>
+                <Tabs.Trigger value="comments">
+                  Comments ({flaggedContent.comments.length})
+                </Tabs.Trigger>
+              </Tabs.List>
+
+              <Tabs.Content value="questions">
+                {flaggedContent.questions.length === 0 ? (
+                  <Text color="gray.500" textAlign="center" py={8}>
+                    No flagged questions
+                  </Text>
+                ) : (
+                  flaggedContent.questions.map((item, index) =>
+                    renderFlaggedItem(item, 'question', index),
+                  )
+                )}
+              </Tabs.Content>
+              <Tabs.Content value="answers">
+                {flaggedContent.answers.length === 0 ? (
+                  <Text color="gray.500" textAlign="center" py={8}>
+                    No flagged answers
+                  </Text>
+                ) : (
+                  flaggedContent.answers.map((item, index) => renderFlaggedItem(item, 'answer', index))
+                )}
+              </Tabs.Content>
+              <Tabs.Content value="comments">
+                {flaggedContent.comments.length === 0 ? (
+                  <Text color="gray.500" textAlign="center" py={8}>
+                    No flagged comments
+                  </Text>
+                ) : (
+                  flaggedContent.comments.map((item, index) =>
+                    renderFlaggedItem(item, 'comment', index),
+                  )
+                )}
+              </Tabs.Content>
+            </Tabs.Root>
           </Tabs.Content>
-          <Tabs.Content value="answers">
-            {flaggedContent.answers.length === 0 ? (
+
+          <Tabs.Content value="appeals">
+            {appeals.length === 0 ? (
               <Text color="gray.500" textAlign="center" py={8}>
-                No flagged answers
+                No pending appeals
               </Text>
             ) : (
-              flaggedContent.answers.map((item, index) => renderFlaggedItem(item, 'answer', index))
-              )}
+              appeals.map(appeal => renderAppealItem(appeal))
+            )}
           </Tabs.Content>
-          <Tabs.Content value="comments">
-            {flaggedContent.comments.length === 0 ? (
+
+          <Tabs.Content value="deleted">
+            {deletedContent.length === 0 ? (
               <Text color="gray.500" textAlign="center" py={8}>
-                No flagged comments
+                No deleted content
               </Text>
             ) : (
-              flaggedContent.comments.map((item, index) =>
-                renderFlaggedItem(item, 'comment', index),
-              )
-              )}
+              deletedContent.map(item => renderDeletedItem(item))
+            )}
           </Tabs.Content>
         </Tabs.Root>
       </VStack>

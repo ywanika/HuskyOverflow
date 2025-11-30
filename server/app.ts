@@ -35,12 +35,12 @@ const PORT = parseInt(process.env.PORT || '8000');
 const app = express();
 const server = http.createServer(app);
 // allow requests from the local dev client or the production client only
-const allowedOrigin = process.env.CLIENT_URL || 'http://localhost:4530';
+const ALLOWED_ORIGIN = process.env.CLIENT_URL || 'http://localhost:4530';
 
 // Configure CORS for Express routes FIRST (before Socket.IO)
 app.use(
   cors({
-    origin: allowedOrigin,
+    origin: ALLOWED_ORIGIN,
     credentials: true,
     methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
     allowedHeaders: ['Content-Type', 'Authorization'],
@@ -53,7 +53,7 @@ const socket: FakeSOSocket = new Server(server, {
     origin: (origin, callback) => {
       // Allow requests with no origin (like mobile apps or curl requests)
       if (!origin) return callback(null, true);
-      if (origin === allowedOrigin) {
+      if (origin === ALLOWED_ORIGIN) {
         callback(null, true);
       } else {
         callback(new Error('Not allowed by CORS'));
