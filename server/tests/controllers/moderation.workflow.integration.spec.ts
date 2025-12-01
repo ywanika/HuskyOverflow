@@ -4,7 +4,9 @@ import { Server } from 'socket.io';
 import { createServer } from 'http';
 import { io as Client, type Socket as ClientSocket } from 'socket.io-client';
 import { AddressInfo } from 'net';
-import { app } from '../../app';
+import express from 'express';
+import moderationController from '../../controllers/moderation.controller';
+import notificationController from '../../controllers/notification.controller';
 import QuestionModel from '../../models/questions.model';
 import AnswerModel from '../../models/answers.model';
 import CommentModel from '../../models/comments.model';
@@ -35,6 +37,7 @@ const MONGO_TEST_URL = `${process.env.MONGODB_URI || 'mongodb://127.0.0.1:27017'
  * from flagging through deletion, appeals, and restoration.
  */
 describe('Moderation Workflow Integration Tests', () => {
+  let testApp: express.Application;
   let httpServer: ReturnType<typeof createServer>;
   let io: Server;
   let clientSocket: ClientSocket;
@@ -56,14 +59,22 @@ describe('Moderation Workflow Integration Tests', () => {
     await mongoose.connect(MONGO_TEST_URL);
     await mongoose.connection.db?.dropDatabase();
 
+    // Create Express app for testing
+    testApp = express();
+    testApp.use(express.json());
+
     // Create HTTP server and Socket.IO instance
-    httpServer = createServer();
+    httpServer = createServer(testApp);
     io = new Server(httpServer, {
       cors: {
         origin: '*',
         credentials: true,
       },
     });
+
+    // Attach controllers with test socket
+    testApp.use('/api/moderation', moderationController(io));
+    testApp.use('/api/notification', notificationController(io));
 
     httpServer.listen(() => {
       const { port } = httpServer.address() as AddressInfo;
@@ -261,6 +272,8 @@ describe('Moderation Workflow Integration Tests', () => {
       expect(appeal?.reason).toBe(appealReason);
 
       // Verify appeal notification was created for moderators
+      // Wait a bit for notification creation
+      await new Promise(resolve => setTimeout(resolve, 100));
       const appealNotifications = await NotificationModel.find({
         type: 'appeal',
         recipientUsername: moderatorUser.username,
@@ -354,14 +367,14 @@ describe('Moderation Workflow Integration Tests', () => {
     it('should complete workflow for comment: flag -> delete -> appeal -> restore via API', async () => {
       // Flag comment via API
       socketEvents = [];
-      const flagResponse = await supertest(app)
+      const flagResponse = await supertest(testApp)
         .post(`/api/moderation/flag/comment/${testComment._id.toString()}`)
         .send({ username: regularUser.username });
       expect(flagResponse.status).toBe(200);
       expect(flagResponse.body.success).toBe(true);
 
       // Delete comment via API
-      const deleteResponse = await supertest(app)
+      const deleteResponse = await supertest(testApp)
         .delete(`/api/moderation/delete/comment/${testComment._id.toString()}`)
         .send({
           moderatorUsername: moderatorUser.username,
@@ -370,9 +383,10 @@ describe('Moderation Workflow Integration Tests', () => {
       expect(deleteResponse.status).toBe(200);
       expect(deleteResponse.body.success).toBe(true);
 
-      // Submit appeal via API
-      const appealReason = 'The comment was appropriate and constructive.';
-      const appealResponse = await supertest(app).post('/api/moderation/appeal/submit').send({
+      // Submit appeal via API (reason must be 50-500 chars and 3+ words)
+      const appealReason =
+        'The comment was appropriate and constructive. It provided valuable information and followed community guidelines properly.';
+      const appealResponse = await supertest(testApp).post('/api/moderation/appeal/submit').send({
         contentId: testComment._id.toString(),
         contentType: 'comment',
         appealUser: contentAuthor.username,
@@ -390,7 +404,7 @@ describe('Moderation Workflow Integration Tests', () => {
 
       // Approve appeal via API
       socketEvents = [];
-      const approveResponse = await supertest(app).post('/api/moderation/appeal/approve').send({
+      const approveResponse = await supertest(testApp).post('/api/moderation/appeal/approve').send({
         appealId: appeal!._id.toString(),
         moderatorUsername: moderatorUser.username,
         modResponse: 'Appeal approved',
@@ -606,8 +620,9 @@ describe('Moderation Workflow Integration Tests', () => {
       // If validation exists, this should fail
       expect(shortResult.success).toBe(false);
 
-      // Valid length (50-500 chars)
-      const validReason = 'A'.repeat(100); // 100 characters
+      // Valid length (50-500 chars) with 3+ words
+      const validReason =
+        'I believe this deletion was made in error and the content should be restored because it follows community guidelines properly.';
       const validResult = await submitAppeal(
         testQuestion._id.toString(),
         'question',
@@ -624,8 +639,9 @@ describe('Moderation Workflow Integration Tests', () => {
       // Less than 3 words
       // Note: This validation may be in controller layer
 
-      // Valid (3+ words)
-      const validReason = 'I believe this deletion was made in error';
+      // Valid (3+ words and 50+ characters)
+      const validReason =
+        'I believe this deletion was made in error. The content was appropriate and follows community guidelines properly.';
       const validResult = await submitAppeal(
         testQuestion._id.toString(),
         'question',
@@ -633,8 +649,9 @@ describe('Moderation Workflow Integration Tests', () => {
         validReason,
       );
       const wordCount = validReason.split(/\s+/).length;
-      expect(validResult.success).toBe(true);
       expect(wordCount).toBeGreaterThanOrEqual(3);
+      expect(validReason.length).toBeGreaterThanOrEqual(50);
+      expect(validResult.success).toBe(true);
     });
 
     it('should prevent user from appealing the same content twice', async () => {
@@ -674,7 +691,7 @@ describe('Moderation Workflow Integration Tests', () => {
       );
 
       // Check if appeal exists
-      const checkResponse = await supertest(app).get('/api/moderation/appeal/check').query({
+      const checkResponse = await supertest(testApp).get('/api/moderation/appeal/check').query({
         contentId: testQuestion._id.toString(),
         appealUser: contentAuthor.username,
       });
@@ -910,13 +927,18 @@ describe('Moderation Workflow Integration Tests', () => {
         'Valid deletion reason with enough words',
       );
 
-      await submitAppeal(
+      const appealReason =
+        'I believe this deletion was made in error. The content was appropriate and follows community guidelines properly.';
+      const appealResult = await submitAppeal(
         testQuestion._id.toString(),
         'question',
         contentAuthor.username,
-        'I believe this deletion was made in error. The content was appropriate.',
+        appealReason,
       );
+      expect(appealResult.success).toBe(true);
 
+      // Wait a bit for notification creation
+      await new Promise(resolve => setTimeout(resolve, 100));
       // Check notifications for moderators
       const appealNotifications = await NotificationModel.find({
         type: 'appeal',
@@ -990,7 +1012,7 @@ describe('Moderation Workflow Integration Tests', () => {
     it('should emit socket event when content is flagged via API', async () => {
       socketEvents = []; // Clear previous events
 
-      const response = await supertest(app)
+      const response = await supertest(testApp)
         .post(`/api/moderation/flag/question/${testQuestion._id.toString()}`)
         .send({ username: regularUser.username });
 
@@ -1015,7 +1037,7 @@ describe('Moderation Workflow Integration Tests', () => {
     it('should emit socket event when content is deleted via API', async () => {
       socketEvents = [];
 
-      const response = await supertest(app)
+      const response = await supertest(testApp)
         .delete(`/api/moderation/delete/question/${testQuestion._id.toString()}`)
         .send({
           moderatorUsername: moderatorUser.username,
@@ -1043,12 +1065,12 @@ describe('Moderation Workflow Integration Tests', () => {
       socketEvents = [];
 
       // First flag the question
-      await supertest(app)
+      await supertest(testApp)
         .post(`/api/moderation/flag/question/${testQuestion._id.toString()}`)
         .send({ username: regularUser.username });
 
       // Then dismiss the flag
-      const response = await supertest(app).post('/api/moderation/dismiss').send({
+      const response = await supertest(testApp).post('/api/moderation/dismiss').send({
         contentType: 'question',
         contentId: testQuestion._id.toString(),
         moderatorUsername: moderatorUser.username,
@@ -1071,12 +1093,12 @@ describe('Moderation Workflow Integration Tests', () => {
       socketEvents = [];
 
       // First flag the question
-      await supertest(app)
+      await supertest(testApp)
         .post(`/api/moderation/flag/question/${testQuestion._id.toString()}`)
         .send({ username: regularUser.username });
 
       // Then mark as reviewed
-      const response = await supertest(app).post('/api/moderation/review').send({
+      const response = await supertest(testApp).post('/api/moderation/review').send({
         contentType: 'question',
         contentId: testQuestion._id.toString(),
         moderatorUsername: moderatorUser.username,
@@ -1105,7 +1127,7 @@ describe('Moderation Workflow Integration Tests', () => {
       );
 
       // Submit appeal
-      const response = await supertest(app).post('/api/moderation/appeal/submit').send({
+      const response = await supertest(testApp).post('/api/moderation/appeal/submit').send({
         contentId: testQuestion._id.toString(),
         contentType: 'question',
         appealUser: contentAuthor.username,

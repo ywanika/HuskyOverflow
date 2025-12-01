@@ -953,11 +953,15 @@ const createAppealNotification = async (
       role: { $in: ['moderator', 'admin'] },
     });
 
+    if (moderators.length === 0) {
+      return [];
+    }
+
     // Create notifications for all moderators
     const notifications = moderators.map(moderator =>
       NotificationModel.create({
         recipientUsername: moderator.username,
-        type: 'flag',
+        type: 'appeal',
         message: `An appeal has been submitted for a deleted ${contentType} by ${appealUser}`,
         contentId: new ObjectId(contentId),
         isRead: false,
@@ -1434,6 +1438,9 @@ export const restoreDeletedContent = async (
       if (!question) {
         return { success: false, error: 'Question not found' };
       }
+      if (!question.deleted?.isDeleted) {
+        return { success: false, error: 'Content is not deleted' };
+      }
       authorUsername = question.askedBy;
 
       updatedContent = await QuestionModel.findByIdAndUpdate(
@@ -1449,6 +1456,9 @@ export const restoreDeletedContent = async (
       if (!answer) {
         return { success: false, error: 'Answer not found' };
       }
+      if (!answer.deleted?.isDeleted) {
+        return { success: false, error: 'Content is not deleted' };
+      }
       authorUsername = answer.ansBy;
 
       updatedContent = await AnswerModel.findByIdAndUpdate(
@@ -1463,6 +1473,9 @@ export const restoreDeletedContent = async (
       const comment = await CommentModel.findById(contentId);
       if (!comment) {
         return { success: false, error: 'Comment not found' };
+      }
+      if (!comment.deleted?.isDeleted) {
+        return { success: false, error: 'Content is not deleted' };
       }
       authorUsername = comment.commentBy;
 
