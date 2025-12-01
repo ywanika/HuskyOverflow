@@ -6,6 +6,9 @@ import {
   FlaggedContentResponse,
   DeletedContentResponse,
 } from '../../services/moderation.service';
+import QuestionModel from '../../models/questions.model';
+import AnswerModel from '../../models/answers.model';
+import CommentModel from '../../models/comments.model';
 
 const deleteQuestionSpy = jest.spyOn(moderationService, 'deleteQuestion');
 const deleteAnswerSpy = jest.spyOn(moderationService, 'deleteAnswer');
@@ -21,6 +24,11 @@ const getDeletedContentByModeratorSpy = jest.spyOn(
   'getDeletedContentByModerator',
 );
 const restoreDeletedContentSpy = jest.spyOn(moderationService, 'restoreDeletedContent');
+
+// Mock the models
+jest.mock('../../models/questions.model');
+jest.mock('../../models/answers.model');
+jest.mock('../../models/comments.model');
 
 describe('Moderation Controller', () => {
   beforeEach(() => {
@@ -209,6 +217,9 @@ describe('Moderation Controller', () => {
       };
 
       flagQuestionSpy.mockResolvedValueOnce(mockResponse);
+      jest.spyOn(QuestionModel, 'findById').mockResolvedValueOnce({
+        askedBy: 'contentOwner',
+      } as any);
 
       const response = await supertest(app)
         .post(`/api/moderation/flag/question/${questionId}`)
@@ -279,6 +290,9 @@ describe('Moderation Controller', () => {
       };
 
       flagAnswerSpy.mockResolvedValueOnce(mockResponse);
+      jest.spyOn(AnswerModel, 'findById').mockResolvedValueOnce({
+        ansBy: 'contentOwner',
+      } as any);
 
       const response = await supertest(app).post(`/api/moderation/flag/answer/${answerId}`).send({
         username,
@@ -311,6 +325,9 @@ describe('Moderation Controller', () => {
       };
 
       flagCommentSpy.mockResolvedValueOnce(mockResponse);
+      jest.spyOn(CommentModel, 'findById').mockResolvedValueOnce({
+        commentBy: 'contentOwner',
+      } as any);
 
       const response = await supertest(app).post(`/api/moderation/flag/comment/${commentId}`).send({
         username,
