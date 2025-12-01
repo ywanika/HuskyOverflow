@@ -106,6 +106,32 @@ Moderators have access to a dedicated dashboard for moderation work.
 4. Log in as a regular user
 5. Try to access "Moderator Dashboard" in navigation - it should not be visible
 
+#### 2.3 View Deleted Posts
+The moderator dashboard displays all posts deleted by the current moderator.
+
+**How to Test:**
+1. Log in as a moderator
+2. Delete a question, answer, or comment (see 2.1)
+3. Navigate to `/moderator/dashboard`
+4. Verify the deleted content appears in the "Deleted Posts" section
+5. Verify it shows:
+   - Content type (question/answer/comment)
+   - The content text
+   - Username of the poster
+   - Deletion reason
+
+#### 2.4 Recover Deleted Posts
+Moderators can recover deleted posts, which will reappear on the homepage with the same URL.
+
+**How to Test:**
+1. Log in as a moderator
+2. Delete a question (see 2.1)
+3. Navigate to `/moderator/dashboard`
+4. Find the deleted question in the list
+5. Click "Recover" button
+6. Navigate to `/home` and verify the question appears again
+7. Click on the question and verify the URL is the same as before
+
 #### 2.5 View Flagged and Appealed Content
 The moderator dashboard displays all flagged content and appeals with options to delete or dismiss.
 
