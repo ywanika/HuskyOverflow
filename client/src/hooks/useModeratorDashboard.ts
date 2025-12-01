@@ -14,7 +14,7 @@ import {
   restoreDeletedContent,
   DeletedContentItem,
 } from '../services/moderationService';
-import { AppealItem } from '@fake-stack-overflow/shared';
+import type { AppealItem } from '@fake-stack-overflow/shared';
 
 interface FlaggedItem {
   _id: string;
