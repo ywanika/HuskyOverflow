@@ -358,6 +358,25 @@ describe('Moderation Service', () => {
       expect(result.success).toBe(false);
       expect(result.error).toBe('Comment not found');
     });
+
+    it('should return error if delete reason is less than 3 words', async () => {
+      const moderatorUser: DatabaseUser = {
+        _id: new ObjectId(),
+        username: moderatorUsername,
+        password: 'password',
+        dateJoined: new Date(),
+        role: 'moderator',
+        agreedToGuidelines: true,
+      };
+
+      jest.spyOn(UserModel, 'findOne').mockResolvedValueOnce(moderatorUser);
+      jest.spyOn(CommentModel, 'findByIdAndUpdate').mockResolvedValueOnce(null);
+
+      const result = await deleteComment(commentId, moderatorUsername, deleteReason);
+
+      expect(result.success).toBe(false);
+      expect(result.error).toBe('Comment not found');
+    });
   });
 
   describe('flagQuestion', () => {

@@ -38,7 +38,7 @@ describe('Moderation Controller', () => {
   describe('DELETE /api/moderation/delete/question/:questionId', () => {
     const questionId = '507f191e810c19729de860ea';
     const moderatorUsername = 'moderator1';
-    const deleteReason = 'Inappropriate content';
+    const deleteReason = 'This content is inappropriate';
 
     it('should successfully delete a question', async () => {
       const mockResponse: ModerationResponse = {
@@ -128,12 +128,24 @@ describe('Moderation Controller', () => {
       expect(response.status).toBe(500);
       expect(response.body.error).toBe('Database error');
     });
+
+    it('should return 400 if delete reason is less than 3 words', async () => {
+      const response = await supertest(app)
+        .delete(`/api/moderation/delete/question/${questionId}`)
+        .send({
+          moderatorUsername,
+          deleteReason: 'Too short',
+        });
+
+      expect(response.status).toBe(400);
+      expect(response.body.error).toBe('Delete reason must be at least 3 words long');
+    });
   });
 
   describe('DELETE /api/moderation/delete/answer/:answerId', () => {
     const answerId = '507f191e810c19729de860eb';
     const moderatorUsername = 'moderator1';
-    const deleteReason = 'Inappropriate content';
+    const deleteReason = 'This content is inappropriate';
 
     it('should successfully delete an answer', async () => {
       const mockResponse: ModerationResponse = {
@@ -166,12 +178,24 @@ describe('Moderation Controller', () => {
       expect(response.body.message).toBe('Request Validation Failed');
       expect(response.body.errors).toBeDefined();
     });
+
+    it('should return 400 if delete reason is less than 3 words', async () => {
+      const response = await supertest(app)
+        .delete(`/api/moderation/delete/answer/${answerId}`)
+        .send({
+          moderatorUsername,
+          deleteReason: 'Bad answer',
+        });
+
+      expect(response.status).toBe(400);
+      expect(response.body.error).toBe('Delete reason must be at least 3 words long');
+    });
   });
 
   describe('DELETE /api/moderation/delete/comment/:commentId', () => {
     const commentId = '507f191e810c19729de860ec';
     const moderatorUsername = 'moderator1';
-    const deleteReason = 'Inappropriate content';
+    const deleteReason = 'This content is inappropriate';
 
     it('should successfully delete a comment', async () => {
       const mockResponse: ModerationResponse = {
@@ -203,6 +227,18 @@ describe('Moderation Controller', () => {
       expect(response.status).toBe(400);
       expect(response.body.message).toBe('Request Validation Failed');
       expect(response.body.errors).toBeDefined();
+    });
+
+    it('should return 400 if delete reason is less than 3 words', async () => {
+      const response = await supertest(app)
+        .delete(`/api/moderation/delete/comment/${commentId}`)
+        .send({
+          moderatorUsername,
+          deleteReason: 'Spam content',
+        });
+
+      expect(response.status).toBe(400);
+      expect(response.body.error).toBe('Delete reason must be at least 3 words long');
     });
   });
 

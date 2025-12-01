@@ -79,6 +79,11 @@ const moderationController = (socket: FakeSOSocket) => {
       return;
     }
 
+    if (deleteReason.trim().split(/\s+/).length < 3) {
+      res.status(400).json({ error: 'Delete reason must be at least 3 words long' });
+      return;
+    }
+
     try {
       const result = await deleteQuestion(questionId, moderatorUsername, deleteReason);
 
@@ -131,6 +136,11 @@ const moderationController = (socket: FakeSOSocket) => {
       return;
     }
 
+    if (deleteReason.trim().split(/\s+/).length < 3) {
+      res.status(400).json({ error: 'Delete reason must be at least 3 words long' });
+      return;
+    }
+
     try {
       const result = await deleteAnswer(answerId, moderatorUsername, deleteReason);
 
@@ -180,6 +190,11 @@ const moderationController = (socket: FakeSOSocket) => {
       res
         .status(400)
         .json({ error: 'Missing required fields: commentId, moderatorUsername, or deleteReason' });
+      return;
+    }
+
+    if (deleteReason.trim().split(/\s+/).length < 3) {
+      res.status(400).json({ error: 'Delete reason must be at least 3 words long' });
       return;
     }
 
