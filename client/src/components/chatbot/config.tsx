@@ -18,7 +18,9 @@ const config = {
       "Hi! I'm your HuskyFlow assistant. I can help you navigate to different parts of the app. What would you like to do?",
       { delay: 500 },
     ) as ChatbotMessage,
-    createChatBotMessage('Here are some things I can help you with:', { delay: 1000 }) as ChatbotMessage,
+    createChatBotMessage('Here are some things I can help you with:', {
+      delay: 1000,
+    }) as ChatbotMessage,
     createChatBotMessage(
       '• Browse Questions\n• Ask a Question\n• Join Communities\n• Play Games\n• Send Messages\n• View Collections\n• Manage Profile\n• Help & Support',
       {

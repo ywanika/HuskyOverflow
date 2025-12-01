@@ -300,10 +300,10 @@ const MessageParser = ({ children, actions }: MessageParserProps) => {
   return (
     <div>
       {React.Children.map(children, child => {
-        return React.cloneElement(child as React.ReactElement<any>, {
+        return React.cloneElement(child as React.ReactElement, {
           parse: parse,
           actions: actions,
-        });
+        } as any);
       })}
     </div>
   );

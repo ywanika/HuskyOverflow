@@ -56,7 +56,9 @@ describe('ActionProvider', () => {
   it('should render children', () => {
     const { container } = render(
       <MemoryRouter>
-        <ActionProvider createChatBotMessage={mockCreateChatBotMessage as any} setState={mockSetState}>
+        <ActionProvider
+          createChatBotMessage={mockCreateChatBotMessage as any}
+          setState={mockSetState}>
           <div>Test Child</div>
         </ActionProvider>
       </MemoryRouter>,
@@ -75,7 +77,9 @@ describe('ActionProvider', () => {
 
       render(
         <MemoryRouter>
-          <ActionProvider createChatBotMessage={mockCreateChatBotMessage as any} setState={mockSetState}>
+          <ActionProvider
+            createChatBotMessage={mockCreateChatBotMessage as any}
+            setState={mockSetState}>
             <TestComponent actions={{} as ChatbotActions} />
           </ActionProvider>
         </MemoryRouter>,
@@ -99,7 +103,9 @@ describe('ActionProvider', () => {
 
       render(
         <MemoryRouter>
-          <ActionProvider createChatBotMessage={mockCreateChatBotMessage as any} setState={mockSetState}>
+          <ActionProvider
+            createChatBotMessage={mockCreateChatBotMessage as any}
+            setState={mockSetState}>
             <TestComponent actions={{} as ChatbotActions} />
           </ActionProvider>
         </MemoryRouter>,
@@ -124,7 +130,9 @@ describe('ActionProvider', () => {
 
       render(
         <MemoryRouter>
-          <ActionProvider createChatBotMessage={mockCreateChatBotMessage as any} setState={mockSetState}>
+          <ActionProvider
+            createChatBotMessage={mockCreateChatBotMessage as any}
+            setState={mockSetState}>
             <TestComponent actions={{} as ChatbotActions} />
           </ActionProvider>
         </MemoryRouter>,
@@ -146,7 +154,9 @@ describe('ActionProvider', () => {
 
       render(
         <MemoryRouter>
-          <ActionProvider createChatBotMessage={mockCreateChatBotMessage as any} setState={mockSetState}>
+          <ActionProvider
+            createChatBotMessage={mockCreateChatBotMessage as any}
+            setState={mockSetState}>
             <TestComponent actions={{} as ChatbotActions} />
           </ActionProvider>
         </MemoryRouter>,
@@ -169,7 +179,9 @@ describe('ActionProvider', () => {
 
       render(
         <MemoryRouter>
-          <ActionProvider createChatBotMessage={mockCreateChatBotMessage as any} setState={mockSetState}>
+          <ActionProvider
+            createChatBotMessage={mockCreateChatBotMessage as any}
+            setState={mockSetState}>
             <TestComponent actions={{} as ChatbotActions} />
           </ActionProvider>
         </MemoryRouter>,
@@ -194,7 +206,9 @@ describe('ActionProvider', () => {
 
       render(
         <MemoryRouter>
-          <ActionProvider createChatBotMessage={mockCreateChatBotMessage as any} setState={mockSetState}>
+          <ActionProvider
+            createChatBotMessage={mockCreateChatBotMessage as any}
+            setState={mockSetState}>
             <TestComponent actions={{} as ChatbotActions} />
           </ActionProvider>
         </MemoryRouter>,
@@ -216,7 +230,9 @@ describe('ActionProvider', () => {
 
       render(
         <MemoryRouter>
-          <ActionProvider createChatBotMessage={mockCreateChatBotMessage as any} setState={mockSetState}>
+          <ActionProvider
+            createChatBotMessage={mockCreateChatBotMessage as any}
+            setState={mockSetState}>
             <TestComponent actions={{} as ChatbotActions} />
           </ActionProvider>
         </MemoryRouter>,
@@ -240,7 +256,9 @@ describe('ActionProvider', () => {
 
       render(
         <MemoryRouter>
-          <ActionProvider createChatBotMessage={mockCreateChatBotMessage as any} setState={mockSetState}>
+          <ActionProvider
+            createChatBotMessage={mockCreateChatBotMessage as any}
+            setState={mockSetState}>
             <TestComponent actions={{} as ChatbotActions} />
           </ActionProvider>
         </MemoryRouter>,
@@ -265,7 +283,9 @@ describe('ActionProvider', () => {
 
       render(
         <MemoryRouter>
-          <ActionProvider createChatBotMessage={mockCreateChatBotMessage as any} setState={mockSetState}>
+          <ActionProvider
+            createChatBotMessage={mockCreateChatBotMessage as any}
+            setState={mockSetState}>
             <TestComponent actions={{} as ChatbotActions} />
           </ActionProvider>
         </MemoryRouter>,
@@ -289,7 +309,9 @@ describe('ActionProvider', () => {
 
       render(
         <MemoryRouter>
-          <ActionProvider createChatBotMessage={mockCreateChatBotMessage as any} setState={mockSetState}>
+          <ActionProvider
+            createChatBotMessage={mockCreateChatBotMessage as any}
+            setState={mockSetState}>
             <TestComponent actions={{} as ChatbotActions} />
           </ActionProvider>
         </MemoryRouter>,
@@ -314,7 +336,9 @@ describe('ActionProvider', () => {
 
       render(
         <MemoryRouter>
-          <ActionProvider createChatBotMessage={mockCreateChatBotMessage as any} setState={mockSetState}>
+          <ActionProvider
+            createChatBotMessage={mockCreateChatBotMessage as any}
+            setState={mockSetState}>
             <TestComponent actions={{} as ChatbotActions} />
           </ActionProvider>
         </MemoryRouter>,
@@ -337,7 +361,9 @@ describe('ActionProvider', () => {
 
       render(
         <MemoryRouter>
-          <ActionProvider createChatBotMessage={mockCreateChatBotMessage as any} setState={mockSetState}>
+          <ActionProvider
+            createChatBotMessage={mockCreateChatBotMessage as any}
+            setState={mockSetState}>
             <TestComponent actions={{} as ChatbotActions} />
           </ActionProvider>
         </MemoryRouter>,
@@ -362,7 +388,9 @@ describe('ActionProvider', () => {
 
       render(
         <MemoryRouter>
-          <ActionProvider createChatBotMessage={mockCreateChatBotMessage as any} setState={mockSetState}>
+          <ActionProvider
+            createChatBotMessage={mockCreateChatBotMessage as any}
+            setState={mockSetState}>
             <TestComponent actions={{} as ChatbotActions} />
           </ActionProvider>
         </MemoryRouter>,
@@ -386,7 +414,9 @@ describe('ActionProvider', () => {
 
       render(
         <MemoryRouter>
-          <ActionProvider createChatBotMessage={mockCreateChatBotMessage as any} setState={mockSetState}>
+          <ActionProvider
+            createChatBotMessage={mockCreateChatBotMessage as any}
+            setState={mockSetState}>
             <TestComponent actions={{} as ChatbotActions} />
           </ActionProvider>
         </MemoryRouter>,
@@ -411,7 +441,9 @@ describe('ActionProvider', () => {
 
       render(
         <MemoryRouter>
-          <ActionProvider createChatBotMessage={mockCreateChatBotMessage as any} setState={mockSetState}>
+          <ActionProvider
+            createChatBotMessage={mockCreateChatBotMessage as any}
+            setState={mockSetState}>
             <TestComponent actions={{} as ChatbotActions} />
           </ActionProvider>
         </MemoryRouter>,
@@ -434,7 +466,9 @@ describe('ActionProvider', () => {
 
       render(
         <MemoryRouter>
-          <ActionProvider createChatBotMessage={mockCreateChatBotMessage as any} setState={mockSetState}>
+          <ActionProvider
+            createChatBotMessage={mockCreateChatBotMessage as any}
+            setState={mockSetState}>
             <TestComponent actions={{} as ChatbotActions} />
           </ActionProvider>
         </MemoryRouter>,
@@ -458,7 +492,9 @@ describe('ActionProvider', () => {
 
       render(
         <MemoryRouter>
-          <ActionProvider createChatBotMessage={mockCreateChatBotMessage as any} setState={mockSetState}>
+          <ActionProvider
+            createChatBotMessage={mockCreateChatBotMessage as any}
+            setState={mockSetState}>
             <TestComponent actions={{} as ChatbotActions} />
           </ActionProvider>
         </MemoryRouter>,
@@ -482,7 +518,9 @@ describe('ActionProvider', () => {
 
       render(
         <MemoryRouter>
-          <ActionProvider createChatBotMessage={mockCreateChatBotMessage as any} setState={mockSetState}>
+          <ActionProvider
+            createChatBotMessage={mockCreateChatBotMessage as any}
+            setState={mockSetState}>
             <TestComponent actions={{} as ChatbotActions} />
           </ActionProvider>
         </MemoryRouter>,
@@ -509,7 +547,9 @@ describe('ActionProvider', () => {
 
       render(
         <MemoryRouter>
-          <ActionProvider createChatBotMessage={mockCreateChatBotMessage as any} setState={mockSetState}>
+          <ActionProvider
+            createChatBotMessage={mockCreateChatBotMessage as any}
+            setState={mockSetState}>
             <TestComponent actions={{} as ChatbotActions} />
           </ActionProvider>
         </MemoryRouter>,
@@ -531,7 +571,9 @@ describe('ActionProvider', () => {
 
       render(
         <MemoryRouter>
-          <ActionProvider createChatBotMessage={mockCreateChatBotMessage as any} setState={mockSetState}>
+          <ActionProvider
+            createChatBotMessage={mockCreateChatBotMessage as any}
+            setState={mockSetState}>
             <TestComponent actions={{} as ChatbotActions} />
           </ActionProvider>
         </MemoryRouter>,
@@ -553,7 +595,9 @@ describe('ActionProvider', () => {
 
       render(
         <MemoryRouter>
-          <ActionProvider createChatBotMessage={mockCreateChatBotMessage as any} setState={mockSetState}>
+          <ActionProvider
+            createChatBotMessage={mockCreateChatBotMessage as any}
+            setState={mockSetState}>
             <TestComponent actions={{} as ChatbotActions} />
           </ActionProvider>
         </MemoryRouter>,
@@ -576,7 +620,9 @@ describe('ActionProvider', () => {
 
       render(
         <MemoryRouter>
-          <ActionProvider createChatBotMessage={mockCreateChatBotMessage as any} setState={mockSetState}>
+          <ActionProvider
+            createChatBotMessage={mockCreateChatBotMessage as any}
+            setState={mockSetState}>
             <TestComponent actions={{} as ChatbotActions} />
           </ActionProvider>
         </MemoryRouter>,
@@ -598,7 +644,9 @@ describe('ActionProvider', () => {
 
       render(
         <MemoryRouter>
-          <ActionProvider createChatBotMessage={mockCreateChatBotMessage as any} setState={mockSetState}>
+          <ActionProvider
+            createChatBotMessage={mockCreateChatBotMessage as any}
+            setState={mockSetState}>
             <TestComponent actions={{} as ChatbotActions} />
           </ActionProvider>
         </MemoryRouter>,
@@ -621,7 +669,9 @@ describe('ActionProvider', () => {
 
       render(
         <MemoryRouter>
-          <ActionProvider createChatBotMessage={mockCreateChatBotMessage as any} setState={mockSetState}>
+          <ActionProvider
+            createChatBotMessage={mockCreateChatBotMessage as any}
+            setState={mockSetState}>
             <TestComponent actions={{} as ChatbotActions} />
           </ActionProvider>
         </MemoryRouter>,
@@ -643,7 +693,9 @@ describe('ActionProvider', () => {
 
       render(
         <MemoryRouter>
-          <ActionProvider createChatBotMessage={mockCreateChatBotMessage as any} setState={mockSetState}>
+          <ActionProvider
+            createChatBotMessage={mockCreateChatBotMessage as any}
+            setState={mockSetState}>
             <TestComponent actions={{} as ChatbotActions} />
           </ActionProvider>
         </MemoryRouter>,
@@ -664,7 +716,9 @@ describe('ActionProvider', () => {
 
       render(
         <MemoryRouter>
-          <ActionProvider createChatBotMessage={mockCreateChatBotMessage as any} setState={mockSetState}>
+          <ActionProvider
+            createChatBotMessage={mockCreateChatBotMessage as any}
+            setState={mockSetState}>
             <TestComponent actions={{} as ChatbotActions} />
           </ActionProvider>
         </MemoryRouter>,
@@ -687,7 +741,9 @@ describe('ActionProvider', () => {
 
       render(
         <MemoryRouter>
-          <ActionProvider createChatBotMessage={mockCreateChatBotMessage as any} setState={mockSetState}>
+          <ActionProvider
+            createChatBotMessage={mockCreateChatBotMessage as any}
+            setState={mockSetState}>
             <TestComponent actions={{} as ChatbotActions} />
           </ActionProvider>
         </MemoryRouter>,
@@ -708,7 +764,9 @@ describe('ActionProvider', () => {
 
       render(
         <MemoryRouter>
-          <ActionProvider createChatBotMessage={mockCreateChatBotMessage as any} setState={mockSetState}>
+          <ActionProvider
+            createChatBotMessage={mockCreateChatBotMessage as any}
+            setState={mockSetState}>
             <TestComponent actions={{} as ChatbotActions} />
           </ActionProvider>
         </MemoryRouter>,
@@ -729,7 +787,9 @@ describe('ActionProvider', () => {
 
       render(
         <MemoryRouter>
-          <ActionProvider createChatBotMessage={mockCreateChatBotMessage as any} setState={mockSetState}>
+          <ActionProvider
+            createChatBotMessage={mockCreateChatBotMessage as any}
+            setState={mockSetState}>
             <TestComponent actions={{} as ChatbotActions} />
           </ActionProvider>
         </MemoryRouter>,
@@ -752,7 +812,9 @@ describe('ActionProvider', () => {
 
       render(
         <MemoryRouter>
-          <ActionProvider createChatBotMessage={mockCreateChatBotMessage as any} setState={mockSetState}>
+          <ActionProvider
+            createChatBotMessage={mockCreateChatBotMessage as any}
+            setState={mockSetState}>
             <TestComponent actions={{} as ChatbotActions} />
           </ActionProvider>
         </MemoryRouter>,
@@ -774,7 +836,9 @@ describe('ActionProvider', () => {
 
       render(
         <MemoryRouter>
-          <ActionProvider createChatBotMessage={mockCreateChatBotMessage as any} setState={mockSetState}>
+          <ActionProvider
+            createChatBotMessage={mockCreateChatBotMessage as any}
+            setState={mockSetState}>
             <TestComponent actions={{} as ChatbotActions} />
           </ActionProvider>
         </MemoryRouter>,
@@ -795,7 +859,9 @@ describe('ActionProvider', () => {
 
       render(
         <MemoryRouter>
-          <ActionProvider createChatBotMessage={mockCreateChatBotMessage as any} setState={mockSetState}>
+          <ActionProvider
+            createChatBotMessage={mockCreateChatBotMessage as any}
+            setState={mockSetState}>
             <TestComponent actions={{} as ChatbotActions} />
           </ActionProvider>
         </MemoryRouter>,
@@ -819,7 +885,9 @@ describe('ActionProvider', () => {
 
       render(
         <MemoryRouter>
-          <ActionProvider createChatBotMessage={mockCreateChatBotMessage as any} setState={mockSetState}>
+          <ActionProvider
+            createChatBotMessage={mockCreateChatBotMessage as any}
+            setState={mockSetState}>
             <TestComponent actions={{} as ChatbotActions} />
           </ActionProvider>
         </MemoryRouter>,
@@ -841,7 +909,9 @@ describe('ActionProvider', () => {
 
       render(
         <MemoryRouter>
-          <ActionProvider createChatBotMessage={mockCreateChatBotMessage as any} setState={mockSetState}>
+          <ActionProvider
+            createChatBotMessage={mockCreateChatBotMessage as any}
+            setState={mockSetState}>
             <TestComponent actions={{} as ChatbotActions} />
           </ActionProvider>
         </MemoryRouter>,
@@ -863,7 +933,9 @@ describe('ActionProvider', () => {
 
       render(
         <MemoryRouter>
-          <ActionProvider createChatBotMessage={mockCreateChatBotMessage as any} setState={mockSetState}>
+          <ActionProvider
+            createChatBotMessage={mockCreateChatBotMessage as any}
+            setState={mockSetState}>
             <TestComponent actions={{} as ChatbotActions} />
           </ActionProvider>
         </MemoryRouter>,
@@ -886,7 +958,9 @@ describe('ActionProvider', () => {
 
       render(
         <MemoryRouter>
-          <ActionProvider createChatBotMessage={mockCreateChatBotMessage as any} setState={mockSetState}>
+          <ActionProvider
+            createChatBotMessage={mockCreateChatBotMessage as any}
+            setState={mockSetState}>
             <TestComponent actions={{} as ChatbotActions} />
           </ActionProvider>
         </MemoryRouter>,
@@ -926,7 +1000,9 @@ describe('ActionProvider', () => {
       });
 
       render(
-        <ActionProvider createChatBotMessage={mockCreateChatBotMessage as any} setState={customSetState}>
+        <ActionProvider
+          createChatBotMessage={mockCreateChatBotMessage as any}
+          setState={customSetState}>
           <TestComponent actions={{} as ChatbotActions} />
         </ActionProvider>,
       );
@@ -957,7 +1033,9 @@ describe('ActionProvider', () => {
       });
 
       render(
-        <ActionProvider createChatBotMessage={mockCreateChatBotMessage as any} setState={customSetState}>
+        <ActionProvider
+          createChatBotMessage={mockCreateChatBotMessage as any}
+          setState={customSetState}>
           <TestComponent actions={{} as ChatbotActions} />
         </ActionProvider>,
       );
@@ -988,7 +1066,9 @@ describe('ActionProvider', () => {
       });
 
       render(
-        <ActionProvider createChatBotMessage={mockCreateChatBotMessage as any} setState={customSetState}>
+        <ActionProvider
+          createChatBotMessage={mockCreateChatBotMessage as any}
+          setState={customSetState}>
           <TestComponent actions={{} as ChatbotActions} />
         </ActionProvider>,
       );

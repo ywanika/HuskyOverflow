@@ -31,7 +31,7 @@ const ActionProvider = ({ createChatBotMessage, setState, children }: ActionProv
 
     setState((prev: ChatbotState) => ({
       ...prev,
-      messages: [...prev.messages, botMessage, menuMessage],
+      messages: [...prev.messages, botMessage, menuMessage] as ChatbotMessage[],
       currentFlow: null,
     }));
   };
@@ -44,7 +44,7 @@ const ActionProvider = ({ createChatBotMessage, setState, children }: ActionProv
 
     setState((prev: ChatbotState) => ({
       ...prev,
-      messages: [...prev.messages, botMessage],
+      messages: [...prev.messages, botMessage] as ChatbotMessage[],
       currentFlow: null,
     }));
   };
@@ -61,7 +61,7 @@ const ActionProvider = ({ createChatBotMessage, setState, children }: ActionProv
 
     setState((prev: ChatbotState) => ({
       ...prev,
-      messages: [...prev.messages, botMessage],
+      messages: [...prev.messages, botMessage] as ChatbotMessage[],
       currentFlow: 'questions',
     }));
   };
@@ -73,7 +73,7 @@ const ActionProvider = ({ createChatBotMessage, setState, children }: ActionProv
 
     setState((prev: ChatbotState) => ({
       ...prev,
-      messages: [...prev.messages, botMessage],
+      messages: [...prev.messages, botMessage] as ChatbotMessage[],
     }));
 
     setTimeout(() => navigate('/home'), 600);
@@ -86,7 +86,7 @@ const ActionProvider = ({ createChatBotMessage, setState, children }: ActionProv
 
     setState((prev: ChatbotState) => ({
       ...prev,
-      messages: [...prev.messages, botMessage],
+      messages: [...prev.messages, botMessage] as ChatbotMessage[],
     }));
 
     setTimeout(() => navigate('/tags'), 600);
@@ -99,29 +99,33 @@ const ActionProvider = ({ createChatBotMessage, setState, children }: ActionProv
 
     setState((prev: ChatbotState) => ({
       ...prev,
-      messages: [...prev.messages, botMessage],
+      messages: [...prev.messages, botMessage] as ChatbotMessage[],
     }));
 
     setTimeout(() => navigate('/home?filter=unanswered'), 600);
   };
 
   const handleAskQuestion = () => {
-    const botMessage = createChatBotMessage('Taking you to ask a new question...', { delay: 500 }) as ChatbotMessage;
+    const botMessage = createChatBotMessage('Taking you to ask a new question...', {
+      delay: 500,
+    }) as ChatbotMessage;
 
     setState((prev: ChatbotState) => ({
       ...prev,
-      messages: [...prev.messages, botMessage],
+      messages: [...prev.messages, botMessage] as ChatbotMessage[],
     }));
 
     setTimeout(() => navigate('/new/question'), 600);
   };
 
   const handleMyQuestions = () => {
-    const botMessage = createChatBotMessage('Finding your questions...', { delay: 500 }) as ChatbotMessage;
+    const botMessage = createChatBotMessage('Finding your questions...', {
+      delay: 500,
+    }) as ChatbotMessage;
 
     setState((prev: ChatbotState) => ({
       ...prev,
-      messages: [...prev.messages, botMessage],
+      messages: [...prev.messages, botMessage] as ChatbotMessage[],
     }));
 
     // Navigate to home page - user can filter their questions there
@@ -137,7 +141,7 @@ const ActionProvider = ({ createChatBotMessage, setState, children }: ActionProv
 
     setState((prev: ChatbotState) => ({
       ...prev,
-      messages: [...prev.messages, botMessage],
+      messages: [...prev.messages, botMessage] as ChatbotMessage[],
       currentFlow: 'communities',
     }));
   };
@@ -149,7 +153,7 @@ const ActionProvider = ({ createChatBotMessage, setState, children }: ActionProv
 
     setState((prev: ChatbotState) => ({
       ...prev,
-      messages: [...prev.messages, botMessage],
+      messages: [...prev.messages, botMessage] as ChatbotMessage[],
     }));
 
     setTimeout(() => navigate('/communities'), 600);
@@ -162,7 +166,7 @@ const ActionProvider = ({ createChatBotMessage, setState, children }: ActionProv
 
     setState((prev: ChatbotState) => ({
       ...prev,
-      messages: [...prev.messages, botMessage],
+      messages: [...prev.messages, botMessage] as ChatbotMessage[],
     }));
 
     setTimeout(() => navigate('/new/community'), 600);
@@ -175,18 +179,20 @@ const ActionProvider = ({ createChatBotMessage, setState, children }: ActionProv
 
     setState((prev: ChatbotState) => ({
       ...prev,
-      messages: [...prev.messages, botMessage],
+      messages: [...prev.messages, botMessage] as ChatbotMessage[],
     }));
 
     setTimeout(() => navigate('/communities'), 600);
   };
 
   const handleMyCommunities = () => {
-    const botMessage = createChatBotMessage('Finding your communities...', { delay: 500 }) as ChatbotMessage;
+    const botMessage = createChatBotMessage('Finding your communities...', {
+      delay: 500,
+    }) as ChatbotMessage;
 
     setState((prev: ChatbotState) => ({
       ...prev,
-      messages: [...prev.messages, botMessage],
+      messages: [...prev.messages, botMessage] as ChatbotMessage[],
     }));
 
     // Navigate to communities page - user can see their communities there
@@ -202,7 +208,7 @@ const ActionProvider = ({ createChatBotMessage, setState, children }: ActionProv
 
     setState((prev: ChatbotState) => ({
       ...prev,
-      messages: [...prev.messages, botMessage],
+      messages: [...prev.messages, botMessage] as ChatbotMessage[],
       currentFlow: 'games',
     }));
   };
@@ -214,29 +220,33 @@ const ActionProvider = ({ createChatBotMessage, setState, children }: ActionProv
 
     setState((prev: ChatbotState) => ({
       ...prev,
-      messages: [...prev.messages, botMessage],
+      messages: [...prev.messages, botMessage] as ChatbotMessage[],
     }));
 
     setTimeout(() => navigate('/games'), 600);
   };
 
   const handleCreateGame = () => {
-    const botMessage = createChatBotMessage('Taking you to create a new game...', { delay: 500 }) as ChatbotMessage;
+    const botMessage = createChatBotMessage('Taking you to create a new game...', {
+      delay: 500,
+    }) as ChatbotMessage;
 
     setState((prev: ChatbotState) => ({
       ...prev,
-      messages: [...prev.messages, botMessage],
+      messages: [...prev.messages, botMessage] as ChatbotMessage[],
     }));
 
     setTimeout(() => navigate('/games'), 600);
   };
 
   const handleJoinGame = () => {
-    const botMessage = createChatBotMessage('Taking you to join a game...', { delay: 500 }) as ChatbotMessage;
+    const botMessage = createChatBotMessage('Taking you to join a game...', {
+      delay: 500,
+    }) as ChatbotMessage;
 
     setState((prev: ChatbotState) => ({
       ...prev,
-      messages: [...prev.messages, botMessage],
+      messages: [...prev.messages, botMessage] as ChatbotMessage[],
     }));
 
     setTimeout(() => navigate('/games'), 600);
@@ -250,7 +260,7 @@ const ActionProvider = ({ createChatBotMessage, setState, children }: ActionProv
 
     setState((prev: ChatbotState) => ({
       ...prev,
-      messages: [...prev.messages, botMessage],
+      messages: [...prev.messages, botMessage] as ChatbotMessage[],
     }));
   };
 
@@ -263,50 +273,58 @@ const ActionProvider = ({ createChatBotMessage, setState, children }: ActionProv
 
     setState((prev: ChatbotState) => ({
       ...prev,
-      messages: [...prev.messages, botMessage],
+      messages: [...prev.messages, botMessage] as ChatbotMessage[],
       currentFlow: 'messaging',
     }));
   };
 
   const handleGlobalMessages = () => {
-    const botMessage = createChatBotMessage('Taking you to global messages...', { delay: 500 }) as ChatbotMessage;
+    const botMessage = createChatBotMessage('Taking you to global messages...', {
+      delay: 500,
+    }) as ChatbotMessage;
 
     setState((prev: ChatbotState) => ({
       ...prev,
-      messages: [...prev.messages, botMessage],
+      messages: [...prev.messages, botMessage] as ChatbotMessage[],
     }));
 
     setTimeout(() => navigate('/messaging'), 600);
   };
 
   const handleDirectMessages = () => {
-    const botMessage = createChatBotMessage('Taking you to direct messages...', { delay: 500 }) as ChatbotMessage;
+    const botMessage = createChatBotMessage('Taking you to direct messages...', {
+      delay: 500,
+    }) as ChatbotMessage;
 
     setState((prev: ChatbotState) => ({
       ...prev,
-      messages: [...prev.messages, botMessage],
+      messages: [...prev.messages, botMessage] as ChatbotMessage[],
     }));
 
     setTimeout(() => navigate('/messaging/direct-message'), 600);
   };
 
   const handleStartNewChat = () => {
-    const botMessage = createChatBotMessage('Taking you to start a new chat...', { delay: 500 }) as ChatbotMessage;
+    const botMessage = createChatBotMessage('Taking you to start a new chat...', {
+      delay: 500,
+    }) as ChatbotMessage;
 
     setState((prev: ChatbotState) => ({
       ...prev,
-      messages: [...prev.messages, botMessage],
+      messages: [...prev.messages, botMessage] as ChatbotMessage[],
     }));
 
     setTimeout(() => navigate('/messaging'), 600);
   };
 
   const handleChatHistory = () => {
-    const botMessage = createChatBotMessage('Taking you to view chat history...', { delay: 500 }) as ChatbotMessage;
+    const botMessage = createChatBotMessage('Taking you to view chat history...', {
+      delay: 500,
+    }) as ChatbotMessage;
 
     setState((prev: ChatbotState) => ({
       ...prev,
-      messages: [...prev.messages, botMessage],
+      messages: [...prev.messages, botMessage] as ChatbotMessage[],
     }));
 
     setTimeout(() => navigate('/messaging'), 600);
@@ -321,7 +339,7 @@ const ActionProvider = ({ createChatBotMessage, setState, children }: ActionProv
 
     setState((prev: ChatbotState) => ({
       ...prev,
-      messages: [...prev.messages, botMessage],
+      messages: [...prev.messages, botMessage] as ChatbotMessage[],
       currentFlow: 'collections',
     }));
   };
@@ -333,7 +351,7 @@ const ActionProvider = ({ createChatBotMessage, setState, children }: ActionProv
 
     setState((prev: ChatbotState) => ({
       ...prev,
-      messages: [...prev.messages, botMessage],
+      messages: [...prev.messages, botMessage] as ChatbotMessage[],
     }));
 
     if (user) {
@@ -348,18 +366,20 @@ const ActionProvider = ({ createChatBotMessage, setState, children }: ActionProv
 
     setState((prev: ChatbotState) => ({
       ...prev,
-      messages: [...prev.messages, botMessage],
+      messages: [...prev.messages, botMessage] as ChatbotMessage[],
     }));
 
     setTimeout(() => navigate('/new/collection'), 600);
   };
 
   const handleBrowsePublicCollections = () => {
-    const botMessage = createChatBotMessage('Finding public collections...', { delay: 500 }) as ChatbotMessage;
+    const botMessage = createChatBotMessage('Finding public collections...', {
+      delay: 500,
+    }) as ChatbotMessage;
 
     setState((prev: ChatbotState) => ({
       ...prev,
-      messages: [...prev.messages, botMessage],
+      messages: [...prev.messages, botMessage] as ChatbotMessage[],
     }));
   };
 
@@ -373,7 +393,7 @@ const ActionProvider = ({ createChatBotMessage, setState, children }: ActionProv
 
     setState((prev: ChatbotState) => ({
       ...prev,
-      messages: [...prev.messages, botMessage],
+      messages: [...prev.messages, botMessage] as ChatbotMessage[],
     }));
   };
 
@@ -386,17 +406,19 @@ const ActionProvider = ({ createChatBotMessage, setState, children }: ActionProv
 
     setState((prev: ChatbotState) => ({
       ...prev,
-      messages: [...prev.messages, botMessage],
+      messages: [...prev.messages, botMessage] as ChatbotMessage[],
       currentFlow: 'profile',
     }));
   };
 
   const handleViewProfile = () => {
-    const botMessage = createChatBotMessage('Taking you to view your profile...', { delay: 500 }) as ChatbotMessage;
+    const botMessage = createChatBotMessage('Taking you to view your profile...', {
+      delay: 500,
+    }) as ChatbotMessage;
 
     setState((prev: ChatbotState) => ({
       ...prev,
-      messages: [...prev.messages, botMessage],
+      messages: [...prev.messages, botMessage] as ChatbotMessage[],
     }));
 
     if (user) {
@@ -405,11 +427,13 @@ const ActionProvider = ({ createChatBotMessage, setState, children }: ActionProv
   };
 
   const handleEditBiography = () => {
-    const botMessage = createChatBotMessage('Taking you to edit your biography...', { delay: 500 }) as ChatbotMessage;
+    const botMessage = createChatBotMessage('Taking you to edit your biography...', {
+      delay: 500,
+    }) as ChatbotMessage;
 
     setState((prev: ChatbotState) => ({
       ...prev,
-      messages: [...prev.messages, botMessage],
+      messages: [...prev.messages, botMessage] as ChatbotMessage[],
     }));
 
     if (user) {
@@ -424,7 +448,7 @@ const ActionProvider = ({ createChatBotMessage, setState, children }: ActionProv
 
     setState((prev: ChatbotState) => ({
       ...prev,
-      messages: [...prev.messages, botMessage],
+      messages: [...prev.messages, botMessage] as ChatbotMessage[],
     }));
 
     if (user) {
@@ -433,11 +457,13 @@ const ActionProvider = ({ createChatBotMessage, setState, children }: ActionProv
   };
 
   const handleViewActivity = () => {
-    const botMessage = createChatBotMessage('Taking you to view your activity...', { delay: 500 }) as ChatbotMessage;
+    const botMessage = createChatBotMessage('Taking you to view your activity...', {
+      delay: 500,
+    }) as ChatbotMessage;
 
     setState((prev: ChatbotState) => ({
       ...prev,
-      messages: [...prev.messages, botMessage],
+      messages: [...prev.messages, botMessage] as ChatbotMessage[],
     }));
 
     if (user) {
@@ -454,7 +480,7 @@ const ActionProvider = ({ createChatBotMessage, setState, children }: ActionProv
 
     setState((prev: ChatbotState) => ({
       ...prev,
-      messages: [...prev.messages, botMessage],
+      messages: [...prev.messages, botMessage] as ChatbotMessage[],
     }));
   };
 
@@ -471,7 +497,7 @@ const ActionProvider = ({ createChatBotMessage, setState, children }: ActionProv
 
     setState((prev: ChatbotState) => ({
       ...prev,
-      messages: [...prev.messages, botMessage],
+      messages: [...prev.messages, botMessage] as ChatbotMessage[],
     }));
   };
 
@@ -485,7 +511,7 @@ const ActionProvider = ({ createChatBotMessage, setState, children }: ActionProv
 
     setState((prev: ChatbotState) => ({
       ...prev,
-      messages: [...prev.messages, botMessage],
+      messages: [...prev.messages, botMessage] as ChatbotMessage[],
       searchQuery,
     }));
   };
@@ -493,7 +519,7 @@ const ActionProvider = ({ createChatBotMessage, setState, children }: ActionProv
   return (
     <div>
       {React.Children.map(children, child => {
-        return React.cloneElement(child as React.ReactElement<any>, {
+        return React.cloneElement(child as React.ReactElement, {
           actions: {
             // Welcome & Main Menu
             handleWelcome,
@@ -541,7 +567,7 @@ const ActionProvider = ({ createChatBotMessage, setState, children }: ActionProv
             handleHelp,
             handleDefault,
           },
-        });
+        } as any);
       })}
     </div>
   );

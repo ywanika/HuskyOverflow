@@ -38,7 +38,7 @@ const CustomChatbot: React.FC<CustomChatbotProps> = ({
   // Initialize messages
   useEffect(() => {
     if (messageHistory && messageHistory.length > 0) {
-      const convertedMessages = messageHistory.map((msg: ChatbotMessage) => ({
+      const convertedMessages: ChatbotMessage[] = messageHistory.map((msg: ChatbotMessage) => ({
         message: msg.message || '',
         type: (msg.type === 'user' ? 'user' : 'bot') as 'user' | 'bot',
         widget: msg.widget,
@@ -47,7 +47,7 @@ const CustomChatbot: React.FC<CustomChatbotProps> = ({
       setMessages(convertedMessages);
     } else {
       // Use initial messages from config
-      const initialMessages = config.initialMessages.map(
+      const initialMessages: ChatbotMessage[] = config.initialMessages.map(
         (msg: { message: string; widget?: string; payload?: unknown }) => ({
           message: msg.message || '',
           type: 'bot' as const,
