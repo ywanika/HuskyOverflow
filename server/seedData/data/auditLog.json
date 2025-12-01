@@ -1,0 +1,26 @@
+{
+  "auditLog1": {
+    "adminUsername": "admin",
+    "actionType": "create_user",
+    "targetUser": "newuser1",
+    "targetContent": null,
+    "reason": "Created new user account for testing purposes",
+    "timestamp": "2025-04-20T10:00:00Z"
+  },
+  "auditLog2": {
+    "adminUsername": "admin",
+    "actionType": "create_user",
+    "targetUser": "newuser2",
+    "targetContent": null,
+    "reason": "Created new moderator account",
+    "timestamp": "2025-04-19T10:30:00Z"
+  },
+  "auditLog3": {
+    "adminUsername": "admin",
+    "actionType": "create_user",
+    "targetUser": "testuser",
+    "targetContent": null,
+    "reason": "Created test user for development",
+    "timestamp": "2025-04-17T08:20:00Z"
+  }
+}

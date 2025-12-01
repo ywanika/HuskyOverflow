@@ -1,7 +1,7 @@
 import { useNavigate } from 'react-router-dom';
 import { ChangeEvent, useState } from 'react';
 import useLoginContext from './useLoginContext';
-import { createUser, loginUser } from '../services/userService';
+import { createUser, loginUser, checkSuspensionStatus } from '../services/userService';
 
 /**
  * Custom hook to manage authentication logic, including handling input changes,
@@ -118,6 +118,18 @@ const useAuth = (authType: 'login' | 'signup') => {
       }
 
       setUser(user);
+
+      // Check if user is suspended or banned
+      try {
+        const suspensionStatus = await checkSuspensionStatus(user.username);
+        if (suspensionStatus.isSuspended || suspensionStatus.isBanned) {
+          navigate('/suspended');
+          return;
+        }
+      } catch (error) {
+        // If suspension check fails, continue to home
+      }
+
       navigate('/home');
     } catch (error) {
       setErr((error as Error).message);

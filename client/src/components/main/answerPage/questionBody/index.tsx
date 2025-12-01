@@ -14,6 +14,7 @@ import './index.css';
  * - isModerator - Whether the current user is a moderator or admin
  * - onDeleteClick - Callback function when delete button is clicked
  * - onFlagClick - Callback function when flag button is clicked
+ * - onUnflagClick - Callback function when unflag button is clicked
  * - isFlagged - Whether the current user has already flagged this question
  */
 interface QuestionBodyProps {
@@ -25,6 +26,7 @@ interface QuestionBodyProps {
   isModerator?: boolean;
   onDeleteClick?: () => void;
   onFlagClick?: () => void;
+  onUnflagClick?: () => void;
   isFlagged?: boolean;
 }
 
@@ -41,6 +43,7 @@ interface QuestionBodyProps {
  * @param isModerator Whether the current user is a moderator
  * @param onDeleteClick Callback when delete button is clicked
  * @param onFlagClick Callback when flag button is clicked
+ * @param onUnflagClick Callback when unflag button is clicked
  * @param isFlagged Whether the current user has already flagged this question
  */
 const QuestionBody = ({
@@ -52,6 +55,7 @@ const QuestionBody = ({
   isModerator,
   onDeleteClick,
   onFlagClick,
+  onUnflagClick,
   isFlagged,
 }: QuestionBodyProps) => (
   <div id='questionBody' className='questionBody right_padding'>
@@ -63,19 +67,36 @@ const QuestionBody = ({
       <div className='question_author'>{askby}</div>
       <div className='answer_question_meta'>asked {meta}</div>
       <div style={{ display: 'flex', gap: '8px', marginTop: '8px' }}>
-        {onFlagClick && (
-          <Button
-            size='sm'
-            colorScheme='orange'
-            variant='outline'
-            onClick={e => {
-              e.stopPropagation();
-              onFlagClick();
-            }}
-            disabled={isFlagged}
-            aria-label={isFlagged ? 'Already flagged' : 'Flag this question'}>
-            {isFlagged ? 'Flagged' : 'Flag'}
-          </Button>
+        {!isModerator && (
+          <>
+            {isFlagged && onUnflagClick ? (
+              <Button
+                size='sm'
+                colorScheme='orange'
+                variant='solid'
+                onClick={e => {
+                  e.stopPropagation();
+                  onUnflagClick();
+                }}
+                aria-label='Unflag this question'>
+                Unflag
+              </Button>
+            ) : (
+              onFlagClick && (
+                <Button
+                  size='sm'
+                  colorScheme='orange'
+                  variant='outline'
+                  onClick={e => {
+                    e.stopPropagation();
+                    onFlagClick();
+                  }}
+                  aria-label='Flag this question'>
+                  Flag
+                </Button>
+              )
+            )}
+          </>
         )}
         {isModerator && onDeleteClick && (
           <Button

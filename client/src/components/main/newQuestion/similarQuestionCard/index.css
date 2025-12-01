@@ -10,7 +10,7 @@
 
 .similar-question-card:hover {
   background-color: var(--color-bg-tertiary);
-  border-color: var(--color-primary);
+  border-color: var(--color-primary-button);
   box-shadow: var(--shadow-md);
   transform: translateY(-2px);
 }
@@ -23,7 +23,7 @@
 .similar-question-title {
   font-size: var(--font-size-base);
   font-weight: 600;
-  color: var(--color-primary);
+  color: var(--color-primary-text);
   margin-bottom: var(--spacing-xs);
   line-height: 1.4;
 }

@@ -1,0 +1,193 @@
+/* Appeal Modal Styles */
+.appeal-modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, 0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+}
+
+.appeal-modal-content {
+  background-color: var(--color-bg-primary);
+  color: var(--color-text-primary);
+  padding: 1.5rem;
+  border-radius: 0.375rem;
+  max-width: 600px;
+  width: 90%;
+  box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+}
+
+.appeal-modal-title {
+  font-size: 1.25rem;
+  font-weight: 700;
+  color: var(--color-text-primary);
+  margin-bottom: 0.5rem;
+}
+
+.appeal-modal-description {
+  color: var(--color-text-secondary);
+  line-height: 1.5;
+}
+
+.appeal-modal-link {
+  color: var(--color-info);
+  text-decoration: underline;
+  transition: color 0.2s;
+}
+
+.appeal-modal-link:hover {
+  color: var(--color-accent);
+}
+
+.appeal-modal-link:focus {
+  outline: 2px solid var(--color-focus);
+  outline-offset: 2px;
+  border-radius: 2px;
+}
+
+.appeal-modal-label {
+  margin-bottom: 0.5rem;
+  font-weight: 600;
+  color: var(--color-text-primary);
+}
+
+.appeal-modal-required {
+  color: var(--color-error);
+}
+
+.appeal-modal-textarea {
+  width: 100%;
+  min-height: 120px;
+  padding: 0.75rem;
+  background-color: var(--color-bg-secondary);
+  color: var(--color-text-primary);
+  border: 2px solid var(--color-bg-tertiary);
+  border-radius: 0.375rem;
+  font-family: inherit;
+  font-size: 0.875rem;
+  resize: vertical;
+  transition: border-color 0.2s, box-shadow 0.2s;
+}
+
+.appeal-modal-textarea:focus {
+  outline: none;
+  border-color: var(--color-focus);
+  box-shadow: 0 0 0 3px var(--color-focus-ring);
+}
+
+.appeal-modal-textarea:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+  background-color: var(--color-bg-tertiary);
+}
+
+.appeal-modal-textarea::placeholder {
+  color: var(--color-text-muted);
+}
+
+.appeal-modal-help-text {
+  font-size: 0.875rem;
+  color: var(--color-text-muted);
+  margin-top: 0.25rem;
+}
+
+.appeal-modal-word-count {
+  font-size: 0.875rem;
+}
+
+.appeal-modal-word-count-valid {
+  color: var(--color-success);
+}
+
+.appeal-modal-word-count-invalid {
+  color: var(--color-text-muted);
+}
+
+.appeal-modal-error {
+  color: var(--color-error);
+  background-color: rgba(211, 47, 47, 0.1);
+  padding: 0.75rem;
+  border-radius: 0.375rem;
+  border: 1px solid var(--color-error);
+}
+
+.appeal-modal-button-group {
+  display: flex;
+  gap: 1rem;
+  justify-content: flex-end;
+  margin-top: 1rem;
+}
+
+.appeal-modal-button {
+  padding: 0.5rem 1rem;
+  border-radius: 0.375rem;
+  font-weight: 500;
+  font-size: 0.875rem;
+  cursor: pointer;
+  transition: all 0.2s;
+  min-height: 44px;
+  border: 2px solid transparent;
+}
+
+.appeal-modal-button:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.appeal-modal-button-cancel {
+  background-color: var(--color-bg-secondary);
+  color: var(--color-text-primary);
+  border-color: var(--color-bg-tertiary);
+}
+
+.appeal-modal-button-cancel:hover:not(:disabled) {
+  background-color: var(--color-bg-tertiary);
+  border-color: var(--color-bg-tertiary);
+}
+
+.appeal-modal-button-submit {
+  background-color: var(--color-info);
+  color: var(--color-bg-primary);
+  border-color: var(--color-info);
+}
+
+.appeal-modal-button-submit:hover:not(:disabled) {
+  background-color: var(--color-accent);
+  border-color: var(--color-accent);
+  color: #1a202c;
+  transform: translateY(-1px);
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+}
+
+.appeal-modal-button-submit:focus {
+  outline: none;
+  box-shadow: 0 0 0 3px var(--color-focus-ring);
+}
+
+.appeal-modal-alert {
+  background-color: rgba(246, 173, 85, 0.1);
+  border: 1px solid var(--color-warning);
+  border-radius: 0.375rem;
+  padding: 0.75rem;
+  color: var(--color-text-primary);
+}
+
+[data-theme='dark'] .appeal-modal-alert {
+  background-color: rgba(246, 173, 85, 0.15);
+}
+
+/* Dark mode specific overrides */
+[data-theme='dark'] .appeal-modal-overlay {
+  background-color: rgba(0, 0, 0, 0.8);
+}
+
+[data-theme='dark'] .appeal-modal-content {
+  background-color: var(--color-bg-secondary);
+  border: 1px solid var(--color-bg-tertiary);
+}
+

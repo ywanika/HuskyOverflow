@@ -120,28 +120,51 @@ export interface CollectionUpdatePayload {
  * - `type`: The type of moderation action.
  * - `questionId`, `answerId`, or `commentId`: The ID of the content affected.
  * - `deletedBy`, `flaggedBy`, `reviewedBy`, or `dismissedBy`: The username of the user who performed the action.
+ * - `appealId`: The ID of the appeal (for appeal-related events).
+ * - `contentId`: The ID of the content being appealed (for appeal submission).
+ * - `contentType`: The type of content being appealed (for appeal submission).
+ * - `appealUser`: The username of the user who submitted the appeal.
+ * - `processedBy`: The username of the moderator who processed the appeal.
  */
 export interface ModerationUpdatePayload {
   type:
     | 'questionDeleted'
     | 'answerDeleted'
     | 'commentDeleted'
+    | 'messageDeleted'
+    | 'questionRestored'
+    | 'answerRestored'
+    | 'commentRestored'
+    | 'messageRestored'
     | 'questionFlagged'
     | 'answerFlagged'
     | 'commentFlagged'
+    | 'questionUnflagged'
+    | 'answerUnflagged'
+    | 'commentUnflagged'
     | 'questionReviewed'
     | 'answerReviewed'
     | 'commentReviewed'
     | 'questionFlagDismissed'
     | 'answerFlagDismissed'
-    | 'commentFlagDismissed';
+    | 'commentFlagDismissed'
+    | 'appealSubmitted'
+    | 'appealApproved'
+    | 'appealRejected';
   questionId?: string;
   answerId?: string;
   commentId?: string;
   deletedBy?: string;
+  restoredBy?: string;
   flaggedBy?: string;
+  unflaggedBy?: string;
   reviewedBy?: string;
   dismissedBy?: string;
+  appealId?: string;
+  contentId?: string;
+  contentType?: 'question' | 'answer' | 'comment';
+  appealUser?: string;
+  processedBy?: string;
 }
 
 /**

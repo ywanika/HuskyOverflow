@@ -78,9 +78,9 @@
 
 .save-btn {
   padding: var(--spacing-sm) var(--spacing-md);
-  background-color: var(--color-accent);
+  background-color: var(--color-accent-button);
   color: #1a202c;
-  border: 2px solid var(--color-accent);
+  border: 2px solid var(--color-accent-button);
   border-radius: var(--radius-md);
   font-size: var(--font-size-sm);
   font-weight: 600;
@@ -91,8 +91,8 @@
 }
 
 .save-btn:hover {
-  background-color: var(--color-primary);
-  border-color: var(--color-primary);
+  background-color: var(--color-primary-button);
+  border-color: var(--color-primary-button);
   transform: translateY(-1px);
   box-shadow: var(--shadow-md);
 }
@@ -113,8 +113,8 @@
 }
 
 .close-btn:hover {
-  background-color: var(--color-primary);
-  border-color: var(--color-primary);
+  background-color: var(--color-primary-button);
+  border-color: var(--color-primary-button);
   color: #1a202c;
   transform: translateY(-1px);
   box-shadow: var(--shadow-md);

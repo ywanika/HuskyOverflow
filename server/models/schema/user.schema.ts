@@ -14,7 +14,6 @@ const userSchema: Schema = new Schema(
     username: {
       type: String,
       unique: true,
-      immutable: true,
     },
     password: {
       type: String,
@@ -40,6 +39,14 @@ const userSchema: Schema = new Schema(
       default: null,
     },
     suspensionReason: {
+      type: String,
+      default: '',
+    },
+    isBanned: {
+      type: Boolean,
+      default: false,
+    },
+    banReason: {
       type: String,
       default: '',
     },

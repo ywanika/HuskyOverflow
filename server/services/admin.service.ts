@@ -6,7 +6,7 @@ import TagModel from '../models/tags.model';
 import CommunityModel from '../models/community.model';
 import CollectionModel from '../models/collection.model';
 import MessageModel from '../models/messages.model';
-import { DatabaseUser } from '../types/types';
+import { DatabaseUser, User, UserResponse, SafeDatabaseUser } from '../types/types';
 
 /**
  * Response type for admin operations
@@ -334,5 +334,55 @@ export const getDashboardMetrics = async (): Promise<DashboardMetrics> => {
     };
   } catch (error) {
     throw new Error(`Error fetching dashboard metrics: ${(error as Error).message}`);
+  }
+};
+
+/**
+ * Creates a new user account with a specific role (Admin only)
+ * @param username - The username for the new user
+ * @param password - The password for the new user
+ * @param role - The role to assign ('user', 'moderator', or 'admin')
+ * @returns Promise resolving to the created user or an error
+ */
+export const createUserWithRole = async (
+  username: string,
+  password: string,
+  role: 'user' | 'moderator' | 'admin',
+): Promise<UserResponse> => {
+  try {
+    // Check if username already exists
+    const existingUser = await UserModel.findOne({ username });
+    if (existingUser) {
+      return { error: 'Username already exists' };
+    }
+
+    const user: User = {
+      username,
+      password,
+      role,
+      dateJoined: new Date(),
+      biography: '',
+      agreedToGuidelines: true, // Admin-created users are assumed to agree to guidelines
+    };
+
+    const result: DatabaseUser = await UserModel.create(user);
+
+    if (!result) {
+      throw Error('Failed to create user');
+    }
+
+    // Remove password field from returned object
+    const safeUser: SafeDatabaseUser = {
+      _id: result._id,
+      username: result.username,
+      dateJoined: result.dateJoined,
+      biography: result.biography,
+      agreedToGuidelines: result.agreedToGuidelines,
+      role: result.role,
+    };
+
+    return safeUser;
+  } catch (error) {
+    return { error: `Error occurred when creating user: ${error}` };
   }
 };

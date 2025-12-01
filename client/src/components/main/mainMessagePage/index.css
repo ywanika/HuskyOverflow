@@ -48,7 +48,7 @@
 }
 
 .tab-button:hover {
-  color: var(--color-primary);
+  color: var(--color-primary-text);
   background-color: var(--color-bg-secondary);
   transform: translateY(-1px);
 }
@@ -56,13 +56,13 @@
 .tab-button:focus {
   outline: 2px solid var(--color-focus);
   outline-offset: -2px;
-  color: var(--color-primary);
+  color: var(--color-primary-text);
   background-color: var(--color-bg-secondary);
 }
 
 .tab-button.active {
-  color: var(--color-primary);
-  border-bottom-color: var(--color-primary);
+  color: var(--color-primary-text);
+  border-bottom-color: var(--color-primary-text);
   background-color: var(--color-bg-secondary);
   font-weight: 600;
 }
@@ -98,7 +98,7 @@
   }
   
   .tab-button.active {
-    border-left-color: var(--color-primary);
+    border-left-color: var(--color-primary-text);
     border-bottom-color: transparent;
   }
 }

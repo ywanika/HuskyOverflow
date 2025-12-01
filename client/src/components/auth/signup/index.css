@@ -59,7 +59,7 @@ form {
 }
 
 .input-text:focus {
-  border-color: var(--color-primary);
+  border-color: var(--color-primary-button);
   box-shadow: 0 0 5px rgba(0, 123, 255, 0.5);
 }
 
@@ -95,7 +95,7 @@ form {
 }
 
 .login-link:hover {
-  color: var(--color-primary);
+  color: var(--color-primary-text);
   text-decoration: underline;
 }
 

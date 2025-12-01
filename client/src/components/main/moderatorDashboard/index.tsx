@@ -8,28 +8,43 @@ import {
   Button,
   Text,
   Badge,
+  Card,
+  Tabs,
   Spinner,
-  CardRoot as Card,
-  CardBody,
-  CardHeader,
-  AlertRoot as Alert,
+  Alert,
+  Textarea,
 } from '@chakra-ui/react';
 import Markdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
 import useModeratorDashboard from '../../../hooks/useModeratorDashboard';
 import useUserContext from '../../../hooks/useUserContext';
 import DeleteContentModal from '../../moderation/DeleteContentModal';
-import { FlaggedContentItem } from '../../../services/moderationService';
+import { AppealItem } from '@fake-stack-overflow/shared';
+import type { FlaggedContentItem } from '../../../services/moderationService';
 import { getMetaData } from '../../../tool';
 import './index.css';
+
+/**
+ * ModeratorDashboard component allows moderators to review and manage flagged content
+ * including questions, answers, comments, and user appeals.
+ */
+
+type FlaggableContentType = 'question' | 'answer' | 'comment' | 'message';
+type FlaggedSubTabType = 'questions' | 'answers' | 'comments' | 'messages';
+type TabType = 'flagged' | 'appeals' | 'deleted';
 
 const ModeratorDashboard = () => {
   const navigate = useNavigate();
   const { user } = useUserContext();
-  const [activeTab, setActiveTab] = useState<'questions' | 'answers' | 'comments'>('questions');
+  const [activeTab, setActiveTab] = useState<TabType>('flagged');
+  const [flaggedSubTab, setFlaggedSubTab] = useState<FlaggedSubTabType>('questions');
+  const [appealModResponse, setAppealModResponse] = useState<Record<string, string>>({});
+  const [processingAppeal, setProcessingAppeal] = useState<string | null>(null);
 
   const {
     flaggedContent,
+    appeals,
+    deletedContent,
     loading,
     error,
     handleMarkAsReviewed,
@@ -38,6 +53,9 @@ const ModeratorDashboard = () => {
     deleteModal,
     setDeleteModal,
     handleDeleteConfirm,
+    handleApproveAppeal,
+    handleRejectAppeal,
+    handleRestoreContent,
   } = useModeratorDashboard();
 
   // Check if user is moderator or admin
@@ -49,52 +67,80 @@ const ModeratorDashboard = () => {
 
   const getContentTitle = (
     item: Record<string, unknown>,
-    contentType: 'question' | 'answer' | 'comment',
+    contentType: FlaggableContentType,
   ): string => {
     if (contentType === 'question') {
-      return (
-        (typeof item.title === 'string' ? item.title : 'Untitled Question') || 'Untitled Question'
-      );
-    } else if (contentType === 'answer') {
-      const text = typeof item.text === 'string' ? item.text : '';
-      return text.substring(0, 50) || 'Answer';
-    } else {
-      const text = typeof item.text === 'string' ? item.text : '';
-      return text.substring(0, 50) || 'Comment';
+      return typeof item.title === 'string' ? item.title : 'Untitled Question';
     }
+    if (contentType === 'message') {
+      return 'Global Message';
+    }
+    const text = typeof item.text === 'string' ? item.text : '';
+    return text || (contentType === 'answer' ? 'Answer' : 'Comment');
   };
 
   const getContentText = (item: Record<string, unknown>): string => {
-    if (typeof item.text === 'string') {
-      return item.text;
-    }
-    if (typeof item.title === 'string') {
-      return item.title;
-    }
+    if (typeof item.msg === 'string') return item.msg; // For messages
+    if (typeof item.text === 'string') return item.text;
+    if (typeof item.title === 'string') return item.title;
     return 'No content';
+  };
+
+  const getAuthor = (item: Record<string, unknown>): string => {
+    if (typeof item.askedBy === 'string') return item.askedBy; // For questions
+    if (typeof item.ansBy === 'string') return item.ansBy; // For answers
+    if (typeof item.comBy === 'string') return item.comBy; // For comments
+    if (typeof item.commentBy === 'string') return item.commentBy; // For comments (alternative)
+    if (typeof item.from === 'string') return item.from; // For messages
+    return 'Unknown';
+  };
+
+  const getDate = (item: Record<string, unknown>): Date => {
+    if (item.askDateTime instanceof Date) return item.askDateTime; // For questions
+    if (item.ansDateTime instanceof Date) return item.ansDateTime; // For answers
+    if (item.comDateTime instanceof Date) return item.comDateTime; // For comments
+    if (item.commentDateTime instanceof Date) return item.commentDateTime; // For comments (alternative)
+    if (item.timestamp instanceof Date) return item.timestamp; // For messages
+    if (typeof item.askDateTime === 'string') return new Date(item.askDateTime);
+    if (typeof item.ansDateTime === 'string') return new Date(item.ansDateTime);
+    if (typeof item.comDateTime === 'string') return new Date(item.comDateTime);
+    if (typeof item.commentDateTime === 'string') return new Date(item.commentDateTime);
+    if (typeof item.timestamp === 'string') return new Date(item.timestamp);
+    return new Date();
+  };
+
+  const getContentTypeColor = (contentType: FlaggableContentType): string => {
+    switch (contentType) {
+      case 'question':
+        return 'blue';
+      case 'answer':
+        return 'green';
+      case 'comment':
+        return 'purple';
+      case 'message':
+        return 'orange';
+      default:
+        return 'gray';
+    }
   };
 
   const renderFlaggedItem = (
     item: FlaggedContentItem,
-    contentType: 'question' | 'answer' | 'comment',
+    contentType: FlaggableContentType,
     _index: number,
   ) => {
     const title = getContentTitle(item.content, contentType);
     const text = getContentText(item.content);
-    const author =
-      (typeof item.content.askedBy === 'string' ? item.content.askedBy : null) ||
-      (typeof item.content.ansBy === 'string' ? item.content.ansBy : null) ||
-      (typeof item.content.commentBy === 'string' ? item.content.commentBy : null) ||
-      'Unknown';
-    const date =
-      (item.content.askDateTime instanceof Date ? item.content.askDateTime : null) ||
-      (item.content.ansDateTime instanceof Date ? item.content.ansDateTime : null) ||
-      (item.content.commentDateTime instanceof Date ? item.content.commentDateTime : null) ||
-      new Date();
+    const author = getAuthor(item.content);
+    const date = getDate(item.content);
 
     return (
-      <Card key={`${contentType}-${item._id}`} mb={4} borderLeft='4px' borderColor='orange.500'>
-        <CardHeader>
+      <Card.Root
+        key={`${contentType}-${item._id}`}
+        mb={4}
+        borderLeft='4px'
+        borderColor='orange.500'>
+        <Card.Header>
           <HStack justify='space-between' align='start'>
             <VStack align='start' gap={1} flex={1}>
               <HStack>
@@ -109,8 +155,8 @@ const ModeratorDashboard = () => {
               </Text>
             </VStack>
           </HStack>
-        </CardHeader>
-        <CardBody>
+        </Card.Header>
+        <Card.Body>
           <Box mb={4} p={3} bg='gray.50' borderRadius='md' maxH='200px' overflowY='auto'>
             <Markdown remarkPlugins={[remarkGfm]}>{text}</Markdown>
           </Box>
@@ -120,57 +166,54 @@ const ModeratorDashboard = () => {
             </Text>
             <HStack wrap='wrap' gap={2}>
               {item.flaggedBy.map((username: string, idx: number) => (
-                <Badge key={idx} colorScheme='orange' variant='outline'>
+                <span key={idx} className='badge-user-outline'>
                   {username}
-                </Badge>
+                </span>
               ))}
             </HStack>
-            <Text fontSize='xs' color='gray.500'>
+            <Text className='flagged-date'>
               First flagged: {getMetaData(new Date(item.flaggedAt[0]))}
             </Text>
           </VStack>
           <HStack gap={2} flexWrap='wrap'>
             {contentType === 'question' && (
               <Button
-                size='sm'
-                colorScheme='blue'
-                variant='outline'
+                className='btn-view-question'
                 onClick={() => navigate(`/question/${item._id}`)}>
                 View Question
               </Button>
             )}
+            {contentType === 'message' && (
+              <Button className='btn-view-message' onClick={() => navigate('/messages')}>
+                View Messages
+              </Button>
+            )}
             <Button
-              size='sm'
-              colorScheme='green'
-              variant='outline'
+              className='btn-mark-reviewed'
               onClick={() => handleMarkAsReviewed(contentType, item._id)}>
               Mark as Reviewed
             </Button>
             <Button
-              size='sm'
-              colorScheme='orange'
-              variant='outline'
+              className='btn-dismiss-flag'
               onClick={() => handleDismissFlag(contentType, item._id)}>
               Dismiss Flag
             </Button>
             <Button
-              size='sm'
-              colorScheme='red'
-              variant='outline'
+              className='btn-delete-content'
               onClick={() => handleDeleteClick(contentType, item._id, title)}>
               Delete
             </Button>
           </HStack>
-        </CardBody>
-      </Card>
+        </Card.Body>
+      </Card.Root>
     );
   };
 
   if (loading) {
     return (
-      <Box p={8} textAlign='center'>
+      <Box className='moderator-loading'>
         <Spinner size='xl' />
-        <Text mt={4}>Loading flagged content...</Text>
+        <Text className='moderator-loading-text'>Loading flagged content...</Text>
       </Box>
     );
   }
@@ -178,15 +221,156 @@ const ModeratorDashboard = () => {
   if (error) {
     return (
       <Box p={8}>
-        <Alert status='error'>{error}</Alert>
+        <Alert.Root status='error'>
+          <Alert.Indicator />
+          <Alert.Title>{error}</Alert.Title>
+        </Alert.Root>
       </Box>
     );
   }
 
+  const renderAppealItem = (appeal: AppealItem) => {
+    const { content, contentType, appealUser, _id: appealId, timestamp } = appeal;
+    const title = getContentTitle(content, contentType);
+    const text = getContentText(content);
+    const deletedInfo = content.deleted as
+      | { deleteReason?: string; deletedBy?: string }
+      | undefined;
+
+    return (
+      <Card.Root key={`appeal-${appealId}`} className='appeal-card'>
+        <Card.Header>
+          <VStack align='start' gap={1} flex={1}>
+            <HStack>
+              <Badge colorScheme='blue'>APPEAL</Badge>
+              <Badge colorScheme='red'>{contentType.toUpperCase()}</Badge>
+            </HStack>
+            <Heading size='sm'>{title}</Heading>
+            <Text className='appeal-meta'>
+              Appealed by {appealUser} • {getMetaData(new Date(timestamp))}
+            </Text>
+            {deletedInfo && (
+              <Text className='appeal-deleted-info'>
+                Deleted by {deletedInfo.deletedBy || 'Unknown'} • Reason:{' '}
+                {deletedInfo.deleteReason || 'No reason provided'}
+              </Text>
+            )}
+          </VStack>
+        </Card.Header>
+        <Card.Body>
+          <Box className='appeal-content-box'>
+            <Markdown remarkPlugins={[remarkGfm]}>{text}</Markdown>
+          </Box>
+          <VStack align='start' gap={2} className='appeal-reason-section'>
+            <Text className='appeal-reason-label'>Appeal Reason:</Text>
+            <Box className='appeal-reason-box'>
+              <Text className='appeal-reason-text'>{appeal.reason}</Text>
+            </Box>
+          </VStack>
+          <Box className='appeal-response-section'>
+            <Text className='appeal-response-label'>Moderator Response (optional):</Text>
+            <Textarea
+              className='appeal-response-textarea'
+              value={appealModResponse[appealId] || ''}
+              onChange={e =>
+                setAppealModResponse({ ...appealModResponse, [appealId]: e.target.value })
+              }
+              placeholder='Optional response to the user...'
+              rows={3}
+              disabled={processingAppeal === appealId}
+            />
+          </Box>
+          <HStack gap={2} flexWrap='wrap'>
+            <Button
+              size='sm'
+              colorScheme='green'
+              variant='solid'
+              onClick={async () => {
+                setProcessingAppeal(appealId);
+                await handleApproveAppeal(appealId, appealModResponse[appealId] || undefined);
+                setAppealModResponse({ ...appealModResponse, [appealId]: '' });
+                setProcessingAppeal(null);
+              }}
+              disabled={processingAppeal === appealId}
+              loading={processingAppeal === appealId}
+              loadingText='Approving...'>
+              Approve Appeal
+            </Button>
+            <Button
+              size='sm'
+              colorScheme='red'
+              variant='solid'
+              onClick={async () => {
+                setProcessingAppeal(appealId);
+                await handleRejectAppeal(appealId, appealModResponse[appealId] || undefined);
+                setAppealModResponse({ ...appealModResponse, [appealId]: '' });
+                setProcessingAppeal(null);
+              }}
+              disabled={processingAppeal === appealId}
+              loading={processingAppeal === appealId}
+              loadingText='Rejecting...'>
+              Reject Appeal
+            </Button>
+          </HStack>
+        </Card.Body>
+      </Card.Root>
+    );
+  };
+
+  const renderDeletedItem = (item: {
+    _id: string;
+    contentType: FlaggableContentType;
+    content: Record<string, unknown>;
+    contentPreview: string;
+    authorUsername: string;
+    deleteReason: string;
+    deletedAt: Date;
+  }) => {
+    const { _id: deletedId, contentType, content, authorUsername, deleteReason, deletedAt } = item;
+    const text = getContentText(content);
+    const title = getContentTitle(content, contentType);
+    return (
+      <Card.Root key={`deleted-${deletedId}`} className='deleted-card'>
+        <Card.Header>
+          <HStack justify='space-between' align='start'>
+            <VStack align='start' gap={1} flex={1}>
+              <HStack>
+                <Badge colorScheme='red'>DELETED</Badge>
+                <Badge colorScheme={getContentTypeColor(contentType)}>
+                  {contentType.toUpperCase()}
+                </Badge>
+              </HStack>
+              <Heading size='sm'>{title}</Heading>
+              <Text className='deleted-meta'>
+                Posted by {authorUsername} • Deleted {getMetaData(new Date(deletedAt))}
+              </Text>
+              <Text className='deleted-reason'>Reason: {deleteReason}</Text>
+            </VStack>
+          </HStack>
+        </Card.Header>
+        <Card.Body>
+          <Box className='deleted-content-box'>
+            <Markdown remarkPlugins={[remarkGfm]}>{text}</Markdown>
+          </Box>
+          <HStack gap={2} flexWrap='wrap'>
+            <Button
+              size='sm'
+              colorScheme='green'
+              variant='solid'
+              onClick={() => handleRestoreContent(contentType, deletedId)}>
+              Restore Content
+            </Button>
+          </HStack>
+        </Card.Body>
+      </Card.Root>
+    );
+  };
+
   const totalFlagged =
     flaggedContent.questions.length +
     flaggedContent.answers.length +
-    flaggedContent.comments.length;
+    flaggedContent.comments.length +
+    flaggedContent.messages.length;
 
   return (
     <Box p={8}>
@@ -195,36 +379,43 @@ const ModeratorDashboard = () => {
           <Heading size='lg' mb={2}>
             Moderator Dashboard
           </Heading>
-          <Text color='gray.600'>
+          <Text className='moderator-dashboard-subtitle'>
             Review and manage flagged content. Total flagged items: {totalFlagged}
           </Text>
         </Box>
 
-        <Box>
-          <HStack gap={2} mb={4} borderBottom='1px' borderColor='gray.200'>
-            <Button
-              variant={activeTab === 'questions' ? 'solid' : 'ghost'}
-              colorScheme={activeTab === 'questions' ? 'blue' : 'gray'}
-              onClick={() => setActiveTab('questions')}>
-              Questions ({flaggedContent.questions.length})
-            </Button>
-            <Button
-              variant={activeTab === 'answers' ? 'solid' : 'ghost'}
-              colorScheme={activeTab === 'answers' ? 'blue' : 'gray'}
-              onClick={() => setActiveTab('answers')}>
-              Answers ({flaggedContent.answers.length})
-            </Button>
-            <Button
-              variant={activeTab === 'comments' ? 'solid' : 'ghost'}
-              colorScheme={activeTab === 'comments' ? 'blue' : 'gray'}
-              onClick={() => setActiveTab('comments')}>
-              Comments ({flaggedContent.comments.length})
-            </Button>
-          </HStack>
+        <Tabs.Root
+          value={activeTab}
+          onValueChange={e => {
+            setActiveTab(e.value as TabType);
+            // Reset flagged subtab when switching away from flagged tab
+            if (e.value !== 'flagged') {
+              setFlaggedSubTab('questions');
+            }
+          }}>
+          <Tabs.List>
+            <Tabs.Trigger value='flagged'>Flagged ({totalFlagged})</Tabs.Trigger>
+            <Tabs.Trigger value='appeals'>Appeals ({appeals.length})</Tabs.Trigger>
+            <Tabs.Trigger value='deleted'>Delete History ({deletedContent.length})</Tabs.Trigger>
+          </Tabs.List>
 
-          <Box>
-            {activeTab === 'questions' && (
-              <Box>
+          <Tabs.Content value='flagged'>
+            <Tabs.Root
+              value={flaggedSubTab}
+              onValueChange={e => setFlaggedSubTab(e.value as FlaggedSubTabType)}>
+              <Tabs.List>
+                <Tabs.Trigger value='questions'>
+                  Questions ({flaggedContent.questions.length})
+                </Tabs.Trigger>
+                <Tabs.Trigger value='answers'>
+                  Answers ({flaggedContent.answers.length})
+                </Tabs.Trigger>
+                <Tabs.Trigger value='comments'>
+                  Comments ({flaggedContent.comments.length})
+                </Tabs.Trigger>
+              </Tabs.List>
+
+              <Tabs.Content value='questions'>
                 {flaggedContent.questions.length === 0 ? (
                   <Text color='gray.500' textAlign='center' py={8}>
                     No flagged questions
@@ -234,10 +425,8 @@ const ModeratorDashboard = () => {
                     renderFlaggedItem(item, 'question', index),
                   )
                 )}
-              </Box>
-            )}
-            {activeTab === 'answers' && (
-              <Box>
+              </Tabs.Content>
+              <Tabs.Content value='answers'>
                 {flaggedContent.answers.length === 0 ? (
                   <Text color='gray.500' textAlign='center' py={8}>
                     No flagged answers
@@ -247,10 +436,8 @@ const ModeratorDashboard = () => {
                     renderFlaggedItem(item, 'answer', index),
                   )
                 )}
-              </Box>
-            )}
-            {activeTab === 'comments' && (
-              <Box>
+              </Tabs.Content>
+              <Tabs.Content value='comments'>
                 {flaggedContent.comments.length === 0 ? (
                   <Text color='gray.500' textAlign='center' py={8}>
                     No flagged comments
@@ -260,10 +447,30 @@ const ModeratorDashboard = () => {
                     renderFlaggedItem(item, 'comment', index),
                   )
                 )}
-              </Box>
+              </Tabs.Content>
+            </Tabs.Root>
+          </Tabs.Content>
+
+          <Tabs.Content value='appeals'>
+            {appeals.length === 0 ? (
+              <Text color='gray.500' textAlign='center' py={8}>
+                No pending appeals
+              </Text>
+            ) : (
+              appeals.map(appeal => renderAppealItem(appeal))
             )}
-          </Box>
-        </Box>
+          </Tabs.Content>
+
+          <Tabs.Content value='deleted'>
+            {deletedContent.length === 0 ? (
+              <Text color='gray.500' textAlign='center' py={8}>
+                No deleted content
+              </Text>
+            ) : (
+              deletedContent.map(item => renderDeletedItem(item))
+            )}
+          </Tabs.Content>
+        </Tabs.Root>
       </VStack>
 
       <DeleteContentModal

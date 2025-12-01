@@ -18,9 +18,9 @@ interface UserListPageProps {
  * based on search content filtering.
  * It includes a header with a search bar.
  */
-const UsersListPage = (props: UserListPageProps) => {
+const UsersListPage = (props: UserListPageProps = {}) => {
   const { userList, setUserFilter } = useUsersListPage();
-  const { handleUserSelect = null } = props;
+  const { handleUserSelect } = props;
   const navigate = useNavigate();
 
   /**

@@ -4,7 +4,7 @@ import useHeader from '../../hooks/useHeader';
 import './index.css';
 import useUserContext from '../../hooks/useUserContext';
 import ThemeToggleButton from '../layout/ThemeToggleButton';
-import { useTheme } from '../../contexts/ThemeContext';
+import { useTheme } from '../../hooks/useTheme';
 import NotificationBell from '../notifications/NotificationBell';
 
 /**
@@ -68,7 +68,7 @@ const Header = () => {
           <NotificationBell />
           <ThemeToggleButton />
           <Button
-            className='logout-button btn btn-secondary'
+            className='logout-button btn btn-primary'
             onClick={handleSignOut}
             variant='outline'
             flexShrink={0}

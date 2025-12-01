@@ -18,8 +18,10 @@ import { Comment, DatabaseComment } from '../../../../types/types';
  * - onDeleteClick Callback function when delete button is clicked
  * - onDeleteComment Callback function when delete button is clicked for a comment
  * - onFlagClick Callback function when flag button is clicked
+ * - onUnflagClick Callback function when unflag button is clicked
  * - isFlagged Whether the current user has already flagged this answer
  * - onFlagComment Callback function when flag button is clicked for a comment
+ * - onUnflagComment Callback function when unflag button is clicked for a comment
  * - getIsCommentFlagged Function to check if a comment is already flagged
  */
 interface AnswerProps {
@@ -33,8 +35,10 @@ interface AnswerProps {
   onDeleteClick?: () => void;
   onDeleteComment?: (commentId: string) => void;
   onFlagClick?: () => void;
+  onUnflagClick?: () => void;
   isFlagged?: boolean;
   onFlagComment?: (commentId: string) => void;
+  onUnflagComment?: (commentId: string) => void;
   getIsCommentFlagged?: (commentId: string) => boolean;
 }
 
@@ -51,8 +55,10 @@ interface AnswerProps {
  * @param onDeleteClick Callback when delete button is clicked
  * @param onDeleteComment Callback when delete button is clicked for a comment
  * @param onFlagClick Callback when flag button is clicked
+ * @param onUnflagClick Callback when unflag button is clicked
  * @param isFlagged Whether the current user has already flagged this answer
  * @param onFlagComment Callback when flag button is clicked for a comment
+ * @param onUnflagComment Callback when unflag button is clicked for a comment
  * @param getIsCommentFlagged Function to check if a comment is already flagged
  */
 const AnswerView = ({
@@ -61,12 +67,15 @@ const AnswerView = ({
   meta,
   comments,
   handleAddComment,
+  answerId: _answerId,
   isModerator,
   onDeleteClick,
   onDeleteComment,
   onFlagClick,
+  onUnflagClick,
   isFlagged,
   onFlagComment,
+  onUnflagComment,
   getIsCommentFlagged,
 }: AnswerProps) => (
   <div className='answer right_padding'>
@@ -77,19 +86,36 @@ const AnswerView = ({
       <div className='answer_author'>{ansBy}</div>
       <div className='answer_question_meta'>{meta}</div>
       <div style={{ display: 'flex', gap: '8px', marginTop: '8px' }}>
-        {onFlagClick && (
-          <Button
-            size='sm'
-            colorScheme='orange'
-            variant='outline'
-            onClick={e => {
-              e.stopPropagation();
-              onFlagClick();
-            }}
-            disabled={isFlagged}
-            aria-label={isFlagged ? 'Already flagged' : 'Flag this answer'}>
-            {isFlagged ? 'Flagged' : 'Flag'}
-          </Button>
+        {!isModerator && (
+          <>
+            {isFlagged && onUnflagClick ? (
+              <Button
+                size='sm'
+                colorScheme='orange'
+                variant='solid'
+                onClick={e => {
+                  e.stopPropagation();
+                  onUnflagClick();
+                }}
+                aria-label='Unflag this answer'>
+                Unflag
+              </Button>
+            ) : (
+              onFlagClick && (
+                <Button
+                  size='sm'
+                  colorScheme='orange'
+                  variant='outline'
+                  onClick={e => {
+                    e.stopPropagation();
+                    onFlagClick();
+                  }}
+                  aria-label='Flag this answer'>
+                  Flag
+                </Button>
+              )
+            )}
+          </>
         )}
         {isModerator && onDeleteClick && (
           <Button
@@ -112,6 +138,7 @@ const AnswerView = ({
       isModerator={isModerator}
       onDeleteComment={onDeleteComment}
       onFlagComment={onFlagComment}
+      onUnflagComment={onUnflagComment}
       getIsFlagged={getIsCommentFlagged}
     />
   </div>

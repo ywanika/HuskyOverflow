@@ -49,7 +49,19 @@ export const getQuestionsByOrder = async (
   order: OrderType,
 ): Promise<PopulatedDatabaseQuestion[]> => {
   try {
-    const qlist: PopulatedDatabaseQuestion[] = await QuestionModel.find().populate<{
+    const qlist: PopulatedDatabaseQuestion[] = await QuestionModel.find({
+      'deleted.isDeleted': { $ne: true },
+      // Filter out flagged content that hasn't been reviewed (temporarily taken down)
+      '$or': [
+        { 'flagged.isFlagged': { $ne: true } },
+        {
+          'flagged.reviewedBy': {
+            $exists: true,
+            $nin: [null, ''],
+          },
+        },
+      ],
+    }).populate<{
       tags: DatabaseTag[];
       answers: PopulatedDatabaseAnswer[];
       comments: DatabaseComment[];
@@ -60,16 +72,57 @@ export const getQuestionsByOrder = async (
       { path: 'comments', model: CommentModel },
     ]);
 
+    // Filter out flagged answers and comments that haven't been reviewed
+    const filteredQlist = qlist.map((q: PopulatedDatabaseQuestion) => {
+      // Filter flagged answers
+      if (q.answers) {
+        q.answers = q.answers.filter(
+          (answer: PopulatedDatabaseAnswer) =>
+            !answer.flagged?.isFlagged ||
+            (answer.flagged.reviewedBy !== undefined &&
+              answer.flagged.reviewedBy !== null &&
+              answer.flagged.reviewedBy !== ''),
+        ) as PopulatedDatabaseAnswer[];
+
+        // Filter flagged comments within answers
+        q.answers = q.answers.map((answer: PopulatedDatabaseAnswer) => {
+          if (answer.comments) {
+            answer.comments = answer.comments.filter(
+              (comment: DatabaseComment) =>
+                !comment.flagged?.isFlagged ||
+                (comment.flagged.reviewedBy !== undefined &&
+                  comment.flagged.reviewedBy !== null &&
+                  comment.flagged.reviewedBy !== ''),
+            ) as DatabaseComment[];
+          }
+          return answer;
+        }) as PopulatedDatabaseAnswer[];
+      }
+
+      // Filter flagged comments on questions
+      if (q.comments) {
+        q.comments = q.comments.filter(
+          (comment: DatabaseComment) =>
+            !comment.flagged?.isFlagged ||
+            (comment.flagged.reviewedBy !== undefined &&
+              comment.flagged.reviewedBy !== null &&
+              comment.flagged.reviewedBy !== ''),
+        ) as DatabaseComment[];
+      }
+
+      return q;
+    });
+
     switch (order) {
       case 'active':
-        return sortQuestionsByActive(qlist);
+        return sortQuestionsByActive(filteredQlist);
       case 'unanswered':
-        return sortQuestionsByUnanswered(qlist);
+        return sortQuestionsByUnanswered(filteredQlist);
       case 'newest':
-        return sortQuestionsByNewest(qlist);
+        return sortQuestionsByNewest(filteredQlist);
       case 'mostViewed':
       default:
-        return sortQuestionsByMostViews(qlist);
+        return sortQuestionsByMostViews(filteredQlist);
     }
   } catch (error) {
     return [];
@@ -131,7 +184,20 @@ export const fetchAndIncrementQuestionViewsById = async (
 ): Promise<PopulatedDatabaseQuestion | { error: string }> => {
   try {
     const q: PopulatedDatabaseQuestion | null = await QuestionModel.findOneAndUpdate(
-      { _id: new ObjectId(qid) },
+      {
+        '_id': new ObjectId(qid),
+        'deleted.isDeleted': { $ne: true },
+        // Filter out flagged content that hasn't been reviewed (temporarily taken down)
+        '$or': [
+          { 'flagged.isFlagged': { $ne: true } },
+          {
+            'flagged.reviewedBy': {
+              $exists: true,
+              $nin: [null, ''],
+            },
+          },
+        ],
+      },
       { $addToSet: { views: username } },
       { new: true },
     ).populate<{
@@ -147,6 +213,41 @@ export const fetchAndIncrementQuestionViewsById = async (
 
     if (!q) {
       throw new Error('Question not found');
+    }
+
+    // Filter out flagged answers and comments that haven't been reviewed
+    if (q.answers) {
+      q.answers = q.answers.filter(
+        (answer: PopulatedDatabaseAnswer) =>
+          !answer.flagged?.isFlagged ||
+          (answer.flagged.reviewedBy !== undefined &&
+            answer.flagged.reviewedBy !== null &&
+            answer.flagged.reviewedBy !== ''),
+      ) as PopulatedDatabaseAnswer[];
+
+      // Filter flagged comments within answers
+      q.answers = q.answers.map((answer: PopulatedDatabaseAnswer) => {
+        if (answer.comments) {
+          answer.comments = answer.comments.filter(
+            (comment: DatabaseComment) =>
+              !comment.flagged?.isFlagged ||
+              (comment.flagged.reviewedBy !== undefined &&
+                comment.flagged.reviewedBy !== null &&
+                comment.flagged.reviewedBy !== ''),
+          ) as DatabaseComment[];
+        }
+        return answer;
+      }) as PopulatedDatabaseAnswer[];
+    }
+
+    if (q.comments) {
+      q.comments = q.comments.filter(
+        (comment: DatabaseComment) =>
+          !comment.flagged?.isFlagged ||
+          (comment.flagged.reviewedBy !== undefined &&
+            comment.flagged.reviewedBy !== null &&
+            comment.flagged.reviewedBy !== ''),
+      ) as DatabaseComment[];
     }
 
     return q;
@@ -274,7 +375,20 @@ export const addVoteToQuestion = async (
  */
 export const getCommunityQuestions = async (communityId: string): Promise<DatabaseQuestion[]> => {
   try {
-    const questions = await QuestionModel.find({ community: communityId });
+    const questions = await QuestionModel.find({
+      'community': communityId,
+      'deleted.isDeleted': { $ne: true },
+      // Filter out flagged content that hasn't been reviewed (temporarily taken down)
+      '$or': [
+        { 'flagged.isFlagged': { $ne: true } },
+        {
+          'flagged.reviewedBy': {
+            $exists: true,
+            $nin: [null, ''],
+          },
+        },
+      ],
+    });
 
     return questions;
   } catch (error) {

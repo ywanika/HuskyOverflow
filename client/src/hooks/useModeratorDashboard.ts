@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import useUserContext from './useUserContext';
 import {
   getFlaggedContent,
@@ -7,11 +7,18 @@ import {
   deleteQuestion,
   deleteAnswer,
   deleteComment,
+  getAppeals,
+  approveAppeal,
+  rejectAppeal,
+  getDeletedContentByModerator,
+  restoreDeletedContent,
+  DeletedContentItem,
 } from '../services/moderationService';
+import type { AppealItem } from '@fake-stack-overflow/shared';
 
 interface FlaggedItem {
   _id: string;
-  contentType: 'question' | 'answer' | 'comment';
+  contentType: 'question' | 'answer' | 'comment' | 'message';
   content: Record<string, unknown>;
   flaggedBy: string[];
   flaggedAt: Date[];
@@ -23,16 +30,20 @@ const useModeratorDashboard = () => {
     questions: FlaggedItem[];
     answers: FlaggedItem[];
     comments: FlaggedItem[];
+    messages: FlaggedItem[];
   }>({
     questions: [],
     answers: [],
     comments: [],
+    messages: [],
   });
+  const [appeals, setAppeals] = useState<AppealItem[]>([]);
+  const [deletedContent, setDeletedContent] = useState<DeletedContentItem[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string>('');
   const [deleteModal, setDeleteModal] = useState<{
     isOpen: boolean;
-    type: 'question' | 'answer' | 'comment';
+    type: 'question' | 'answer' | 'comment' | 'message';
     contentId: string;
     contentTitle?: string;
   }>({
@@ -41,7 +52,7 @@ const useModeratorDashboard = () => {
     contentId: '',
   });
 
-  const fetchFlaggedContent = async () => {
+  const fetchFlaggedContent = useCallback(async () => {
     try {
       setLoading(true);
       setError('');
@@ -52,15 +63,39 @@ const useModeratorDashboard = () => {
     } finally {
       setLoading(false);
     }
-  };
+  }, []);
+
+  const fetchAppeals = useCallback(async () => {
+    try {
+      setError('');
+      const data = await getAppeals();
+      setAppeals(data.appeals || []);
+    } catch (err) {
+      setError((err as Error).message || 'Failed to fetch appeals');
+    }
+  }, []);
+
+  const fetchDeletedContent = useCallback(async () => {
+    try {
+      setError('');
+      const data = await getDeletedContentByModerator(user.username);
+      setDeletedContent(data.items || []);
+    } catch (err) {
+      setError((err as Error).message || 'Failed to fetch deleted content');
+    }
+  }, [user.username]);
 
   useEffect(() => {
     fetchFlaggedContent();
-  }, []);
+    fetchAppeals();
+    fetchDeletedContent();
+  }, [fetchFlaggedContent, fetchAppeals, fetchDeletedContent]);
 
   useEffect(() => {
     const handleModerationUpdate = () => {
       fetchFlaggedContent();
+      fetchAppeals();
+      fetchDeletedContent();
     };
 
     socket.on('moderationUpdate', handleModerationUpdate);
@@ -68,10 +103,21 @@ const useModeratorDashboard = () => {
     return () => {
       socket.off('moderationUpdate', handleModerationUpdate);
     };
-  }, [socket]);
+  }, [socket, fetchFlaggedContent, fetchAppeals, fetchDeletedContent]);
+
+  // Poll every 60 seconds to ensure updates within 1 minute
+  useEffect(() => {
+    const interval = setInterval(() => {
+      fetchFlaggedContent();
+      fetchAppeals();
+      fetchDeletedContent();
+    }, 60000); // 60 seconds
+
+    return () => clearInterval(interval);
+  }, [fetchFlaggedContent, fetchAppeals, fetchDeletedContent]);
 
   const handleMarkAsReviewed = async (
-    contentType: 'question' | 'answer' | 'comment',
+    contentType: 'question' | 'answer' | 'comment' | 'message',
     contentId: string,
   ) => {
     try {
@@ -83,7 +129,7 @@ const useModeratorDashboard = () => {
   };
 
   const handleDismissFlag = async (
-    contentType: 'question' | 'answer' | 'comment',
+    contentType: 'question' | 'answer' | 'comment' | 'message',
     contentId: string,
   ) => {
     try {
@@ -95,7 +141,7 @@ const useModeratorDashboard = () => {
   };
 
   const handleDeleteClick = (
-    type: 'question' | 'answer' | 'comment',
+    type: 'question' | 'answer' | 'comment' | 'message',
     contentId: string,
     contentTitle?: string,
   ) => {
@@ -113,13 +159,49 @@ const useModeratorDashboard = () => {
       }
       setDeleteModal({ ...deleteModal, isOpen: false });
       await fetchFlaggedContent();
+      await fetchDeletedContent();
     } catch (err) {
       setError((err as Error).message || 'Failed to delete content');
     }
   };
 
+  const handleRestoreContent = async (
+    contentType: 'question' | 'answer' | 'comment' | 'message',
+    contentId: string,
+  ) => {
+    try {
+      await restoreDeletedContent(contentType, contentId, user.username);
+      await fetchDeletedContent();
+      await fetchFlaggedContent();
+    } catch (err) {
+      setError((err as Error).message || 'Failed to restore content');
+    }
+  };
+
+  const handleApproveAppeal = async (appealId: string, modResponse?: string) => {
+    try {
+      await approveAppeal(appealId, user.username, modResponse);
+      await fetchAppeals();
+      await fetchFlaggedContent();
+      await fetchDeletedContent();
+    } catch (err) {
+      setError((err as Error).message || 'Failed to approve appeal');
+    }
+  };
+
+  const handleRejectAppeal = async (appealId: string, modResponse?: string) => {
+    try {
+      await rejectAppeal(appealId, user.username, modResponse);
+      await fetchAppeals();
+    } catch (err) {
+      setError((err as Error).message || 'Failed to reject appeal');
+    }
+  };
+
   return {
     flaggedContent,
+    appeals,
+    deletedContent,
     loading,
     error,
     handleMarkAsReviewed,
@@ -129,6 +211,9 @@ const useModeratorDashboard = () => {
     setDeleteModal,
     handleDeleteConfirm,
     fetchFlaggedContent,
+    handleApproveAppeal,
+    handleRejectAppeal,
+    handleRestoreContent,
   };
 };
 

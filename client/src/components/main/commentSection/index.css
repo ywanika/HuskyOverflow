@@ -9,7 +9,7 @@
 
 .toggle-button {
   background: none;
-  color: var(--color-accent);
+  color: var(--color-accent-text);
   border: none;
   font-size: var(--font-size-base);
   cursor: pointer;
@@ -20,7 +20,7 @@
 }
 
 .toggle-button:hover {
-  color: var(--color-primary);
+  color: var(--color-primary-text);
   text-decoration: none;
 }
 
@@ -116,10 +116,10 @@
 
 .add-comment-button {
   flex: 1;
-  background-color: var(--color-accent);
+  background-color: var(--color-accent-button);
   color: #1a202c;
   padding: var(--spacing-xs) var(--spacing-sm);
-  border: 2px solid var(--color-accent);
+  border: 2px solid var(--color-accent-button);
   border-radius: var(--radius-sm);
   cursor: pointer;
   font-size: var(--font-size-sm);
@@ -129,8 +129,8 @@
 }
 
 .add-comment-button:hover {
-  background-color: var(--color-primary);
-  border-color: var(--color-primary);
+  background-color: var(--color-primary-button);
+  border-color: var(--color-primary-button);
   transform: translateY(-1px);
   box-shadow: var(--shadow-md);
 }

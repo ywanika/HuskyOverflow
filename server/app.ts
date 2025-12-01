@@ -5,6 +5,7 @@
 // startServer() is a function that starts the server
 import 'dotenv/config';
 import express, { Request, Response, NextFunction } from 'express';
+import cors from 'cors';
 import mongoose from 'mongoose';
 import { Server } from 'socket.io';
 import * as http from 'http';
@@ -27,6 +28,7 @@ import communityController from './controllers/community.controller';
 import moderationController from './controllers/moderation.controller';
 import adminController from './controllers/admin.controller';
 import notificationController from './controllers/notification.controller';
+import chatbotController from './controllers/chatbot.controller';
 
 const MONGO_URL = `${process.env.MONGODB_URI || 'mongodb://127.0.0.1:27017'}/fake_so`;
 const PORT = parseInt(process.env.PORT || '8000');
@@ -34,11 +36,32 @@ const PORT = parseInt(process.env.PORT || '8000');
 const app = express();
 const server = http.createServer(app);
 // allow requests from the local dev client or the production client only
+const ALLOWED_ORIGIN = process.env.CLIENT_URL || 'http://localhost:4530';
+
+// Configure CORS for Express routes FIRST (before Socket.IO)
+app.use(
+  cors({
+    origin: ALLOWED_ORIGIN,
+    credentials: true,
+    methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+    allowedHeaders: ['Content-Type', 'Authorization'],
+  }),
+);
+
 const socket: FakeSOSocket = new Server(server, {
   path: '/socket.io',
   cors: {
-    origin: `${process.env.CLIENT_URL}` || 'http://localhost:4530',
+    origin: (origin, callback) => {
+      // Allow requests with no origin (like mobile apps or curl requests)
+      if (!origin) return callback(null, true);
+      if (origin === ALLOWED_ORIGIN) {
+        callback(null, true);
+      } else {
+        callback(new Error('Not allowed by CORS'));
+      }
+    },
     credentials: true,
+    methods: ['GET', 'POST'],
   },
 });
 
@@ -121,6 +144,7 @@ app.use('/api/community', communityController(socket));
 app.use('/api/moderation', moderationController(socket));
 app.use('/api/admin', adminController(socket));
 app.use('/api/notification', notificationController(socket));
+app.use('/api/chatbot', chatbotController(socket));
 
 const openApiDocument = yaml.parse(fs.readFileSync('./openapi.yaml', 'utf8'));
 app.use('/api/docs', swaggerUi.serve, swaggerUi.setup(openApiDocument));
