@@ -37,6 +37,7 @@ export interface ChatbotActions {
   handleChangePassword?: () => void;
   handleViewActivity?: () => void;
   handleHelp?: () => void;
+  handleContactModerator?: () => void;
   handleDefault?: () => void;
   [key: string]: ((...args: unknown[]) => void) | ((query: string) => void) | undefined;
 }

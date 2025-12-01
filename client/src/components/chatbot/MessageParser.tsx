@@ -114,6 +114,23 @@ const MessageParser = ({ children, actions }: MessageParserProps) => {
     // Detect intent and entity
     const { intent, entity, query } = detectIntent(message);
 
+    // Handle contact moderator intent
+    if (
+      lowerMessage.includes('contact moderator') ||
+      lowerMessage.includes('contact mod') ||
+      lowerMessage.includes('message moderator') ||
+      lowerMessage.includes('talk to moderator') ||
+      lowerMessage.includes('ask moderator') ||
+      lowerMessage.includes('report') ||
+      (lowerMessage.includes('moderator') &&
+        (lowerMessage.includes('contact') ||
+          lowerMessage.includes('message') ||
+          lowerMessage.includes('help')))
+    ) {
+      actions.handleContactModerator?.();
+      return;
+    }
+
     // Handle help intent
     if (intent === 'help') {
       actions.handleHelp?.();

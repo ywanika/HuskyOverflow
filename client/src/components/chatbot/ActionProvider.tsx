@@ -22,7 +22,7 @@ const ActionProvider = ({ createChatBotMessage, setState, children }: ActionProv
       { delay: 500 },
     ) as ChatbotMessage;
     const menuMessage = createChatBotMessage(
-      '• Browse Questions\n• Ask a Question\n• Join Communities\n• Play Games\n• Send Messages\n• View Collections\n• Manage Profile\n• Help & Support',
+      '• Browse Questions\n• Ask a Question\n• Join Communities\n• Play Games\n• Send Messages\n• View Collections\n• Manage Profile\n• Help & Support\n• Contact Moderator',
       {
         delay: 1000,
         widget: 'mainMenu',
@@ -474,13 +474,30 @@ const ActionProvider = ({ createChatBotMessage, setState, children }: ActionProv
   // Help & Support
   const handleHelp = () => {
     const botMessage = createChatBotMessage(
-      'I can help you with:\n• Navigating the app\n• Finding questions\n• Joining communities\n• Playing games\n• Using messaging\n• Managing collections\n• Profile settings\n\nWhat would you like help with?',
+      'I can help you with:\n• Navigating the app\n• Finding questions\n• Joining communities\n• Playing games\n• Using messaging\n• Managing collections\n• Profile settings\n• Contacting a moderator\n\nWhat would you like help with?',
       { delay: 500 },
     ) as ChatbotMessage;
 
     setState((prev: ChatbotState) => ({
       ...prev,
       messages: [...prev.messages, botMessage] as ChatbotMessage[],
+    }));
+  };
+
+  // Contact Moderator Flow
+  const handleContactModerator = () => {
+    const botMessage = createChatBotMessage(
+      'I can help you contact a moderator. Please fill out the form below with your message.',
+      {
+        delay: 500,
+        widget: 'contactModerator',
+      },
+    ) as ChatbotMessage;
+
+    setState((prev: ChatbotState) => ({
+      ...prev,
+      messages: [...prev.messages, botMessage] as ChatbotMessage[],
+      currentFlow: 'contactModerator',
     }));
   };
 
@@ -567,6 +584,7 @@ const ActionProvider = ({ createChatBotMessage, setState, children }: ActionProv
               handleViewActivity,
               // Help & Support
               handleHelp,
+              handleContactModerator,
               handleDefault,
             },
           } as Record<string, unknown>,
