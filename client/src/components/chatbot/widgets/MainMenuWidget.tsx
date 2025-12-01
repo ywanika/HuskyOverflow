@@ -71,8 +71,8 @@ const MainMenuWidget: React.FC<MainMenuWidgetProps> = ({
     } else if (actionProvider?.actions && option.actionName) {
       // Trigger action if available
       const action = actionProvider.actions[option.actionName];
-      if (action) {
-        action();
+      if (action && typeof action === 'function') {
+        (action as () => void)();
       }
     }
     if (scrollIntoView) {

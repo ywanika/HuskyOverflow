@@ -42,8 +42,9 @@ const ProfileMenuWidget: React.FC<ProfileMenuWidgetProps> = ({
       navigate(option.route);
     } else if (actionProvider?.actions) {
       const actionName = `handle${option.action.charAt(0).toUpperCase() + option.action.slice(1)}`;
-      if (actionProvider.actions[actionName]) {
-        actionProvider.actions[actionName]();
+      const action = actionProvider.actions[actionName];
+      if (action && typeof action === 'function') {
+        (action as () => void)();
       }
     }
     if (scrollIntoView) {

@@ -519,55 +519,58 @@ const ActionProvider = ({ createChatBotMessage, setState, children }: ActionProv
   return (
     <div>
       {React.Children.map(children, child => {
-        return React.cloneElement(child as React.ReactElement, {
-          actions: {
-            // Welcome & Main Menu
-            handleWelcome,
-            handleMainMenu,
-            handleHello,
-            // Questions Flow
-            handleQuestionsFlow,
-            handleBrowseQuestions,
-            handleSearchByTags,
-            handleUnansweredQuestions,
-            handleAskQuestion,
-            handleMyQuestions,
-            handleSearchQuestions,
-            // Communities Flow
-            handleCommunitiesFlow,
-            handleBrowseCommunities,
-            handleCreateCommunity,
-            handleFindCommunitiesByTopic,
-            handleMyCommunities,
-            // Games Flow
-            handleGamesFlow,
-            handleViewGames,
-            handleCreateGame,
-            handleJoinGame,
-            handleLearnNim,
-            // Messaging Flow
-            handleMessagingFlow,
-            handleGlobalMessages,
-            handleDirectMessages,
-            handleStartNewChat,
-            handleChatHistory,
-            // Collections Flow
-            handleCollectionsFlow,
-            handleViewMyCollections,
-            handleCreateCollection,
-            handleBrowsePublicCollections,
-            handleAddToCollection,
-            // Profile Flow
-            handleProfileFlow,
-            handleViewProfile,
-            handleEditBiography,
-            handleChangePassword,
-            handleViewActivity,
-            // Help & Support
-            handleHelp,
-            handleDefault,
-          },
-        } as any);
+        return React.cloneElement(
+          child as React.ReactElement,
+          {
+            actions: {
+              // Welcome & Main Menu
+              handleWelcome,
+              handleMainMenu,
+              handleHello,
+              // Questions Flow
+              handleQuestionsFlow,
+              handleBrowseQuestions,
+              handleSearchByTags,
+              handleUnansweredQuestions,
+              handleAskQuestion,
+              handleMyQuestions,
+              handleSearchQuestions,
+              // Communities Flow
+              handleCommunitiesFlow,
+              handleBrowseCommunities,
+              handleCreateCommunity,
+              handleFindCommunitiesByTopic,
+              handleMyCommunities,
+              // Games Flow
+              handleGamesFlow,
+              handleViewGames,
+              handleCreateGame,
+              handleJoinGame,
+              handleLearnNim,
+              // Messaging Flow
+              handleMessagingFlow,
+              handleGlobalMessages,
+              handleDirectMessages,
+              handleStartNewChat,
+              handleChatHistory,
+              // Collections Flow
+              handleCollectionsFlow,
+              handleViewMyCollections,
+              handleCreateCollection,
+              handleBrowsePublicCollections,
+              handleAddToCollection,
+              // Profile Flow
+              handleProfileFlow,
+              handleViewProfile,
+              handleEditBiography,
+              handleChangePassword,
+              handleViewActivity,
+              // Help & Support
+              handleHelp,
+              handleDefault,
+            },
+          } as Record<string, unknown>,
+        );
       })}
     </div>
   );

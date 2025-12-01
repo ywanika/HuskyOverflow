@@ -38,7 +38,7 @@ export interface ChatbotActions {
   handleViewActivity?: () => void;
   handleHelp?: () => void;
   handleDefault?: () => void;
-  [key: string]: ((...args: any[]) => void) | undefined;
+  [key: string]: ((...args: unknown[]) => void) | ((query: string) => void) | undefined;
 }
 
 export interface ChatbotMessage {

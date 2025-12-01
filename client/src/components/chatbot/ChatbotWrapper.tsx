@@ -45,7 +45,7 @@ const ChatbotWrapper: React.FC<ChatbotWrapperProps> = ({
     message: string,
     options?: Record<string, unknown>,
   ): ChatbotMessage => {
-    return createChatBotMessage(message, options as any) as ChatbotMessage;
+    return createChatBotMessage(message, options ?? {}) as ChatbotMessage;
   };
 
   const setStateWrapper = (updater: (prev: ChatbotState) => ChatbotState) => {
