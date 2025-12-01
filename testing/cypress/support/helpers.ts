@@ -392,3 +392,147 @@ export const verifyCollectionPageDetails = (name: string, username?: string) => 
     cy.get('.collection-meta').should('contain', username);
   }
 };
+
+/**
+ * Flags content (question, answer, or comment)
+ * @param contentType - Type of content: 'question', 'answer', or 'comment'
+ * @param contentSelector - Selector to find the content element
+ */
+export const flagContent = (contentType: 'question' | 'answer' | 'comment', contentSelector?: string) => {
+  if (contentSelector) {
+    cy.contains(contentSelector).click();
+  }
+  
+  if (contentType === 'question') {
+    cy.contains('button', /flag/i).first().click();
+  } else if (contentType === 'answer') {
+    cy.get('.answer, [class*="answer"]').first().within(() => {
+      cy.contains('button', /flag/i).click();
+    });
+  } else if (contentType === 'comment') {
+    cy.get('.comment, [class*="comment"]').first().within(() => {
+      cy.contains('button', /flag/i).click();
+    });
+  }
+  
+  cy.wait(1000);
+};
+
+/**
+ * Deletes content as moderator
+ * @param contentType - Type of content: 'question', 'answer', or 'comment'
+ * @param deleteReason - Reason for deletion (minimum 3 words)
+ */
+export const deleteContentAsModerator = (
+  contentType: 'question' | 'answer' | 'comment',
+  deleteReason: string
+) => {
+  if (contentType === 'question') {
+    cy.contains('button', /delete/i).first().click();
+  } else if (contentType === 'answer') {
+    cy.get('.answer, [class*="answer"]').first().within(() => {
+      cy.contains('button', /delete/i).click();
+    });
+  } else if (contentType === 'comment') {
+    cy.get('.comment, [class*="comment"]').first().within(() => {
+      cy.contains('button', /delete/i).click();
+    });
+  }
+  
+  cy.get('input[type="text"], textarea').last().type(deleteReason);
+  cy.contains('button', /confirm|delete/i).click();
+  cy.wait(2000);
+};
+
+/**
+ * Navigates to moderator dashboard
+ */
+export const goToModeratorDashboard = () => {
+  cy.contains(/moderator.*dashboard|dashboard/i).click();
+  cy.url().should('include', '/moderator/dashboard');
+};
+
+/**
+ * Navigates to admin dashboard
+ */
+export const goToAdminDashboard = () => {
+  cy.contains(/admin.*dashboard|dashboard/i).click();
+  cy.url().should('include', '/admin/dashboard');
+};
+
+/**
+ * Submits an appeal for deleted content
+ * @param appealReason - Reason for appeal (50-500 chars, minimum 3 words)
+ */
+export const submitAppeal = (appealReason: string) => {
+  cy.get('[class*="notification"], [aria-label*="notification"]').click();
+  cy.contains('button', /appeal/i).first().click();
+  cy.get('textarea, input[type="text"]').last().type(appealReason);
+  cy.contains('button', /submit|appeal/i).click();
+  cy.wait(2000);
+};
+
+/**
+ * Opens notification dropdown
+ */
+export const openNotifications = () => {
+  cy.get('[class*="notification"], [aria-label*="notification"], button[aria-label*="notification"]').click();
+};
+
+/**
+ * Creates a user as admin
+ * @param username - Username for new user
+ * @param password - Password for new user
+ * @param role - Role: 'user', 'moderator', or 'admin'
+ */
+export const createUserAsAdmin = (username: string, password: string, role: 'user' | 'moderator' | 'admin') => {
+  goToAdminDashboard();
+  cy.contains(/user.*management|users/i).click();
+  
+  cy.contains(/create.*user|new user/i).click();
+  cy.get('input[type="text"][name*="username"], input[id*="username"]').last().type(username);
+  cy.get('input[type="password"][name*="password"], input[id*="password"]').last().type(password);
+  cy.get('input[type="password"][name*="confirm"], input[id*="confirm"]').last().type(password);
+  cy.get(`input[type="radio"][value="${role}"]`).check();
+  
+  cy.contains('button', /create/i).click();
+  cy.wait(1000);
+};
+
+/**
+ * Suspends a user as admin
+ * @param username - Username to suspend
+ * @param duration - Duration in days: 1, 3, 7, 14, or 30
+ * @param reason - Violation reason
+ */
+export const suspendUserAsAdmin = (username: string, duration: number, reason: string) => {
+  goToAdminDashboard();
+  cy.contains(/user.*management|users/i).click();
+  
+  cy.contains(username).parent().within(() => {
+    cy.contains('button', /suspend/i).click();
+  });
+  
+  cy.get('select, [role="combobox"]').select(`${duration} days`);
+  cy.get('select, [role="combobox"]').eq(1).select(reason);
+  cy.contains('button', /confirm|suspend/i).click();
+  cy.wait(2000);
+};
+
+/**
+ * Bans a user as admin
+ * @param username - Username to ban
+ * @param reason - Ban reason (minimum 20 characters)
+ */
+export const banUserAsAdmin = (username: string, reason: string) => {
+  goToAdminDashboard();
+  cy.contains(/user.*management|users/i).click();
+  
+  cy.contains(username).parent().within(() => {
+    cy.contains('button', /ban/i).click();
+  });
+  
+  cy.get('textarea, input[type="text"]').last().type(reason);
+  cy.contains('button', /confirm|ban/i).click();
+  cy.wait(2000);
+};
