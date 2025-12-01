@@ -7,6 +7,7 @@ import MessagingMenuWidget from './widgets/MessagingMenuWidget';
 import CollectionsMenuWidget from './widgets/CollectionsMenuWidget';
 import ProfileMenuWidget from './widgets/ProfileMenuWidget';
 import QuestionSearchWidget from './widgets/QuestionSearchWidget';
+import ContactModeratorWidget from './widgets/ContactModeratorWidget';
 import type { BaseWidgetProps, ChatbotMessage } from './types';
 
 const BOT_NAME = 'HuskyFlow Assistant';
@@ -22,7 +23,7 @@ const config = {
       delay: 1000,
     }) as ChatbotMessage,
     createChatBotMessage(
-      '• Browse Questions\n• Ask a Question\n• Join Communities\n• Play Games\n• Send Messages\n• View Collections\n• Manage Profile\n• Help & Support',
+      '• Browse Questions\n• Ask a Question\n• Join Communities\n• Play Games\n• Send Messages\n• View Collections\n• Manage Profile\n• Help & Support\n• Contact Moderator',
       {
         delay: 1500,
         widget: 'mainMenu',
@@ -87,6 +88,11 @@ const config = {
         props: BaseWidgetProps & { payload?: { searchQuery?: string; maxResults?: number } },
       ) => <QuestionSearchWidget {...props} />,
       mapStateToProps: ['searchQuery'],
+    },
+    {
+      widgetName: 'contactModerator',
+      widgetFunc: (props: BaseWidgetProps) => <ContactModeratorWidget {...props} />,
+      mapStateToProps: ['currentFlow'],
     },
   ],
 };

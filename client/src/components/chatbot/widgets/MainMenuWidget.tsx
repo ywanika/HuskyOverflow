@@ -62,7 +62,18 @@ const MainMenuWidget: React.FC<MainMenuWidgetProps> = ({
       route: user ? `/user/${user.username}` : null,
       actionName: 'handleProfileFlow',
     },
-    { label: 'Help & Support', action: 'help', route: null, actionName: 'handleHelp' },
+    {
+      label: 'Help & Support',
+      action: 'help',
+      route: null,
+      actionName: 'handleHelp',
+    },
+    {
+      label: 'Contact Moderator',
+      action: 'contactModerator',
+      route: null,
+      actionName: 'handleContactModerator',
+    },
   ];
 
   const handleMenuClick = (option: (typeof menuOptions)[0]) => {

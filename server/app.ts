@@ -28,6 +28,7 @@ import communityController from './controllers/community.controller';
 import moderationController from './controllers/moderation.controller';
 import adminController from './controllers/admin.controller';
 import notificationController from './controllers/notification.controller';
+import chatbotController from './controllers/chatbot.controller';
 
 const MONGO_URL = `${process.env.MONGODB_URI || 'mongodb://127.0.0.1:27017'}/fake_so`;
 const PORT = parseInt(process.env.PORT || '8000');
@@ -143,6 +144,7 @@ app.use('/api/community', communityController(socket));
 app.use('/api/moderation', moderationController(socket));
 app.use('/api/admin', adminController(socket));
 app.use('/api/notification', notificationController(socket));
+app.use('/api/chatbot', chatbotController(socket));
 
 const openApiDocument = yaml.parse(fs.readFileSync('./openapi.yaml', 'utf8'));
 app.use('/api/docs', swaggerUi.serve, swaggerUi.setup(openApiDocument));
