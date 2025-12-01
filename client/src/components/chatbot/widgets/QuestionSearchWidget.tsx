@@ -83,7 +83,7 @@ const QuestionSearchWidget: React.FC<QuestionSearchWidgetProps> = ({ payload, sc
       <Text mb={3} fontWeight='semibold' fontSize='sm'>
         Found {questions.length} question{questions.length !== 1 ? 's' : ''}:
       </Text>
-      <VStack spacing={2} align='stretch'>
+      <VStack gap={2} align='stretch'>
         {questions.map(question => (
           <Box
             key={question._id.toString()}

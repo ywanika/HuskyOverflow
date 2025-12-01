@@ -8,7 +8,7 @@ type ProfileMenuWidgetProps = BaseWidgetProps;
 
 const ProfileMenuWidget: React.FC<ProfileMenuWidgetProps> = ({
   actionProvider,
-  setState,
+  setState: _setState,
   scrollIntoView,
 }) => {
   const navigate = useNavigate();
@@ -56,7 +56,7 @@ const ProfileMenuWidget: React.FC<ProfileMenuWidgetProps> = ({
       <Text mb={3} fontWeight='semibold' fontSize='sm'>
         What would you like to do with your profile?
       </Text>
-      <VStack spacing={2} align='stretch'>
+      <VStack gap={2} align='stretch'>
         {options.map((option, index) => (
           <Button
             key={index}

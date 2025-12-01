@@ -7,7 +7,7 @@ type CommunitiesMenuWidgetProps = BaseWidgetProps;
 
 const CommunitiesMenuWidget: React.FC<CommunitiesMenuWidgetProps> = ({
   actionProvider,
-  setState,
+  setState: _setState,
   scrollIntoView,
 }) => {
   const navigate = useNavigate();
@@ -38,7 +38,7 @@ const CommunitiesMenuWidget: React.FC<CommunitiesMenuWidgetProps> = ({
       <Text mb={3} fontWeight='semibold' fontSize='sm'>
         What would you like to do with communities?
       </Text>
-      <VStack spacing={2} align='stretch'>
+      <VStack gap={2} align='stretch'>
         {options.map((option, index) => (
           <Button
             key={index}

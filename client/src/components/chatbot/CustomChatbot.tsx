@@ -40,7 +40,7 @@ const CustomChatbot: React.FC<CustomChatbotProps> = ({
     if (messageHistory && messageHistory.length > 0) {
       const convertedMessages = messageHistory.map((msg: ChatbotMessage) => ({
         message: msg.message || '',
-        type: msg.type === 'user' ? 'user' : 'bot',
+        type: (msg.type === 'user' ? 'user' : 'bot') as 'user' | 'bot',
         widget: msg.widget,
         payload: msg.payload,
       }));
@@ -111,16 +111,30 @@ const CustomChatbot: React.FC<CustomChatbotProps> = ({
         return (
           <Box key={`widget-${index}`} my={2}>
             <WidgetComponent
-              actionProvider={{ actions: actionsRef.current }}
+              actionProvider={{ actions: actionsRef.current || ({} as ChatbotActions) }}
               setState={(updater: (prev: ChatbotState) => ChatbotState) => {
                 setMessages(prev => {
-                  const prevState = { messages: prev };
+                  const prevState: ChatbotState = {
+                    messages: prev,
+                    currentFlow: null,
+                    userContext: '',
+                    selectedFeature: null,
+                    searchQuery: '',
+                    navigationTarget: null,
+                  };
                   const newState = updater(prevState);
                   return newState.messages || prev;
                 });
               }}
-              state={{ messages }}
-              payload={msg.payload}
+              state={{
+                messages,
+                currentFlow: null,
+                userContext: '',
+                selectedFeature: null,
+                searchQuery: '',
+                navigationTarget: null,
+              }}
+              payload={msg.payload as { searchQuery?: string; maxResults?: number } | undefined}
             />
           </Box>
         );
@@ -204,7 +218,7 @@ const CustomChatbot: React.FC<CustomChatbotProps> = ({
             borderRadius: '3px',
           },
         }}>
-        <VStack spacing={2} align='stretch'>
+        <VStack gap={2} align='stretch'>
           {messages.map((msg, index) => renderMessage(msg, index))}
           <div ref={messagesEndRef} />
         </VStack>
@@ -215,7 +229,7 @@ const CustomChatbot: React.FC<CustomChatbotProps> = ({
 
       {/* Input Container */}
       <Box p={4} flexShrink={0} bg={bgColor}>
-        <HStack spacing={2}>
+        <HStack gap={2}>
           <Input
             value={inputValue}
             onChange={e => setInputValue(e.target.value)}
@@ -240,7 +254,7 @@ const CustomChatbot: React.FC<CustomChatbotProps> = ({
             onClick={handleSend}
             colorScheme='blue'
             px={6}
-            isDisabled={!inputValue.trim()}
+            disabled={!inputValue.trim()}
             _disabled={{
               opacity: 0.4,
               cursor: 'not-allowed',

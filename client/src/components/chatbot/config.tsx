@@ -1,4 +1,3 @@
-import React from 'react';
 import { createChatBotMessage } from 'react-chatbot-kit';
 import MainMenuWidget from './widgets/MainMenuWidget';
 import QuestionsMenuWidget from './widgets/QuestionsMenuWidget';
@@ -8,7 +7,7 @@ import MessagingMenuWidget from './widgets/MessagingMenuWidget';
 import CollectionsMenuWidget from './widgets/CollectionsMenuWidget';
 import ProfileMenuWidget from './widgets/ProfileMenuWidget';
 import QuestionSearchWidget from './widgets/QuestionSearchWidget';
-import type { BaseWidgetProps } from './types';
+import type { BaseWidgetProps, ChatbotMessage } from './types';
 
 const BOT_NAME = 'HuskyFlow Assistant';
 
@@ -18,15 +17,15 @@ const config = {
     createChatBotMessage(
       "Hi! I'm your HuskyFlow assistant. I can help you navigate to different parts of the app. What would you like to do?",
       { delay: 500 },
-    ),
-    createChatBotMessage('Here are some things I can help you with:', { delay: 1000 }),
+    ) as ChatbotMessage,
+    createChatBotMessage('Here are some things I can help you with:', { delay: 1000 }) as ChatbotMessage,
     createChatBotMessage(
       '• Browse Questions\n• Ask a Question\n• Join Communities\n• Play Games\n• Send Messages\n• View Collections\n• Manage Profile\n• Help & Support',
       {
         delay: 1500,
         widget: 'mainMenu',
       },
-    ),
+    ) as ChatbotMessage,
   ],
   customStyles: {
     botMessageBox: {

@@ -7,7 +7,7 @@ type MessagingMenuWidgetProps = BaseWidgetProps;
 
 const MessagingMenuWidget: React.FC<MessagingMenuWidgetProps> = ({
   actionProvider,
-  setState,
+  setState: _setState,
   scrollIntoView,
 }) => {
   const navigate = useNavigate();
@@ -38,7 +38,7 @@ const MessagingMenuWidget: React.FC<MessagingMenuWidgetProps> = ({
       <Text mb={3} fontWeight='semibold' fontSize='sm'>
         What would you like to do with messaging?
       </Text>
-      <VStack spacing={2} align='stretch'>
+      <VStack gap={2} align='stretch'>
         {options.map((option, index) => (
           <Button
             key={index}

@@ -10,7 +10,7 @@ export interface ChatbotActions {
   handleUnansweredQuestions?: () => void;
   handleAskQuestion?: () => void;
   handleMyQuestions?: () => void;
-  handleSearchQuestions?: (query?: string) => void;
+  handleSearchQuestions?: (query: string) => void;
   handleCommunitiesFlow?: () => void;
   handleBrowseCommunities?: () => void;
   handleCreateCommunity?: () => void;
@@ -38,7 +38,7 @@ export interface ChatbotActions {
   handleViewActivity?: () => void;
   handleHelp?: () => void;
   handleDefault?: () => void;
-  [key: string]: ((...args: unknown[]) => void) | undefined;
+  [key: string]: ((...args: any[]) => void) | undefined;
 }
 
 export interface ChatbotMessage {

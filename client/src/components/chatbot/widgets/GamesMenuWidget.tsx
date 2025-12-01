@@ -7,7 +7,7 @@ type GamesMenuWidgetProps = BaseWidgetProps;
 
 const GamesMenuWidget: React.FC<GamesMenuWidgetProps> = ({
   actionProvider,
-  setState,
+  setState: _setState,
   scrollIntoView,
 }) => {
   const navigate = useNavigate();
@@ -38,7 +38,7 @@ const GamesMenuWidget: React.FC<GamesMenuWidgetProps> = ({
       <Text mb={3} fontWeight='semibold' fontSize='sm'>
         What would you like to do with games?
       </Text>
-      <VStack spacing={2} align='stretch'>
+      <VStack gap={2} align='stretch'>
         {options.map((option, index) => (
           <Button
             key={index}

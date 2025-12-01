@@ -41,18 +41,25 @@ const ChatbotWrapper: React.FC<ChatbotWrapperProps> = ({
   const botTextColor = 'white';
   const scrollbarBg = isDark ? 'gray.600' : 'gray.200';
 
-  const createChatBotMessageWrapper = (message: string, options?: Record<string, unknown>) => {
-    return createChatBotMessage(message, options);
+  const createChatBotMessageWrapper = (message: string, options?: Record<string, unknown>): ChatbotMessage => {
+    return createChatBotMessage(message, options as any) as ChatbotMessage;
   };
 
   const setStateWrapper = (updater: (prev: ChatbotState) => ChatbotState) => {
     setMessages(prevMessages => {
-      const prevState = { messages: prevMessages };
+      const prevState: ChatbotState = {
+        messages: prevMessages,
+        currentFlow: null,
+        userContext: '',
+        selectedFeature: null,
+        searchQuery: '',
+        navigationTarget: null,
+      };
       const newState = updater(prevState);
       const newMessages = newState.messages || prevMessages;
       return newMessages.map((msg: ChatbotMessage) => ({
         message: msg.message || '',
-        type: msg.type === 'user' ? 'user' : 'bot',
+        type: msg.type === 'user' ? ('user' as const) : ('bot' as const),
         widget: msg.widget,
         payload: msg.payload,
       }));
@@ -72,7 +79,7 @@ const ChatbotWrapper: React.FC<ChatbotWrapperProps> = ({
     if (messageHistory && messageHistory.length > 0) {
       const convertedMessages = messageHistory.map((msg: ChatbotMessage) => ({
         message: msg.message || '',
-        type: msg.type === 'user' ? 'user' : 'bot',
+        type: (msg.type === 'user' ? 'user' : 'bot') as 'user' | 'bot',
         widget: msg.widget,
         payload: msg.payload,
       }));
@@ -103,7 +110,7 @@ const ChatbotWrapper: React.FC<ChatbotWrapperProps> = ({
   const handleSend = () => {
     if (!inputValue.trim() || !parseRef.current) return;
 
-    const userMessage: Message = {
+    const userMessage: ChatbotMessage = {
       message: inputValue.trim(),
       type: 'user',
     };
@@ -122,7 +129,7 @@ const ChatbotWrapper: React.FC<ChatbotWrapperProps> = ({
     }
   };
 
-  const renderMessage = (msg: Message, index: number) => {
+  const renderMessage = (msg: ChatbotMessage, index: number) => {
     if (msg.widget) {
       const widget = config.widgets.find(
         (w: { widgetName: string }) => w.widgetName === msg.widget,
@@ -132,16 +139,30 @@ const ChatbotWrapper: React.FC<ChatbotWrapperProps> = ({
         return (
           <Box key={`widget-${index}`} my={2}>
             <WidgetComponent
-              actionProvider={{ actions: actionsRef.current }}
+              actionProvider={{ actions: actionsRef.current || ({} as ChatbotActions) }}
               setState={(updater: (prev: ChatbotState) => ChatbotState) => {
                 setMessages(prev => {
-                  const prevState = { messages: prev };
+                  const prevState: ChatbotState = {
+                    messages: prev,
+                    currentFlow: null,
+                    userContext: '',
+                    selectedFeature: null,
+                    searchQuery: '',
+                    navigationTarget: null,
+                  };
                   const newState = updater(prevState);
                   return newState.messages || prev;
                 });
               }}
-              state={{ messages }}
-              payload={msg.payload}
+              state={{
+                messages,
+                currentFlow: null,
+                userContext: '',
+                selectedFeature: null,
+                searchQuery: '',
+                navigationTarget: null,
+              }}
+              payload={msg.payload as { searchQuery?: string; maxResults?: number } | undefined}
             />
           </Box>
         );
@@ -229,7 +250,7 @@ const ChatbotWrapper: React.FC<ChatbotWrapperProps> = ({
         <ActionProvider
           createChatBotMessage={createChatBotMessageWrapper}
           setState={setStateWrapper}>
-          <MessageParser actions={actionsRef.current || {}}>
+          <MessageParser actions={actionsRef.current || ({} as ChatbotActions)}>
             <IntegrationComponent />
           </MessageParser>
         </ActionProvider>
@@ -298,7 +319,7 @@ const ChatbotWrapper: React.FC<ChatbotWrapperProps> = ({
             borderRadius: '3px',
           },
         }}>
-        <VStack spacing={2} align='stretch'>
+        <VStack gap={2} align='stretch'>
           {messages.map((msg, index) => renderMessage(msg, index))}
           <div ref={messagesEndRef} />
         </VStack>
@@ -309,7 +330,7 @@ const ChatbotWrapper: React.FC<ChatbotWrapperProps> = ({
 
       {/* Input Container */}
       <Box p={4} flexShrink={0} bg={bgColor}>
-        <HStack spacing={2}>
+        <HStack gap={2}>
           <Input
             value={inputValue}
             onChange={e => setInputValue(e.target.value)}
@@ -334,7 +355,7 @@ const ChatbotWrapper: React.FC<ChatbotWrapperProps> = ({
             onClick={handleSend}
             colorScheme='blue'
             px={6}
-            isDisabled={!inputValue.trim()}
+            disabled={!inputValue.trim()}
             _disabled={{
               opacity: 0.4,
               cursor: 'not-allowed',

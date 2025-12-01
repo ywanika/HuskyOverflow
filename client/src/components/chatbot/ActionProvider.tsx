@@ -1,11 +1,10 @@
 import React from 'react';
-import { createChatBotMessage } from 'react-chatbot-kit';
 import { useNavigate } from 'react-router-dom';
 import useUserContext from '../../hooks/useUserContext';
-import type { ChatbotState, SetStateFunction } from './types';
+import type { ChatbotState, SetStateFunction, ChatbotMessage } from './types';
 
 interface ActionProviderProps {
-  createChatBotMessage: typeof createChatBotMessage;
+  createChatBotMessage: (message: string, options?: Record<string, unknown>) => ChatbotMessage;
   setState: SetStateFunction;
   children: React.ReactNode;
 }
@@ -21,14 +20,14 @@ const ActionProvider = ({ createChatBotMessage, setState, children }: ActionProv
     const botMessage = createChatBotMessage(
       "Hi! I'm your HuskyFlow assistant. I can help you navigate to different parts of the app. What would you like to do?",
       { delay: 500 },
-    );
+    ) as ChatbotMessage;
     const menuMessage = createChatBotMessage(
       '• Browse Questions\n• Ask a Question\n• Join Communities\n• Play Games\n• Send Messages\n• View Collections\n• Manage Profile\n• Help & Support',
       {
         delay: 1000,
         widget: 'mainMenu',
       },
-    );
+    ) as ChatbotMessage;
 
     setState((prev: ChatbotState) => ({
       ...prev,
@@ -41,7 +40,7 @@ const ActionProvider = ({ createChatBotMessage, setState, children }: ActionProv
     const botMessage = createChatBotMessage('Here are the main options:', {
       delay: 500,
       widget: 'mainMenu',
-    });
+    }) as ChatbotMessage;
 
     setState((prev: ChatbotState) => ({
       ...prev,
@@ -58,7 +57,7 @@ const ActionProvider = ({ createChatBotMessage, setState, children }: ActionProv
         delay: 500,
         widget: 'questionsMenu',
       },
-    );
+    ) as ChatbotMessage;
 
     setState((prev: ChatbotState) => ({
       ...prev,
@@ -70,7 +69,7 @@ const ActionProvider = ({ createChatBotMessage, setState, children }: ActionProv
   const handleBrowseQuestions = () => {
     const botMessage = createChatBotMessage('Taking you to browse all questions...', {
       delay: 500,
-    });
+    }) as ChatbotMessage;
 
     setState((prev: ChatbotState) => ({
       ...prev,
@@ -83,7 +82,7 @@ const ActionProvider = ({ createChatBotMessage, setState, children }: ActionProv
   const handleSearchByTags = () => {
     const botMessage = createChatBotMessage('Taking you to search questions by tags...', {
       delay: 500,
-    });
+    }) as ChatbotMessage;
 
     setState((prev: ChatbotState) => ({
       ...prev,
@@ -96,7 +95,7 @@ const ActionProvider = ({ createChatBotMessage, setState, children }: ActionProv
   const handleUnansweredQuestions = () => {
     const botMessage = createChatBotMessage('Finding unanswered questions for you...', {
       delay: 500,
-    });
+    }) as ChatbotMessage;
 
     setState((prev: ChatbotState) => ({
       ...prev,
@@ -107,7 +106,7 @@ const ActionProvider = ({ createChatBotMessage, setState, children }: ActionProv
   };
 
   const handleAskQuestion = () => {
-    const botMessage = createChatBotMessage('Taking you to ask a new question...', { delay: 500 });
+    const botMessage = createChatBotMessage('Taking you to ask a new question...', { delay: 500 }) as ChatbotMessage;
 
     setState((prev: ChatbotState) => ({
       ...prev,
@@ -118,7 +117,7 @@ const ActionProvider = ({ createChatBotMessage, setState, children }: ActionProv
   };
 
   const handleMyQuestions = () => {
-    const botMessage = createChatBotMessage('Finding your questions...', { delay: 500 });
+    const botMessage = createChatBotMessage('Finding your questions...', { delay: 500 }) as ChatbotMessage;
 
     setState((prev: ChatbotState) => ({
       ...prev,
@@ -134,7 +133,7 @@ const ActionProvider = ({ createChatBotMessage, setState, children }: ActionProv
     const botMessage = createChatBotMessage("Let's explore communities! What interests you?", {
       delay: 500,
       widget: 'communitiesMenu',
-    });
+    }) as ChatbotMessage;
 
     setState((prev: ChatbotState) => ({
       ...prev,
@@ -146,7 +145,7 @@ const ActionProvider = ({ createChatBotMessage, setState, children }: ActionProv
   const handleBrowseCommunities = () => {
     const botMessage = createChatBotMessage('Taking you to browse all communities...', {
       delay: 500,
-    });
+    }) as ChatbotMessage;
 
     setState((prev: ChatbotState) => ({
       ...prev,
@@ -159,7 +158,7 @@ const ActionProvider = ({ createChatBotMessage, setState, children }: ActionProv
   const handleCreateCommunity = () => {
     const botMessage = createChatBotMessage('Taking you to create a new community...', {
       delay: 500,
-    });
+    }) as ChatbotMessage;
 
     setState((prev: ChatbotState) => ({
       ...prev,
@@ -172,7 +171,7 @@ const ActionProvider = ({ createChatBotMessage, setState, children }: ActionProv
   const handleFindCommunitiesByTopic = () => {
     const botMessage = createChatBotMessage('Let me help you find communities by topic...', {
       delay: 500,
-    });
+    }) as ChatbotMessage;
 
     setState((prev: ChatbotState) => ({
       ...prev,
@@ -183,7 +182,7 @@ const ActionProvider = ({ createChatBotMessage, setState, children }: ActionProv
   };
 
   const handleMyCommunities = () => {
-    const botMessage = createChatBotMessage('Finding your communities...', { delay: 500 });
+    const botMessage = createChatBotMessage('Finding your communities...', { delay: 500 }) as ChatbotMessage;
 
     setState((prev: ChatbotState) => ({
       ...prev,
@@ -199,7 +198,7 @@ const ActionProvider = ({ createChatBotMessage, setState, children }: ActionProv
     const botMessage = createChatBotMessage('Ready to play? We have games available!', {
       delay: 500,
       widget: 'gamesMenu',
-    });
+    }) as ChatbotMessage;
 
     setState((prev: ChatbotState) => ({
       ...prev,
@@ -211,7 +210,7 @@ const ActionProvider = ({ createChatBotMessage, setState, children }: ActionProv
   const handleViewGames = () => {
     const botMessage = createChatBotMessage('Taking you to view available games...', {
       delay: 500,
-    });
+    }) as ChatbotMessage;
 
     setState((prev: ChatbotState) => ({
       ...prev,
@@ -222,7 +221,7 @@ const ActionProvider = ({ createChatBotMessage, setState, children }: ActionProv
   };
 
   const handleCreateGame = () => {
-    const botMessage = createChatBotMessage('Taking you to create a new game...', { delay: 500 });
+    const botMessage = createChatBotMessage('Taking you to create a new game...', { delay: 500 }) as ChatbotMessage;
 
     setState((prev: ChatbotState) => ({
       ...prev,
@@ -233,7 +232,7 @@ const ActionProvider = ({ createChatBotMessage, setState, children }: ActionProv
   };
 
   const handleJoinGame = () => {
-    const botMessage = createChatBotMessage('Taking you to join a game...', { delay: 500 });
+    const botMessage = createChatBotMessage('Taking you to join a game...', { delay: 500 }) as ChatbotMessage;
 
     setState((prev: ChatbotState) => ({
       ...prev,
@@ -247,7 +246,7 @@ const ActionProvider = ({ createChatBotMessage, setState, children }: ActionProv
     const botMessage = createChatBotMessage(
       'Nim is a mathematical game of strategy. Players take turns removing objects from distinct heaps. The player who takes the last object wins!',
       { delay: 500 },
-    );
+    ) as ChatbotMessage;
 
     setState((prev: ChatbotState) => ({
       ...prev,
@@ -260,7 +259,7 @@ const ActionProvider = ({ createChatBotMessage, setState, children }: ActionProv
     const botMessage = createChatBotMessage('I can help you with messaging!', {
       delay: 500,
       widget: 'messagingMenu',
-    });
+    }) as ChatbotMessage;
 
     setState((prev: ChatbotState) => ({
       ...prev,
@@ -270,7 +269,7 @@ const ActionProvider = ({ createChatBotMessage, setState, children }: ActionProv
   };
 
   const handleGlobalMessages = () => {
-    const botMessage = createChatBotMessage('Taking you to global messages...', { delay: 500 });
+    const botMessage = createChatBotMessage('Taking you to global messages...', { delay: 500 }) as ChatbotMessage;
 
     setState((prev: ChatbotState) => ({
       ...prev,
@@ -281,7 +280,7 @@ const ActionProvider = ({ createChatBotMessage, setState, children }: ActionProv
   };
 
   const handleDirectMessages = () => {
-    const botMessage = createChatBotMessage('Taking you to direct messages...', { delay: 500 });
+    const botMessage = createChatBotMessage('Taking you to direct messages...', { delay: 500 }) as ChatbotMessage;
 
     setState((prev: ChatbotState) => ({
       ...prev,
@@ -292,7 +291,7 @@ const ActionProvider = ({ createChatBotMessage, setState, children }: ActionProv
   };
 
   const handleStartNewChat = () => {
-    const botMessage = createChatBotMessage('Taking you to start a new chat...', { delay: 500 });
+    const botMessage = createChatBotMessage('Taking you to start a new chat...', { delay: 500 }) as ChatbotMessage;
 
     setState((prev: ChatbotState) => ({
       ...prev,
@@ -303,7 +302,7 @@ const ActionProvider = ({ createChatBotMessage, setState, children }: ActionProv
   };
 
   const handleChatHistory = () => {
-    const botMessage = createChatBotMessage('Taking you to view chat history...', { delay: 500 });
+    const botMessage = createChatBotMessage('Taking you to view chat history...', { delay: 500 }) as ChatbotMessage;
 
     setState((prev: ChatbotState) => ({
       ...prev,
@@ -318,7 +317,7 @@ const ActionProvider = ({ createChatBotMessage, setState, children }: ActionProv
     const botMessage = createChatBotMessage("Let's work with your collections!", {
       delay: 500,
       widget: 'collectionsMenu',
-    });
+    }) as ChatbotMessage;
 
     setState((prev: ChatbotState) => ({
       ...prev,
@@ -330,7 +329,7 @@ const ActionProvider = ({ createChatBotMessage, setState, children }: ActionProv
   const handleViewMyCollections = () => {
     const botMessage = createChatBotMessage('Taking you to view your collections...', {
       delay: 500,
-    });
+    }) as ChatbotMessage;
 
     setState((prev: ChatbotState) => ({
       ...prev,
@@ -345,7 +344,7 @@ const ActionProvider = ({ createChatBotMessage, setState, children }: ActionProv
   const handleCreateCollection = () => {
     const botMessage = createChatBotMessage('Taking you to create a new collection...', {
       delay: 500,
-    });
+    }) as ChatbotMessage;
 
     setState((prev: ChatbotState) => ({
       ...prev,
@@ -356,7 +355,7 @@ const ActionProvider = ({ createChatBotMessage, setState, children }: ActionProv
   };
 
   const handleBrowsePublicCollections = () => {
-    const botMessage = createChatBotMessage('Finding public collections...', { delay: 500 });
+    const botMessage = createChatBotMessage('Finding public collections...', { delay: 500 }) as ChatbotMessage;
 
     setState((prev: ChatbotState) => ({
       ...prev,
@@ -370,7 +369,7 @@ const ActionProvider = ({ createChatBotMessage, setState, children }: ActionProv
       {
         delay: 500,
       },
-    );
+    ) as ChatbotMessage;
 
     setState((prev: ChatbotState) => ({
       ...prev,
@@ -383,7 +382,7 @@ const ActionProvider = ({ createChatBotMessage, setState, children }: ActionProv
     const botMessage = createChatBotMessage("Let's manage your profile!", {
       delay: 500,
       widget: 'profileMenu',
-    });
+    }) as ChatbotMessage;
 
     setState((prev: ChatbotState) => ({
       ...prev,
@@ -393,7 +392,7 @@ const ActionProvider = ({ createChatBotMessage, setState, children }: ActionProv
   };
 
   const handleViewProfile = () => {
-    const botMessage = createChatBotMessage('Taking you to view your profile...', { delay: 500 });
+    const botMessage = createChatBotMessage('Taking you to view your profile...', { delay: 500 }) as ChatbotMessage;
 
     setState((prev: ChatbotState) => ({
       ...prev,
@@ -406,7 +405,7 @@ const ActionProvider = ({ createChatBotMessage, setState, children }: ActionProv
   };
 
   const handleEditBiography = () => {
-    const botMessage = createChatBotMessage('Taking you to edit your biography...', { delay: 500 });
+    const botMessage = createChatBotMessage('Taking you to edit your biography...', { delay: 500 }) as ChatbotMessage;
 
     setState((prev: ChatbotState) => ({
       ...prev,
@@ -421,7 +420,7 @@ const ActionProvider = ({ createChatBotMessage, setState, children }: ActionProv
   const handleChangePassword = () => {
     const botMessage = createChatBotMessage('Taking you to change your password...', {
       delay: 500,
-    });
+    }) as ChatbotMessage;
 
     setState((prev: ChatbotState) => ({
       ...prev,
@@ -434,7 +433,7 @@ const ActionProvider = ({ createChatBotMessage, setState, children }: ActionProv
   };
 
   const handleViewActivity = () => {
-    const botMessage = createChatBotMessage('Taking you to view your activity...', { delay: 500 });
+    const botMessage = createChatBotMessage('Taking you to view your activity...', { delay: 500 }) as ChatbotMessage;
 
     setState((prev: ChatbotState) => ({
       ...prev,
@@ -451,7 +450,7 @@ const ActionProvider = ({ createChatBotMessage, setState, children }: ActionProv
     const botMessage = createChatBotMessage(
       'I can help you with:\n• Navigating the app\n• Finding questions\n• Joining communities\n• Playing games\n• Using messaging\n• Managing collections\n• Profile settings\n\nWhat would you like help with?',
       { delay: 500 },
-    );
+    ) as ChatbotMessage;
 
     setState((prev: ChatbotState) => ({
       ...prev,
@@ -468,7 +467,7 @@ const ActionProvider = ({ createChatBotMessage, setState, children }: ActionProv
     const botMessage = createChatBotMessage(
       "I'm not sure how to help with that. Try asking for 'help' or use the menu options to see what I can assist you with!",
       { delay: 500 },
-    );
+    ) as ChatbotMessage;
 
     setState((prev: ChatbotState) => ({
       ...prev,
@@ -482,7 +481,7 @@ const ActionProvider = ({ createChatBotMessage, setState, children }: ActionProv
       delay: 500,
       widget: 'questionSearch',
       payload: { searchQuery, maxResults: 5 },
-    });
+    }) as ChatbotMessage;
 
     setState((prev: ChatbotState) => ({
       ...prev,
@@ -494,7 +493,7 @@ const ActionProvider = ({ createChatBotMessage, setState, children }: ActionProv
   return (
     <div>
       {React.Children.map(children, child => {
-        return React.cloneElement(child as React.ReactElement, {
+        return React.cloneElement(child as React.ReactElement<any>, {
           actions: {
             // Welcome & Main Menu
             handleWelcome,

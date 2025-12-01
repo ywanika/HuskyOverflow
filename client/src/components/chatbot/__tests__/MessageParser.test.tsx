@@ -60,9 +60,9 @@ describe('MessageParser', () => {
 
   describe('Greeting Detection', () => {
     it('should handle "hello" greeting', () => {
-      const TestComponent = ({ parse }: { parse: (msg: string) => void }) => {
+      const TestComponent = ({ parse }: { parse?: (msg: string) => void }) => {
         React.useEffect(() => {
-          parse('hello');
+          parse?.('hello');
         }, [parse]);
         return null;
       };
@@ -77,9 +77,9 @@ describe('MessageParser', () => {
     });
 
     it('should handle "hi" greeting', () => {
-      const TestComponent = ({ parse }: { parse: (msg: string) => void }) => {
+      const TestComponent = ({ parse }: { parse?: (msg: string) => void }) => {
         React.useEffect(() => {
-          parse('hi');
+          parse?.('hi');
         }, [parse]);
         return null;
       };
@@ -94,9 +94,9 @@ describe('MessageParser', () => {
     });
 
     it('should handle "hey" greeting', () => {
-      const TestComponent = ({ parse }: { parse: (msg: string) => void }) => {
+      const TestComponent = ({ parse }: { parse?: (msg: string) => void }) => {
         React.useEffect(() => {
-          parse('hey');
+          parse?.('hey');
         }, [parse]);
         return null;
       };
@@ -113,9 +113,9 @@ describe('MessageParser', () => {
 
   describe('Help Intent Detection', () => {
     it('should detect help intent with "help" keyword', () => {
-      const TestComponent = ({ parse }: { parse: (msg: string) => void }) => {
+      const TestComponent = ({ parse }: { parse?: (msg: string) => void }) => {
         React.useEffect(() => {
-          parse('help');
+          parse?.('help');
         }, [parse]);
         return null;
       };
@@ -130,9 +130,9 @@ describe('MessageParser', () => {
     });
 
     it('should detect help intent with "how to" pattern', () => {
-      const TestComponent = ({ parse }: { parse: (msg: string) => void }) => {
+      const TestComponent = ({ parse }: { parse?: (msg: string) => void }) => {
         React.useEffect(() => {
-          parse('how to ask a question');
+          parse?.('how to ask a question');
         }, [parse]);
         return null;
       };
@@ -147,9 +147,9 @@ describe('MessageParser', () => {
     });
 
     it('should detect help intent with "what is" pattern', () => {
-      const TestComponent = ({ parse }: { parse: (msg: string) => void }) => {
+      const TestComponent = ({ parse }: { parse?: (msg: string) => void }) => {
         React.useEffect(() => {
-          parse('what is a community');
+          parse?.('what is a community');
         }, [parse]);
         return null;
       };
@@ -166,9 +166,9 @@ describe('MessageParser', () => {
 
   describe('Questions Flow Detection', () => {
     it('should detect questions intent with "I want to browse questions"', () => {
-      const TestComponent = ({ parse }: { parse: (msg: string) => void }) => {
+      const TestComponent = ({ parse }: { parse?: (msg: string) => void }) => {
         React.useEffect(() => {
-          parse('I want to browse questions');
+          parse?.('I want to browse questions');
         }, [parse]);
         return null;
       };
@@ -184,9 +184,9 @@ describe('MessageParser', () => {
     });
 
     it('should detect questions intent with "show me questions"', () => {
-      const TestComponent = ({ parse }: { parse: (msg: string) => void }) => {
+      const TestComponent = ({ parse }: { parse?: (msg: string) => void }) => {
         React.useEffect(() => {
-          parse('show me questions');
+          parse?.('show me questions');
         }, [parse]);
         return null;
       };
@@ -201,9 +201,9 @@ describe('MessageParser', () => {
     });
 
     it('should detect questions intent with "find questions"', () => {
-      const TestComponent = ({ parse }: { parse: (msg: string) => void }) => {
+      const TestComponent = ({ parse }: { parse?: (msg: string) => void }) => {
         React.useEffect(() => {
-          parse('questions');
+          parse?.('questions');
         }, [parse]);
         return null;
       };
@@ -219,9 +219,9 @@ describe('MessageParser', () => {
     });
 
     it('should handle browse questions action', () => {
-      const TestComponent = ({ parse }: { parse: (msg: string) => void }) => {
+      const TestComponent = ({ parse }: { parse?: (msg: string) => void }) => {
         React.useEffect(() => {
-          parse('browse all questions');
+          parse?.('browse all questions');
         }, [parse]);
         return null;
       };
@@ -236,9 +236,9 @@ describe('MessageParser', () => {
     });
 
     it('should handle search by tags action', () => {
-      const TestComponent = ({ parse }: { parse: (msg: string) => void }) => {
+      const TestComponent = ({ parse }: { parse?: (msg: string) => void }) => {
         React.useEffect(() => {
-          parse('questions tag');
+          parse?.('questions tag');
         }, [parse]);
         return null;
       };
@@ -254,9 +254,9 @@ describe('MessageParser', () => {
     });
 
     it('should handle unanswered questions action', () => {
-      const TestComponent = ({ parse }: { parse: (msg: string) => void }) => {
+      const TestComponent = ({ parse }: { parse?: (msg: string) => void }) => {
         React.useEffect(() => {
-          parse('questions unanswered');
+          parse?.('questions unanswered');
         }, [parse]);
         return null;
       };
@@ -272,9 +272,9 @@ describe('MessageParser', () => {
     });
 
     it('should handle ask question action', () => {
-      const TestComponent = ({ parse }: { parse: (msg: string) => void }) => {
+      const TestComponent = ({ parse }: { parse?: (msg: string) => void }) => {
         React.useEffect(() => {
-          parse('ask a new question');
+          parse?.('ask a new question');
         }, [parse]);
         return null;
       };
@@ -289,9 +289,9 @@ describe('MessageParser', () => {
     });
 
     it('should handle search questions with query', () => {
-      const TestComponent = ({ parse }: { parse: (msg: string) => void }) => {
+      const TestComponent = ({ parse }: { parse?: (msg: string) => void }) => {
         React.useEffect(() => {
-          parse('search questions about react');
+          parse?.('search questions about react');
         }, [parse]);
         return null;
       };
@@ -312,9 +312,9 @@ describe('MessageParser', () => {
 
   describe('Communities Flow Detection', () => {
     it('should detect communities intent with "communities" keyword', () => {
-      const TestComponent = ({ parse }: { parse: (msg: string) => void }) => {
+      const TestComponent = ({ parse }: { parse?: (msg: string) => void }) => {
         React.useEffect(() => {
-          parse('communities');
+          parse?.('communities');
         }, [parse]);
         return null;
       };
@@ -329,9 +329,9 @@ describe('MessageParser', () => {
     });
 
     it('should detect communities intent with "join community"', () => {
-      const TestComponent = ({ parse }: { parse: (msg: string) => void }) => {
+      const TestComponent = ({ parse }: { parse?: (msg: string) => void }) => {
         React.useEffect(() => {
-          parse('join community');
+          parse?.('join community');
         }, [parse]);
         return null;
       };
@@ -346,9 +346,9 @@ describe('MessageParser', () => {
     });
 
     it('should detect communities intent with "find groups"', () => {
-      const TestComponent = ({ parse }: { parse: (msg: string) => void }) => {
+      const TestComponent = ({ parse }: { parse?: (msg: string) => void }) => {
         React.useEffect(() => {
-          parse('communities');
+          parse?.('communities');
         }, [parse]);
         return null;
       };
@@ -364,9 +364,9 @@ describe('MessageParser', () => {
     });
 
     it('should handle create community action', () => {
-      const TestComponent = ({ parse }: { parse: (msg: string) => void }) => {
+      const TestComponent = ({ parse }: { parse?: (msg: string) => void }) => {
         React.useEffect(() => {
-          parse('create new community');
+          parse?.('create new community');
         }, [parse]);
         return null;
       };
@@ -381,9 +381,9 @@ describe('MessageParser', () => {
     });
 
     it('should handle browse communities action', () => {
-      const TestComponent = ({ parse }: { parse: (msg: string) => void }) => {
+      const TestComponent = ({ parse }: { parse?: (msg: string) => void }) => {
         React.useEffect(() => {
-          parse('browse all communities');
+          parse?.('browse all communities');
         }, [parse]);
         return null;
       };
@@ -400,9 +400,9 @@ describe('MessageParser', () => {
 
   describe('Games Flow Detection', () => {
     it('should detect games intent with "games" keyword', () => {
-      const TestComponent = ({ parse }: { parse: (msg: string) => void }) => {
+      const TestComponent = ({ parse }: { parse?: (msg: string) => void }) => {
         React.useEffect(() => {
-          parse('games');
+          parse?.('games');
         }, [parse]);
         return null;
       };
@@ -417,9 +417,9 @@ describe('MessageParser', () => {
     });
 
     it('should detect games intent with "play games"', () => {
-      const TestComponent = ({ parse }: { parse: (msg: string) => void }) => {
+      const TestComponent = ({ parse }: { parse?: (msg: string) => void }) => {
         React.useEffect(() => {
-          parse('play games');
+          parse?.('play games');
         }, [parse]);
         return null;
       };
@@ -435,9 +435,9 @@ describe('MessageParser', () => {
     });
 
     it('should detect games intent with "nim game"', () => {
-      const TestComponent = ({ parse }: { parse: (msg: string) => void }) => {
+      const TestComponent = ({ parse }: { parse?: (msg: string) => void }) => {
         React.useEffect(() => {
-          parse('nim game');
+          parse?.('nim game');
         }, [parse]);
         return null;
       };
@@ -452,9 +452,9 @@ describe('MessageParser', () => {
     });
 
     it('should handle learn about nim action', () => {
-      const TestComponent = ({ parse }: { parse: (msg: string) => void }) => {
+      const TestComponent = ({ parse }: { parse?: (msg: string) => void }) => {
         React.useEffect(() => {
-          parse('learn about nim');
+          parse?.('learn about nim');
         }, [parse]);
         return null;
       };
@@ -471,9 +471,9 @@ describe('MessageParser', () => {
 
   describe('Messaging Flow Detection', () => {
     it('should detect messaging intent with "messages" keyword', () => {
-      const TestComponent = ({ parse }: { parse: (msg: string) => void }) => {
+      const TestComponent = ({ parse }: { parse?: (msg: string) => void }) => {
         React.useEffect(() => {
-          parse('messages');
+          parse?.('messages');
         }, [parse]);
         return null;
       };
@@ -488,9 +488,9 @@ describe('MessageParser', () => {
     });
 
     it('should detect messaging intent with "chat" keyword', () => {
-      const TestComponent = ({ parse }: { parse: (msg: string) => void }) => {
+      const TestComponent = ({ parse }: { parse?: (msg: string) => void }) => {
         React.useEffect(() => {
-          parse('chat');
+          parse?.('chat');
         }, [parse]);
         return null;
       };
@@ -505,9 +505,9 @@ describe('MessageParser', () => {
     });
 
     it('should detect messaging intent with "direct message"', () => {
-      const TestComponent = ({ parse }: { parse: (msg: string) => void }) => {
+      const TestComponent = ({ parse }: { parse?: (msg: string) => void }) => {
         React.useEffect(() => {
-          parse('direct message');
+          parse?.('direct message');
         }, [parse]);
         return null;
       };
@@ -523,9 +523,9 @@ describe('MessageParser', () => {
     });
 
     it('should handle global messages action', () => {
-      const TestComponent = ({ parse }: { parse: (msg: string) => void }) => {
+      const TestComponent = ({ parse }: { parse?: (msg: string) => void }) => {
         React.useEffect(() => {
-          parse('global messages');
+          parse?.('global messages');
         }, [parse]);
         return null;
       };
@@ -542,9 +542,9 @@ describe('MessageParser', () => {
 
   describe('Collections Flow Detection', () => {
     it('should detect collections intent with "collections" keyword', () => {
-      const TestComponent = ({ parse }: { parse: (msg: string) => void }) => {
+      const TestComponent = ({ parse }: { parse?: (msg: string) => void }) => {
         React.useEffect(() => {
-          parse('collections');
+          parse?.('collections');
         }, [parse]);
         return null;
       };
@@ -559,9 +559,9 @@ describe('MessageParser', () => {
     });
 
     it('should detect collections intent with "save questions"', () => {
-      const TestComponent = ({ parse }: { parse: (msg: string) => void }) => {
+      const TestComponent = ({ parse }: { parse?: (msg: string) => void }) => {
         React.useEffect(() => {
-          parse('save to collection');
+          parse?.('save to collection');
         }, [parse]);
         return null;
       };
@@ -577,9 +577,9 @@ describe('MessageParser', () => {
     });
 
     it('should detect collections intent with "my collections"', () => {
-      const TestComponent = ({ parse }: { parse: (msg: string) => void }) => {
+      const TestComponent = ({ parse }: { parse?: (msg: string) => void }) => {
         React.useEffect(() => {
-          parse('my collections');
+          parse?.('my collections');
         }, [parse]);
         return null;
       };
@@ -597,9 +597,9 @@ describe('MessageParser', () => {
 
   describe('Profile Flow Detection', () => {
     it('should detect profile intent with "profile" keyword', () => {
-      const TestComponent = ({ parse }: { parse: (msg: string) => void }) => {
+      const TestComponent = ({ parse }: { parse?: (msg: string) => void }) => {
         React.useEffect(() => {
-          parse('profile');
+          parse?.('profile');
         }, [parse]);
         return null;
       };
@@ -614,9 +614,9 @@ describe('MessageParser', () => {
     });
 
     it('should detect profile intent with "settings" keyword', () => {
-      const TestComponent = ({ parse }: { parse: (msg: string) => void }) => {
+      const TestComponent = ({ parse }: { parse?: (msg: string) => void }) => {
         React.useEffect(() => {
-          parse('settings');
+          parse?.('settings');
         }, [parse]);
         return null;
       };
@@ -631,9 +631,9 @@ describe('MessageParser', () => {
     });
 
     it('should detect profile intent with "my account"', () => {
-      const TestComponent = ({ parse }: { parse: (msg: string) => void }) => {
+      const TestComponent = ({ parse }: { parse?: (msg: string) => void }) => {
         React.useEffect(() => {
-          parse('my account');
+          parse?.('my account');
         }, [parse]);
         return null;
       };
@@ -650,9 +650,9 @@ describe('MessageParser', () => {
 
   describe('Main Menu Detection', () => {
     it('should handle "menu" request', () => {
-      const TestComponent = ({ parse }: { parse: (msg: string) => void }) => {
+      const TestComponent = ({ parse }: { parse?: (msg: string) => void }) => {
         React.useEffect(() => {
-          parse('menu');
+          parse?.('menu');
         }, [parse]);
         return null;
       };
@@ -667,9 +667,9 @@ describe('MessageParser', () => {
     });
 
     it('should handle "options" request', () => {
-      const TestComponent = ({ parse }: { parse: (msg: string) => void }) => {
+      const TestComponent = ({ parse }: { parse?: (msg: string) => void }) => {
         React.useEffect(() => {
-          parse('options');
+          parse?.('options');
         }, [parse]);
         return null;
       };
@@ -684,9 +684,9 @@ describe('MessageParser', () => {
     });
 
     it('should handle "what can you do" request', () => {
-      const TestComponent = ({ parse }: { parse: (msg: string) => void }) => {
+      const TestComponent = ({ parse }: { parse?: (msg: string) => void }) => {
         React.useEffect(() => {
-          parse('what can you do');
+          parse?.('what can you do');
         }, [parse]);
         return null;
       };
@@ -701,9 +701,9 @@ describe('MessageParser', () => {
     });
 
     it('should handle "what can i do" request', () => {
-      const TestComponent = ({ parse }: { parse: (msg: string) => void }) => {
+      const TestComponent = ({ parse }: { parse?: (msg: string) => void }) => {
         React.useEffect(() => {
-          parse('what can i do');
+          parse?.('what can i do');
         }, [parse]);
         return null;
       };
@@ -720,9 +720,9 @@ describe('MessageParser', () => {
 
   describe('Questions Flow - All Variations', () => {
     it('should handle "view all questions"', () => {
-      const TestComponent = ({ parse }: { parse: (msg: string) => void }) => {
+      const TestComponent = ({ parse }: { parse?: (msg: string) => void }) => {
         React.useEffect(() => {
-          parse('view all questions');
+          parse?.('view all questions');
         }, [parse]);
         return null;
       };
@@ -737,9 +737,9 @@ describe('MessageParser', () => {
     });
 
     it('should handle "show all questions"', () => {
-      const TestComponent = ({ parse }: { parse: (msg: string) => void }) => {
+      const TestComponent = ({ parse }: { parse?: (msg: string) => void }) => {
         React.useEffect(() => {
-          parse('show all questions');
+          parse?.('show all questions');
         }, [parse]);
         return null;
       };
@@ -754,9 +754,9 @@ describe('MessageParser', () => {
     });
 
     it('should handle "questions tag"', () => {
-      const TestComponent = ({ parse }: { parse: (msg: string) => void }) => {
+      const TestComponent = ({ parse }: { parse?: (msg: string) => void }) => {
         React.useEffect(() => {
-          parse('questions tag');
+          parse?.('questions tag');
         }, [parse]);
         return null;
       };
@@ -771,9 +771,9 @@ describe('MessageParser', () => {
     });
 
     it('should handle "questions with no answer"', () => {
-      const TestComponent = ({ parse }: { parse: (msg: string) => void }) => {
+      const TestComponent = ({ parse }: { parse?: (msg: string) => void }) => {
         React.useEffect(() => {
-          parse('questions with no answer');
+          parse?.('questions with no answer');
         }, [parse]);
         return null;
       };
@@ -788,9 +788,9 @@ describe('MessageParser', () => {
     });
 
     it('should handle "post question"', () => {
-      const TestComponent = ({ parse }: { parse: (msg: string) => void }) => {
+      const TestComponent = ({ parse }: { parse?: (msg: string) => void }) => {
         React.useEffect(() => {
-          parse('post question');
+          parse?.('post question');
         }, [parse]);
         return null;
       };
@@ -805,9 +805,9 @@ describe('MessageParser', () => {
     });
 
     it('should handle "my questions"', () => {
-      const TestComponent = ({ parse }: { parse: (msg: string) => void }) => {
+      const TestComponent = ({ parse }: { parse?: (msg: string) => void }) => {
         React.useEffect(() => {
-          parse('my questions');
+          parse?.('my questions');
         }, [parse]);
         return null;
       };
@@ -822,9 +822,9 @@ describe('MessageParser', () => {
     });
 
     it('should handle "find questions about react"', () => {
-      const TestComponent = ({ parse }: { parse: (msg: string) => void }) => {
+      const TestComponent = ({ parse }: { parse?: (msg: string) => void }) => {
         React.useEffect(() => {
-          parse('find questions about react');
+          parse?.('find questions about react');
         }, [parse]);
         return null;
       };
@@ -842,9 +842,9 @@ describe('MessageParser', () => {
     });
 
     it('should handle "look for Python questions"', () => {
-      const TestComponent = ({ parse }: { parse: (msg: string) => void }) => {
+      const TestComponent = ({ parse }: { parse?: (msg: string) => void }) => {
         React.useEffect(() => {
-          parse('look for Python questions');
+          parse?.('look for Python questions');
         }, [parse]);
         return null;
       };
@@ -859,9 +859,9 @@ describe('MessageParser', () => {
     });
 
     it('should handle "I need help with questions" - triggers help first', () => {
-      const TestComponent = ({ parse }: { parse: (msg: string) => void }) => {
+      const TestComponent = ({ parse }: { parse?: (msg: string) => void }) => {
         React.useEffect(() => {
-          parse('I need help with questions');
+          parse?.('I need help with questions');
         }, [parse]);
         return null;
       };
@@ -879,9 +879,9 @@ describe('MessageParser', () => {
 
   describe('Communities Flow - All Variations', () => {
     it('should handle "show all communities"', () => {
-      const TestComponent = ({ parse }: { parse: (msg: string) => void }) => {
+      const TestComponent = ({ parse }: { parse?: (msg: string) => void }) => {
         React.useEffect(() => {
-          parse('show all communities');
+          parse?.('show all communities');
         }, [parse]);
         return null;
       };
@@ -896,9 +896,9 @@ describe('MessageParser', () => {
     });
 
     it('should handle "make a community"', () => {
-      const TestComponent = ({ parse }: { parse: (msg: string) => void }) => {
+      const TestComponent = ({ parse }: { parse?: (msg: string) => void }) => {
         React.useEffect(() => {
-          parse('make a community');
+          parse?.('make a community');
         }, [parse]);
         return null;
       };
@@ -913,9 +913,9 @@ describe('MessageParser', () => {
     });
 
     it('should handle "find communities"', () => {
-      const TestComponent = ({ parse }: { parse: (msg: string) => void }) => {
+      const TestComponent = ({ parse }: { parse?: (msg: string) => void }) => {
         React.useEffect(() => {
-          parse('find communities');
+          parse?.('find communities');
         }, [parse]);
         return null;
       };
@@ -930,9 +930,9 @@ describe('MessageParser', () => {
     });
 
     it('should handle "my communities"', () => {
-      const TestComponent = ({ parse }: { parse: (msg: string) => void }) => {
+      const TestComponent = ({ parse }: { parse?: (msg: string) => void }) => {
         React.useEffect(() => {
-          parse('my communities');
+          parse?.('my communities');
         }, [parse]);
         return null;
       };
@@ -947,9 +947,9 @@ describe('MessageParser', () => {
     });
 
     it('should handle "I want to join communities"', () => {
-      const TestComponent = ({ parse }: { parse: (msg: string) => void }) => {
+      const TestComponent = ({ parse }: { parse?: (msg: string) => void }) => {
         React.useEffect(() => {
-          parse('I want to join communities');
+          parse?.('I want to join communities');
         }, [parse]);
         return null;
       };
@@ -966,9 +966,9 @@ describe('MessageParser', () => {
 
   describe('Games Flow - All Variations', () => {
     it('should handle "show games"', () => {
-      const TestComponent = ({ parse }: { parse: (msg: string) => void }) => {
+      const TestComponent = ({ parse }: { parse?: (msg: string) => void }) => {
         React.useEffect(() => {
-          parse('show games');
+          parse?.('show games');
         }, [parse]);
         return null;
       };
@@ -983,9 +983,9 @@ describe('MessageParser', () => {
     });
 
     it('should handle "new game"', () => {
-      const TestComponent = ({ parse }: { parse: (msg: string) => void }) => {
+      const TestComponent = ({ parse }: { parse?: (msg: string) => void }) => {
         React.useEffect(() => {
-          parse('new game');
+          parse?.('new game');
         }, [parse]);
         return null;
       };
@@ -1000,9 +1000,9 @@ describe('MessageParser', () => {
     });
 
     it('should handle "what is Nim?" - triggers help first', () => {
-      const TestComponent = ({ parse }: { parse: (msg: string) => void }) => {
+      const TestComponent = ({ parse }: { parse?: (msg: string) => void }) => {
         React.useEffect(() => {
-          parse('what is Nim?');
+          parse?.('what is Nim?');
         }, [parse]);
         return null;
       };
@@ -1018,9 +1018,9 @@ describe('MessageParser', () => {
     });
 
     it('should handle "tell me about Nim" - triggers help first', () => {
-      const TestComponent = ({ parse }: { parse: (msg: string) => void }) => {
+      const TestComponent = ({ parse }: { parse?: (msg: string) => void }) => {
         React.useEffect(() => {
-          parse('tell me about Nim');
+          parse?.('tell me about Nim');
         }, [parse]);
         return null;
       };
@@ -1036,9 +1036,9 @@ describe('MessageParser', () => {
     });
 
     it('should handle "learn about nim"', () => {
-      const TestComponent = ({ parse }: { parse: (msg: string) => void }) => {
+      const TestComponent = ({ parse }: { parse?: (msg: string) => void }) => {
         React.useEffect(() => {
-          parse('learn about nim');
+          parse?.('learn about nim');
         }, [parse]);
         return null;
       };
@@ -1053,9 +1053,9 @@ describe('MessageParser', () => {
     });
 
     it('should handle "I want to play games"', () => {
-      const TestComponent = ({ parse }: { parse: (msg: string) => void }) => {
+      const TestComponent = ({ parse }: { parse?: (msg: string) => void }) => {
         React.useEffect(() => {
-          parse('I want to play games');
+          parse?.('I want to play games');
         }, [parse]);
         return null;
       };
@@ -1072,9 +1072,9 @@ describe('MessageParser', () => {
 
   describe('Messaging Flow - All Variations', () => {
     it('should handle "private messages"', () => {
-      const TestComponent = ({ parse }: { parse: (msg: string) => void }) => {
+      const TestComponent = ({ parse }: { parse?: (msg: string) => void }) => {
         React.useEffect(() => {
-          parse('private messages');
+          parse?.('private messages');
         }, [parse]);
         return null;
       };
@@ -1089,9 +1089,9 @@ describe('MessageParser', () => {
     });
 
     it('should handle "start chat"', () => {
-      const TestComponent = ({ parse }: { parse: (msg: string) => void }) => {
+      const TestComponent = ({ parse }: { parse?: (msg: string) => void }) => {
         React.useEffect(() => {
-          parse('start chat');
+          parse?.('start chat');
         }, [parse]);
         return null;
       };
@@ -1106,9 +1106,9 @@ describe('MessageParser', () => {
     });
 
     it('should handle "previous chats"', () => {
-      const TestComponent = ({ parse }: { parse: (msg: string) => void }) => {
+      const TestComponent = ({ parse }: { parse?: (msg: string) => void }) => {
         React.useEffect(() => {
-          parse('previous chats');
+          parse?.('previous chats');
         }, [parse]);
         return null;
       };
@@ -1123,9 +1123,9 @@ describe('MessageParser', () => {
     });
 
     it('should handle "I want to send messages"', () => {
-      const TestComponent = ({ parse }: { parse: (msg: string) => void }) => {
+      const TestComponent = ({ parse }: { parse?: (msg: string) => void }) => {
         React.useEffect(() => {
-          parse('I want to send messages');
+          parse?.('I want to send messages');
         }, [parse]);
         return null;
       };
@@ -1142,9 +1142,9 @@ describe('MessageParser', () => {
 
   describe('Collections Flow - All Variations', () => {
     it('should handle "view my collections"', () => {
-      const TestComponent = ({ parse }: { parse: (msg: string) => void }) => {
+      const TestComponent = ({ parse }: { parse?: (msg: string) => void }) => {
         React.useEffect(() => {
-          parse('view my collections');
+          parse?.('view my collections');
         }, [parse]);
         return null;
       };
@@ -1159,9 +1159,9 @@ describe('MessageParser', () => {
     });
 
     it('should handle "browse public collections"', () => {
-      const TestComponent = ({ parse }: { parse: (msg: string) => void }) => {
+      const TestComponent = ({ parse }: { parse?: (msg: string) => void }) => {
         React.useEffect(() => {
-          parse('browse public collections');
+          parse?.('browse public collections');
         }, [parse]);
         return null;
       };
@@ -1176,9 +1176,9 @@ describe('MessageParser', () => {
     });
 
     it('should handle "save to collection"', () => {
-      const TestComponent = ({ parse }: { parse: (msg: string) => void }) => {
+      const TestComponent = ({ parse }: { parse?: (msg: string) => void }) => {
         React.useEffect(() => {
-          parse('save to collection');
+          parse?.('save to collection');
         }, [parse]);
         return null;
       };
@@ -1193,9 +1193,9 @@ describe('MessageParser', () => {
     });
 
     it('should handle "I want to work with collections"', () => {
-      const TestComponent = ({ parse }: { parse: (msg: string) => void }) => {
+      const TestComponent = ({ parse }: { parse?: (msg: string) => void }) => {
         React.useEffect(() => {
-          parse('I want to work with collections');
+          parse?.('I want to work with collections');
         }, [parse]);
         return null;
       };
@@ -1212,9 +1212,9 @@ describe('MessageParser', () => {
 
   describe('Profile Flow - All Variations', () => {
     it('should handle "show my profile"', () => {
-      const TestComponent = ({ parse }: { parse: (msg: string) => void }) => {
+      const TestComponent = ({ parse }: { parse?: (msg: string) => void }) => {
         React.useEffect(() => {
-          parse('show my profile');
+          parse?.('show my profile');
         }, [parse]);
         return null;
       };
@@ -1229,9 +1229,9 @@ describe('MessageParser', () => {
     });
 
     it('should handle "edit biography"', () => {
-      const TestComponent = ({ parse }: { parse: (msg: string) => void }) => {
+      const TestComponent = ({ parse }: { parse?: (msg: string) => void }) => {
         React.useEffect(() => {
-          parse('edit biography');
+          parse?.('edit biography');
         }, [parse]);
         return null;
       };
@@ -1246,9 +1246,9 @@ describe('MessageParser', () => {
     });
 
     it('should handle "change password" with profile keyword', () => {
-      const TestComponent = ({ parse }: { parse: (msg: string) => void }) => {
+      const TestComponent = ({ parse }: { parse?: (msg: string) => void }) => {
         React.useEffect(() => {
-          parse('profile password');
+          parse?.('profile password');
         }, [parse]);
         return null;
       };
@@ -1263,9 +1263,9 @@ describe('MessageParser', () => {
     });
 
     it('should handle "view activity" with profile keyword', () => {
-      const TestComponent = ({ parse }: { parse: (msg: string) => void }) => {
+      const TestComponent = ({ parse }: { parse?: (msg: string) => void }) => {
         React.useEffect(() => {
-          parse('profile activity');
+          parse?.('profile activity');
         }, [parse]);
         return null;
       };
@@ -1280,9 +1280,9 @@ describe('MessageParser', () => {
     });
 
     it('should handle "manage my profile"', () => {
-      const TestComponent = ({ parse }: { parse: (msg: string) => void }) => {
+      const TestComponent = ({ parse }: { parse?: (msg: string) => void }) => {
         React.useEffect(() => {
-          parse('manage my profile');
+          parse?.('manage my profile');
         }, [parse]);
         return null;
       };
@@ -1299,9 +1299,9 @@ describe('MessageParser', () => {
 
   describe('Navigation Patterns', () => {
     it('should handle "go to questions"', () => {
-      const TestComponent = ({ parse }: { parse: (msg: string) => void }) => {
+      const TestComponent = ({ parse }: { parse?: (msg: string) => void }) => {
         React.useEffect(() => {
-          parse('go to questions');
+          parse?.('go to questions');
         }, [parse]);
         return null;
       };
@@ -1316,9 +1316,9 @@ describe('MessageParser', () => {
     });
 
     it('should handle "take me to communities"', () => {
-      const TestComponent = ({ parse }: { parse: (msg: string) => void }) => {
+      const TestComponent = ({ parse }: { parse?: (msg: string) => void }) => {
         React.useEffect(() => {
-          parse('take me to communities');
+          parse?.('take me to communities');
         }, [parse]);
         return null;
       };
@@ -1333,9 +1333,9 @@ describe('MessageParser', () => {
     });
 
     it('should handle "I need to play games"', () => {
-      const TestComponent = ({ parse }: { parse: (msg: string) => void }) => {
+      const TestComponent = ({ parse }: { parse?: (msg: string) => void }) => {
         React.useEffect(() => {
-          parse('I need to play games');
+          parse?.('I need to play games');
         }, [parse]);
         return null;
       };
@@ -1350,9 +1350,9 @@ describe('MessageParser', () => {
     });
 
     it('should handle "open profile"', () => {
-      const TestComponent = ({ parse }: { parse: (msg: string) => void }) => {
+      const TestComponent = ({ parse }: { parse?: (msg: string) => void }) => {
         React.useEffect(() => {
-          parse('open profile');
+          parse?.('open profile');
         }, [parse]);
         return null;
       };
@@ -1369,9 +1369,9 @@ describe('MessageParser', () => {
 
   describe('Help Patterns', () => {
     it('should handle "can you tell me"', () => {
-      const TestComponent = ({ parse }: { parse: (msg: string) => void }) => {
+      const TestComponent = ({ parse }: { parse?: (msg: string) => void }) => {
         React.useEffect(() => {
-          parse('can you tell me about questions');
+          parse?.('can you tell me about questions');
         }, [parse]);
         return null;
       };
@@ -1386,9 +1386,9 @@ describe('MessageParser', () => {
     });
 
     it('should handle "explain"', () => {
-      const TestComponent = ({ parse }: { parse: (msg: string) => void }) => {
+      const TestComponent = ({ parse }: { parse?: (msg: string) => void }) => {
         React.useEffect(() => {
-          parse('explain how to use communities');
+          parse?.('explain how to use communities');
         }, [parse]);
         return null;
       };
@@ -1403,9 +1403,9 @@ describe('MessageParser', () => {
     });
 
     it('should handle "tutorial"', () => {
-      const TestComponent = ({ parse }: { parse: (msg: string) => void }) => {
+      const TestComponent = ({ parse }: { parse?: (msg: string) => void }) => {
         React.useEffect(() => {
-          parse('tutorial on games');
+          parse?.('tutorial on games');
         }, [parse]);
         return null;
       };
@@ -1420,9 +1420,9 @@ describe('MessageParser', () => {
     });
 
     it('should handle "instructions"', () => {
-      const TestComponent = ({ parse }: { parse: (msg: string) => void }) => {
+      const TestComponent = ({ parse }: { parse?: (msg: string) => void }) => {
         React.useEffect(() => {
-          parse('instructions for messaging');
+          parse?.('instructions for messaging');
         }, [parse]);
         return null;
       };
@@ -1439,9 +1439,9 @@ describe('MessageParser', () => {
 
   describe('Case Variations', () => {
     it('should handle uppercase "QUESTIONS"', () => {
-      const TestComponent = ({ parse }: { parse: (msg: string) => void }) => {
+      const TestComponent = ({ parse }: { parse?: (msg: string) => void }) => {
         React.useEffect(() => {
-          parse('QUESTIONS');
+          parse?.('QUESTIONS');
         }, [parse]);
         return null;
       };
@@ -1456,9 +1456,9 @@ describe('MessageParser', () => {
     });
 
     it('should handle mixed case "CoMmUnItIeS"', () => {
-      const TestComponent = ({ parse }: { parse: (msg: string) => void }) => {
+      const TestComponent = ({ parse }: { parse?: (msg: string) => void }) => {
         React.useEffect(() => {
-          parse('CoMmUnItIeS');
+          parse?.('CoMmUnItIeS');
         }, [parse]);
         return null;
       };
@@ -1473,9 +1473,9 @@ describe('MessageParser', () => {
     });
 
     it('should handle "GAMES" in uppercase', () => {
-      const TestComponent = ({ parse }: { parse: (msg: string) => void }) => {
+      const TestComponent = ({ parse }: { parse?: (msg: string) => void }) => {
         React.useEffect(() => {
-          parse('GAMES');
+          parse?.('GAMES');
         }, [parse]);
         return null;
       };
@@ -1492,9 +1492,9 @@ describe('MessageParser', () => {
 
   describe('Search Query Extraction', () => {
     it('should extract query from "search for questions about async await"', () => {
-      const TestComponent = ({ parse }: { parse: (msg: string) => void }) => {
+      const TestComponent = ({ parse }: { parse?: (msg: string) => void }) => {
         React.useEffect(() => {
-          parse('search for questions about async await');
+          parse?.('search for questions about async await');
         }, [parse]);
         return null;
       };
@@ -1512,9 +1512,9 @@ describe('MessageParser', () => {
     });
 
     it('should extract query from "find React questions"', () => {
-      const TestComponent = ({ parse }: { parse: (msg: string) => void }) => {
+      const TestComponent = ({ parse }: { parse?: (msg: string) => void }) => {
         React.useEffect(() => {
-          parse('find React questions');
+          parse?.('find React questions');
         }, [parse]);
         return null;
       };
@@ -1534,9 +1534,9 @@ describe('MessageParser', () => {
 
   describe('Special Characters Handling', () => {
     it('should handle "search for C++ questions"', () => {
-      const TestComponent = ({ parse }: { parse: (msg: string) => void }) => {
+      const TestComponent = ({ parse }: { parse?: (msg: string) => void }) => {
         React.useEffect(() => {
-          parse('search for C++ questions');
+          parse?.('search for C++ questions');
         }, [parse]);
         return null;
       };
@@ -1551,9 +1551,9 @@ describe('MessageParser', () => {
     });
 
     it('should handle "find .NET questions"', () => {
-      const TestComponent = ({ parse }: { parse: (msg: string) => void }) => {
+      const TestComponent = ({ parse }: { parse?: (msg: string) => void }) => {
         React.useEffect(() => {
-          parse('find .NET questions');
+          parse?.('find .NET questions');
         }, [parse]);
         return null;
       };
@@ -1570,9 +1570,9 @@ describe('MessageParser', () => {
 
   describe('Default Handling', () => {
     it('should handle empty messages', () => {
-      const TestComponent = ({ parse }: { parse: (msg: string) => void }) => {
+      const TestComponent = ({ parse }: { parse?: (msg: string) => void }) => {
         React.useEffect(() => {
-          parse('');
+          parse?.('');
         }, [parse]);
         return null;
       };
@@ -1587,9 +1587,9 @@ describe('MessageParser', () => {
     });
 
     it('should handle whitespace-only messages', () => {
-      const TestComponent = ({ parse }: { parse: (msg: string) => void }) => {
+      const TestComponent = ({ parse }: { parse?: (msg: string) => void }) => {
         React.useEffect(() => {
-          parse('   ');
+          parse?.('   ');
         }, [parse]);
         return null;
       };
@@ -1604,9 +1604,9 @@ describe('MessageParser', () => {
     });
 
     it('should handle unknown messages', () => {
-      const TestComponent = ({ parse }: { parse: (msg: string) => void }) => {
+      const TestComponent = ({ parse }: { parse?: (msg: string) => void }) => {
         React.useEffect(() => {
-          parse('random gibberish text');
+          parse?.('random gibberish text');
         }, [parse]);
         return null;
       };
@@ -1621,9 +1621,9 @@ describe('MessageParser', () => {
     });
 
     it('should handle "asdfghjkl"', () => {
-      const TestComponent = ({ parse }: { parse: (msg: string) => void }) => {
+      const TestComponent = ({ parse }: { parse?: (msg: string) => void }) => {
         React.useEffect(() => {
-          parse('asdfghjkl');
+          parse?.('asdfghjkl');
         }, [parse]);
         return null;
       };
@@ -1638,9 +1638,9 @@ describe('MessageParser', () => {
     });
 
     it('should handle "xyz123"', () => {
-      const TestComponent = ({ parse }: { parse: (msg: string) => void }) => {
+      const TestComponent = ({ parse }: { parse?: (msg: string) => void }) => {
         React.useEffect(() => {
-          parse('xyz123');
+          parse?.('xyz123');
         }, [parse]);
         return null;
       };
@@ -1657,9 +1657,9 @@ describe('MessageParser', () => {
 
   describe('Welcome Message', () => {
     it('should handle "welcome" as greeting', () => {
-      const TestComponent = ({ parse }: { parse: (msg: string) => void }) => {
+      const TestComponent = ({ parse }: { parse?: (msg: string) => void }) => {
         React.useEffect(() => {
-          parse('welcome');
+          parse?.('welcome');
         }, [parse]);
         return null;
       };

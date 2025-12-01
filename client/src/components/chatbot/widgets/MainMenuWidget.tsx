@@ -14,7 +14,7 @@ interface MainMenuWidgetProps {
 
 const MainMenuWidget: React.FC<MainMenuWidgetProps> = ({
   actionProvider,
-  setState,
+  setState: _setState,
   scrollIntoView,
 }) => {
   const navigate = useNavigate();
@@ -90,7 +90,7 @@ const MainMenuWidget: React.FC<MainMenuWidgetProps> = ({
       <Text mb={3} fontWeight='semibold' fontSize='sm' color={isDark ? 'white' : 'gray.800'}>
         What would you like to do?
       </Text>
-      <VStack spacing={2} align='stretch'>
+      <VStack gap={2} align='stretch'>
         {menuOptions.map((option, index) => (
           <Button
             key={index}

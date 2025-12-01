@@ -8,7 +8,7 @@ type CollectionsMenuWidgetProps = BaseWidgetProps;
 
 const CollectionsMenuWidget: React.FC<CollectionsMenuWidgetProps> = ({
   actionProvider,
-  setState,
+  setState: _setState,
   scrollIntoView,
 }) => {
   const navigate = useNavigate();
@@ -44,7 +44,7 @@ const CollectionsMenuWidget: React.FC<CollectionsMenuWidgetProps> = ({
       <Text mb={3} fontWeight='semibold' fontSize='sm'>
         What would you like to do with collections?
       </Text>
-      <VStack spacing={2} align='stretch'>
+      <VStack gap={2} align='stretch'>
         {options.map((option, index) => (
           <Button
             key={index}

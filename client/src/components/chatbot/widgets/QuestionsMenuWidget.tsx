@@ -7,7 +7,7 @@ type QuestionsMenuWidgetProps = BaseWidgetProps;
 
 const QuestionsMenuWidget: React.FC<QuestionsMenuWidgetProps> = ({
   actionProvider,
-  setState,
+  setState: _setState,
   scrollIntoView,
 }) => {
   const navigate = useNavigate();
@@ -39,7 +39,7 @@ const QuestionsMenuWidget: React.FC<QuestionsMenuWidgetProps> = ({
       <Text mb={3} fontWeight='semibold' fontSize='sm'>
         What would you like to do with questions?
       </Text>
-      <VStack spacing={2} align='stretch'>
+      <VStack gap={2} align='stretch'>
         {options.map((option, index) => (
           <Button
             key={index}

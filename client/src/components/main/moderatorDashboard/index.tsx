@@ -126,7 +126,7 @@ const ModeratorDashboard = () => {
 
   const renderFlaggedItem = (
     item: FlaggedContentItem,
-    contentType: 'question' | 'answer' | 'comment',
+    contentType: FlaggableContentType,
     _index: number,
   ) => {
     const title = getContentTitle(item.content, contentType);

@@ -1,55 +1,10 @@
 import React from 'react';
 import { NAVIGATION_PATTERNS, actionPatterns, HELP_PATTERNS, knowledgeBase } from './knowledgeBase';
+import type { ChatbotActions } from './types';
 
 interface MessageParserProps {
   children: React.ReactNode;
-  actions: {
-    // Welcome & Main Menu
-    handleWelcome: () => void;
-    handleMainMenu: () => void;
-    handleHello: () => void;
-    // Questions Flow
-    handleQuestionsFlow: () => void;
-    handleBrowseQuestions: () => void;
-    handleSearchByTags: () => void;
-    handleUnansweredQuestions: () => void;
-    handleAskQuestion: () => void;
-    handleMyQuestions: () => void;
-    handleSearchQuestions: (query: string) => void;
-    // Communities Flow
-    handleCommunitiesFlow: () => void;
-    handleBrowseCommunities: () => void;
-    handleCreateCommunity: () => void;
-    handleFindCommunitiesByTopic: () => void;
-    handleMyCommunities: () => void;
-    // Games Flow
-    handleGamesFlow: () => void;
-    handleViewGames: () => void;
-    handleCreateGame: () => void;
-    handleJoinGame: () => void;
-    handleLearnNim: () => void;
-    // Messaging Flow
-    handleMessagingFlow: () => void;
-    handleGlobalMessages: () => void;
-    handleDirectMessages: () => void;
-    handleStartNewChat: () => void;
-    handleChatHistory: () => void;
-    // Collections Flow
-    handleCollectionsFlow: () => void;
-    handleViewMyCollections: () => void;
-    handleCreateCollection: () => void;
-    handleBrowsePublicCollections: () => void;
-    handleAddToCollection: () => void;
-    // Profile Flow
-    handleProfileFlow: () => void;
-    handleViewProfile: () => void;
-    handleEditBiography: () => void;
-    handleChangePassword: () => void;
-    handleViewActivity: () => void;
-    // Help & Support
-    handleHelp: () => void;
-    handleDefault: () => void;
-  };
+  actions: ChatbotActions;
 }
 
 const MessageParser = ({ children, actions }: MessageParserProps) => {
@@ -130,7 +85,7 @@ const MessageParser = ({ children, actions }: MessageParserProps) => {
 
     // Handle empty messages
     if (!message || message.trim().length === 0) {
-      actions.handleDefault();
+      actions.handleDefault?.();
       return;
     }
 
@@ -141,7 +96,7 @@ const MessageParser = ({ children, actions }: MessageParserProps) => {
       lowerMessage.includes('hey') ||
       lowerMessage === 'welcome'
     ) {
-      actions.handleHello();
+      actions.handleHello?.();
       return;
     }
 
@@ -152,7 +107,7 @@ const MessageParser = ({ children, actions }: MessageParserProps) => {
       lowerMessage.includes('what can you do') ||
       lowerMessage.includes('what can i do')
     ) {
-      actions.handleMainMenu();
+      actions.handleMainMenu?.();
       return;
     }
 
@@ -161,14 +116,14 @@ const MessageParser = ({ children, actions }: MessageParserProps) => {
 
     // Handle help intent
     if (intent === 'help') {
-      actions.handleHelp();
+      actions.handleHelp?.();
       return;
     }
 
     // Handle questions flow
     if (entity === 'questions') {
       if (intent === 'search' && query) {
-        actions.handleSearchQuestions(query);
+        actions.handleSearchQuestions?.(query);
         return;
       }
       if (
@@ -176,15 +131,15 @@ const MessageParser = ({ children, actions }: MessageParserProps) => {
         lowerMessage.includes('view all') ||
         lowerMessage.includes('show all')
       ) {
-        actions.handleBrowseQuestions();
+        actions.handleBrowseQuestions?.();
         return;
       }
       if (lowerMessage.includes('tag') || lowerMessage.includes('search by tag')) {
-        actions.handleSearchByTags();
+        actions.handleSearchByTags?.();
         return;
       }
       if (lowerMessage.includes('unanswered') || lowerMessage.includes('no answer')) {
-        actions.handleUnansweredQuestions();
+        actions.handleUnansweredQuestions?.();
         return;
       }
       if (
@@ -192,15 +147,15 @@ const MessageParser = ({ children, actions }: MessageParserProps) => {
         lowerMessage.includes('new question') ||
         lowerMessage.includes('post question')
       ) {
-        actions.handleAskQuestion();
+        actions.handleAskQuestion?.();
         return;
       }
       if (lowerMessage.includes('my question') || lowerMessage.includes('my questions')) {
-        actions.handleMyQuestions();
+        actions.handleMyQuestions?.();
         return;
       }
       // Default to questions flow
-      actions.handleQuestionsFlow();
+      actions.handleQuestionsFlow?.();
       return;
     }
 
@@ -211,7 +166,7 @@ const MessageParser = ({ children, actions }: MessageParserProps) => {
         lowerMessage.includes('new community') ||
         lowerMessage.includes('make')
       ) {
-        actions.handleCreateCommunity();
+        actions.handleCreateCommunity?.();
         return;
       }
       if (
@@ -219,19 +174,19 @@ const MessageParser = ({ children, actions }: MessageParserProps) => {
         lowerMessage.includes('view all') ||
         lowerMessage.includes('show all')
       ) {
-        actions.handleBrowseCommunities();
+        actions.handleBrowseCommunities?.();
         return;
       }
       if (lowerMessage.includes('topic') || lowerMessage.includes('find')) {
-        actions.handleFindCommunitiesByTopic();
+        actions.handleFindCommunitiesByTopic?.();
         return;
       }
       if (lowerMessage.includes('my communit')) {
-        actions.handleMyCommunities();
+        actions.handleMyCommunities?.();
         return;
       }
       // Default to communities flow
-      actions.handleCommunitiesFlow();
+      actions.handleCommunitiesFlow?.();
       return;
     }
 
@@ -241,7 +196,7 @@ const MessageParser = ({ children, actions }: MessageParserProps) => {
         lowerMessage.includes('nim') &&
         (lowerMessage.includes('learn') || lowerMessage.includes('what'))
       ) {
-        actions.handleLearnNim();
+        actions.handleLearnNim?.();
         return;
       }
       if (
@@ -249,11 +204,11 @@ const MessageParser = ({ children, actions }: MessageParserProps) => {
         lowerMessage.includes('new game') ||
         lowerMessage.includes('make')
       ) {
-        actions.handleCreateGame();
+        actions.handleCreateGame?.();
         return;
       }
       if (lowerMessage.includes('join') || lowerMessage.includes('play')) {
-        actions.handleJoinGame();
+        actions.handleJoinGame?.();
         return;
       }
       if (
@@ -261,34 +216,34 @@ const MessageParser = ({ children, actions }: MessageParserProps) => {
         lowerMessage.includes('browse') ||
         lowerMessage.includes('show')
       ) {
-        actions.handleViewGames();
+        actions.handleViewGames?.();
         return;
       }
       // Default to games flow
-      actions.handleGamesFlow();
+      actions.handleGamesFlow?.();
       return;
     }
 
     // Handle messaging flow
     if (entity === 'messaging') {
       if (lowerMessage.includes('global')) {
-        actions.handleGlobalMessages();
+        actions.handleGlobalMessages?.();
         return;
       }
       if (lowerMessage.includes('direct') || lowerMessage.includes('private')) {
-        actions.handleDirectMessages();
+        actions.handleDirectMessages?.();
         return;
       }
       if (lowerMessage.includes('new chat') || lowerMessage.includes('start chat')) {
-        actions.handleStartNewChat();
+        actions.handleStartNewChat?.();
         return;
       }
       if (lowerMessage.includes('history') || lowerMessage.includes('previous')) {
-        actions.handleChatHistory();
+        actions.handleChatHistory?.();
         return;
       }
       // Default to messaging flow
-      actions.handleMessagingFlow();
+      actions.handleMessagingFlow?.();
       return;
     }
 
@@ -299,53 +254,53 @@ const MessageParser = ({ children, actions }: MessageParserProps) => {
         lowerMessage.includes('new collection') ||
         lowerMessage.includes('make')
       ) {
-        actions.handleCreateCollection();
+        actions.handleCreateCollection?.();
         return;
       }
       if (lowerMessage.includes('my collection') || lowerMessage.includes('view my')) {
-        actions.handleViewMyCollections();
+        actions.handleViewMyCollections?.();
         return;
       }
       if (lowerMessage.includes('public') || lowerMessage.includes('browse')) {
-        actions.handleBrowsePublicCollections();
+        actions.handleBrowsePublicCollections?.();
         return;
       }
       if (lowerMessage.includes('add') || lowerMessage.includes('save')) {
-        actions.handleAddToCollection();
+        actions.handleAddToCollection?.();
         return;
       }
       // Default to collections flow
-      actions.handleCollectionsFlow();
+      actions.handleCollectionsFlow?.();
       return;
     }
 
     // Handle profile flow
     if (entity === 'profile') {
       if (lowerMessage.includes('biography') || lowerMessage.includes('bio')) {
-        actions.handleEditBiography();
+        actions.handleEditBiography?.();
         return;
       }
       if (lowerMessage.includes('password')) {
-        actions.handleChangePassword();
+        actions.handleChangePassword?.();
         return;
       }
       if (lowerMessage.includes('activity')) {
-        actions.handleViewActivity();
+        actions.handleViewActivity?.();
         return;
       }
       // Default to profile flow
-      actions.handleProfileFlow();
+      actions.handleProfileFlow?.();
       return;
     }
 
     // Fallback for unknown intents
-    actions.handleDefault();
+    actions.handleDefault?.();
   };
 
   return (
     <div>
       {React.Children.map(children, child => {
-        return React.cloneElement(child as React.ReactElement, {
+        return React.cloneElement(child as React.ReactElement<any>, {
           parse: parse,
           actions: actions,
         });
