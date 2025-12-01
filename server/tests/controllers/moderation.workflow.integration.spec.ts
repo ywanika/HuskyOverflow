@@ -17,14 +17,12 @@ import {
   flagComment,
   deleteQuestion,
   deleteAnswer,
-  deleteComment,
   getFlaggedContent,
   markAsReviewed,
   dismissFlag,
   submitAppeal,
   approveAppeal,
   rejectAppeal,
-  checkExistingAppeal,
   restoreDeletedContent,
 } from '../../services/moderation.service';
 import { DatabaseQuestion, DatabaseAnswer, DatabaseComment, DatabaseUser } from '../../types/types';
@@ -56,7 +54,7 @@ describe('Moderation Workflow Integration Tests', () => {
   beforeAll(async () => {
     // Connect to test database
     await mongoose.connect(MONGO_TEST_URL);
-    await mongoose.connection.db.dropDatabase();
+    await mongoose.connection.db?.dropDatabase();
 
     // Create HTTP server and Socket.IO instance
     httpServer = createServer();
@@ -72,7 +70,7 @@ describe('Moderation Workflow Integration Tests', () => {
       clientSocket = Client(`http://localhost:${port}`);
 
       clientSocket.on('connect', () => {
-        console.log('Test client connected');
+        // Test client connected
       });
 
       // Listen for moderation updates
@@ -96,7 +94,7 @@ describe('Moderation Workflow Integration Tests', () => {
     if (httpServer) {
       httpServer.close();
     }
-    await mongoose.connection.db.dropDatabase();
+    await mongoose.connection.db?.dropDatabase();
     await mongoose.disconnect();
   });
 
@@ -242,7 +240,8 @@ describe('Moderation Workflow Integration Tests', () => {
       expect(deletionNotifications[0].contentId).toEqual(testQuestion._id);
 
       // Step 3: Content author creates an appeal via service
-      const appealReason = 'I believe this deletion was made in error. The content was appropriate and follows community guidelines.';
+      const appealReason =
+        'I believe this deletion was made in error. The content was appropriate and follows community guidelines.';
       const appealResult = await submitAppeal(
         testQuestion._id.toString(),
         'question',
@@ -373,14 +372,12 @@ describe('Moderation Workflow Integration Tests', () => {
 
       // Submit appeal via API
       const appealReason = 'The comment was appropriate and constructive.';
-      const appealResponse = await supertest(app)
-        .post('/api/moderation/appeal/submit')
-        .send({
-          contentId: testComment._id.toString(),
-          contentType: 'comment',
-          appealUser: contentAuthor.username,
-          reason: appealReason,
-        });
+      const appealResponse = await supertest(app).post('/api/moderation/appeal/submit').send({
+        contentId: testComment._id.toString(),
+        contentType: 'comment',
+        appealUser: contentAuthor.username,
+        reason: appealReason,
+      });
       expect(appealResponse.status).toBe(200);
       expect(appealResponse.body.success).toBe(true);
 
@@ -393,13 +390,11 @@ describe('Moderation Workflow Integration Tests', () => {
 
       // Approve appeal via API
       socketEvents = [];
-      const approveResponse = await supertest(app)
-        .post('/api/moderation/appeal/approve')
-        .send({
-          appealId: appeal!._id.toString(),
-          moderatorUsername: moderatorUser.username,
-          modResponse: 'Appeal approved',
-        });
+      const approveResponse = await supertest(app).post('/api/moderation/appeal/approve').send({
+        appealId: appeal!._id.toString(),
+        moderatorUsername: moderatorUser.username,
+        modResponse: 'Appeal approved',
+      });
       expect(approveResponse.status).toBe(200);
       expect(approveResponse.body.success).toBe(true);
 
@@ -411,7 +406,8 @@ describe('Moderation Workflow Integration Tests', () => {
       // Wait for socket events
       await new Promise(resolve => setTimeout(resolve, 200));
       const appealEvents = socketEvents.filter(
-        e => e.type === 'moderationUpdate' && (e.data as { type: string }).type === 'appealApproved',
+        e =>
+          e.type === 'moderationUpdate' && (e.data as { type: string }).type === 'appealApproved',
       );
       expect(appealEvents.length).toBeGreaterThan(0);
     });
@@ -423,7 +419,11 @@ describe('Moderation Workflow Integration Tests', () => {
       await flagQuestion(testQuestion._id.toString(), regularUser.username);
 
       // Moderator dismisses the flag
-      const dismissResult = await dismissFlag('question', testQuestion._id.toString(), moderatorUser.username);
+      const dismissResult = await dismissFlag(
+        'question',
+        testQuestion._id.toString(),
+        moderatorUser.username,
+      );
       expect(dismissResult.success).toBe(true);
 
       // Verify flag is dismissed
@@ -436,7 +436,11 @@ describe('Moderation Workflow Integration Tests', () => {
     it('should allow moderator to dismiss a flag on an answer', async () => {
       await flagAnswer(testAnswer._id.toString(), regularUser.username);
 
-      const dismissResult = await dismissFlag('answer', testAnswer._id.toString(), moderatorUser.username);
+      const dismissResult = await dismissFlag(
+        'answer',
+        testAnswer._id.toString(),
+        moderatorUser.username,
+      );
       expect(dismissResult.success).toBe(true);
 
       const answer = await AnswerModel.findById(testAnswer._id);
@@ -446,7 +450,11 @@ describe('Moderation Workflow Integration Tests', () => {
     it('should allow moderator to dismiss a flag on a comment', async () => {
       await flagComment(testComment._id.toString(), regularUser.username);
 
-      const dismissResult = await dismissFlag('comment', testComment._id.toString(), moderatorUser.username);
+      const dismissResult = await dismissFlag(
+        'comment',
+        testComment._id.toString(),
+        moderatorUser.username,
+      );
       expect(dismissResult.success).toBe(true);
 
       const comment = await CommentModel.findById(testComment._id);
@@ -543,7 +551,7 @@ describe('Moderation Workflow Integration Tests', () => {
         deleted: { isDeleted: false },
       });
 
-      const question2 = await QuestionModel.create({
+      await QuestionModel.create({
         title: 'Question 2',
         text: 'Text 2',
         tags: [],
@@ -596,6 +604,7 @@ describe('Moderation Workflow Integration Tests', () => {
       expect(shortReason.length).toBeLessThan(50);
       // Note: Validation may be in controller, so we test the actual behavior
       // If validation exists, this should fail
+      expect(shortResult.success).toBe(false);
 
       // Valid length (50-500 chars)
       const validReason = 'A'.repeat(100); // 100 characters
@@ -608,11 +617,11 @@ describe('Moderation Workflow Integration Tests', () => {
       expect(validReason.length).toBeGreaterThanOrEqual(50);
       expect(validReason.length).toBeLessThanOrEqual(500);
       // This should succeed if validation passes
+      expect(validResult.success).toBe(true);
     });
 
     it('should require appeal reason with at least 3 words', async () => {
       // Less than 3 words
-      const twoWordReason = 'Too short';
       // Note: This validation may be in controller layer
 
       // Valid (3+ words)
@@ -624,11 +633,13 @@ describe('Moderation Workflow Integration Tests', () => {
         validReason,
       );
       const wordCount = validReason.split(/\s+/).length;
+      expect(validResult.success).toBe(true);
       expect(wordCount).toBeGreaterThanOrEqual(3);
     });
 
     it('should prevent user from appealing the same content twice', async () => {
-      const appealReason = 'I believe this deletion was made in error. The content was appropriate.';
+      const appealReason =
+        'I believe this deletion was made in error. The content was appropriate.';
 
       // First appeal succeeds
       const firstAppeal = await submitAppeal(
@@ -651,7 +662,8 @@ describe('Moderation Workflow Integration Tests', () => {
     });
 
     it('should check if appeal exists via API', async () => {
-      const appealReason = 'I believe this deletion was made in error. The content was appropriate.';
+      const appealReason =
+        'I believe this deletion was made in error. The content was appropriate.';
 
       // Submit appeal
       await submitAppeal(
@@ -662,18 +674,17 @@ describe('Moderation Workflow Integration Tests', () => {
       );
 
       // Check if appeal exists
-      const checkResponse = await supertest(app)
-        .get('/api/moderation/appeal/check')
-        .query({
-          contentId: testQuestion._id.toString(),
-          appealUser: contentAuthor.username,
-        });
+      const checkResponse = await supertest(app).get('/api/moderation/appeal/check').query({
+        contentId: testQuestion._id.toString(),
+        appealUser: contentAuthor.username,
+      });
       expect(checkResponse.status).toBe(200);
       expect(checkResponse.body.exists).toBe(true);
     });
 
     it('should only allow content author to appeal their own content', async () => {
-      const appealReason = 'I believe this deletion was made in error. The content was appropriate.';
+      const appealReason =
+        'I believe this deletion was made in error. The content was appropriate.';
 
       // Regular user tries to appeal content they didn't create
       const appealResult = await submitAppeal(
@@ -704,7 +715,8 @@ describe('Moderation Workflow Integration Tests', () => {
         deleted: { isDeleted: false },
       });
 
-      const appealReason = 'I believe this deletion was made in error. The content was appropriate.';
+      const appealReason =
+        'I believe this deletion was made in error. The content was appropriate.';
 
       // Try to appeal non-deleted content
       const appealResult = await submitAppeal(
@@ -750,7 +762,11 @@ describe('Moderation Workflow Integration Tests', () => {
     it('should prevent regular users from dismissing flags', async () => {
       await flagQuestion(testQuestion._id.toString(), regularUser.username);
 
-      const dismissResult = await dismissFlag('question', testQuestion._id.toString(), regularUser.username);
+      const dismissResult = await dismissFlag(
+        'question',
+        testQuestion._id.toString(),
+        regularUser.username,
+      );
       expect(dismissResult.success).toBe(false);
       expect(dismissResult.error).toContain('Unauthorized');
     });
@@ -780,6 +796,7 @@ describe('Moderation Workflow Integration Tests', () => {
         contentAuthor.username,
         'I believe this deletion was made in error. The content was appropriate.',
       );
+      expect(appealResult.success).toBe(true);
       const appeal = await AppealModel.findOne({
         contentId: testQuestion._id,
         appealUser: contentAuthor.username,
@@ -804,6 +821,7 @@ describe('Moderation Workflow Integration Tests', () => {
         contentAuthor.username,
         'I believe this deletion was made in error. The content was appropriate.',
       );
+      expect(appealResult.success).toBe(true);
       const appeal = await AppealModel.findOne({
         contentId: testQuestion._id,
         appealUser: contentAuthor.username,
@@ -984,7 +1002,11 @@ describe('Moderation Workflow Integration Tests', () => {
 
       const flagEvents = socketEvents.filter(e => e.type === 'moderationUpdate');
       expect(flagEvents.length).toBeGreaterThan(0);
-      const flagEvent = flagEvents[0].data as { type: string; questionId: string; flaggedBy: string };
+      const flagEvent = flagEvents[0].data as {
+        type: string;
+        questionId: string;
+        flaggedBy: string;
+      };
       expect(flagEvent.type).toBe('questionFlagged');
       expect(flagEvent.questionId).toBe(testQuestion._id.toString());
       expect(flagEvent.flaggedBy).toBe(regularUser.username);
@@ -1038,7 +1060,9 @@ describe('Moderation Workflow Integration Tests', () => {
       await new Promise(resolve => setTimeout(resolve, 200));
 
       const dismissEvents = socketEvents.filter(
-        e => e.type === 'moderationUpdate' && (e.data as { type: string }).type === 'questionFlagDismissed',
+        e =>
+          e.type === 'moderationUpdate' &&
+          (e.data as { type: string }).type === 'questionFlagDismissed',
       );
       expect(dismissEvents.length).toBeGreaterThan(0);
     });
@@ -1064,7 +1088,8 @@ describe('Moderation Workflow Integration Tests', () => {
       await new Promise(resolve => setTimeout(resolve, 200));
 
       const reviewEvents = socketEvents.filter(
-        e => e.type === 'moderationUpdate' && (e.data as { type: string }).type === 'questionReviewed',
+        e =>
+          e.type === 'moderationUpdate' && (e.data as { type: string }).type === 'questionReviewed',
       );
       expect(reviewEvents.length).toBeGreaterThan(0);
     });
@@ -1080,14 +1105,12 @@ describe('Moderation Workflow Integration Tests', () => {
       );
 
       // Submit appeal
-      const response = await supertest(app)
-        .post('/api/moderation/appeal/submit')
-        .send({
-          contentId: testQuestion._id.toString(),
-          contentType: 'question',
-          appealUser: contentAuthor.username,
-          reason: 'I believe this deletion was made in error. The content was appropriate.',
-        });
+      const response = await supertest(app).post('/api/moderation/appeal/submit').send({
+        contentId: testQuestion._id.toString(),
+        contentType: 'question',
+        appealUser: contentAuthor.username,
+        reason: 'I believe this deletion was made in error. The content was appropriate.',
+      });
 
       expect(response.status).toBe(200);
       expect(response.body.success).toBe(true);
@@ -1095,7 +1118,8 @@ describe('Moderation Workflow Integration Tests', () => {
       await new Promise(resolve => setTimeout(resolve, 200));
 
       const appealEvents = socketEvents.filter(
-        e => e.type === 'moderationUpdate' && (e.data as { type: string }).type === 'appealSubmitted',
+        e =>
+          e.type === 'moderationUpdate' && (e.data as { type: string }).type === 'appealSubmitted',
       );
       expect(appealEvents.length).toBeGreaterThan(0);
     });
@@ -1245,4 +1269,3 @@ describe('Moderation Workflow Integration Tests', () => {
     });
   });
 });
-
