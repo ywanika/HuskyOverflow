@@ -208,20 +208,30 @@ const useAnswerPage = () => {
    * Handles deletion of a question by a moderator
    */
   const handleDeleteQuestion = async (deleteReason: string) => {
-    if (!questionID) {
-      throw new Error('Question ID not found');
+    try {
+      if (!questionID) {
+        throw new Error('Question ID not found');
+      }
+      if (deleteReason.trim().split(/\s+/).length < 3) {
+        throw new Error('Delete reason must be at least 3 words long');
+      }
+      await deleteQuestion(questionID, user.username, deleteReason);
+      // Refresh the question data
+      const res = await getQuestionById(questionID, user.username);
+      setQuestion(res || null);
+      // Optionally navigate away or show a message
+    } catch (error) {
+      throw new Error((error as Error).message);
     }
-    await deleteQuestion(questionID, user.username, deleteReason);
-    // Refresh the question data
-    const res = await getQuestionById(questionID, user.username);
-    setQuestion(res || null);
-    // Optionally navigate away or show a message
   };
 
   /**
    * Handles deletion of an answer by a moderator
    */
   const handleDeleteAnswer = async (answerId: string, deleteReason: string) => {
+    if (deleteReason.trim().split(/\s+/).length < 3) {
+      throw new Error('Delete reason must be at least 3 words long');
+    }
     await deleteAnswer(answerId, user.username, deleteReason);
     // Refresh the question data
     const res = await getQuestionById(questionID, user.username);
@@ -232,6 +242,9 @@ const useAnswerPage = () => {
    * Handles deletion of a comment by a moderator
    */
   const handleDeleteComment = async (commentId: string, deleteReason: string) => {
+    if (deleteReason.trim().split(/\s+/).length < 3) {
+      throw new Error('Delete reason must be at least 3 words long');
+    }
     await deleteComment(commentId, user.username, deleteReason);
     // Refresh the question data
     const res = await getQuestionById(questionID, user.username);
