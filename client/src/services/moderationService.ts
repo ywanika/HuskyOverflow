@@ -57,7 +57,7 @@ export const deleteQuestion = async (
   });
 
   if (res.status !== 200) {
-    throw new Error('Error while deleting question');
+    throw new Error(res.data.error || 'Error while deleting question');
   }
 
   return res.data;
@@ -84,7 +84,7 @@ export const deleteAnswer = async (
   });
 
   if (res.status !== 200) {
-    throw new Error('Error while deleting answer');
+    throw new Error(res.data.error || 'Error while deleting answer');
   }
 
   return res.data;
@@ -111,7 +111,7 @@ export const deleteComment = async (
   });
 
   if (res.status !== 200) {
-    throw new Error('Error while deleting comment');
+    throw new Error(res.data.error || 'Error while deleting comment');
   }
 
   return res.data;
