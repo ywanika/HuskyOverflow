@@ -185,10 +185,8 @@ export const fetchAndIncrementQuestionViewsById = async (
   try {
     const q: PopulatedDatabaseQuestion | null = await QuestionModel.findOneAndUpdate(
       {
-        '_id': new ObjectId(qid),
-        'deleted.isDeleted': { $ne: true },
-        // Filter out flagged content that hasn't been reviewed (temporarily taken down)
-        '$or': [
+        _id: new ObjectId(qid),
+        $or: [
           { 'flagged.isFlagged': { $ne: true } },
           {
             'flagged.reviewedBy': {
