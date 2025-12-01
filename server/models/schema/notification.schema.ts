@@ -22,6 +22,7 @@ const notificationSchema: Schema = new Schema(
       type: String,
       enum: [
         'deletion',
+        'appeal',
         'appeal_result',
         'flag',
         'suspension',
