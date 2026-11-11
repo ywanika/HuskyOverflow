@@ -1,158 +1,162 @@
-[![Review Assignment Due Date](https://classroom.github.com/assets/deadline-readme-button-22041afd0340ce965d47ae6ef1cefeee28c7c493a6346c4f15d667ab976d596c.svg)](https://classroom.github.com/a/Uq-6GvbM)
-The team project for this class is designed to mirror the experiences of a software engineer: by virtue of your individual projects, you have been _onboarded_ to our codebase, made several individual contributions, and have formed a team to propose, develop and implement new features. The codebase that we’ll be developing on is a Fake Stack Overflow project (let’s call it HuskyFlow). You will get an opportunity to work with the starter code which provides basic skeleton for the app and then additional features will be proposed and implemented by you! All implementation will take place in the TypeScript programming language, using React for the user interface.
+# Husky Overflow
 
-## Getting Started
+**A full-stack Stack Overflow-style Q&A platform for the Northeastern community, with built-in moderation, appeals, and admin tooling.**
 
-Run `npm install` in the root directory to install all dependencies for the `client`, `server`, and `shared` folders.
+Developed over a semester by Ahana, Dishant, and Anika for CS 4530: Fundamentals of Software Engineering. The team extended a course-provided "Fake Stack Overflow" starter codebase with new features across three user roles: users, moderators, and admins.
 
-> [!NOTE]
-> Refer to [IP1](https://neu-se.github.io/CS4530-Spring-2025/assignments/ip1) and [IP2](https://neu-se.github.io/CS4530-Spring-2025/assignments/ip2) for further instructions related to setting up MongoDB, setting environment variables, and running the client and server.
+---
 
-## Codebase Folder Structure
+## How it works
 
-- `client`: Contains the frontend application code, responsible for the user interface and interacting with the backend. This directory includes all React components and related assets.
-- `server`: Contains the backend application code, handling the logic, APIs, and database interactions. It serves requests from the client and processes data accordingly.
-- `shared`: Contains all shared type definitions that are used by both the client and server. This helps maintain consistency and reduces duplication of code between the two folders. The type definitions are imported and shared within each folder's `types/types.ts` file.
+Husky Overflow supports three roles, each with their own views and permissions once they log in.
 
-## Database Architecture
+**Users**: Users can ask questions, answer them, comment, vote, tag, join communities, save questions to collections, message each other, and chat with a built-in help chatbot. They agree to community guidelines at signup, can flag content, and can appeal if their content is removed.
 
-The schemas for the database are documented in the directory `server/models/schema`.
-A class diagram for the schema definition is shown below:
+**Moderators**: Moderators get a dashboard of flagged and appealed content. They can delete content (with a written reason), review or dismiss flags, approve or reject appeals, and see their own deletion history.
+
+**Admins**: Admins get a platform dashboard with live metrics and an audit log. They can create, edit, delete, suspend, ban, promote, and demote users.
+
+### The moderation lifecycle
+
+A piece of content moves through a defined flow, and every step notifies the people involved in real time:
+
+1. A user **flags** a question, answer, or comment (one flag per user per item).
+2. A moderator **reviews** it: dismiss the flag, or **delete** it with a reason of at least three words.
+3. The author gets an instant **deletion notification** containing the reason.
+4. The author can submit **one appeal** per deletion.
+5. A moderator **approves** (content is restored) or **rejects** the appeal, and the author is notified of the result.
+
+Full user stories and step-by-step test instructions for every feature are in [FEATURES.md](FEATURES.md).
+
+---
+
+## Tech stack
+
+| Layer | Technology |
+| --- | --- |
+| Language | TypeScript (client, server, and shared types) |
+| Frontend | React, Vite, React Router, Recharts |
+| Backend | Node.js, Express, express-openapi-validator |
+| Database | MongoDB with Mongoose |
+| Realtime | Socket.IO |
+| Testing | Jest, Cypress (end-to-end), cypress-axe (accessibility), Stryker (mutation testing) |
+| CI | GitHub Actions: lint, build, server smoke test, backend and frontend tests |
+
+---
+
+## Architecture
+
+```mermaid
+flowchart LR
+    User["User"] --> Client
+    Moderator["Moderator"] --> Client
+    Admin["Admin"] --> Client
+
+    Client["React client<br/>(Vite + TypeScript)"] -->|REST via axios| Server["Express server<br/>controllers → services"]
+    Server -->|Mongoose| DB[("MongoDB<br/>users, questions, answers,<br/>appeals, notifications, audit logs")]
+    Server -->|"moderationUpdate,<br/>notificationUpdate"| Sockets{{"Socket.IO"}}
+    Sockets -->|live updates| Client
+    Client -->|profanity check| Profanity["Profanity API"]
+
+    Shared["shared/<br/>type definitions"] -.-> Client
+    Shared -.-> Server
+```
+
+The repo is an npm workspace with three packages:
+
+- `client`: the React frontend (components, hooks, services).
+- `server`: the Express API, Mongoose models and schemas, services, seed data, and OpenAPI spec.
+- `shared`: TypeScript types used by both client and server, so the API contract stays consistent.
+
+On the server, each feature follows a **controller → service → model** layering: controllers handle HTTP and socket events, services hold the business logic and database access, and models define the Mongoose schemas. On the client, each screen pairs a component with a custom hook that owns its state and calls a service module for API access.
+
+The database schema is documented in `server/models/schema` and diagrammed here:
 
 ![Class Diagram](class-diagram.png)
 
-## API Routes
+---
 
-### `/answer`
+## Anika's contribution
+<small>AI generated, Checked by me</small>
 
-| Endpoint   | Method | Description      |
-| ---------- | ------ | ---------------- |
-| `/addAnswer` | POST   | Add a new answer |
+I owned most of the **moderation, appeals, and admin user-management** workflow, plus several user-facing features around it.
 
-### `/comment`
+### Features
 
-| Endpoint    | Method | Description       |
-| ----------- | ------ | ----------------- |
-| `/addComment` | POST   | Add a new comment |
+**Moderator deletion, history, and appeals.** I built the appeal flow end to end: authors can appeal a deletion once, and moderators can approve or reject from the dashboard. Rejections and approvals trigger instant notifications to the author, and approved appeals restore the content. I also added the moderator's **deletion history** view, the three-word minimum for deletion reasons, and the deletion notifications that include the removed content and reason.
 
-### `/messaging`
+**Admin user management.** Admins can suspend users for a set number of days with a violation reason, ban them, promote or demote users between User, Moderator, and Admin, and create, edit, or delete accounts from the dashboard. Every route checks that the caller is an admin, and a suspension or ban is checked at login so the user is redirected to a suspended page.
 
-| Endpoint     | Method | Description           |
-| ------------ | ------ | --------------------- |
-| `/addMessage`  | POST   | Add a new message     |
-| `/getMessages` | GET    | Retrieve all messages |
+**Real-time moderation updates.** Moderation routes emit `moderationUpdate` and `notificationUpdate` Socket.IO events, so dashboards and notification bells update without a refresh.
 
-### `/question`
+**Community guidelines.** The guidelines page, agreement at signup, access from the profile, and a check that users have agreed before they participate.
 
-| Endpoint          | Method | Description                     |
-| ----------------- | ------ | ------------------------------- |
-| `/getQuestion`      | GET    | Fetch questions by filter       |
-| `/getQuestionById/` | GET    | Fetch a specific question by ID |
-| `/addQuestion`      | POST   | Add a new question              |
-| `/upvoteQuestion`   | POST   | Upvote a question               |
-| `/downvoteQuestion` | POST   | Downvote a question             |
+**Profanity detection.** Questions, answers, comments, and messages are checked against a profanity API before submission, for all roles including moderators. Failed checks surface as clear form errors.
 
-### `/tag`
+**Duplicate question detection.** While a user types a question, a debounced hook searches by title, text, and tags and shows up to five similar questions, which reduces duplicate posts.
 
-| Endpoint                   | Method | Description                                   |
-| -------------------------- | ------ | --------------------------------------------- |
-| `/getTagsWithQuestionNumber` | GET    | Fetch tags along with the number of questions |
-| `/getTagByName/`             | GET    | Fetch a specific tag by name                  |
+**Dark mode.** A theme toggle in the header that persists the preference between sessions, applied through a `ThemeContext` and a shared `darkmode.css`.
 
-### `/user`
+**API spec and tests.** I kept `openapi.yaml` in sync with the new routes, wrote Jest unit tests for the services, controllers, and hooks I added, and wrote the workflow documentation in FEATURES.md.
 
-| Endpoint         | Method | Description                    |
-| ---------------- | ------ | ------------------------------ |
-| `/signup`          | POST   | Create a new user account      |
-| `/login`           | POST   | Log in as a user               |
-| `/resetPassword`   | PATCH  | Reset user password            |
-| `/getUser/`        | GET    | Fetch user details by username |
-| `/getUsers`        | GET    | Fetch all users                |
-| `/deleteUser/`     | DELETE | Delete a user by username      |
-| `/updateBiography` | PATCH  | Update user biography          |
+### Patterns and skills
 
-### `/chat`
+| Pattern | Where |
+| --- | --- |
+| Layered backend: controller → service → model | moderation, user, notification, and admin features |
+| Role-based access control | admin and moderator checks in every protected route, plus client route guards |
+| Realtime sync | Socket.IO events for moderation and notifications |
+| Custom React hooks for state and data | `useModeratorDashboard`, `useUserManagement`, `useSimilarQuestions`, `useTheme` |
+| React Context | `ThemeContext` for dark mode, `UserContext` for the logged-in user |
+| Contract-first API validation | OpenAPI spec enforced by `express-openapi-validator` |
+| Debounced search | similar-question suggestions (500 ms) |
+| Testing | Jest for units, Cypress workflows for moderation, appeals, and admin flows |
+| Team workflow | feature branches, pull requests, merge-conflict resolution, linting in CI |
 
-| Endpoint                    | Method | Description                                                                 |
-| --------------------------- | ------ | --------------------------------------------------------------------------- |
-| `/createChat`               | POST   | Create a new chat.                                                          |
-| `/:chatId/addMessage`       | POST   | Add a new message to an existing chat.                                      |
-| `/:chatId`                  | GET    | Retrieve a chat by its ID, optionally populating participants and messages. |
-| `/:chatId/addParticipant`   | POST   | Add a new participant to an existing chat.                                  |
-| `/getChatsByUser/:username` | GET    | Retrieve all chats for a specific user based on their username.             |
+---
 
-### `/games`
+## Running it locally
 
-| Endpoint | Method | Description           |
-| -------- | ------ | --------------------- |
-| `/create`  | POST   | Create a new game     |
-| `/join`    | POST   | Join an existing game |
-| `/leave`   | POST   | Leave a game          |
-| `/games`   | GET    | Retrieve all games    |
+You'll need Node.js 22 and a running MongoDB instance.
 
-### `/api/collection`
+```bash
+# install dependencies for client, server, and shared
+npm install
 
-| Endpoint                            | Method | Description                         |
-| ----------------------------------- | ------ | ----------------------------------- |
-| `/create`                             | POST   | Create a new collection             |
-| `/delete/:collectionId`               | DELETE | Delete a collection                 |
-| `/toggleSaveQuestion`                 | PATCH  | Add/remove question from collection |
-| `/getCollectionsByUsername/:username` | GET    | Get collections by username         |
-| `/getCollectionById/:collectionId`    | GET    | Get collection by ID                |
+# server (in /server): set MONGODB_URI, e.g. mongodb://127.0.0.1:27017
+npm run populate-db   # optional: load sample data
+npm run dev
 
-### `/api/community`
+# client (in /client): set VITE_SERVER_URL, e.g. http://localhost:8000
+npm run dev
+```
 
-| Endpoint                    | Method | Description                      |
-| --------------------------- | ------ | -------------------------------- |
-| `/getCommunity/:communityId`  | GET    | Get a specific community         |
-| `/getAllCommunities`          | GET    | Get all communities              |
-| `/toggleMembership`           | POST   | Join/leave a community           |
-| `/create`                     | POST   | Create a new community           |
-| `/delete/:communityId`        | DELETE | Delete a community          |
+Seed logins for the admin and moderator accounts are listed in [FEATURES.md](FEATURES.md).
 
-## OpenAPI specification
+To run the tests:
 
-OpenAPI specifications as given in the [`server/openapi.yaml`](./server/openapi.yaml) file should give you an idea about the overall structure of the API endpoints, the request format and the various path/query parameters required as well as the expected response formats. To see a detailed explanation of the schemas and to test the endpoint in a sandboxed environment, you can use the Swagger UI page as follows:
+```bash
+cd server && npm test
+cd client && npm test
+```
 
-- Start the server as specified earlier (`cd server && npm run dev`).
-- Visit `http://localhost:8000/api/docs` to see the complete API specification in a user friendly manner.
-- You should be able to see and test out individual endpoints using the *Try it out* button associated with each endpoint.
+---
 
-The specification itself is coupled with an OpenAPI validator (present as a middleware) that validates every request and response against the provided spec document.
+## API routes
 
-## Cypress Tests
+The full API is described in [`server/openapi.yaml`](server/openapi.yaml). All routes are served under `/api` (for example `/api/moderation/flagged`), and interactive docs are at `/api/docs`. The main route groups are:
 
-Cypress tests are end-to-end tests that can help verify your implementation.
+| Group | Purpose |
+| --- | --- |
+| `/user` | signup, login, profile, guidelines agreement, suspend, ban, promote, demote |
+| `/moderation` | delete, flag, unflag, review, dismiss, appeals, deleted-content history, restore |
+| `/admin` | dashboard metrics, audit logs, create user |
+| `/notification` | list, unread count, mark read, delete |
+| `/question`, `/answer`, `/comment`, `/tags` | core Q&A |
+| `/community`, `/collection`, `/message`, `/chat`, `/chatbot`, `/games` | community and social features |
 
-### Setup Instructions
+---
 
-1. Navigate to the `testing` directory:
-   ```sh
-   cd testing
-   ```
+## Repository history
 
-2. Install dependencies:
-   ```sh
-   npm install
-   ```
-
-3. Create a `.env` file in the `testing/` directory with the following content:
-   ```
-   MONGODB_URI=mongodb://127.0.0.1:27017
-   ```
-
-4. Make sure that both the server and client are already running
-
-5. Run Cypress tests:
-   ```sh
-   npx cypress open
-   ```
-
-6. In the Cypress UI that opens:
-   - Select *E2E Testing*
-   - Choose your browser (Chrome is preferred)
-   - Click on any of the test files to run it
-   - If any of the tests fail, you should be able to see the exact sequence of steps that led to the failure.
-
-> [!NOTE]
-> Running Cypress tests is optional. Cypress tests require significant system resources, and without them, the tests may be flaky. We will use these tests for grading.
+This repo is a copy of a private class repo that was created for this project. This repo preserves the commit history of `main` but removes private information, including a committed npm cache, and rewrites commit author emails to GitHub noreply addresses.
