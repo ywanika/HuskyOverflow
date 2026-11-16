@@ -1,8 +1,10 @@
 # Husky Overflow
 
-**A full-stack Stack Overflow-style Q&A platform for the Northeastern community, with built-in moderation, appeals, and admin tooling.**
+**A full-stack Stack Overflow-style Q&A platform with built-in moderation, appeals, and admin tooling.**
 
 Developed over a semester by Ahana, Dishant, and Anika for CS 4530: Fundamentals of Software Engineering. The team extended a course-provided "Fake Stack Overflow" starter codebase with new features across three user roles: users, moderators, and admins.
+
+<small>This README is AI generated and checked by me.</small>
 
 ---
 
@@ -70,14 +72,163 @@ The repo is an npm workspace with three packages:
 
 On the server, each feature follows a **controller → service → model** layering: controllers handle HTTP and socket events, services hold the business logic and database access, and models define the Mongoose schemas. On the client, each screen pairs a component with a custom hook that owns its state and calls a service module for API access.
 
-The database schema is documented in `server/models/schema` and diagrammed here:
+The database schema is defined in `server/models/schema`. This diagram reflects the current Mongoose schemas, including the moderation, appeal, notification, and audit-log collections added this semester.
 
-![Class Diagram](class-diagram.png)
+```mermaid
+erDiagram
+    USER {
+        string username PK
+        string password "hashed"
+        date dateJoined
+        string biography
+        string role "user | moderator | admin"
+        boolean agreedToGuidelines
+        date suspendedUntil
+        string suspensionReason
+        boolean isBanned
+        string banReason
+        date lastActive
+    }
+    QUESTION {
+        ObjectId id PK
+        string title
+        string text
+        string askedBy "username"
+        date askDateTime
+        string[] views "usernames"
+        string[] upVotes "usernames"
+        string[] downVotes "usernames"
+        ObjectId[] tags FK
+        ObjectId[] answers FK
+        ObjectId[] comments FK
+        ObjectId community FK
+        object flagged "moderation state"
+        object deleted "moderation state"
+    }
+    ANSWER {
+        ObjectId id PK
+        string text
+        string ansBy "username"
+        date ansDateTime
+        ObjectId[] comments FK
+        object flagged "moderation state"
+        object deleted "moderation state"
+    }
+    COMMENT {
+        ObjectId id PK
+        string text
+        string commentBy "username"
+        date commentDateTime
+        object flagged "moderation state"
+        object deleted "moderation state"
+    }
+    TAG {
+        ObjectId id PK
+        string name
+        string description
+    }
+    COMMUNITY {
+        ObjectId id PK
+        string name "unique"
+        string description
+        string[] participants "usernames"
+        string visibility "PUBLIC | PRIVATE"
+        string admin "username"
+    }
+    COLLECTION {
+        ObjectId id PK
+        string name
+        string description
+        string username "owner"
+        boolean isPrivate
+        ObjectId[] questions FK
+    }
+    CHAT {
+        ObjectId id PK
+        string[] participants "usernames"
+        ObjectId[] messages FK
+    }
+    MESSAGE {
+        ObjectId id PK
+        string msg
+        string msgFrom "username"
+        date msgDateTime
+        string type "global | direct"
+        object flagged "moderation state"
+        object deleted "moderation state"
+    }
+    APPEAL {
+        ObjectId id PK
+        ObjectId contentId "polymorphic"
+        string contentType "question | answer | comment | message"
+        string appealUser "username"
+        string reason
+        string status "pending | approved | rejected"
+        string modResponse
+        string processedBy "moderator username"
+        date timestamp
+        date processedAt
+    }
+    NOTIFICATION {
+        ObjectId id PK
+        string recipientUsername
+        string type "deletion | appeal | appeal_result | flag | suspension | role_change | system_announcement"
+        string message
+        ObjectId contentId "polymorphic"
+        boolean isRead
+        date timestamp
+    }
+    AUDIT_LOG {
+        ObjectId id PK
+        string adminUsername
+        string actionType
+        string targetUser
+        string targetContent
+        string reason
+        date timestamp
+    }
+    GAME {
+        ObjectId id PK
+        string gameID "unique"
+        string[] players "usernames"
+        string gameType "Nim"
+        object state "moves, players, winners, status"
+    }
+
+    QUESTION }o--o{ TAG : "tagged with"
+    QUESTION ||--o{ ANSWER : "has"
+    QUESTION ||--o{ COMMENT : "has"
+    ANSWER ||--o{ COMMENT : "has"
+    COMMUNITY |o--o{ QUESTION : "contains"
+    COLLECTION }o--o{ QUESTION : "saves"
+    CHAT ||--o{ MESSAGE : "contains"
+
+    USER ||--o{ QUESTION : "asks"
+    USER ||--o{ ANSWER : "writes"
+    USER ||--o{ COMMENT : "writes"
+    USER ||--o{ MESSAGE : "sends"
+    USER ||--o{ COLLECTION : "owns"
+    USER }o--o{ COMMUNITY : "joins"
+    USER ||--o{ APPEAL : "submits"
+    USER ||--o{ NOTIFICATION : "receives"
+    USER ||--o{ AUDIT_LOG : "admin actions"
+    USER }o--o{ GAME : "plays"
+
+    APPEAL }o--|| QUESTION : "appeals deletion of"
+    APPEAL }o--|| ANSWER : "or"
+    APPEAL }o--|| COMMENT : "or"
+    APPEAL }o--|| MESSAGE : "or"
+```
+
+A few things worth knowing about how the schema works:
+
+- **Users are referenced by username**, not by `ObjectId`. Content, votes, appeals, and notifications store the username string, so the `USER` links above are logical rather than enforced foreign keys.
+- **Moderation state is embedded.** Questions, answers, comments, and messages each carry a `flagged` object (`isFlagged`, `flaggedBy[]`, `flaggedAt[]`, `reviewedBy`, `reviewedAt`) and a `deleted` object (`isDeleted`, `deletedBy`, `deleteReason`, `deletedAt`, `restoredAt`). Deleting is a soft delete, which is what lets an approved appeal restore the content.
+- **Appeals and notifications point at content polymorphically.** `contentId` can reference a question, answer, comment, or message, and `contentType` says which.
 
 ---
 
 ## Anika's contribution
-<small>AI generated, Checked by me</small>
 
 I owned most of the **moderation, appeals, and admin user-management** workflow, plus several user-facing features around it.
 
@@ -154,6 +305,12 @@ The full API is described in [`server/openapi.yaml`](server/openapi.yaml). All r
 | `/notification` | list, unread count, mark read, delete |
 | `/question`, `/answer`, `/comment`, `/tags` | core Q&A |
 | `/community`, `/collection`, `/message`, `/chat`, `/chatbot`, `/games` | community and social features |
+
+---
+
+## AI disclosure
+
+The application was architected by our team and the course professors. A significant amount of the code and tests was written with AI assistance.
 
 ---
 
