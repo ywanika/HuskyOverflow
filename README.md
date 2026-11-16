@@ -72,7 +72,7 @@ The repo is an npm workspace with three packages:
 
 On the server, each feature follows a **controller → service → model** layering: controllers handle HTTP and socket events, services hold the business logic and database access, and models define the Mongoose schemas. On the client, each screen pairs a component with a custom hook that owns its state and calls a service module for API access.
 
-The database schema is defined in `server/models/schema`. This diagram reflects the current Mongoose schemas, including the moderation, appeal, notification, and audit-log collections added this semester.
+The database schema is defined in `server/models/schema`. The class diagram below reflects the current Mongoose schemas, including the moderation, appeal, notification, and audit-log classes added this semester (shaded in the diagram). The original course-provided diagram is kept in the repo as [`class-diagram.png`](class-diagram.png) for comparison.
 
 [![Husky Overflow database schema](schema-diagram.png)](schema-diagram.png)
 
@@ -80,8 +80,8 @@ The database schema is defined in `server/models/schema`. This diagram reflects 
 
 A few things worth knowing about how the schema works:
 
-- **Users are referenced by username**, not by `ObjectId`. Content, votes, appeals, and notifications store the username string, so the `USER` links above are logical rather than enforced foreign keys.
-- **Moderation state is embedded.** Questions, answers, comments, and messages each carry a `flagged` object (`isFlagged`, `flaggedBy[]`, `flaggedAt[]`, `reviewedBy`, `reviewedAt`) and a `deleted` object (`isDeleted`, `deletedBy`, `deleteReason`, `deletedAt`, `restoredAt`). Deleting is a soft delete, which is what lets an approved appeal restore the content.
+- **Users are referenced by username**, not by `ObjectId`. Content, votes, appeals, and notifications store the username string, so the lines to `User` are logical references rather than enforced foreign keys.
+- **Moderation state is embedded.** Questions, answers, comments, and messages each carry a `flagged` object (`FlaggedInfo`) and a `deleted` object (`DeletedInfo`). Deleting is a soft delete, which is what lets an approved appeal restore the content.
 - **Appeals and notifications point at content polymorphically.** `contentId` can reference a question, answer, comment, or message, and `contentType` says which.
 
 ---
