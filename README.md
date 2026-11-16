@@ -98,6 +98,8 @@ I owned most of the **moderation, appeals, and admin user-management** workflow,
 
 **Real-time moderation updates.** Moderation routes emit `moderationUpdate` and `notificationUpdate` Socket.IO events, so dashboards and notification bells update without a refresh.
 
+**System-wide announcements.** Admins can broadcast a message to every user from the admin dashboard. The server creates a `system_announcement` notification for each account and emits a Socket.IO event, so the announcement shows up in every user's notification bell in real time. The dashboard form validates that the message isn't empty and reports how many users were notified, or shows an error if the send fails.
+
 **Community guidelines.** The guidelines page, agreement at signup, access from the profile, and a check that users have agreed before they participate.
 
 **Profanity detection.** Questions, answers, comments, and messages are checked against a profanity API before submission, for all roles including moderators. Failed checks surface as clear form errors.
