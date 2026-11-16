@@ -79,8 +79,6 @@ The database schema is defined in `server/models/schema`. The class diagram belo
 *Click the image to view it full size.*
 
 A few things worth knowing about how the schema works:
-
-- **Users are referenced by username**, not by `ObjectId`. Content, votes, appeals, and notifications store the username string, so the lines to `User` are logical references rather than enforced foreign keys.
 - **Moderation state is embedded.** Questions, answers, comments, and messages each carry a `flagged` object (`FlaggedInfo`) and a `deleted` object (`DeletedInfo`). Deleting is a soft delete, which is what lets an approved appeal restore the content.
 - **Appeals and notifications point at content polymorphically.** `contentId` can reference a question, answer, comment, or message, and `contentType` says which.
 
@@ -97,10 +95,6 @@ I owned most of the **moderation, appeals, and admin user-management** workflow,
 **Admin user management.** Admins can suspend users for a set number of days with a violation reason, ban them, promote or demote users between User, Moderator, and Admin, and create, edit, or delete accounts from the dashboard. Every route checks that the caller is an admin, and a suspension or ban is checked at login so the user is redirected to a suspended page.
 
 **Real-time moderation updates.** Moderation routes emit `moderationUpdate` and `notificationUpdate` Socket.IO events, so dashboards and notification bells update without a refresh.
-
-**System-wide announcements.** Admins can broadcast a message to every user from the admin dashboard. The server creates a `system_announcement` notification for each account and emits a Socket.IO event, so the announcement shows up in every user's notification bell in real time. The dashboard form validates that the message isn't empty and reports how many users were notified, or shows an error if the send fails.
-
-**Community guidelines.** The guidelines page, agreement at signup, access from the profile, and a check that users have agreed before they participate.
 
 **Profanity detection.** Questions, answers, comments, and messages are checked against a profanity API before submission, for all roles including moderators. Failed checks surface as clear form errors.
 
@@ -120,7 +114,6 @@ I owned most of the **moderation, appeals, and admin user-management** workflow,
 | Custom React hooks for state and data | `useModeratorDashboard`, `useUserManagement`, `useSimilarQuestions`, `useTheme` |
 | React Context | `ThemeContext` for dark mode, `UserContext` for the logged-in user |
 | Contract-first API validation | OpenAPI spec enforced by `express-openapi-validator` |
-| Debounced search | similar-question suggestions (500 ms) |
 | Testing | Jest for units, Cypress workflows for moderation, appeals, and admin flows |
 | Team workflow | feature branches, pull requests, merge-conflict resolution, linting in CI |
 
